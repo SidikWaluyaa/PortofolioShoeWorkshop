@@ -19,11 +19,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin User
-        User::factory()->create([
+        User::create([
             'name' => 'Admin Shoe Workshop',
             'email' => 'admin@shoeworkshop.com',
             'password' => Hash::make('password'),
         ]);
+
+        // Blog Posts
+        $this->call(PostSeeder::class);
 
         // Hero Section
         HeroSection::create([
