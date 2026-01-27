@@ -48,6 +48,9 @@
                     <a href="{{ $settings['tiktok_link'] ?? '#' }}" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#22AF85] hover:text-white hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 transform hover:-translate-y-1">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16.25 2H13v14.75c0 2.9-2.35 5.25-5.25 5.25S2.5 19.65 2.5 16.75 4.85 11.5 7.75 11.5c.73 0 1.41.15 2.03.43V8.2c-.65-.18-1.33-.28-2.03-.28-4.83 0-8.75 3.92-8.75 8.75s3.92 8.75 8.75 8.75 8.75-3.92 8.75-8.75 8.75-3.92 8.75-8.75v-8.58c1.72 1.22 3.8 1.94 6.03 1.94v-3.5c-2.8 0-5.22-1.6-6.28-3.96z"/></svg>
                     </a>
+                    <a href="{{ $settings['facebook_link'] ?? '#' }}" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#22AF85] hover:text-white hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 transform hover:-translate-y-1">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
+                    </a>
                 </div>
             </div>
         </div>
