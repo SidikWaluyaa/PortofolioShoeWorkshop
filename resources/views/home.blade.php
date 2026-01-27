@@ -86,38 +86,38 @@
     <!-- Trust Strip -->
     @include('components.trust', ['items' => $trustItems])
     
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24 sm:py-32">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20 sm:py-32">
         <!-- row 1: Services | Portfolio -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 mb-24 sm:mb-32">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-16 mb-24 sm:mb-32">
             <div id="services" class="scroll-mt-32">
-                <div class="text-center lg:text-left mb-10">
-                    <p class="text-[10px] font-black text-[#22AF85] uppercase tracking-[0.3em] mb-3">Our Expertise</p>
-                    <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tighter">Layanan Reparasi</h2>
+                <div class="text-center lg:text-left mb-12 sm:mb-10">
+                    <p class="text-[10px] font-black text-[#22AF85] uppercase tracking-[0.3em] mb-4">Our Expertise</p>
+                    <h2 class="text-4xl sm:text-4xl font-black text-gray-900 tracking-tighter">Layanan Reparasi</h2>
                 </div>
                 @include('components.services', ['services' => $services])
             </div>
             <div id="portfolio" class="scroll-mt-32">
-                <div class="text-center lg:text-left mb-10">
-                    <p class="text-[10px] font-black text-[#FFC232] uppercase tracking-[0.3em] mb-3">Proof of Quality</p>
-                    <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tighter">Hasil Pekerjaan</h2>
+                <div class="text-center lg:text-left mb-12 sm:mb-10">
+                    <p class="text-[10px] font-black text-[#FFC232] uppercase tracking-[0.3em] mb-4">Proof of Quality</p>
+                    <h2 class="text-4xl sm:text-4xl font-black text-gray-900 tracking-tighter">Hasil Pekerjaan</h2>
                 </div>
                 @include('components.portfolio', ['portfolio' => $portfolio])
             </div>
         </div>
 
         <!-- row 2: Workflow | About -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-16">
             <div id="workflow" class="scroll-mt-32">
-                <div class="text-center lg:text-left mb-10">
-                    <p class="text-[10px] font-black text-[#22AF85] uppercase tracking-[0.3em] mb-3">Simple Process</p>
-                    <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tighter">Cara Kerja Kami</h2>
+                <div class="text-center lg:text-left mb-12 sm:mb-10">
+                    <p class="text-[10px] font-black text-[#22AF85] uppercase tracking-[0.3em] mb-4">Simple Process</p>
+                    <h2 class="text-4xl sm:text-4xl font-black text-gray-900 tracking-tighter">Cara Kerja Kami</h2>
                 </div>
                 @include('components.workflow', ['workflow' => $workflow])
             </div>
             <div id="about" class="scroll-mt-32">
-                <div class="text-center lg:text-left mb-10">
-                    <p class="text-[10px] font-black text-[#FFC232] uppercase tracking-[0.3em] mb-3">Our Legend</p>
-                    <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tighter">Reputasi Kami</h2>
+                <div class="text-center lg:text-left mb-12 sm:mb-10">
+                    <p class="text-[10px] font-black text-[#FFC232] uppercase tracking-[0.3em] mb-4">Our Legend</p>
+                    <h2 class="text-4xl sm:text-4xl font-black text-gray-900 tracking-tighter">Reputasi Kami</h2>
                 </div>
                 @include('components.about', ['about' => $about])
             </div>

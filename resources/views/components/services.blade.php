@@ -1,4 +1,4 @@
-<div class="bg-white rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] border border-gray-100 p-8 sm:p-10 h-full flex flex-col hover:shadow-2xl transition-all duration-500">
+<div class="bg-white rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] border border-gray-100 p-8 sm:p-10 sm:h-full flex flex-col hover:shadow-2xl transition-all duration-500">
     <div class="mb-10 flex items-center justify-between">
         <h3 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Layanan Kami</h3>
         <div class="w-12 h-1.5 bg-[#22AF85] rounded-full"></div>
