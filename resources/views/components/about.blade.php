@@ -1,29 +1,40 @@
-<div class="bg-white rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] border border-gray-100 p-8 sm:p-10 sm:h-full flex flex-col hover:shadow-2xl transition-all duration-500">
-    <div class="mb-10 flex items-center justify-between">
-        <h3 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">{{ $about->title ?? 'Berdiri Sejak 2017' }}</h3>
-        <div class="w-12 h-1.5 bg-[#22AF85] rounded-full"></div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    {{-- Image --}}
+    <div class="flex justify-center">
+        <div class="relative">
+            <div class="w-72 h-72 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
+                <img src="{{ $about->image ? asset('storage/'.$about->image) : 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=600&q=80' }}"
+                     alt="Shoe Workshop – {{ $about->title ?? 'Tentang Kami' }}"
+                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="absolute -bottom-4 -right-4 bg-[#22AF85] text-white rounded-2xl px-5 py-4 shadow-xl text-center">
+                <p class="text-2xl font-black leading-none">9+</p>
+                <p class="text-xs font-bold uppercase tracking-widest mt-1 opacity-90">Tahun</p>
+            </div>
+        </div>
     </div>
-    
-    <div class="flex flex-col md:flex-row gap-10 items-start flex-grow">
-        <div class="flex-grow order-2 md:order-1">
-            <p class="text-sm sm:text-base text-gray-400 leading-loose font-medium text-justify">
-                {{ $about->description }}
-            </p>
-            <div class="mt-8 flex gap-5">
-                <div class="flex-1 text-center px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100 shadow-sm">
-                    <span class="block text-2xl font-black text-[#22AF85]">5+</span>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Tahun</span>
-                </div>
-                <div class="flex-1 text-center px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100 shadow-sm">
-                    <span class="block text-2xl font-black text-[#FFC232]">1K+</span>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Pelanggan</span>
-                </div>
+    {{-- Content --}}
+    <div>
+        <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4">{{ $about->title ?? 'Berdiri Sejak 2017' }}</h2>
+        <p class="text-gray-500 text-sm leading-relaxed mb-8">{{ $about->description }}</p>
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="text-center bg-white rounded-2xl border border-gray-100 py-5 shadow-sm">
+                <p class="text-2xl font-black text-[#22AF85]">9+</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Tahun</p>
+            </div>
+            <div class="text-center bg-white rounded-2xl border border-gray-100 py-5 shadow-sm">
+                <p class="text-2xl font-black text-[#B8952A]">100K+</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Pelanggan</p>
+            </div>
+            <div class="text-center bg-white rounded-2xl border border-gray-100 py-5 shadow-sm">
+                <p class="text-2xl font-black text-[#22AF85]">100%</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Garansi</p>
             </div>
         </div>
-        <div class="flex-shrink-0 w-full md:w-48 order-1 md:order-2 flex justify-center md:justify-end">
-            <div class="w-40 h-40 rounded-[32px] overflow-hidden shadow-2xl border-8 border-white ring-1 ring-gray-100 rotate-6 hover:rotate-0 transition-all duration-500 transform hover:scale-110">
-                <img src="{{ $about->image ? asset('storage/' . $about->image) : 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=400&q=80' }}" alt="About Image" class="w-full h-full object-cover">
-            </div>
-        </div>
+        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
+           class="inline-flex items-center gap-2 px-6 py-3 bg-[#22AF85] text-white text-sm font-bold rounded-lg hover:bg-[#178a67] transition-colors">
+            Konsultasi Sekarang
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
     </div>
 </div>
