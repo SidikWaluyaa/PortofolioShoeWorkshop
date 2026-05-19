@@ -5,38 +5,113 @@
 @section('content')
 
 {{-- NAVBAR --}}
-<nav x-data="{ open: false }" class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+<nav x-data="{
+        open: false,
+        active: 'beranda',
+        init() {
+            this.updateActive();
+            window.addEventListener('scroll', () => this.updateActive());
+        },
+        updateActive() {
+            const ids = ['contact','about','reviews','workflow','portfolio','services'];
+            const offset = 80;
+            let found = 'beranda';
+            for (const id of ids) {
+                const el = document.getElementById(id);
+                if (el && window.scrollY >= el.offsetTop - offset) {
+                    found = id;
+                    break;
+                }
+            }
+            this.active = found;
+        }
+     }"
+     class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-            <a href="{{ route('home') }}">
+
+            {{-- Logo --}}
+            <a href="{{ route('home') }}" class="flex-shrink-0">
                 <x-application-logo class="h-12 w-auto" />
             </a>
-            <div class="hidden md:flex items-center gap-6">
-                <a href="{{ route('home') }}"        class="text-sm font-semibold text-gray-800 border-b-2 border-[#B8952A] pb-0.5">Beranda</a>
-                <a href="#services"                   class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">Layanan</a>
-                <a href="#portfolio"                  class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">Portfolio</a>
-                <a href="#reviews"                    class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">Review</a>
-                <a href="{{ route('blog.index') }}"   class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">Artikel</a>
-                <a href="#contact"                    class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">Kontak</a>
+
+            {{-- Desktop Nav --}}
+            <div class="hidden md:flex items-center gap-1">
+                <a href="{{ route('home') }}"
+                   class="relative px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+                   :class="active === 'beranda' ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'">
+                    Beranda
+                    <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#22AF85] rounded-full transition-all duration-300" :class="active === 'beranda' ? 'w-4' : 'w-0'"></span>
+                </a>
+                <a href="#services" @click="active='services'"
+                   class="relative px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+                   :class="active === 'services' ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'">
+                    Layanan
+                    <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#22AF85] rounded-full transition-all duration-300" :class="active === 'services' ? 'w-4' : 'w-0'"></span>
+                </a>
+                <a href="#portfolio" @click="active='portfolio'"
+                   class="relative px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+                   :class="active === 'portfolio' ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'">
+                    Portfolio
+                    <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#22AF85] rounded-full transition-all duration-300" :class="active === 'portfolio' ? 'w-4' : 'w-0'"></span>
+                </a>
+                <a href="#reviews" @click="active='reviews'"
+                   class="relative px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+                   :class="active === 'reviews' ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'">
+                    Review
+                    <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#22AF85] rounded-full transition-all duration-300" :class="active === 'reviews' ? 'w-4' : 'w-0'"></span>
+                </a>
+                <a href="{{ route('blog.index') }}"
+                   class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-lg">
+                    Artikel
+                </a>
+                <a href="{{ route('tracking.index') }}"
+                   class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-lg">
+                    Tracking
+                </a>
+                <a href="#contact" @click="active='contact'"
+                   class="relative px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+                   :class="active === 'contact' ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'">
+                    Kontak
+                    <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#22AF85] rounded-full transition-all duration-300" :class="active === 'contact' ? 'w-4' : 'w-0'"></span>
+                </a>
             </div>
+
+            {{-- WA Button --}}
             <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-               class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-[#22AF85] text-white text-sm font-bold rounded-lg">
+               class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-[#22AF85] text-white text-sm font-bold rounded-lg hover:bg-[#178a67] transition-colors flex-shrink-0">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 Konsultasi via WhatsApp
             </a>
-            <button @click="open=!open" class="md:hidden p-2 text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+
+            {{-- Hamburger --}}
+            <button @click="open=!open" class="md:hidden p-2 text-gray-600 rounded-lg hover:bg-gray-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
             </button>
         </div>
     </div>
-    <div x-show="open" class="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
-        <a href="{{ route('home') }}"  @click="open=false" class="block py-2.5 text-sm font-semibold text-gray-800">Beranda</a>
-        <a href="#services"            @click="open=false" class="block py-2.5 text-sm font-semibold text-gray-600">Layanan</a>
-        <a href="#portfolio"           @click="open=false" class="block py-2.5 text-sm font-semibold text-gray-600">Portfolio</a>
-        <a href="#reviews"             @click="open=false" class="block py-2.5 text-sm font-semibold text-gray-600">Review</a>
-        <a href="{{ route('blog.index') }}" @click="open=false" class="block py-2.5 text-sm font-semibold text-gray-600">Artikel</a>
-        <a href="#contact"             @click="open=false" class="block py-2.5 text-sm font-semibold text-gray-600">Kontak</a>
-        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="block mt-3 py-3 bg-[#22AF85] text-white text-sm font-bold text-center rounded-lg">Konsultasi via WhatsApp</a>
+
+    {{-- Mobile menu --}}
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0 -translate-y-1"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
+        <a href="{{ route('home') }}"        @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-[#22AF85] bg-green-50 rounded-lg">Beranda</a>
+        <a href="#services"                   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
+        <a href="#portfolio"                  @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Portfolio</a>
+        <a href="#reviews"                    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Review</a>
+        <a href="{{ route('blog.index') }}"   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Artikel</a>
+        <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
+        <a href="#contact"                    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Kontak</a>
+        <div class="pt-2">
+            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#22AF85] text-white text-sm font-bold rounded-lg">
+                Konsultasi via WhatsApp
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -47,7 +122,7 @@
 @include('components.trust', ['items' => $trustItems])
 
 {{-- 3. LAYANAN --}}
-<section id="services" class="py-16 bg-white scroll-mt-16">
+<section id="services" class="py-16 bg-white scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-center gap-3 mb-10">
             <div class="h-px w-12 bg-gray-300"></div>
@@ -62,7 +137,7 @@
 <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-14">
-            <div id="portfolio" class="scroll-mt-16">
+            <div id="portfolio" class="scroll-mt-20">
                 <div class="flex items-center gap-3 mb-8">
                     <div class="h-px flex-1 bg-gray-300"></div>
                     <p class="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Portfolio</p>
@@ -70,7 +145,7 @@
                 </div>
                 @include('components.portfolio', ['portfolio' => $portfolio])
             </div>
-            <div id="workflow" class="scroll-mt-16">
+            <div id="workflow" class="scroll-mt-20">
                 <div class="flex items-center gap-3 mb-8">
                     <div class="h-px flex-1 bg-gray-300"></div>
                     <p class="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Cara Kerja</p>
@@ -83,7 +158,7 @@
 </section>
 
 {{-- 5. REVIEW & ARTIKEL --}}
-<section id="reviews" class="py-16 bg-white scroll-mt-16">
+<section id="reviews" class="py-16 bg-white scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-14">
             <div>
@@ -107,7 +182,7 @@
 </section>
 
 {{-- 6. TENTANG KAMI --}}
-<section id="about" class="py-16 bg-gray-50 scroll-mt-16">
+<section id="about" class="py-16 bg-gray-50 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-center gap-3 mb-12">
             <div class="h-px w-12 bg-gray-300"></div>
@@ -119,7 +194,7 @@
 </section>
 
 {{-- 7. LOKASI & CTA --}}
-<section id="contact" class="py-16 bg-white scroll-mt-16">
+<section id="contact" class="py-16 bg-white scroll-mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
             <div>
