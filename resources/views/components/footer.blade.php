@@ -1,10 +1,11 @@
 <footer class="bg-[#1a1a1a] text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-10 pb-10 border-b border-white/10 mb-8">
+
             {{-- Brand --}}
             <div class="col-span-2 lg:col-span-1">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 mb-4">
-                    <x-application-logo class="h-10 w-auto brightness-0 invert" />
+                    <x-application-logo class="h-10 w-auto" />
                     <div>
                         <p class="font-black text-sm leading-none">SHOE</p>
                         <p class="font-black text-sm leading-none text-[#22AF85]">WORKSHOP</p>
@@ -34,29 +35,32 @@
                     @endif
                 </div>
             </div>
+
             {{-- Navigasi --}}
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-widest text-white/40 mb-5">Navigasi</h4>
                 <ul class="space-y-3 text-sm text-gray-400">
-                    <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Beranda</a></li>
-                    <li><a href="#services" class="hover:text-white transition-colors">Layanan</a></li>
-                    <li><a href="#portfolio" class="hover:text-white transition-colors">Portfolio</a></li>
-                    <li><a href="#reviews" class="hover:text-white transition-colors">Review</a></li>
-                    <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Artikel</a></li>
-                    <li><a href="#contact" class="hover:text-white transition-colors">Kontak</a></li>
+                    <li><a href="{{ route('home') }}"        class="hover:text-white transition-colors">Beranda</a></li>
+                    <li><a href="{{ route('home') }}#services" class="hover:text-white transition-colors">Layanan</a></li>
+                    <li><a href="{{ route('home') }}#portfolio" class="hover:text-white transition-colors">Portfolio</a></li>
+                    <li><a href="{{ route('home') }}#reviews"  class="hover:text-white transition-colors">Review</a></li>
+                    <li><a href="{{ route('blog.index') }}"   class="hover:text-white transition-colors">Artikel</a></li>
+                    <li><a href="{{ route('home') }}#contact"  class="hover:text-white transition-colors">Kontak</a></li>
                 </ul>
             </div>
+
             {{-- Layanan --}}
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-widest text-white/40 mb-5">Layanan</h4>
                 <ul class="space-y-3 text-sm text-gray-400">
-                    <li><a href="#services" class="hover:text-white transition-colors">Deep Clean</a></li>
-                    <li><a href="#services" class="hover:text-white transition-colors">Repaint</a></li>
-                    <li><a href="#services" class="hover:text-white transition-colors">Reglue</a></li>
-                    <li><a href="#services" class="hover:text-white transition-colors">Perbaikan Upper</a></li>
-                    <li><a href="#services" class="hover:text-white transition-colors">Lainnya</a></li>
+                    <li><a href="{{ route('home') }}#services" class="hover:text-white transition-colors">Treatment</a></li>
+                    <li><a href="{{ route('home') }}#services" class="hover:text-white transition-colors">Reparasi Sol</a></li>
+                    <li><a href="{{ route('home') }}#services" class="hover:text-white transition-colors">Reglue</a></li>
+                    <li><a href="{{ route('home') }}#services" class="hover:text-white transition-colors">Perbaikan Upper</a></li>
+                    <li><a href="{{ route('home') }}#services" class="hover:text-white transition-colors">Lainnya</a></li>
                 </ul>
             </div>
+
             {{-- Kontak --}}
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-widest text-white/40 mb-5">Kontak</h4>
@@ -82,6 +86,7 @@
                 </ul>
             </div>
         </div>
+
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
             <p>&copy; {{ date('Y') }} Shoe Workshop. All rights reserved.</p>
             <div class="flex gap-6">
