@@ -31,7 +31,7 @@
     {{-- Right: Image with Green Background --}}
     <div class="w-full lg:w-1/2 bg-[#22AF85] relative flex items-center justify-center p-8 lg:p-0 min-h-[300px] sm:min-h-[400px] lg:min-h-0">
         <div class="relative w-full h-full flex items-center justify-center hover:scale-105 transition-transform duration-700 ease-out">
-            <img src="{{ $hero->image ? asset('storage/'.$hero->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+            <img src="{{ $hero->image_url }}"
                  alt="{{ $hero->title }}"
                  class="w-4/5 object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.4)]">
         </div>

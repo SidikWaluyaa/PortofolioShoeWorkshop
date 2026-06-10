@@ -31,7 +31,7 @@
                             @foreach($heroes as $hero)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <img src="{{ $hero->image ? asset('storage/' . $hero->image) : 'https://via.placeholder.com/100' }}" alt="" class="h-10 w-20 object-cover">
+                                    <img src="{{ $hero->image_url }}" alt="" class="h-10 w-20 object-cover rounded shadow-sm">
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">{{ $hero->title }}</div>
