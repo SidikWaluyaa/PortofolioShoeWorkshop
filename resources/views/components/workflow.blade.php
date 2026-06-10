@@ -1,6 +1,6 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
-    {{-- Left Sticky Panel --}}
-    <div class="sticky top-32">
+    {{-- Left Panel (Flat/No sticky scroll) --}}
+    <div>
         <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase mb-4">Proses Kerja</p>
         <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17] mb-8 leading-tight">Bagaimana Kami Merawat Sepatu Anda?</h2>
         <p class="text-gray-500 text-sm sm:text-base leading-relaxed mb-12">
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    {{-- Right Steps Timeline --}}
+    {{-- Right Steps Timeline with Database Icons --}}
     <div class="space-y-12 relative timeline-line pl-12 md:pl-0">
         @foreach($workflow as $i => $step)
         @php
@@ -30,12 +30,11 @@
             'Setiap sepatu wajib melewati 3 tahap pengecekan kualitas sebelum dinyatakan selesai dan siap dikirim kembali ke Anda.',
             'Sepatu Anda sudah seperti baru! Kami akan mengirimkan foto hasil akhir sebelum melakukan pengiriman atau penjadwalan kurir.',
         ];
-        $isFirst = $i === 0;
-        $isLast = $i === count($workflow) - 1;
         @endphp
         <div class="relative flex gap-6 group">
-            <div class="absolute -left-[53px] w-10 h-10 bg-white border-2 {{ $isFirst || $isLast ? 'border-[#22AF85] text-[#22AF85]' : 'border-gray-200 text-gray-400' }} {{ $isLast ? 'bg-[#22AF85] !text-white !border-[#22AF85]' : '' }} rounded-full flex items-center justify-center z-10 font-bold">
-                {{ $i + 1 }}
+            {{-- Circle with Emoji from Database --}}
+            <div class="absolute -left-[53px] w-10 h-10 bg-white border-2 border-[#22AF85] rounded-full flex items-center justify-center z-10 text-lg shadow-sm">
+                {{ $step->icon }}
             </div>
             <div>
                 <h4 class="font-bold text-sm sm:text-base text-[#1c1c17] mb-2 group-hover:text-[#22AF85] transition-colors">
