@@ -45,9 +45,10 @@
         </div>
 
         {{-- Progress Steps --}}
-        <div class="mb-12">
+        <div class="mb-10 sm:mb-12">
             <div class="flex items-center justify-center">
-                <div class="flex items-center w-full max-w-lg justify-between">
+                {{-- Desktop Stepper --}}
+                <div class="hidden sm:flex items-center w-full max-w-lg justify-between">
                     {{-- Step 1 Indicator --}}
                     <div class="flex flex-col items-center relative" id="step-indicator-1">
                         <div class="w-10 h-10 rounded-full bg-[#22AF85] text-white flex items-center justify-center font-bold ring-4 ring-[#22AF85]/20 transition-all duration-300">
@@ -78,6 +79,17 @@
                             3
                         </div>
                         <span class="text-xs font-semibold mt-2 text-gray-400" id="step-text-3">Selesai</span>
+                    </div>
+                </div>
+
+                {{-- Mobile Stepper (Premium Compact Progress Bar) --}}
+                <div class="flex sm:hidden flex-col items-center w-full px-2">
+                    <div class="flex justify-between w-full items-center mb-2.5">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Langkah <span id="mobile-step-num" class="text-gray-800">1</span> dari 3</span>
+                        <span class="text-xs font-extrabold text-[#22AF85] uppercase tracking-wider" id="mobile-step-name">Validasi</span>
+                    </div>
+                    <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                        <div id="mobile-step-progress" class="bg-[#22AF85] h-full w-1/3 transition-all duration-500 rounded-full"></div>
                     </div>
                 </div>
             </div>
@@ -202,12 +214,15 @@
                     {{-- Upload Foto Kerusakan --}}
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Bukti Kerusakan (1 - 3 Foto)</label>
-                        <div id="dropzone-problem" class="border-2 border-dashed border-gray-300 hover:border-[#22AF85] rounded-2xl p-6 text-center cursor-pointer transition-colors bg-gray-50/30">
+                        <div id="dropzone-problem" class="border-2 border-dashed border-gray-300 hover:border-[#22AF85] rounded-2xl p-5 sm:p-6 text-center cursor-pointer transition-colors bg-gray-50/30">
                             <input type="file" id="problem_photos" multiple accept="image/*" class="hidden">
-                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <span class="text-sm font-bold text-gray-700 block">Tarik gambar Anda kemari, atau <span class="text-[#22AF85] hover:text-[#178a67]">pilih file</span></span>
+                            <span class="text-sm font-bold text-gray-700 block">
+                                <span class="hidden sm:inline">Tarik gambar Anda kemari, atau </span>
+                                <span class="text-[#22AF85] hover:text-[#178a67]">pilih file / ambil foto</span>
+                            </span>
                             <span class="text-xs text-gray-400 block mt-1">Hanya file JPG, PNG, atau WEBP. Maksimal 20MB per file.</span>
                         </div>
                         {{-- Thumbnail Previews --}}
@@ -228,12 +243,15 @@
                         </div>
 
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Bukti Screenshot Google Review (1 Foto)</label>
-                        <div id="dropzone-review" class="border-2 border-dashed border-gray-300 hover:border-[#22AF85] rounded-2xl p-6 text-center cursor-pointer transition-colors bg-gray-50/30">
+                        <div id="dropzone-review" class="border-2 border-dashed border-gray-300 hover:border-[#22AF85] rounded-2xl p-5 sm:p-6 text-center cursor-pointer transition-colors bg-gray-50/30">
                             <input type="file" id="google_review_photo" accept="image/*" class="hidden">
-                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
-                            <span class="text-sm font-bold text-gray-700 block">Tarik gambar ulasan Anda kemari, atau <span class="text-[#22AF85] hover:text-[#178a67]">pilih file</span></span>
+                            <span class="text-sm font-bold text-gray-700 block">
+                                <span class="hidden sm:inline">Tarik gambar ulasan Anda kemari, atau </span>
+                                <span class="text-[#22AF85] hover:text-[#178a67]">pilih file / screenshot</span>
+                            </span>
                             <span class="text-xs text-gray-400 block mt-1">Maksimal 20MB. Format JPG, PNG, atau WEBP.</span>
                         </div>
                         {{-- Single Preview --}}
@@ -315,60 +333,60 @@
     </div>
 </div>
 
-{{-- Modal Syarat & Ketentuan (Big 4 Styling) --}}
-<div id="terms-modal" class="hidden fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        {{-- Backdrop --}}
-        <div class="fixed inset-0 bg-gray-600/75 transition-opacity" aria-hidden="true" id="close-modal-bg"></div>
+{{-- Modal Syarat & Ketentuan (Big 4 Styling - Bottom Sheet on Mobile) --}}
+<div id="terms-modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    {{-- Backdrop --}}
+    <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" id="close-modal-bg"></div>
 
-        {{-- Centering helper --}}
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    {{-- Modal Panel --}}
+    <div class="mobile-bottom-sheet desktop-modal w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all border border-gray-100 flex flex-col max-h-[85vh] sm:max-h-[90vh] z-10 animate-fade-in">
+        {{-- Drag Handle (Mobile Only) --}}
+        <div class="flex sm:hidden justify-center py-3 bg-white cursor-pointer rounded-t-3xl flex-shrink-0" id="modal-drag-handle">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+        </div>
 
-        {{-- Modal Panel --}}
-        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100 animate-fade-in">
-            {{-- Header --}}
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <x-application-logo class="h-8 w-auto" />
-                    <div>
-                        <h3 class="text-sm font-extrabold text-gray-900" id="modal-title">Syarat & Ketentuan Garansi</h3>
-                        <p class="text-[10px] text-gray-400">Shoe Workshop Peraturan & Kebijakan</p>
-                    </div>
+        {{-- Header --}}
+        <div class="px-6 pb-4 pt-2 sm:pt-4 border-b border-gray-100 flex items-center justify-between bg-white z-10 flex-shrink-0">
+            <div class="flex items-center gap-2">
+                <x-application-logo class="h-8 w-auto" />
+                <div>
+                    <h3 class="text-sm font-extrabold text-gray-900" id="modal-title">Syarat & Ketentuan Garansi</h3>
+                    <p class="text-[10px] text-gray-400">Shoe Workshop Peraturan & Kebijakan</p>
                 </div>
-                <button type="button" id="btn-close-terms" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
             </div>
+            <button type="button" id="btn-close-terms" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
 
-            {{-- Body --}}
-            <div class="px-6 py-5 max-h-[60vh] overflow-y-auto space-y-4 text-xs text-gray-650 leading-relaxed">
-                <div class="text-center pb-3 border-b border-gray-100">
-                    <p class="font-extrabold text-gray-900 text-sm">Kebijakan Garansi Shoe Workshop</p>
-                </div>
-                <ol class="list-decimal pl-5 space-y-3">
-                    <li>Garansi ini hanya berlaku untuk sepatu kamu yang direparasi di Shoe Workshop, sesuai dengan jasa yang dipilih ketika melakukan reparasi sepatu.</li>
-                    <li>Waktu garansi adalah 100 hari setelah tanggal sepatu selesai dikerjakan oleh Shoe Workshop.</li>
-                    <li>Garansi menjadi tidak berlaku jika pihak Shoe Workshop menemukan adanya unsur kesengajaan, penyalahgunaan garansi, campur tangan pihak ketiga dalam perbaikan, pemakaian yang tidak sesuai, serta force majeure yang menyebabkan kerusakan pada sepatu.</li>
-                    <li>Kamu harus melakukan klaim garansi hanya melalui nomor pengaduan ShoeWorkshop (<strong>089533993980</strong>) (WA). Selain nomor ini, tidak akan kami tanggapi.</li>
-                    <li>Jangan lupa, ketika klaim garansi, kamu harus mengirimkan bukti transaksi, nama akun Instagram/TikTok, atau username lain jika kamu tidak bisa menunjukkan informasi tersebut. Garansi kamu tidak akan kami proses.</li>
-                    <li>Setelah klaim garansi sepatu disetujui pihak Shoe Workshop, kamu bisa mengirim kembali sepatumu untuk dilakukan proses garansi.</li>
-                    <li>Biaya pengajuan reparasi sepatu garansi akan ditanggung sepenuhnya oleh pihak Shoe Workshop, tetapi tidak dengan ongkos kirim sepatu.</li>
-                    <li>Pengerjaan reparasi ulang akan diestimasi kurang lebih 2 minggu setelah barang diterima kembali pihak Shoe Workshop.</li>
-                    <li>Saat melakukan klaim garansi, sampaikan komplain dan klaim garansi sepatumu dengan tutur kata yang baik dan komunikasi positif. <em>Solve the problem with positivity.</em></li>
-                    <li>Pihak Shoe Workshop tidak akan merespon jika kamu mengeluarkan kata-kata yang tidak pantas dan tidak berorientasi untuk hal yang solutif. <em>Negativity is not acceptable.</em></li>
-                    <li>ShoeWorkshop berhak menolak klaim yang tidak sesuai dengan syarat dan ketentuan.</li>
-                </ol>
+        {{-- Body --}}
+        <div class="px-6 py-5 overflow-y-auto space-y-4 text-xs text-gray-650 leading-relaxed flex-1">
+            <div class="text-center pb-3 border-b border-gray-100">
+                <p class="font-extrabold text-gray-900 text-sm">Kebijakan Garansi Shoe Workshop</p>
             </div>
+            <ol class="list-decimal pl-5 space-y-3">
+                <li>Garansi ini hanya berlaku untuk sepatu kamu yang direparasi di Shoe Workshop, sesuai dengan jasa yang dipilih ketika melakukan reparasi sepatu.</li>
+                <li>Waktu garansi adalah 100 hari setelah tanggal sepatu selesai dikerjakan oleh Shoe Workshop.</li>
+                <li>Garansi menjadi tidak berlaku jika pihak Shoe Workshop menemukan adanya unsur kesengajaan, penyalahgunaan garansi, campur tangan pihak ketiga dalam perbaikan, pemakaian yang tidak sesuai, serta force majeure yang menyebabkan kerusakan pada sepatu.</li>
+                <li>Kamu harus melakukan klaim garansi hanya melalui nomor pengaduan ShoeWorkshop (<strong>089533993980</strong>) (WA). Selain nomor ini, tidak akan kami tanggapi.</li>
+                <li>Jangan lupa, ketika klaim garansi, kamu harus mengirimkan bukti transaksi, nama akun Instagram/TikTok, atau username lain jika kamu tidak bisa menunjukkan informasi tersebut. Garansi kamu tidak akan kami proses.</li>
+                <li>Setelah klaim garansi sepatu disetujui pihak Shoe Workshop, kamu bisa mengirim kembali sepatumu untuk dilakukan proses garansi.</li>
+                <li>Biaya pengajuan reparasi sepatu garansi akan ditanggung sepenuhnya oleh pihak Shoe Workshop, tetapi tidak dengan ongkos kirim sepatu.</li>
+                <li>Pengerjaan reparasi ulang akan diestimasi kurang lebih 2 minggu setelah barang diterima kembali pihak Shoe Workshop.</li>
+                <li>Saat melakukan klaim garansi, sampaikan komplain dan klaim garansi sepatumu dengan tutur kata yang baik dan komunikasi positif. <em>Solve the problem with positivity.</em></li>
+                <li>Pihak Shoe Workshop tidak akan merespon jika kamu mengeluarkan kata-kata yang tidak pantas dan tidak berorientasi untuk hal yang solutif. <em>Negativity is not acceptable.</em></li>
+                <li>ShoeWorkshop berhak menolak klaim yang tidak sesuai dengan syarat dan ketentuan.</li>
+            </ol>
+        </div>
 
-            {{-- Footer --}}
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div class="text-[10px] text-gray-400">Jam Operasional: Senin - Minggu (09.00 - 17.00)</div>
-                <button type="button" id="btn-agree-modal" class="w-full sm:w-auto px-5 py-2.5 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl text-xs transition-colors">
-                    Saya Setuju & Lanjutkan
-                </button>
-            </div>
+        {{-- Footer --}}
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
+            <div class="text-[10px] text-gray-400 hidden sm:block">Jam Operasional: Senin - Minggu (09.00 - 17.00)</div>
+            <button type="button" id="btn-agree-modal" class="w-full sm:w-auto px-5 py-2.5 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl text-xs transition-colors shadow-sm shadow-[#22AF85]/10">
+                Saya Setuju & Lanjutkan
+            </button>
         </div>
     </div>
 </div>
@@ -378,10 +396,30 @@
 {{-- JavaScript Logic --}}
 @section('head')
 <style>
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-out forwards;
+    @media (max-width: 639px) {
+        .mobile-bottom-sheet {
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: transform 0.15s ease-out;
+            will-change: transform;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
     }
-    @keyframes fadeIn {
+    @media (min-width: 640px) {
+        .desktop-modal {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    }
+    .animate-fade-in {
+        animation: simpleFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes simpleFadeIn {
         from { opacity: 0; transform: translateY(8px); }
         to { opacity: 1; transform: translateY(0); }
     }
@@ -639,6 +677,11 @@
             activeStep = step;
             hideAlert();
 
+            // Mobile step indicator update
+            const mobileStepNum = document.getElementById('mobile-step-num');
+            const mobileStepName = document.getElementById('mobile-step-name');
+            const mobileStepProgress = document.getElementById('mobile-step-progress');
+
             if (step === 1) {
                 step2Content.classList.add('hidden');
                 step3Content.classList.add('hidden');
@@ -648,6 +691,10 @@
                 progressLine1.className = "h-full bg-gray-200 transition-all duration-500 w-0";
                 stepCircle2.className = "w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold transition-all duration-300";
                 stepText2.className = "text-xs font-semibold mt-2 text-gray-400";
+
+                if (mobileStepNum) mobileStepNum.textContent = "1";
+                if (mobileStepName) mobileStepName.textContent = "Validasi";
+                if (mobileStepProgress) mobileStepProgress.style.width = "33.33%";
             } else if (step === 2) {
                 step1Content.classList.add('hidden');
                 step3Content.classList.add('hidden');
@@ -661,6 +708,10 @@
                 progressLine2.className = "h-full bg-gray-200 transition-all duration-500 w-0";
                 stepCircle3.className = "w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold transition-all duration-300";
                 stepText3.className = "text-xs font-semibold mt-2 text-gray-400";
+
+                if (mobileStepNum) mobileStepNum.textContent = "2";
+                if (mobileStepName) mobileStepName.textContent = "Klaim Form";
+                if (mobileStepProgress) mobileStepProgress.style.width = "66.66%";
             } else if (step === 3) {
                 step1Content.classList.add('hidden');
                 step2Content.classList.add('hidden');
@@ -670,6 +721,10 @@
                 progressLine2.className = "h-full bg-[#22AF85] transition-all duration-500 w-full";
                 stepCircle3.className = "w-10 h-10 rounded-full bg-[#22AF85] text-white flex items-center justify-center font-bold ring-4 ring-[#22AF85]/20 transition-all duration-300";
                 stepText3.className = "text-xs font-bold mt-2 text-gray-800";
+
+                if (mobileStepNum) mobileStepNum.textContent = "3";
+                if (mobileStepName) mobileStepName.textContent = "Selesai";
+                if (mobileStepProgress) mobileStepProgress.style.width = "100%";
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -916,23 +971,69 @@
         const btnAgreeModal = document.getElementById('btn-agree-modal');
         const agreeTermsCheckbox = document.getElementById('agree_terms');
 
+        const modalPanel = termsModal.querySelector('.mobile-bottom-sheet');
+        let touchStartY = 0;
+        let touchCurrentY = 0;
+
         function openModal() {
             termsModal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
+            if (modalPanel) modalPanel.style.transform = '';
         }
 
         function closeModal() {
             termsModal.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
+            if (modalPanel) modalPanel.style.transform = '';
         }
 
-        btnOpenTerms.addEventListener('click', openModal);
+        btnOpenTerms.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openModal();
+        });
+        
         btnCloseTerms.addEventListener('click', closeModal);
         closeTermsBg.addEventListener('click', closeModal);
+        
         btnAgreeModal.addEventListener('click', function() {
             agreeTermsCheckbox.checked = true;
             closeModal();
         });
+
+        // Swipe-down to dismiss bottom sheet (for mobile ergonomics)
+        if (modalPanel) {
+            modalPanel.addEventListener('touchstart', function(e) {
+                if (window.innerWidth < 640) {
+                    touchStartY = e.touches[0].clientY;
+                    touchCurrentY = touchStartY;
+                }
+            }, { passive: true });
+
+            modalPanel.addEventListener('touchmove', function(e) {
+                if (window.innerWidth < 640) {
+                    touchCurrentY = e.touches[0].clientY;
+                    const deltaY = touchCurrentY - touchStartY;
+                    if (deltaY > 0) {
+                        // Apply CSS translation to pull the panel down
+                        modalPanel.style.transform = `translateY(${deltaY}px)`;
+                    }
+                }
+            }, { passive: true });
+
+            modalPanel.addEventListener('touchend', function() {
+                if (window.innerWidth < 640) {
+                    const deltaY = touchCurrentY - touchStartY;
+                    if (deltaY > 120) {
+                        // If pulled down far enough, close the modal
+                        closeModal();
+                    } else {
+                        // Otherwise, snap back into place
+                        modalPanel.style.transform = '';
+                    }
+                }
+            });
+        }
     });
 </script>
 @endsection

@@ -29,12 +29,12 @@
     {{-- Header --}}
     <div class="bg-white border-b border-gray-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center flex-wrap gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 class="text-2xl font-bold text-gray-900">
                     <span class="text-gray-900">STATUS</span>
                     <span class="text-[#22AF85] ml-2">ORDER</span>
                 </h1>
-                <a href="{{ route('warranty.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 bg-white shadow-sm">
+                <a href="{{ route('warranty.index') }}" class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3.5 py-2 hover:bg-gray-50 bg-white shadow-sm">
                     🛡️ Ajukan Klaim Garansi
                 </a>
             </div>
@@ -163,33 +163,35 @@
                         </div>
 
                         @if($result['timeline'] ?? null)
-                        <div class="flex flex-wrap gap-2 mb-12">
-                            @php
-                                $timelineArray = (array) $result['timeline'];
-                            @endphp
-                            @foreach($timelineArray as $stageKey => $stage)
+                        <div class="overflow-x-auto pb-4 mb-10 -mx-6 px-6 sm:-mx-0 sm:px-0 scrollbar-none">
+                            <div class="flex items-center min-w-[500px] sm:min-w-0 sm:justify-between gap-1">
                                 @php
-                                    $isCompleted = $stage['is_completed'] ?? false;
-                                    $isCurrent = $stage['is_current'] ?? false;
+                                    $timelineArray = (array) $result['timeline'];
                                 @endphp
-                                <div class="flex items-center">
-                                    <div class="flex flex-col items-center">
-                                        <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white {{ $isCompleted || $isCurrent ? 'bg-[#22AF85]' : 'bg-gray-300' }}">
-                                            @if($isCompleted && !$isCurrent)
-                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                                                </svg>
-                                            @else
-                                                {{ $loop->iteration }}
-                                            @endif
+                                @foreach($timelineArray as $stageKey => $stage)
+                                    @php
+                                        $isCompleted = $stage['is_completed'] ?? false;
+                                        $isCurrent = $stage['is_current'] ?? false;
+                                    @endphp
+                                    <div class="flex items-center flex-1">
+                                        <div class="flex flex-col items-center flex-shrink-0">
+                                            <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white {{ $isCompleted || $isCurrent ? 'bg-[#22AF85]' : 'bg-gray-300' }}">
+                                                @if($isCompleted && !$isCurrent)
+                                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                @else
+                                                    {{ $loop->iteration }}
+                                                @endif
+                                            </div>
+                                            <p class="text-xs font-semibold text-center mt-2 text-gray-700 max-w-16">{{ $stage['label'] ?? '-' }}</p>
                                         </div>
-                                        <p class="text-xs font-semibold text-center mt-2 text-gray-700 max-w-16">{{ $stage['label'] ?? '-' }}</p>
+                                        @if(!$loop->last)
+                                        <div class="flex-1 h-1 {{ $isCompleted ? 'bg-[#22AF85]' : 'bg-gray-300' }} mx-2 min-w-[24px]"></div>
+                                        @endif
                                     </div>
-                                    @if(!$loop->last)
-                                    <div class="w-12 h-1 {{ $isCompleted ? 'bg-[#22AF85]' : 'bg-gray-300' }} mx-2"></div>
-                                    @endif
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
 
                         {{-- Timeline Details --}}
