@@ -4,27 +4,68 @@
 
 @section('content')
 
-{{-- Navbar --}}
-<nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="{{ route('home') }}">
-                <x-application-logo class="h-12 w-auto" />
-            </a>
-            <div class="flex items-center gap-4">
-                <a href="{{ route('home') }}" class="text-sm font-semibold text-gray-600 hover:text-[#22AF85] transition-colors flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                    Beranda
-                </a>
-                <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-                   class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 bg-[#22AF85] text-white text-sm font-bold rounded-lg hover:bg-[#178a67] transition-colors">
-                    Konsultasi
-                </a>
+{{-- NAVBAR --}}
+<header x-data="{ open: false }" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center">
+        {{-- Logo --}}
+        <a href="{{ route('home') }}" class="flex items-center gap-2">
+            <div class="flex flex-col leading-tight">
+                <span class="text-lg font-extrabold text-[#1c1c17]">Shoe Workshop</span>
+                <div class="flex h-1 w-full">
+                    <div class="w-1/2 bg-[#22AF85]"></div>
+                    <div class="w-1/2 bg-[#FFC232]"></div>
+                </div>
             </div>
+        </a>
+
+        {{-- Desktop Nav --}}
+        <div class="hidden lg:flex items-center gap-8">
+            <a href="{{ route('home') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Beranda</a>
+            <a href="{{ route('home') }}#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
+            <a href="{{ route('portfolio.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Portfolio</a>
+            <a href="{{ route('home') }}#review" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Review</a>
+            <a href="{{ route('tracking.index') }}" class="text-sm font-semibold text-[#22AF85] active-nav-border">Tracking</a>
+            <a href="{{ route('home') }}#kontak" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Kontak</a>
+        </div>
+
+        {{-- CTA Button --}}
+        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
+           class="hidden md:inline-flex items-center gap-2 px-6 py-2.5 bg-[#FFC232] text-[#1c1c17] text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#FFC232]/20">
+            <span class="material-symbols-outlined !text-[20px]">chat</span>
+            Konsultasi via WhatsApp
+        </a>
+
+        {{-- Hamburger --}}
+        <button @click="open=!open" class="lg:hidden p-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </nav>
+
+    {{-- Mobile menu --}}
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="lg:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
+        <a href="{{ route('home') }}"         @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Beranda</a>
+        <a href="{{ route('home') }}#layanan" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
+        <a href="{{ route('portfolio.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Portfolio</a>
+        <a href="{{ route('home') }}#review"  @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Review</a>
+        <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-[#22AF85] bg-green-50 rounded-lg">Tracking</a>
+        <a href="{{ route('home') }}#kontak"  @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Kontak</a>
+        <div class="pt-2">
+            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#FFC232] text-[#1c1c17] text-sm font-bold rounded-lg">
+                <span class="material-symbols-outlined !text-[20px]">chat</span>
+                Konsultasi via WhatsApp
+            </a>
         </div>
     </div>
-</nav>
+</header>
 
+<main class="pt-20">
 <div class="min-h-screen bg-gray-50/50 py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Header --}}
@@ -279,6 +320,7 @@
         @endif
     </div>
 </div>
+</main>
 
 @include('components.footer', ['settings' => $settings])
 
