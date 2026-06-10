@@ -19,6 +19,7 @@
                     <x-nav-link :href="route('admin.cta.index')" :active="request()->routeIs('admin.cta.*')">CTA</x-nav-link>
                     <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">Artikel</x-nav-link>
                     <x-nav-link :href="route('admin.tracking.index')" :active="request()->routeIs('admin.tracking.*')">Tracking</x-nav-link>
+                    <x-nav-link :href="route('admin.warranty-claims.index')" :active="request()->routeIs('admin.warranty-claims.index')">Klaim Garansi</x-nav-link>
                     <x-nav-link :href="route('admin.settings.index')" :active="request()->routeIs('admin.settings.*')">Settings</x-nav-link>
                 </div>
             </div>
@@ -67,6 +68,7 @@
             <x-responsive-nav-link :href="route('admin.reviews.index')" :active="request()->routeIs('admin.reviews.*')">Reviews</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">Artikel</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.tracking.index')" :active="request()->routeIs('admin.tracking.*')">Tracking</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.warranty-claims.index')" :active="request()->routeIs('admin.warranty-claims.index')">Klaim Garansi</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.settings.index')" :active="request()->routeIs('admin.settings.*')">Settings</x-responsive-nav-link>
         </div>
         <div class="pt-4 pb-1 border-t border-gray-200">

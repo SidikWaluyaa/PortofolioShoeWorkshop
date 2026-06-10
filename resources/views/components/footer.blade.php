@@ -46,6 +46,8 @@
                     <li><a href="{{ route('home') }}#reviews"  class="hover:text-white transition-colors">Review</a></li>
                     <li><a href="{{ route('blog.index') }}"   class="hover:text-white transition-colors">Artikel</a></li>
                     <li><a href="{{ route('home') }}#contact"  class="hover:text-white transition-colors">Kontak</a></li>
+                    <li><a href="{{ route('tracking.index') }}" class="hover:text-white transition-colors">Lacak Pesanan</a></li>
+                    <li><a href="{{ route('warranty.index') }}" class="hover:text-white transition-colors">Klaim Garansi</a></li>
                 </ul>
             </div>
 
