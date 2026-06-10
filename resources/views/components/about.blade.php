@@ -5,7 +5,7 @@
         <div class="w-full lg:w-1/2 relative">
             <div class="grid grid-cols-2 gap-4">
                 <div class="rounded-xl aspect-square overflow-hidden shadow-lg">
-                    <img src="{{ $about->image ? asset('storage/'.$about->image) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuDPm2DdRBKN240i8GbSy96uUxctlETJimPG2EVwCIubBELe1NsPVGlSnHMR1Frw8Ov4PQIAdF96hFSKpaVqMckIMrKLeuaG4m157XaGpwh8VsUdkMUj0aVI11OjqM2HyjjTfz-HtqLkNkLqsdfNU18dEBI7keuQ4Z9uoyNtqAH-XJoAyyPYLRRkz-TIEejDOPlmDdnK_bC3rja7UCfZJtKP0tzOFl0oXlzrubgHxpOOuHiAf-PkSk4sziyB-MC2HVEhFGU82pjlt898' }}" 
+                    <img src="{{ $about->image_url }}" 
                          alt="Workshop" 
                          class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                 </div>
