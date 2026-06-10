@@ -97,7 +97,7 @@
 </section>
 
 {{-- 5. REVIEW --}}
-<section id="review" class="py-20 sm:py-24 bg-gray-50 border-y border-gray-200 scroll-mt-20">
+<section id="review" class="py-20 sm:py-24 bg-gray-50 border-y border-gray-200 scroll-mt-20" x-data="reviewCarousel()">
     <div class="px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
             <div class="max-w-[600px] space-y-4">
@@ -105,10 +105,10 @@
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17] leading-tight">Apa Kata Mereka Tentang Kami?</h2>
             </div>
             <div class="flex gap-4">
-                <button class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-white transition-colors">
+                <button @click="prev()" class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-white active:scale-95 transition-all text-[#1c1c17]">
                     <span class="material-symbols-outlined">chevron_left</span>
                 </button>
-                <button class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-white transition-colors">
+                <button @click="next()" class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-white active:scale-95 transition-all text-[#1c1c17]">
                     <span class="material-symbols-outlined">chevron_right</span>
                 </button>
             </div>

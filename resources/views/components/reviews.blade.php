@@ -1,7 +1,7 @@
 @if(count($reviews) > 0)
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    @foreach($reviews->take(3) as $review)
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6 hover:shadow-xl hover:border-[#22AF85]/20 hover:-translate-y-1 transition-all duration-300">
+<div x-ref="track" class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none pb-4">
+    @foreach($reviews as $review)
+    <div class="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] snap-start bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6 hover:shadow-xl hover:border-[#22AF85]/20 transition-all duration-300">
         {{-- Stars --}}
         <div class="flex text-[#22AF85]">
             @for($s = 1; $s <= 5; $s++)
@@ -33,6 +33,23 @@
     </div>
     @endforeach
 </div>
+
+<script>
+function reviewCarousel() {
+    return {
+        prev() {
+            const track = this.$refs.track;
+            const cardWidth = track.firstElementChild.offsetWidth + 24; // width + gap
+            track.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+        },
+        next() {
+            const track = this.$refs.track;
+            const cardWidth = track.firstElementChild.offsetWidth + 24; // width + gap
+            track.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        }
+    }
+}
+</script>
 @else
 <div class="text-center py-16 text-gray-400 text-sm">Belum ada testimoni.</div>
 @endif
