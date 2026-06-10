@@ -37,6 +37,11 @@
             <p class="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
                 Ajukan klaim perbaikan jika hasil reparasi sepatu Anda tidak sesuai dengan standar garansi kami.
             </p>
+            <div class="mt-4 flex items-center justify-center">
+                <a href="{{ route('tracking.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 bg-white shadow-sm">
+                    📦 Lacak Status Pesanan Anda
+                </a>
+            </div>
         </div>
 
         {{-- Progress Steps --}}

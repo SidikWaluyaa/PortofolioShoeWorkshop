@@ -29,11 +29,14 @@
     {{-- Header --}}
     <div class="bg-white border-b border-gray-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div>
+            <div class="flex justify-between items-center flex-wrap gap-4">
                 <h1 class="text-2xl font-bold text-gray-900">
                     <span class="text-gray-900">STATUS</span>
                     <span class="text-[#22AF85] ml-2">ORDER</span>
                 </h1>
+                <a href="{{ route('warranty.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 bg-white shadow-sm">
+                    🛡️ Ajukan Klaim Garansi
+                </a>
             </div>
         </div>
     </div>
