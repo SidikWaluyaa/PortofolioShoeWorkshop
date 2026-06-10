@@ -1,20 +1,23 @@
-{{-- Services Grid --}}
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
-    @foreach($services as $i => $service)
-    <div class="group text-center cursor-default">
-        <div class="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 bg-gray-50 rounded-2xl flex items-center justify-center text-2xl border border-gray-100 group-hover:bg-[#22AF85]/10 group-hover:border-[#22AF85]/20 group-hover:scale-110 transition-all duration-300">
+{{-- Services Grid: 4-col cards with icon + title + description --}}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    @foreach($services as $service)
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 flex flex-col gap-4 hover:border-[#22AF85] hover:shadow-xl transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-[#22AF85]/10 flex items-center justify-center text-xl">
             {!! $service->icon !!}
         </div>
-        <h3 class="font-bold text-gray-800 text-xs sm:text-sm group-hover:text-[#22AF85] transition-colors duration-300">{{ $service->name }}</h3>
+        <h3 class="font-semibold text-[#1c1c17] text-lg">{{ $service->name }}</h3>
+        @if($service->description)
+        <p class="text-gray-500 text-sm leading-relaxed">{{ $service->description }}</p>
+        @endif
     </div>
     @endforeach
 </div>
 
 {{-- Link --}}
-<div class="text-center mt-10 sm:mt-12">
+<div class="mt-12 text-center">
     <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-       class="inline-flex items-center gap-2 text-sm font-semibold text-[#22AF85] hover:text-[#178a67] transition-colors group">
+       class="inline-flex items-center gap-2 text-sm font-semibold text-[#22AF85] hover:underline group">
         Lihat semua layanan
-        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
     </a>
 </div>

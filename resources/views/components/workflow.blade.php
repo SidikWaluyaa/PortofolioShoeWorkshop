@@ -1,33 +1,50 @@
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-    {{-- Left: Heading --}}
-    <div>
-        <p class="text-xs font-bold tracking-[0.2em] text-[#22AF85] uppercase mb-4">Cara Kerja</p>
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 leading-tight mb-4">Bagaimana Kami Merawat Sepatu Anda?</h2>
-        <p class="text-gray-500 text-sm leading-relaxed max-w-md">Proses reparasi kami yang terstruktur memastikan sepatu Anda mendapatkan penanganan terbaik dari awal hingga selesai.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
+    {{-- Left Sticky Panel --}}
+    <div class="sticky top-32">
+        <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase mb-4">Proses Kerja</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17] mb-8 leading-tight">Bagaimana Kami Merawat Sepatu Anda?</h2>
+        <p class="text-gray-500 text-sm sm:text-base leading-relaxed mb-12">
+            Kami menjaga transparansi di setiap langkah. Mulai dari konsultasi awal hingga pengiriman kembali, Anda akan selalu mendapatkan update status pengerjaan.
+        </p>
+        <div class="bg-white p-8 rounded-2xl border border-dashed border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-[#22AF85] rounded-full flex items-center justify-center text-white flex-shrink-0">
+                    <span class="material-symbols-outlined">call</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-[#1c1c17] text-sm sm:text-base">Ada Pertanyaan?</h4>
+                    <p class="text-gray-500 text-xs sm:text-sm">Tim teknis kami siap menjawab konsultasi Anda.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {{-- Right: Steps Grid --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    {{-- Right Steps Timeline --}}
+    <div class="space-y-12 relative timeline-line pl-12 md:pl-0">
         @foreach($workflow as $i => $step)
         @php
         $descs = [
-            'Kirim foto sepatu Anda via WhatsApp. Kami akan cek dan berikan estimasi.',
-            'Antar ke workshop kami atau gunakan layanan pickup kami.',
-            'Dikerjakan oleh tenaga ahli dengan material premium dan teliti.',
-            'Sepatu kembali seperti baru dan siap dipakai kembali.',
+            'Kirimkan foto kondisi sepatu Anda via WhatsApp. CS kami akan memberikan analisa awal dan estimasi biaya secara gratis.',
+            'Antar sepatu ke workshop kami atau gunakan jasa pickup. Kami akan melakukan pengecekan material dan struktur secara langsung.',
+            'Dikerjakan oleh artisan berpengalaman menggunakan tools profesional dan bahan kimia premium yang aman untuk material sepatu.',
+            'Setiap sepatu wajib melewati 3 tahap pengecekan kualitas sebelum dinyatakan selesai dan siap dikirim kembali ke Anda.',
+            'Sepatu Anda sudah seperti baru! Kami akan mengirimkan foto hasil akhir sebelum melakukan pengiriman atau penjadwalan kurir.',
         ];
-        $colors = ['bg-[#22AF85]', 'bg-[#E74C3C]', 'bg-[#3498DB]', 'bg-[#F39C12]'];
+        $isFirst = $i === 0;
+        $isLast = $i === count($workflow) - 1;
         @endphp
-        <div class="group bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 hover:shadow-lg hover:border-[#22AF85]/20 hover:-translate-y-1 transition-all duration-300">
-            <div class="w-10 h-10 {{ $colors[$i] ?? 'bg-gray-400' }} rounded-xl flex items-center justify-center text-white font-black text-lg mb-4 shadow-md">
+        <div class="relative flex gap-6 group">
+            <div class="absolute -left-[53px] w-10 h-10 bg-white border-2 {{ $isFirst || $isLast ? 'border-[#22AF85] text-[#22AF85]' : 'border-gray-200 text-gray-400' }} {{ $isLast ? 'bg-[#22AF85] !text-white !border-[#22AF85]' : '' }} rounded-full flex items-center justify-center z-10 font-bold">
                 {{ $i + 1 }}
             </div>
-            <h3 class="font-bold text-gray-900 text-sm mb-2">{{ $step->title }}</h3>
-            @if(!empty($step->description))
-            <p class="text-xs text-gray-500 leading-relaxed">{{ $step->description }}</p>
-            @else
-            <p class="text-xs text-gray-500 leading-relaxed">{{ $descs[$i] ?? '' }}</p>
-            @endif
+            <div>
+                <h4 class="font-bold text-sm sm:text-base text-[#1c1c17] mb-2 group-hover:text-[#22AF85] transition-colors">
+                    {{ $step->title }}
+                </h4>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">
+                    {{ !empty($step->description) ? $step->description : ($descs[$i] ?? '') }}
+                </p>
+            </div>
         </div>
         @endforeach
     </div>

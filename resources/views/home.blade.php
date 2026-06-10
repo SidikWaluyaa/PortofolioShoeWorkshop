@@ -5,212 +5,202 @@
 @section('content')
 
 {{-- NAVBAR --}}
-<nav x-data="{
-        open: false,
-        scrolled: false,
-        active: 'beranda',
-        init() {
-            this.updateActive();
-            this.checkScroll();
-            window.addEventListener('scroll', () => {
-                this.updateActive();
-                this.checkScroll();
-            });
-        },
-        checkScroll() {
-            this.scrolled = window.scrollY > 20;
-        },
-        updateActive() {
-            const ids = ['contact','about','blog','reviews','workflow','portfolio','services'];
-            const offset = 80;
-            let found = 'beranda';
-            for (const id of ids) {
-                const el = document.getElementById(id);
-                if (el && window.scrollY >= el.offsetTop - offset) {
-                    found = id;
-                    break;
-                }
-            }
-            this.active = found;
-        }
-     }"
-     class="sticky top-0 z-50 transition-all duration-300"
-     :class="scrolled ? 'bg-[#1a9970] shadow-lg' : 'bg-[#22AF85]'">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-
-            {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 flex-shrink-0">
-                <x-application-logo class="h-9 w-auto brightness-0 invert" />
-                <div>
-                    <p class="font-black text-sm leading-none text-white">SHOE</p>
-                    <p class="font-black text-sm leading-none text-white/70">WORKSHOP</p>
+<header x-data="{ open: false }" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center">
+        {{-- Logo --}}
+        <a href="{{ route('home') }}" class="flex items-center gap-2">
+            <div class="flex flex-col leading-tight">
+                <span class="text-lg font-extrabold text-[#1c1c17]">Shoe Workshop</span>
+                <div class="flex h-1 w-full">
+                    <div class="w-1/2 bg-[#22AF85]"></div>
+                    <div class="w-1/2 bg-[#FFC232]"></div>
                 </div>
-            </a>
-
-            {{-- Desktop Nav --}}
-            <div class="hidden md:flex items-center gap-0.5">
-                <a href="{{ route('home') }}"
-                   class="px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
-                   :class="active === 'beranda' ? 'text-white bg-white/20' : 'text-white/80 hover:text-white hover:bg-white/10'">
-                    Beranda
-                </a>
-                <a href="#services" @click="active='services'"
-                   class="px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
-                   :class="active === 'services' ? 'text-white bg-white/20' : 'text-white/80 hover:text-white hover:bg-white/10'">
-                    Layanan
-                </a>
-                <a href="#portfolio" @click="active='portfolio'"
-                   class="px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
-                   :class="active === 'portfolio' ? 'text-white bg-white/20' : 'text-white/80 hover:text-white hover:bg-white/10'">
-                    Portfolio
-                </a>
-                <a href="#reviews" @click="active='reviews'"
-                   class="px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
-                   :class="active === 'reviews' ? 'text-white bg-white/20' : 'text-white/80 hover:text-white hover:bg-white/10'">
-                    Review
-                </a>
-                <a href="{{ route('blog.index') }}"
-                   class="px-3 py-2 text-sm font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-all rounded-lg">
-                    Artikel
-                </a>
-                <a href="{{ route('tracking.index') }}"
-                   class="px-3 py-2 text-sm font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-all rounded-lg">
-                    Tracking
-                </a>
-                <a href="#contact" @click="active='contact'"
-                   class="px-3 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
-                   :class="active === 'contact' ? 'text-white bg-white/20' : 'text-white/80 hover:text-white hover:bg-white/10'">
-                    Kontak
-                </a>
             </div>
+        </a>
 
-            {{-- WA Button --}}
-            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-               class="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-white text-[#22AF85] text-sm font-bold rounded-lg hover:bg-white/90 transition-colors flex-shrink-0 shadow-sm">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Konsultasi
-            </a>
-
-            {{-- Hamburger --}}
-            <button @click="open=!open" class="md:hidden p-2 text-white rounded-lg hover:bg-white/10 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+        {{-- Desktop Nav --}}
+        <div class="hidden lg:flex items-center gap-8">
+            <a href="{{ route('home') }}" class="text-sm font-semibold text-[#22AF85] active-nav-border">Beranda</a>
+            <a href="#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
+            <a href="#portfolio" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Portfolio</a>
+            <a href="#review" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Review</a>
+            <a href="{{ route('tracking.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Tracking</a>
+            <a href="#kontak" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Kontak</a>
         </div>
-    </div>
+
+        {{-- CTA Button --}}
+        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
+           class="hidden md:inline-flex items-center gap-2 px-6 py-2.5 bg-[#FFC232] text-[#1c1c17] text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#FFC232]/20">
+            <span class="material-symbols-outlined !text-[20px]">chat</span>
+            Konsultasi via WhatsApp
+        </a>
+
+        {{-- Hamburger --}}
+        <button @click="open=!open" class="lg:hidden p-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </nav>
 
     {{-- Mobile menu --}}
     <div x-show="open"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 -translate-y-2"
          x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-2"
-         class="md:hidden bg-[#1a9970] border-t border-white/10 px-4 py-3 space-y-1">
-        <a href="{{ route('home') }}"        @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white bg-white/15 rounded-lg">Beranda</a>
-        <a href="#services"                   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 rounded-lg transition-colors">Layanan</a>
-        <a href="#portfolio"                  @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 rounded-lg transition-colors">Portfolio</a>
-        <a href="#reviews"                    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 rounded-lg transition-colors">Review</a>
-        <a href="{{ route('blog.index') }}"   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 rounded-lg transition-colors">Artikel</a>
-        <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 rounded-lg transition-colors">Tracking</a>
-        <a href="#contact"                    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 rounded-lg transition-colors">Kontak</a>
+         class="lg:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
+        <a href="{{ route('home') }}"         @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-[#22AF85] bg-green-50 rounded-lg">Beranda</a>
+        <a href="#layanan"                     @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
+        <a href="#portfolio"                   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Portfolio</a>
+        <a href="#review"                      @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Review</a>
+        <a href="{{ route('blog.index') }}"    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Artikel</a>
+        <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
+        <a href="#kontak"                      @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Kontak</a>
         <div class="pt-2">
-            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-white text-[#22AF85] text-sm font-bold rounded-lg hover:bg-white/90 transition-colors">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#FFC232] text-[#1c1c17] text-sm font-bold rounded-lg">
+                <span class="material-symbols-outlined !text-[20px]">chat</span>
                 Konsultasi via WhatsApp
             </a>
         </div>
     </div>
-</nav>
+</header>
+
+<main class="pt-20">
 
 {{-- 1. HERO --}}
 @include('components.hero', ['hero' => $hero])
 
 {{-- 2. LAYANAN --}}
-<section id="services" class="py-16 sm:py-20 bg-white scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900">Solusi Terbaik Untuk Sepatu Anda</h2>
-            <div class="w-16 h-1 bg-[#22AF85] mx-auto mt-4 rounded-full"></div>
-        </div>
-        @include('components.services', ['services' => $services])
+<section id="layanan" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
+    <div class="text-center mb-14 space-y-4">
+        <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase">Layanan Kami</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17]">Solusi Terbaik Untuk Sepatu Anda</h2>
     </div>
+    @include('components.services', ['services' => $services])
 </section>
 
 {{-- 3. PORTFOLIO --}}
-<section id="portfolio" class="py-16 sm:py-20 bg-gray-50 scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900">Hasil Restorasi Kami</h2>
-            <div class="w-16 h-1 bg-[#22AF85] mx-auto mt-4 rounded-full"></div>
+<section id="portfolio" class="py-20 sm:py-24 border-y border-gray-200 scroll-mt-20">
+    <div class="px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto">
+        <div class="text-center mb-14 space-y-4">
+            <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase">Portfolio</p>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17]">Hasil Restorasi Kami</h2>
         </div>
         @include('components.portfolio', ['portfolio' => $portfolio])
     </div>
 </section>
 
 {{-- 4. CARA KERJA --}}
-<section id="workflow" class="py-16 sm:py-20 bg-white scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        @include('components.workflow', ['workflow' => $workflow])
-    </div>
+<section id="workflow" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
+    @include('components.workflow', ['workflow' => $workflow])
 </section>
 
 {{-- 5. REVIEW --}}
-<section id="reviews" class="py-16 sm:py-20 bg-gray-50 scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900">Apa Kata Mereka Tentang Kami?</h2>
-            <div class="w-16 h-1 bg-[#22AF85] mx-auto mt-4 rounded-full"></div>
+<section id="review" class="py-20 sm:py-24 bg-gray-50 border-y border-gray-200 scroll-mt-20">
+    <div class="px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+            <div class="max-w-[600px] space-y-4">
+                <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase">Testimoni</p>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17] leading-tight">Apa Kata Mereka Tentang Kami?</h2>
+            </div>
+            <div class="flex gap-4">
+                <button class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-white transition-colors">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-white transition-colors">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
         </div>
         @include('components.reviews', ['reviews' => $reviews])
     </div>
 </section>
 
 {{-- 6. ARTIKEL --}}
-<section id="blog" class="py-16 sm:py-20 bg-white scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900">Tips & Edukasi Perawatan</h2>
-            <div class="w-16 h-1 bg-[#22AF85] mx-auto mt-4 rounded-full"></div>
-        </div>
-        @include('components.blog', ['posts' => $latestPosts])
+<section id="blog" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17]">Tips & Edukasi Perawatan</h2>
+        <a href="{{ route('blog.index') }}" class="text-sm font-semibold text-[#22AF85] hover:underline flex items-center gap-1">
+            Semua Artikel <span class="material-symbols-outlined">north_east</span>
+        </a>
     </div>
+    @include('components.blog', ['posts' => $latestPosts])
 </section>
 
-{{-- 7. TENTANG KAMI / STATS --}}
+{{-- 7. TENTANG KAMI --}}
 <section id="about" class="scroll-mt-20">
     @include('components.about', ['about' => $about])
 </section>
 
 {{-- 8. LOKASI --}}
-<section id="contact" class="py-16 sm:py-20 bg-white scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900">Kunjungi Workshop Kami</h2>
-            <div class="w-16 h-1 bg-[#22AF85] mx-auto mt-4 rounded-full"></div>
+<section id="kontak" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+        {{-- Left: Contact Info --}}
+        <div class="space-y-8">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17]">Kunjungi Workshop Kami</h2>
+            <div class="space-y-6">
+                <div class="flex gap-4">
+                    <span class="material-symbols-outlined text-[#22AF85]">location_on</span>
+                    <div>
+                        <h4 class="font-semibold text-[#1c1c17]">Alamat Pusat</h4>
+                        <p class="text-gray-500">{{ $settings['address'] ?? 'Bandung, Jawa Barat' }}</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <span class="material-symbols-outlined text-[#22AF85]">schedule</span>
+                    <div>
+                        <h4 class="font-semibold text-[#1c1c17]">Jam Operasional</h4>
+                        <p class="text-gray-500">Senin - Minggu: 09.00 - 17.00 WIB</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <span class="material-symbols-outlined text-[#22AF85]">phone_iphone</span>
+                    <div>
+                        <h4 class="font-semibold text-[#1c1c17]">Kontak</h4>
+                        @if(!empty($settings['whatsapp_number']))
+                        <p class="text-gray-500">{{ $settings['whatsapp_number'] }}</p>
+                        @endif
+                        @if(!empty($settings['email']))
+                        <p class="text-gray-500">{{ $settings['email'] }}</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-4 pt-4">
+                @if(!empty($settings['instagram_link']))
+                <a href="{{ $settings['instagram_link'] }}" target="_blank" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#22AF85] hover:text-white hover:border-[#22AF85] transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
+                </a>
+                @endif
+                @if(!empty($settings['tiktok_link']))
+                <a href="{{ $settings['tiktok_link'] }}" target="_blank" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#22AF85] hover:text-white hover:border-[#22AF85] transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34l.04-8.46a8.16 8.16 0 004.79 1.53V5.01a4.85 4.85 0 01-1.06-.32z"/></svg>
+                </a>
+                @endif
+                @if(!empty($settings['facebook_link']))
+                <a href="{{ $settings['facebook_link'] }}" target="_blank" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#22AF85] hover:text-white hover:border-[#22AF85] transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"/></svg>
+                </a>
+                @endif
+            </div>
         </div>
-        <a href="https://maps.app.goo.gl/rSxrp8gRqce2Euxr5" target="_blank"
-           class="block rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 relative group"
-           style="height:300px">
-            <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors pointer-events-none z-10"></div>
-            <iframe src="https://maps.google.com/maps?q={{ urlencode($settings['address'] ?? 'Bandung') }}&output=embed"
-                    width="100%" height="100%" style="border:0" allowfullscreen loading="lazy"
-                    title="Lokasi Shoe Workshop" class="pointer-events-none"></iframe>
-        </a>
-        <div class="mt-6 bg-gray-50 rounded-2xl border border-gray-100 p-5 sm:p-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {{-- Right: Map --}}
+        <div class="rounded-3xl overflow-hidden shadow-2xl border-4 sm:border-8 border-white bg-gray-100 min-h-[400px] flex flex-col">
+            <div class="flex-grow relative min-h-[300px]">
+                <iframe src="https://maps.google.com/maps?q={{ urlencode($settings['address'] ?? 'Bandung') }}&output=embed"
+                        width="100%" height="100%" style="border:0" allowfullscreen loading="lazy"
+                        title="Lokasi Shoe Workshop" class="absolute inset-0 w-full h-full"></iframe>
+            </div>
+            <div class="bg-white p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-t border-gray-200">
                 <div>
-                    <p class="font-bold text-gray-900">Shoe Workshop</p>
-                    <p class="text-sm text-gray-500 mt-0.5">{{ $settings['address'] ?? 'Bandung, Jawa Barat' }}</p>
+                    <p class="font-semibold text-[#1c1c17]">Shoe Workshop Bandung</p>
+                    <p class="text-xs text-gray-500">Klik peta untuk navigasi</p>
                 </div>
-                <div class="text-sm text-gray-500">
-                    <p class="font-semibold text-gray-700">Senin – Minggu</p>
-                    <p>09.00 – 17.00</p>
-                </div>
+                <a href="https://maps.app.goo.gl/rSxrp8gRqce2Euxr5" target="_blank"
+                   class="bg-white text-[#1c1c17] px-6 py-2 rounded-full shadow-lg text-sm font-semibold flex items-center gap-2 border border-gray-200 hover:border-[#22AF85] transition-colors whitespace-nowrap">
+                    Buka di Google Maps
+                </a>
             </div>
         </div>
     </div>
@@ -218,6 +208,8 @@
 
 {{-- 9. CTA FINAL --}}
 @include('components.cta', ['cta' => $cta])
+
+</main>
 
 {{-- FOOTER --}}
 @include('components.footer', ['settings' => $settings])
