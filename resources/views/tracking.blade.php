@@ -67,263 +67,302 @@
     </div>
 </header>
 
-<main class="pt-20">
-<div class="min-h-screen bg-gray-50/50 py-12">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Header --}}
-        <div class="text-center mb-10">
-            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">
-                <span>STATUS</span>
-                <span class="text-[#22AF85]">ORDER</span>
-            </h1>
-            <p class="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
-                Lacak status pengerjaan reparasi sepatu Anda secara real-time.
-            </p>
-            <div class="mt-4 flex items-center justify-center">
-                <a href="{{ route('warranty.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 bg-white shadow-sm">
-                    🛡️ Ajukan Klaim Garansi
-                </a>
-            </div>
-        </div>
-        {{-- Search Section --}}
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <form method="GET" action="{{ route('tracking.index') }}">
-                <div class="flex gap-3">
-                    <input type="text"
-                           name="q"
-                           value="{{ $query ?? '' }}"
-                           placeholder="Masukkan kode pesanan..."
-                           class="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20">
-                    <button type="submit" class="px-6 py-3 bg-[#22AF85] text-white font-semibold rounded-lg hover:bg-[#178a67] transition-colors">
-                        Lacak
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        @if(isset($query) && $query)
-            @if(isset($result) && $result)
-            {{-- Main Content Grid --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {{-- Left Column - Customer Info --}}
-                <div class="lg:col-span-1">
-                    {{-- SPK Info --}}
-                    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-2">Pencarian SPK</p>
-                        <p class="text-lg font-bold text-gray-900">{{ $result['spk_number'] ?? '-' }}</p>
+<main class="pt-[100px] pb-stack-lg max-w-container-max mx-auto px-margin-desktop">
+    @if(isset($query) && $query)
+        @if(isset($result) && $result)
+            <!-- Search & Header Section -->
+            <header class="mb-stack-md flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <p class="font-label-bold text-label-bold text-primary mb-2 uppercase tracking-widest">Tracking Order</p>
+                    <h1 class="font-headline-xl text-headline-xl mb-4">{{ $result['spk_number'] ?? '-' }}</h1>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-bold text-label-bold">{{ strtoupper($result['current_status']['label'] ?? '-') }}</span>
+                        @if(isset($result['estimated_finish_date']))
+                        <span class="text-on-surface-variant font-body-sm text-body-sm">Estimasi Selesai: {{ \Carbon\Carbon::parse($result['estimated_finish_date'])->format('d M Y') }}</span>
+                        @endif
                     </div>
-
-                    {{-- Customer Info Box --}}
-                    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <div class="flex items-center gap-2 mb-4">
-                            <svg class="w-5 h-5 text-[#22AF85]" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
-                            </svg>
-                            <h3 class="font-bold text-gray-900">Informasi Pelanggan</h3>
+                </div>
+                <div class="w-full md:w-[400px]">
+                    <form method="GET" action="{{ route('tracking.index') }}">
+                        <div class="relative">
+                            <input class="w-full bg-white border-2 border-on-surface px-6 py-4 rounded-xl focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none" 
+                                   placeholder="Cari SPK Number lain..." 
+                                   name="q" 
+                                   value="{{ $query ?? '' }}" 
+                                   type="text"
+                                   required/>
+                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-secondary-container p-2 rounded-lg text-on-surface active:scale-90 transition-transform">
+                                <span class="material-symbols-outlined">search</span>
+                            </button>
                         </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Nama</p>
-                                <p class="font-semibold text-gray-900">{{ $result['customer_name'] ?? '-' }}</p>
-                            </div>
+                    </form>
+                </div>
+            </header>
 
+            <!-- Status Overview Stepper -->
+            <section class="mb-stack-md bg-white p-8 rounded-2xl border-2 border-on-surface custom-shadow-hard overflow-x-auto scrollbar-none">
+                <div class="min-w-[800px] flex justify-between relative">
+                    <!-- Progress Line Background -->
+                    <div class="absolute top-[22px] left-0 w-full h-[2px] bg-surface-container-highest -z-0"></div>
+                    <!-- Active Progress Line -->
+                    @php
+                        $timelineArray = (array) $result['timeline'];
+                        $totalStages = count($timelineArray);
+                        $completedCount = 0;
+                        foreach ($timelineArray as $stage) {
+                            if ($stage['is_completed'] ?? false) {
+                                $completedCount++;
+                            }
+                        }
+                        $percent = $totalStages > 1 ? (($completedCount - 1) / ($totalStages - 1)) * 100 : 0;
+                        $percent = max(0, min(100, $percent));
+                    @endphp
+                    <div class="absolute top-[22px] left-0 h-[2px] bg-primary -z-0 transition-all duration-1000" style="width: {{ $percent }}%"></div>
+                    <!-- Steps -->
+                    @foreach($timelineArray as $stageKey => $stage)
+                        @php
+                            $isCompleted = $stage['is_completed'] ?? false;
+                            $isCurrent = $stage['is_current'] ?? false;
+                            $icon = 'circle';
+                            $labelLower = strtolower($stage['label'] ?? '');
+                            if (str_contains($labelLower, 'terima') || str_contains($labelLower, 'diterima')) {
+                                $icon = 'check_circle';
+                            } elseif (str_contains($labelLower, 'cuci') || str_contains($labelLower, 'clean')) {
+                                $icon = 'cleaning_services';
+                            } elseif (str_contains($labelLower, 'reparasi') || str_contains($labelLower, 'proses') || str_contains($labelLower, 'reglue') || str_contains($labelLower, 'repaint')) {
+                                $icon = 'construction';
+                            } elseif (str_contains($labelLower, 'selesai') || str_contains($labelLower, 'ready')) {
+                                $icon = 'verified';
+                            } elseif (str_contains($labelLower, 'kirim') || str_contains($labelLower, 'dikirim') || str_contains($labelLower, 'ambil')) {
+                                $icon = 'local_shipping';
+                            } else {
+                                $icon = $isCompleted ? 'check_circle' : 'circle';
+                            }
+                        @endphp
+                        <div class="flex flex-col items-center gap-3 relative z-10">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 {{ $isCompleted || $isCurrent ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant' }}">
+                                <span class="material-symbols-outlined" style="{{ $isCompleted || $isCurrent ? "font-variation-settings: 'FILL' 1;" : '' }}">{{ $icon }}</span>
+                            </div>
+                            <span class="font-label-bold text-label-bold {{ $isCompleted || $isCurrent ? 'text-primary' : 'text-on-surface-variant' }}">{{ strtoupper($stage['label'] ?? '') }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+                <!-- Left Column: Customer & Progress Photos -->
+                <div class="lg:col-span-7 flex flex-col gap-gutter">
+                    <!-- Customer & Item Info -->
+                    <div class="bg-white p-8 rounded-2xl border border-on-surface tracking-card">
+                        <h3 class="font-headline-lg text-headline-lg mb-6">Detail Pesanan</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Layanan</p>
-                                <p class="text-sm text-gray-600">
+                                <p class="font-label-bold text-label-bold text-on-surface-variant uppercase mb-1">Pelanggan</p>
+                                <p class="font-title-md text-title-md font-bold">{{ $result['customer_name'] ?? '-' }}</p>
+                                @if($result['shoe']['size'] ?? null)
+                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Ukuran Sepatu: {{ $result['shoe']['size'] ?? '-' }}</p>
+                                @endif
+                            </div>
+                            <div>
+                                <p class="font-label-bold text-label-bold text-on-surface-variant uppercase mb-1">Item & Layanan</p>
+                                <p class="font-title-md text-title-md font-bold">{{ ($result['shoe']['brand'] ?? '') . ' ' . ($result['shoe']['type'] ?? '-') }}</p>
+                                <div class="flex flex-wrap gap-2 mt-2">
                                     @if($result['services'] ?? null)
                                         @foreach($result['services'] as $service)
-                                        <span class="inline-block bg-[#e8f8f5] text-[#22AF85] text-xs font-semibold px-3 py-1 rounded mb-2 mr-2">
-                                            {{ $service['service_name'] ?? '-' }}
-                                        </span>
+                                        <span class="bg-surface-container px-2 py-1 rounded text-[10px] font-bold uppercase text-on-surface-variant">{{ $service['service_name'] ?? '-' }}</span>
                                         @endforeach
                                     @else
                                         -
-                                    @endif
-                                </p>
-                            </div>
-
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Visual Kondisi</p>
-                                <div class="flex gap-2 mt-3">
-                                    @if($result['visual_photos']['before_photo_url'] ?? null)
-                                    <div class="flex-1">
-                                        <img src="{{ $result['visual_photos']['before_photo_url'] }}" alt="Sebelum" class="w-full h-24 object-cover rounded-lg">
-                                        <p class="text-xs text-center text-gray-600 mt-1 font-semibold">SEBELUM</p>
-                                    </div>
-                                    @endif
-                                    @if($result['visual_photos']['after_photo_url'] ?? null)
-                                    <div class="flex-1">
-                                        <img src="{{ $result['visual_photos']['after_photo_url'] }}" alt="Sesudah" class="w-full h-24 object-cover rounded-lg">
-                                        <p class="text-xs text-center text-gray-600 mt-1 font-semibold">SESUDAH</p>
-                                    </div>
                                     @endif
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Shoe Info --}}
-                    @if($result['shoe'] ?? null)
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex items-center gap-2 mb-4">
-                            <svg class="w-5 h-5 text-[#22AF85]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                            </svg>
-                            <h3 class="font-bold text-gray-900">Detail Sepatu</h3>
+                    <!-- Documentation -->
+                    @if(($result['visual_photos']['before_photo_url'] ?? null) || ($result['visual_photos']['after_photo_url'] ?? null))
+                    <div class="bg-white p-8 rounded-2xl border border-on-surface tracking-card">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-headline-lg text-headline-lg">Workshop Documentation</h3>
                         </div>
-                        
-                        <div class="space-y-3 text-sm">
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Brand</p>
-                                <p class="font-semibold text-gray-900">{{ $result['shoe']['brand'] ?? '-' }}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @if($result['visual_photos']['before_photo_url'] ?? null)
+                            <div class="relative group">
+                                <img class="w-full h-64 object-cover rounded-xl grayscale" src="{{ $result['visual_photos']['before_photo_url'] }}" alt="Sebelum"/>
+                                <span class="absolute top-4 left-4 bg-on-surface text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">BEFORE</span>
                             </div>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Tipe</p>
-                                <p class="font-semibold text-gray-900">{{ $result['shoe']['type'] ?? '-' }}</p>
+                            @endif
+                            @if($result['visual_photos']['after_photo_url'] ?? null)
+                            <div class="relative group">
+                                <img class="w-full h-64 object-cover rounded-xl" src="{{ $result['visual_photos']['after_photo_url'] }}" alt="Sesudah/Progres"/>
+                                <span class="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">AFTER / PROGRESS</span>
                             </div>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Warna</p>
-                                <p class="font-semibold text-gray-900">{{ $result['shoe']['color'] ?? '-' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Ukuran</p>
-                                <p class="font-semibold text-gray-900">{{ $result['shoe']['size'] ?? '-' }}</p>
-                            </div>
+                            @endif
                         </div>
                     </div>
                     @endif
                 </div>
 
-                {{-- Right Column - Timeline --}}
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                        <div class="flex items-center gap-2 mb-8">
-                            <svg class="w-6 h-6 text-[#22AF85]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <h2 class="text-2xl font-bold text-gray-900">Timeline Pengerjaan</h2>
-                        </div>
-
-                        @if($result['timeline'] ?? null)
-                        <div class="overflow-x-auto pb-4 mb-10 -mx-6 px-6 sm:-mx-0 sm:px-0 scrollbar-none">
-                            <div class="flex items-center min-w-[500px] sm:min-w-0 sm:justify-between gap-1">
-                                @php
-                                    $timelineArray = (array) $result['timeline'];
-                                @endphp
-                                @foreach($timelineArray as $stageKey => $stage)
-                                    @php
-                                        $isCompleted = $stage['is_completed'] ?? false;
-                                        $isCurrent = $stage['is_current'] ?? false;
-                                    @endphp
-                                    <div class="flex items-center flex-1">
-                                        <div class="flex flex-col items-center flex-shrink-0">
-                                            <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white {{ $isCompleted || $isCurrent ? 'bg-[#22AF85]' : 'bg-gray-300' }}">
-                                                @if($isCompleted && !$isCurrent)
-                                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                                                    </svg>
-                                                @else
-                                                    {{ $loop->iteration }}
-                                                @endif
-                                            </div>
-                                            <p class="text-xs font-semibold text-center mt-2 text-gray-700 max-w-16">{{ $stage['label'] ?? '-' }}</p>
-                                        </div>
-                                        @if(!$loop->last)
-                                        <div class="flex-1 h-1 {{ $isCompleted ? 'bg-[#22AF85]' : 'bg-gray-300' }} mx-2 min-w-[24px]"></div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        {{-- Timeline Details --}}
-                        <div class="space-y-6 border-t border-gray-200 pt-8">
+                <!-- Right Column: Timeline -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white p-8 rounded-2xl border border-on-surface tracking-card h-full">
+                        <h3 class="font-headline-lg text-headline-lg mb-8">Timeline Pengerjaan</h3>
+                        <div class="space-y-10 relative">
+                            <!-- Connecting Line -->
+                            <div class="absolute top-2 left-6 bottom-4 w-1 bg-surface-container-highest -z-0"></div>
+                            
+                            <!-- Timeline Items -->
                             @foreach($timelineArray as $stageKey => $stage)
                                 @php
                                     $isCompleted = $stage['is_completed'] ?? false;
                                     $isCurrent = $stage['is_current'] ?? false;
                                     $timestamp = $stage['waktu'] ?? null;
                                 @endphp
-                                <div class="flex gap-4">
-                                    <div class="flex flex-col items-center flex-shrink-0">
-                                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white {{ $isCompleted || $isCurrent ? 'bg-[#22AF85]' : 'bg-gray-300' }}">
-                                            @if($isCompleted && !$isCurrent)
-                                                ✓
-                                            @else
-                                                {{ $loop->iteration }}
-                                            @endif
-                                        </div>
-                                        @if(!$loop->last)
-                                        <div class="w-1 h-16 {{ $isCompleted ? 'bg-[#22AF85]' : 'bg-gray-300' }} my-2"></div>
+                                <div class="flex gap-6 relative z-10 {{ $isCompleted || $isCurrent ? '' : 'opacity-70' }}">
+                                    <div class="w-12 h-12 rounded-full border-4 border-white flex items-center justify-center shrink-0 {{ $isCurrent ? 'bg-primary-container text-white' : ($isCompleted ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant') }}">
+                                        @if($isCurrent)
+                                            <span class="material-symbols-outlined text-white text-[20px]">rebase_edit</span>
+                                        @elseif($isCompleted)
+                                            <span class="material-symbols-outlined text-white text-[20px]">check</span>
+                                        @else
+                                            <span class="material-symbols-outlined text-on-surface-variant text-[20px]">schedule</span>
                                         @endif
                                     </div>
-                                    <div class="flex-1 pt-2">
-                                        <div class="flex items-start justify-between">
-                                            <div>
-                                                <h4 class="font-bold text-gray-900">{{ $stage['label'] ?? '-' }}</h4>
-                                                @if($isCurrent)
-                                                <span class="inline-block mt-1 px-3 py-1 text-xs font-bold bg-[#e8f8f5] text-[#22AF85] rounded-full">
-                                                    Sedang Berlangsung
-                                                </span>
-                                                @elseif($isCompleted)
-                                                <span class="inline-block mt-1 px-3 py-1 text-xs font-bold bg-green-100 text-green-700 rounded-full">
-                                                    Selesai
-                                                </span>
-                                                @else
-                                                <span class="inline-block mt-1 px-3 py-1 text-xs font-bold bg-gray-100 text-gray-700 rounded-full">
-                                                    Menunggu
-                                                </span>
-                                                @endif
-                                            </div>
-                                            @if($timestamp)
-                                            <div class="text-right flex-shrink-0">
-                                                <p class="text-xs font-bold text-gray-600">{{ \Carbon\Carbon::parse($timestamp)->format('d M Y') }}</p>
-                                                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($timestamp)->format('H:i') }}</p>
-                                            </div>
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-title-md text-title-md font-bold">{{ $stage['label'] ?? '-' }}</span>
+                                            @if($isCurrent)
+                                                <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Sedang Berjalan</span>
+                                            @elseif($isCompleted)
+                                                <span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Selesai</span>
+                                            @else
+                                                <span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Menunggu</span>
                                             @endif
                                         </div>
+                                        @if($timestamp)
+                                            <p class="text-on-surface-variant font-body-sm text-body-sm">{{ \Carbon\Carbon::parse($timestamp)->format('d M Y, H:i') }}</p>
+                                        @endif
+                                        @if($isCurrent && isset($result['current_status']['description']))
+                                            <p class="font-body-md text-body-md mt-2 text-on-surface">{{ $result['current_status']['description'] }}</p>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
                         </div>
-                        @endif
-
-                        {{-- Status Description Box --}}
-                        @if($result['current_status']['description'] ?? null)
-                        <div class="mt-8 p-4 bg-[#e8f8f5] border border-[#22AF85]/30 rounded-lg">
-                            <div class="flex gap-3">
-                                <svg class="w-5 h-5 text-[#22AF85] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <div>
-                                    <p class="text-sm font-bold text-[#22AF85] mb-1">Status Saat Ini: {{ $result['current_status']['label'] ?? '-' }}</p>
-                                    <p class="text-sm text-gray-700">{{ $result['current_status']['description'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
                     </div>
                 </div>
             </div>
 
-            @elseif(isset($error) && $error)
-            <div class="bg-white rounded-lg shadow-sm p-12 text-center">
-                <svg class="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Pesanan Tidak Ditemukan</h3>
-                <p class="text-gray-600 mb-6">{{ $error }}</p>
-                <a href="{{ route('tracking.index') }}" class="inline-block px-6 py-2 bg-[#22AF85] text-white font-semibold rounded-lg hover:bg-[#178a67] transition-colors">
-                    Coba Lagi
+            <!-- Footer Actions / Support -->
+            <section class="mt-stack-md grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <a href="{{ route('warranty.index') }}?spk_number={{ $result['spk_number'] ?? '' }}" class="bg-white p-8 rounded-2xl border-2 border-on-surface flex items-start gap-6 hover:translate-x-2 transition-transform cursor-pointer group text-left">
+                    <div class="bg-error-container text-on-error-container w-16 h-16 rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[32px]">verified_user</span>
+                    </div>
+                    <div>
+                        <h4 class="font-headline-lg text-[24px] mb-2 group-hover:text-primary transition-colors">Ajukan Klaim Garansi</h4>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Layanan kami dilindungi garansi hasil pengerjaan selama 100 hari kerja.</p>
+                    </div>
+                    <span class="material-symbols-outlined self-center text-on-surface-variant ml-auto">arrow_forward_ios</span>
                 </a>
+                
+                <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank" class="bg-secondary-container p-8 rounded-2xl border-2 border-on-surface flex items-start gap-6 hover:translate-x-2 transition-transform cursor-pointer group custom-shadow-hard text-left">
+                    <div class="bg-on-secondary-container text-white w-16 h-16 rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[32px]">support_agent</span>
+                    </div>
+                    <div>
+                        <h4 class="font-headline-lg text-[24px] mb-2 text-on-secondary-container">Chat Konsultan Workshop</h4>
+                        <p class="font-body-md text-body-md text-on-secondary-fixed-variant">Ada pertanyaan tentang progres sepatu Anda? Hubungi tim ahli kami.</p>
+                    </div>
+                    <span class="material-symbols-outlined self-center text-on-secondary-container ml-auto">arrow_forward_ios</span>
+                </a>
+            </section>
+
+        @elseif(isset($error) && $error)
+            <!-- Error State: Order Not Found -->
+            <div class="max-w-xl mx-auto py-16 text-center">
+                <div class="w-24 h-24 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-error/20">
+                    <span class="material-symbols-outlined text-[48px]">error</span>
+                </div>
+                <h2 class="text-3xl font-extrabold text-on-surface mb-3 tracking-tight">Pesanan Tidak Ditemukan</h2>
+                <p class="text-on-surface-variant text-sm mb-8 max-w-md mx-auto">
+                    {{ $error }}
+                </p>
+                <div class="bg-white p-6 rounded-2xl border-2 border-on-surface custom-shadow-hard">
+                    <form method="GET" action="{{ route('tracking.index') }}">
+                        <div class="relative">
+                            <input class="w-full bg-white border-2 border-on-surface px-6 py-4 rounded-xl focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none" 
+                                   placeholder="Cari nomor SPK lain..." 
+                                   name="q" 
+                                   value="{{ $query ?? '' }}" 
+                                   type="text"
+                                   required/>
+                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-secondary-container p-2 rounded-lg text-on-surface active:scale-90 transition-transform">
+                                <span class="material-symbols-outlined">search</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            @endif
         @endif
-    </div>
-</div>
+    @else
+        <!-- Welcome State: Standby search -->
+        <div class="max-w-xl mx-auto py-16 text-center">
+            <div class="w-24 h-24 bg-[#e8f8f5] text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-primary/20">
+                <span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">package_2</span>
+            </div>
+            <h2 class="text-3xl font-extrabold text-on-surface mb-3 tracking-tight">Lacak Status Pesanan Anda</h2>
+            <p class="text-on-surface-variant text-sm mb-8 max-w-md mx-auto">
+                Masukkan nomor SPK (Surat Perintah Kerja) Anda untuk melihat progres pengerjaan sepatu secara real-time.
+            </p>
+            <div class="bg-white p-6 rounded-2xl border-2 border-on-surface custom-shadow-hard">
+                <form method="GET" action="{{ route('tracking.index') }}">
+                    <div class="relative">
+                        <input class="w-full bg-white border-2 border-on-surface px-6 py-4 rounded-xl focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none" 
+                               placeholder="Masukkan nomor SPK..." 
+                               name="q" 
+                               value="{{ $query ?? '' }}" 
+                               type="text"
+                               required/>
+                        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-secondary-container p-2 rounded-lg text-on-surface active:scale-90 transition-transform">
+                            <span class="material-symbols-outlined">search</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 </main>
 
 @include('components.footer', ['settings' => $settings])
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Micro-interactions for tracking ID copy or search animation
+        const searchInput = document.querySelector('input');
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('scale-[1.02]');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.remove('scale-[1.02]');
+            });
+        }
+
+        // Simple Fade-in effect for timeline items
+        const timelineItems = document.querySelectorAll('.space-y-10 > div');
+        timelineItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = `all 0.5s ease ${index * 0.1}s`;
+            
+            setTimeout(() => {
+                item.style.opacity = index === 0 ? '1' : '0.7';
+                item.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    });
+</script>
 
 @endsection

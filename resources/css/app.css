@@ -16,4 +16,23 @@
       scrollbar-width: none;  /* Firefox */
     }
   }
+
+  /* Custom styles for Tracking Page */
+  .custom-shadow-hard { box-shadow: 4px 4px 0px 0px #1c1b1b; }
+  .tracking-card { transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid #1c1b1b; }
+  .tracking-card:hover { transform: translateY(-2px); box-shadow: 6px 6px 0px 0px #1c1b1b; }
+
+  /* Custom typography classes */
+  .font-title-md { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .text-title-md { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .font-headline-xl { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .text-headline-xl { font-size: 48px; line-height: 56px; letter-spacing: -0.02em; font-weight: 800; }
+  .font-label-bold { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .text-label-bold { font-size: 12px; line-height: 16px; letter-spacing: 0.05em; font-weight: 700; }
+  .font-headline-lg { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .text-headline-lg { font-size: 32px; line-height: 40px; letter-spacing: -0.01em; font-weight: 700; }
+  .font-body-sm { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .text-body-sm { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .font-body-md { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .text-body-md { font-size: 16px; line-height: 24px; font-weight: 400; }
 }
