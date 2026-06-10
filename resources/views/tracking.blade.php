@@ -25,23 +25,23 @@
     </div>
 </nav>
 
-<div class="min-h-screen bg-gray-50">
-    {{-- Header --}}
-    <div class="bg-white border-b border-gray-200">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 class="text-2xl font-bold text-gray-900">
-                    <span class="text-gray-900">STATUS</span>
-                    <span class="text-[#22AF85] ml-2">ORDER</span>
-                </h1>
-                <a href="{{ route('warranty.index') }}" class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3.5 py-2 hover:bg-gray-50 bg-white shadow-sm">
+<div class="min-h-screen bg-gray-50/50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{-- Header --}}
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">
+                <span>STATUS</span>
+                <span class="text-[#22AF85]">ORDER</span>
+            </h1>
+            <p class="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
+                Lacak status pengerjaan reparasi sepatu Anda secara real-time.
+            </p>
+            <div class="mt-4 flex items-center justify-center">
+                <a href="{{ route('warranty.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 bg-white shadow-sm">
                     🛡️ Ajukan Klaim Garansi
                 </a>
             </div>
         </div>
-    </div>
-
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Search Section --}}
         <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
             <form method="GET" action="{{ route('tracking.index') }}">
