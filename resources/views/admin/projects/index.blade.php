@@ -34,10 +34,10 @@
                             @foreach($projects as $project)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <img src="{{ asset('storage/' . $project->before_image) }}" alt="" class="h-10 w-10 object-cover rounded">
+                                    <img src="{{ $project->before_image_url }}" alt="" class="h-10 w-10 object-cover rounded">
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <img src="{{ asset('storage/' . $project->after_image) }}" alt="" class="h-10 w-10 object-cover rounded">
+                                    <img src="{{ $project->after_image_url }}" alt="" class="h-10 w-10 object-cover rounded">
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $project->title }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $project->category }}</td>
