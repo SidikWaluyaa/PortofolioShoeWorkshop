@@ -203,11 +203,12 @@
                     <p class="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Lokasi Kami</p>
                     <div class="h-px flex-1 bg-gray-300"></div>
                 </div>
-                <div class="rounded-2xl overflow-hidden border border-gray-200 mb-4" style="height:200px">
+                <a href="https://maps.app.goo.gl/rSxrp8gRqce2Euxr5" target="_blank" class="block rounded-2xl overflow-hidden border border-gray-200 mb-4 hover:opacity-95 transition-opacity relative group" style="height:200px">
+                    <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors pointer-events-none z-10"></div>
                     <iframe src="https://maps.google.com/maps?q={{ urlencode($settings['address'] ?? 'Bandung') }}&output=embed"
                             width="100%" height="100%" style="border:0" allowfullscreen loading="lazy"
-                            title="Lokasi Shoe Workshop"></iframe>
-                </div>
+                            title="Lokasi Shoe Workshop" class="pointer-events-none"></iframe>
+                </a>
                 <div class="bg-gray-50 rounded-2xl border border-gray-100 p-5">
                     <p class="font-bold text-gray-900 mb-1">Shoe Workshop</p>
                     <p class="text-sm text-gray-500 mb-4">{{ $settings['address'] ?? 'Bandung, Jawa Barat' }}</p>

@@ -95,7 +95,7 @@ class DatabaseSeeder extends Seeder
             'site_title' => 'Shoe Workshop',
             'site_description' => 'Workshop spesialis reparasi dan perawatan sepatu profesional dengan hasil terbaik.',
             'whatsapp_number' => '628123456789',
-            'address' => 'Jl. Kemang Raya No. 23, Bangka, Mampang Prapatan, Jakarta Selatan 12730',
+            'address' => 'Jl. Ibu Inggit Garnasih No. 152a, Ciateul, Kec. Regol, Kota Bandung, Jawa Barat 40252',
             'email' => 'info@shoeworkshop.id',
             'instagram_link' => 'https://instagram.com/shoeworkshop',
             'tiktok_link' => 'https://tiktok.com/@shoeworkshop',
