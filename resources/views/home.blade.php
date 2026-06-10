@@ -214,12 +214,8 @@
                     <p class="text-sm text-gray-500 mb-4">{{ $settings['address'] ?? 'Bandung, Jawa Barat' }}</p>
                     <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <p class="font-semibold text-gray-800 mb-0.5">Senin – Sabtu</p>
-                            <p class="text-gray-500">09.00 – 19.00</p>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-gray-800 mb-0.5">Minggu</p>
-                            <p class="text-gray-500">10.00 – 17.00</p>
+                            <p class="font-semibold text-gray-800 mb-0.5">Senin – Minggu</p>
+                            <p class="text-gray-500">09.00 – 17.00</p>
                         </div>
                     </div>
                 </div>
