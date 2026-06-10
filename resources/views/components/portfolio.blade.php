@@ -5,12 +5,12 @@
     <div class="relative rounded-2xl shadow-2xl border-4 border-white overflow-hidden group">
         <div class="flex">
             <div class="relative w-1/2">
-                <img src="{{ $featured->before_image ? asset('storage/'.$featured->before_image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80' }}"
+                <img src="{{ $featured->before_image_url }}"
                      alt="Sebelum" class="h-[280px] sm:h-[400px] object-cover w-full grayscale brightness-75">
                 <div class="absolute top-3 left-3 sm:top-4 sm:left-4 bg-[#1c1c17] text-white text-[10px] px-2 py-1 rounded font-bold uppercase">Sebelum</div>
             </div>
             <div class="relative w-1/2">
-                <img src="{{ $featured->after_image ? asset('storage/'.$featured->after_image) : 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=600&q=80' }}"
+                <img src="{{ $featured->after_image_url }}"
                      alt="Sesudah" class="h-[280px] sm:h-[400px] object-cover w-full">
                 <div class="absolute top-3 right-3 sm:top-4 sm:right-4 bg-[#22AF85] text-white text-[10px] px-2 py-1 rounded font-bold uppercase">Sesudah</div>
             </div>
@@ -27,7 +27,7 @@
 
     {{-- Right: Details --}}
     <div class="space-y-5 sm:space-y-6">
-        <div class="inline-block px-3 py-1 bg-[#22AF85]/10 text-[#22AF85] rounded-full text-xs font-semibold uppercase tracking-wider">Service: {{ $featured->category ?? 'Restorasi' }}</div>
+        <div class="inline-block px-3 py-1 bg-[#22AF85]/10 text-[#22AF85] rounded-full text-xs font-semibold uppercase tracking-wider">Service: {{ $featured->category ?? ($featured->service->name ?? 'Restorasi') }}</div>
         <h3 class="text-2xl sm:text-[32px] font-extrabold text-[#1c1c17] leading-tight">{{ $featured->title }}</h3>
         @if($featured->description)
         <p class="text-gray-500 text-base leading-relaxed">{{ $featured->description }}</p>

@@ -41,9 +41,9 @@
 {{-- Portfolio Grid --}}
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        @if(count($categories) > 0)
+        @if(count($projects) > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-            @foreach($categories as $category => $images)
+            @foreach($projects as $project)
             <div class="group">
                 {{-- Slider --}}
                 <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gray-100 select-none"
@@ -59,16 +59,16 @@
                      @touchend="stopDrag()">
 
                     {{-- AFTER (background full) --}}
-                    <img src="{{ asset('images/portfolio/' . $images['after']) }}"
-                         alt="{{ $category }} Sesudah"
+                    <img src="{{ $project->after_image_url }}"
+                         alt="{{ $project->title }} Sesudah"
                          class="absolute inset-0 w-full h-full object-cover pointer-events-none"
                          draggable="false">
 
                     {{-- BEFORE (clipped left) --}}
                     <div class="absolute inset-0 overflow-hidden pointer-events-none"
                          :style="'width:' + position + '%'">
-                        <img src="{{ asset('images/portfolio/' . $images['before']) }}"
-                             alt="{{ $category }} Sebelum"
+                        <img src="{{ $project->before_image_url }}"
+                             alt="{{ $project->title }} Sebelum"
                              class="absolute inset-0 w-full h-full object-cover"
                              style="min-width: 100vw; max-width: none;"
                              :style="'width:' + (10000/position) + '%; max-width: none'"
@@ -96,10 +96,13 @@
                     </div>
                 </div>
 
-                {{-- Category label --}}
+                {{-- Project Info --}}
                 <div class="mt-4 text-center">
-                    <h3 class="font-bold text-gray-900 text-base">{{ str_replace('_', ' ', $category) }}</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Geser slider untuk perbandingan</p>
+                    <h3 class="font-bold text-gray-900 text-base">{{ $project->title }}</h3>
+                    <p class="text-xs text-[#22AF85] font-semibold uppercase tracking-wider mt-0.5">{{ $project->category ?? ($project->service->name ?? 'Restorasi') }}</p>
+                    @if($project->description)
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2 px-4">{{ $project->description }}</p>
+                    @endif
                 </div>
             </div>
             @endforeach
@@ -110,7 +113,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             <p class="font-bold text-gray-400 mb-1">Belum ada foto portfolio</p>
-            <p class="text-sm text-gray-400">Tambahkan foto ke folder <code class="bg-gray-100 px-2 py-0.5 rounded text-xs">public/images/portfolio/</code></p>
+            <p class="text-sm text-gray-400">Gunakan dashboard admin untuk mengunggah proyek portfolio baru.</p>
         </div>
         @endif
     </div>
