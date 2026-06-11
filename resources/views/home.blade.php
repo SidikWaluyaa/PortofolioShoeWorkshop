@@ -23,18 +23,66 @@
             <a href="{{ route('home') }}" class="text-sm font-semibold text-[#22AF85] active-nav-border">Beranda</a>
             <a href="#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
             <a href="#portfolio" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Portfolio</a>
-            <a href="#review" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Review</a>
             <a href="{{ route('tracking.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Tracking</a>
             <a href="{{ route('warranty.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Garansi</a>
-            <a href="#kontak" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Kontak</a>
         </div>
 
-        {{-- CTA Button --}}
-        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-           class="hidden md:inline-flex items-center gap-2 px-6 py-2.5 bg-[#FFC232] text-[#1c1c17] text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#FFC232]/20">
-            <span class="material-symbols-outlined !text-[20px]">chat</span>
-            Konsultasi via WhatsApp
-        </a>
+        {{-- CTA & Account Buttons --}}
+        <div class="hidden md:flex items-center gap-4">
+            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
+               class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#FFC232] text-[#1c1c17] text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#FFC232]/20">
+                <span class="material-symbols-outlined !text-[20px]">chat</span>
+                Konsultasi via WhatsApp
+            </a>
+
+            <div class="relative" x-data="{ openAccount: false }">
+                <button @click="openAccount = !openAccount" @click.outside="openAccount = false"
+                        class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#22AF85] text-white text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#22AF85]/20">
+                    <span class="material-symbols-outlined !text-[20px]">account_circle</span>
+                    @auth
+                        <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
+                    @else
+                        Akun
+                    @endauth
+                    <span class="material-symbols-outlined !text-[16px] transition-transform duration-200" :class="openAccount ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                </button>
+                
+                <div x-show="openAccount"
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1.5 overflow-hidden"
+                     style="display: none;">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#22AF85]">
+                            <span class="material-symbols-outlined !text-[18px]">dashboard</span>
+                            Dashboard
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <span class="material-symbols-outlined !text-[18px]">logout</span>
+                                Logout
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#22AF85]">
+                            <span class="material-symbols-outlined !text-[18px]">login</span>
+                            Masuk (Login)
+                        </a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#22AF85]">
+                                <span class="material-symbols-outlined !text-[18px]">person_add</span>
+                                Daftar (Register)
+                            </a>
+                        @endif
+                    @endauth
+                </div>
+            </div>
+        </div>
 
         {{-- Hamburger --}}
         <button @click="open=!open" class="lg:hidden p-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -54,16 +102,41 @@
         <a href="{{ route('home') }}"         @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-[#22AF85] bg-green-50 rounded-lg">Beranda</a>
         <a href="#layanan"                     @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
         <a href="#portfolio"                   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Portfolio</a>
-        <a href="#review"                      @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Review</a>
         <a href="{{ route('blog.index') }}"    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Artikel</a>
         <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
         <a href="{{ route('warranty.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Garansi</a>
-        <a href="#kontak"                      @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Kontak</a>
-        <div class="pt-2">
+        <div class="pt-2 space-y-2">
             <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#FFC232] text-[#1c1c17] text-sm font-bold rounded-lg">
                 <span class="material-symbols-outlined !text-[20px]">chat</span>
                 Konsultasi via WhatsApp
             </a>
+            <div class="border-t border-gray-100 pt-2 mt-2">
+                @auth
+                    <p class="px-3 py-1.5 text-xs font-semibold text-gray-400">Akun: {{ Auth::user()->name }}</p>
+                    <a href="{{ route('dashboard') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">dashboard</span>
+                        Dashboard
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg">
+                            <span class="material-symbols-outlined !text-[20px]">logout</span>
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">login</span>
+                        Masuk (Login)
+                    </a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                            <span class="material-symbols-outlined !text-[20px]">person_add</span>
+                            Daftar (Register)
+                        </a>
+                    @endif
+                @endauth
+            </div>
         </div>
     </div>
 </header>

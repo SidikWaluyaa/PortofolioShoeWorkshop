@@ -62,6 +62,18 @@
                                     <x-text-input id="facebook_link" name="facebook_link" type="text" class="mt-1 block w-full" :value="$settings['facebook_link'] ?? ''" />
                                 </div>
                             </div>
+
+                            <div>
+                                <h3 class="text-lg font-bold mb-4">Workshop API Integration</h3>
+                                <div class="mb-4">
+                                    <x-input-label for="workshop_api_base_url" :value="__('Workshop API Base URL')" />
+                                    <x-text-input id="workshop_api_base_url" name="workshop_api_base_url" type="url" class="mt-1 block w-full" :value="$settings['workshop_api_base_url'] ?? ''" />
+                                </div>
+                                <div class="mb-4">
+                                    <x-input-label for="workshop_api_key" :value="__('Workshop API Key (X-API-KEY)')" />
+                                    <x-text-input id="workshop_api_key" name="workshop_api_key" type="password" class="mt-1 block w-full" :value="$settings['workshop_api_key'] ?? ''" />
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mt-6">

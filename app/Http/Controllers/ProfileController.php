@@ -26,13 +26,32 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        
+        $validatedData = $request->validated();
+        unset($validatedData['avatar']);
+        
+        if (!$user->isAdmin()) {
+            unset($validatedData['role']);
+        }
+        
+        $user->fill($validatedData);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar_path);
+            }
+            
+            $avatarFile = $request->file('avatar');
+            $storedPath = \App\Helpers\ImageCompressionHelper::compressAndStore($avatarFile, 'avatars');
+            $user->avatar_path = $storedPath;
         }
 
-        $request->user()->save();
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

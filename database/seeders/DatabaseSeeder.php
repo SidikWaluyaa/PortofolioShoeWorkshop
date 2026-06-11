@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin Shoe Workshop',
             'email' => 'admin@shoeworkshop.com',
             'password' => Hash::make('password'),
+            'role' => 'admin',
         ]);
 
         $this->call(PostSeeder::class);
@@ -100,6 +101,8 @@ class DatabaseSeeder extends Seeder
             'instagram_link' => 'https://instagram.com/shoeworkshop',
             'tiktok_link' => 'https://tiktok.com/@shoeworkshop',
             'facebook_link' => 'https://facebook.com/shoeworkshop',
+            'workshop_api_base_url' => 'https://info.shoeworkshop.id/api/v1',
+            'workshop_api_key' => '',
         ];
         foreach ($settings as $key => $value) {
             Setting::create(['key' => $key, 'value' => $value]);

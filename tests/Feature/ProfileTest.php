@@ -96,4 +96,77 @@ class ProfileTest extends TestCase
 
         $this->assertNotNull($user->fresh());
     }
+
+    public function test_admin_can_update_role(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'phone' => '08123456789',
+                'role' => 'user',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+
+        $this->assertSame('628123456789', $user->phone);
+        $this->assertSame('user', $user->role);
+    }
+
+    public function test_non_admin_cannot_update_role(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'phone' => '08123456789',
+                'role' => 'admin',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+
+        $this->assertSame('628123456789', $user->phone);
+        $this->assertSame('user', $user->role);
+    }
+
+    public function test_profile_avatar_can_be_uploaded(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $user = User::factory()->create();
+
+        $avatar = \Illuminate\Http\UploadedFile::fake()->image('avatar.jpg');
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'role' => 'user',
+                'avatar' => $avatar,
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+
+        $this->assertNotNull($user->avatar_path);
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($user->avatar_path);
+    }
 }

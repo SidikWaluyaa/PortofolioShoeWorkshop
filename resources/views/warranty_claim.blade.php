@@ -2,6 +2,46 @@
 @section('seo_title', 'Klaim Garansi | Shoe Workshop')
 @section('seo_description', 'Ajukan klaim garansi reparasi sepatu kamu secara mudah dan cepat di Shoe Workshop.')
 
+@section('head')
+<style>
+    @keyframes bounce-x {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(4px); }
+    }
+    .animate-bounce-horizontal {
+        display: inline-block;
+        animation: bounce-x 1.2s ease-in-out infinite;
+    }
+    @media (max-width: 639px) {
+        .mobile-bottom-sheet {
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: transform 0.15s ease-out;
+            will-change: transform;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    }
+    @media (min-width: 640px) {
+        .desktop-modal {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    }
+    .animate-fade-in {
+        animation: simpleFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes simpleFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+@endsection
+
 @section('content')
 
 {{-- NAVBAR --}}
@@ -67,314 +107,306 @@
     </div>
 </header>
 
-<main class="pt-20">
-<div class="min-h-screen bg-gray-50/50 py-12">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {{-- Header --}}
-        <div class="text-center mb-10">
-            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">
-                <span>KLAIM</span>
-                <span class="text-[#22AF85]">GARANSI</span>
-            </h1>
-            <p class="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
+<main class="pt-24 pb-16 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    
+    {{-- Header Section --}}
+    <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <p class="font-label-bold text-label-bold text-primary mb-2 uppercase tracking-widest">Garansi Workshop</p>
+            <h1 class="text-3xl md:text-headline-xl font-bold mb-4 text-on-surface">Klaim Garansi Reparasi</h1>
+            <p class="text-on-surface-variant font-body-md text-body-md max-w-xl">
                 Ajukan klaim perbaikan jika hasil reparasi sepatu Anda tidak sesuai dengan standar garansi kami.
             </p>
-            <div class="mt-4 flex items-center justify-center">
-                <a href="{{ route('tracking.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-650 hover:text-[#22AF85] transition-colors border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 bg-white shadow-sm">
-                    📦 Lacak Status Pesanan Anda
-                </a>
+        </div>
+        <div class="shrink-0">
+            <a href="{{ route('tracking.index') }}" class="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-on-surface text-on-surface font-semibold text-xs rounded-xl hover:translate-x-[2px] hover:translate-y-[2px] transition-transform shadow-[4px_4px_0px_0px_#1c1b1b] hover:shadow-none">
+                <span class="material-symbols-outlined !text-[18px]">package_2</span>
+                Lacak Status Pesanan
+            </a>
+        </div>
+    </header>
+
+    {{-- Stepper Progress Card --}}
+    <div class="mb-8 bg-white p-5 sm:p-8 rounded-2xl border-2 border-on-surface custom-shadow-hard">
+        <div class="flex items-center justify-center">
+            {{-- Desktop Stepper --}}
+            <div class="hidden sm:flex items-center w-full max-w-xl justify-between">
+                {{-- Step 1 Indicator --}}
+                <div class="flex flex-col items-center relative" id="step-indicator-1">
+                    <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold ring-4 ring-primary/20 border-4 border-white transition-all duration-300">
+                        1
+                    </div>
+                    <span class="text-xs font-bold mt-2 text-primary transition-colors">Validasi</span>
+                </div>
+
+                <div class="flex-1 h-[2px] bg-surface-container-highest mx-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-surface-container-highest transition-all duration-500 w-0" id="progress-line-1"></div>
+                </div>
+
+                {{-- Step 2 Indicator --}}
+                <div class="flex flex-col items-center relative" id="step-indicator-2">
+                    <div class="w-12 h-12 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold border-4 border-white transition-all duration-300" id="step-circle-2">
+                        2
+                    </div>
+                    <span class="text-xs font-semibold mt-2 text-on-surface-variant" id="step-text-2">Klaim Form</span>
+                </div>
+
+                <div class="flex-1 h-[2px] bg-surface-container-highest mx-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-surface-container-highest transition-all duration-500 w-0" id="progress-line-2"></div>
+                </div>
+
+                {{-- Step 3 Indicator --}}
+                <div class="flex flex-col items-center relative" id="step-indicator-3">
+                    <div class="w-12 h-12 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold border-4 border-white transition-all duration-300" id="step-circle-3">
+                        3
+                    </div>
+                    <span class="text-xs font-semibold mt-2 text-on-surface-variant" id="step-text-3">Selesai</span>
+                </div>
+            </div>
+
+            {{-- Mobile Stepper (Premium Compact Progress Bar) --}}
+            <div class="flex sm:hidden flex-col items-center w-full px-2">
+                <div class="flex justify-between w-full items-center mb-2.5">
+                    <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Langkah <span id="mobile-step-num" class="text-on-surface">1</span> dari 3</span>
+                    <span class="text-xs font-extrabold text-primary uppercase tracking-wider" id="mobile-step-name">Validasi</span>
+                </div>
+                <div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+                    <div id="mobile-step-progress" class="bg-primary h-full w-1/3 transition-all duration-500 rounded-full"></div>
+                </div>
             </div>
         </div>
+    </div>
 
-        {{-- Progress Steps --}}
-        <div class="mb-10 sm:mb-12">
-            <div class="flex items-center justify-center">
-                {{-- Desktop Stepper --}}
-                <div class="hidden sm:flex items-center w-full max-w-lg justify-between">
-                    {{-- Step 1 Indicator --}}
-                    <div class="flex flex-col items-center relative" id="step-indicator-1">
-                        <div class="w-10 h-10 rounded-full bg-[#22AF85] text-white flex items-center justify-center font-bold ring-4 ring-[#22AF85]/20 transition-all duration-300">
-                            1
+    {{-- Alert Area --}}
+    <div id="alert-box" class="hidden mb-6 p-4 rounded-xl border-2 border-on-surface custom-shadow-hard flex items-start gap-3 animate-fade-in">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" id="alert-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <div>
+            <p class="text-sm font-bold" id="alert-title"></p>
+            <p class="text-sm mt-0.5 text-on-surface-variant" id="alert-message"></p>
+        </div>
+    </div>
+
+    {{-- Step Card Containers --}}
+    <div class="relative overflow-hidden bg-white rounded-2xl border-2 border-on-surface custom-shadow-hard p-6 sm:p-8">
+
+        {{-- STEP 1: VALIDATION --}}
+        <div id="step-content-1" class="transition-all duration-300">
+            <form id="form-step-1" class="space-y-6">
+                <div>
+                    <label for="spk_number" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Nomor SPK</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant">
+                            <span class="material-symbols-outlined !text-[20px]">content_paste</span>
                         </div>
-                        <span class="text-xs font-bold mt-2 text-gray-800 transition-colors">Validasi</span>
+                        <input type="text" id="spk_number" required placeholder="Contoh: S-2604-23-0962-MY" 
+                               class="block w-full pl-12 pr-6 py-3.5 bg-white border-2 border-on-surface rounded-xl text-sm focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none">
                     </div>
+                    <p class="mt-1.5 text-xs text-on-surface-variant">Nomor Surat Perintah Kerja yang Anda terima saat pengerjaan selesai.</p>
+                </div>
 
-                    <div class="flex-1 h-1 bg-gray-200 mx-4 rounded-full overflow-hidden">
-                        <div class="h-full bg-gray-200 transition-all duration-500" id="progress-line-1"></div>
-                    </div>
-
-                    {{-- Step 2 Indicator --}}
-                    <div class="flex flex-col items-center relative" id="step-indicator-2">
-                        <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold transition-all duration-300" id="step-circle-2">
-                            2
+                <div>
+                    <label for="customer_phone" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Nomor WhatsApp Pelanggan</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant">
+                            <span class="material-symbols-outlined !text-[20px]">chat</span>
                         </div>
-                        <span class="text-xs font-semibold mt-2 text-gray-400" id="step-text-2">Klaim Form</span>
+                        <input type="tel" id="customer_phone" required placeholder="Contoh: 628123456789" 
+                               class="block w-full pl-12 pr-6 py-3.5 bg-white border-2 border-on-surface rounded-xl text-sm focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none">
                     </div>
+                    <p class="mt-1.5 text-xs text-on-surface-variant">Gunakan nomor telepon yang Anda daftarkan saat melakukan transaksi.</p>
+                </div>
 
-                    <div class="flex-1 h-1 bg-gray-200 mx-4 rounded-full overflow-hidden">
-                        <div class="h-full bg-gray-200 transition-all duration-500" id="progress-line-2"></div>
+                <div class="p-5 bg-error-container/10 border border-error-container/20 rounded-xl">
+                    <h4 class="text-xs font-black text-on-error-container uppercase tracking-wider mb-2">Ketentuan Garansi:</h4>
+                    <ul class="text-xs text-on-error-container/90 font-semibold space-y-1.5 list-disc pl-4">
+                        <li>Status pengerjaan pesanan harus sudah <strong>SELESAI</strong>.</li>
+                        <li>Klaim diajukan sebelum masa garansi berakhir (sesuai paket pengerjaan).</li>
+                        <li>Tidak diperkenankan mengajukan klaim berulang untuk SPK yang sedang diproses (*Pending* atau *Approved*).</li>
+                    </ul>
+                </div>
+
+                {{-- Checkbox T&C --}}
+                <div class="flex items-start gap-3 p-4 bg-surface-container-low border border-on-surface/20 rounded-xl">
+                    <input type="checkbox" id="agree_terms" required 
+                           class="w-5 h-5 rounded border-2 border-on-surface text-primary focus:ring-primary/20 focus:ring-2 mt-0.5 accent-primary cursor-pointer">
+                    <label for="agree_terms" class="text-xs text-on-surface-variant leading-relaxed cursor-pointer select-none">
+                        Saya telah membaca dan menyetujui <span id="btn-open-terms" class="text-primary hover:text-on-primary-fixed-variant font-bold underline cursor-pointer font-body-sm">Syarat & Ketentuan</span> klaim garansi.
+                    </label>
+                </div>
+
+                <button type="submit" id="btn-submit-step-1" 
+                        class="w-full py-3.5 px-6 bg-primary text-white font-bold rounded-xl border-2 border-on-surface custom-shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <span id="btn-text-1">Cek Ketersediaan Garansi</span>
+                    <svg id="btn-spinner-1" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        {{-- STEP 2: FORM SUBMISSION --}}
+        <div id="step-content-2" class="hidden transition-all duration-300">
+            
+            {{-- Customer / Shoe Information Card --}}
+            <div class="mb-8 p-5 bg-surface-container-low border border-on-surface/20 rounded-2xl flex flex-col sm:flex-row justify-between gap-4">
+                <div>
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-black mb-1">Pelanggan</p>
+                    <p class="font-bold text-on-surface text-base" id="info-customer-name">-</p>
+                    <p class="text-xs text-on-surface-variant mt-1 font-mono" id="info-spk-number">-</p>
+                </div>
+                <div class="sm:border-l sm:border-on-surface/20 sm:pl-6">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-black mb-1">Detail Sepatu</p>
+                    <p class="font-bold text-on-surface text-base" id="info-shoe-details">-</p>
+                    <p class="text-xs text-on-surface-variant mt-1" id="info-shoe-color">-</p>
+                </div>
+                <div class="sm:border-l sm:border-on-surface/20 sm:pl-6 flex flex-col justify-center">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-primary/10 text-primary rounded-full border border-primary/20 w-fit" id="info-warranty-badge">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                        Garansi Aktif
+                    </span>
+                    <p class="text-xs text-on-surface-variant mt-1.5 font-semibold" id="info-warranty-expires">-</p>
+                </div>
+            </div>
+
+            <form id="form-step-2" class="space-y-6" enctype="multipart/form-data">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="problem_description" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Detail Keluhan Kerusakan</label>
+                        <span class="text-xs text-on-surface-variant font-bold" id="char-counter-desc">0 / 1000</span>
                     </div>
+                    <textarea id="problem_description" required minlength="10" maxlength="1000" rows="4" 
+                              placeholder="Tuliskan secara detail bagian sepatu mana yang rusak kembali (misal: Sol bagian tumit sepatu kanan terkelupas lagi setelah dipakai 2 kali)..."
+                              class="block w-full px-4 py-3 bg-white border-2 border-on-surface rounded-xl text-sm focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none resize-none"></textarea>
+                    <p class="mt-1.5 text-xs text-on-surface-variant">Jelaskan kondisi kerusakan yang terjadi secara spesifik agar tim kami mudah memprosesnya (min 10 karakter).</p>
+                </div>
 
-                    {{-- Step 3 Indicator --}}
-                    <div class="flex flex-col items-center relative" id="step-indicator-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold transition-all duration-300" id="step-circle-3">
-                            3
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="penggunaan" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Keterangan Penggunaan Sepatu</label>
+                        <span class="text-xs text-on-surface-variant font-bold" id="char-counter-use">0 / 100</span>
+                    </div>
+                    <input type="text" id="penggunaan" required minlength="5" maxlength="100" placeholder="Contoh: Dipakai jalan santai di mall, dipakai lari pagi" 
+                           class="block w-full px-4 py-3.5 bg-white border-2 border-on-surface rounded-xl text-sm focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none">
+                    <p class="mt-1.5 text-xs text-on-surface-variant">Bagaimana sepatu ini digunakan setelah diserahkan ke Anda?</p>
+                </div>
+
+                {{-- Upload Foto Kerusakan --}}
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Foto Bukti Kerusakan (1 - 3 Foto)</label>
+                    <div id="dropzone-problem" class="border-2 border-dashed border-on-surface rounded-2xl p-5 sm:p-6 text-center cursor-pointer transition-colors bg-surface-container-low/30 hover:bg-surface-container-low">
+                        <input type="file" id="problem_photos" multiple accept="image/*" class="hidden">
+                        <span class="material-symbols-outlined !text-[36px] text-on-surface-variant mb-2">add_photo_alternate</span>
+                        <span class="text-sm font-bold text-on-surface block">
+                            <span class="hidden sm:inline">Tarik gambar Anda kemari, atau </span>
+                            <span class="text-primary hover:text-on-primary-fixed-variant">pilih file / ambil foto</span>
+                        </span>
+                        <span class="text-xs text-on-surface-variant block mt-1">Hanya file JPG, PNG, atau WEBP. Maksimal 20MB per file.</span>
+                    </div>
+                    {{-- Thumbnail Previews --}}
+                    <div id="preview-problem" class="grid grid-cols-3 gap-4 mt-4"></div>
+                </div>
+
+                {{-- Upload Bukti Google Review --}}
+                <div class="border-t border-surface-container pt-6">
+                    <div class="bg-primary-container/10 border border-primary-container/20 rounded-2xl p-5 mb-6 flex gap-3 text-sm text-on-primary-container">
+                        <span class="text-2xl shrink-0">🌟</span>
+                        <div>
+                            <h4 class="text-xs font-black uppercase tracking-wider mb-1">Dapatkan Claim Priority:</h4>
+                            <p class="text-xs text-on-primary-container/90 leading-relaxed font-semibold">
+                                Unggah screenshot bukti ulasan Bintang 5 Anda di Google Maps kami untuk mempercepat proses persetujuan admin. Anda bisa memberi ulasan melalui 
+                                <a href="https://maps.app.goo.gl/rSxrp8gRqce2Euxr5" target="_blank" class="underline font-black text-primary">Link Google Maps Kami</a>.
+                            </p>
                         </div>
-                        <span class="text-xs font-semibold mt-2 text-gray-400" id="step-text-3">Selesai</span>
+                    </div>
+
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Bukti Screenshot Google Review (1 Foto)</label>
+                    <div id="dropzone-review" class="border-2 border-dashed border-on-surface rounded-2xl p-5 sm:p-6 text-center cursor-pointer transition-colors bg-surface-container-low/30 hover:bg-surface-container-low">
+                        <input type="file" id="google_review_photo" accept="image/*" class="hidden">
+                        <span class="material-symbols-outlined !text-[36px] text-on-surface-variant mb-2">rate_review</span>
+                        <span class="text-sm font-bold text-on-surface block">
+                            <span class="hidden sm:inline">Tarik gambar ulasan Anda kemari, atau </span>
+                            <span class="text-primary hover:text-on-primary-fixed-variant">pilih file / screenshot</span>
+                        </span>
+                        <span class="text-xs text-on-surface-variant block mt-1">Maksimal 20MB. Format JPG, PNG, atau WEBP.</span>
+                    </div>
+                    {{-- Single Preview --}}
+                    <div id="preview-review" class="mt-4 max-w-[200px]"></div>
+                </div>
+
+                {{-- Submission Progress Bar --}}
+                <div id="upload-progress-container" class="hidden space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-on-surface-variant">
+                        <span>Sedang mengunggah data klaim...</span>
+                        <span id="upload-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-surface-container-highest h-2.5 rounded-full overflow-hidden">
+                        <div id="upload-progress-bar" class="bg-primary h-full w-0 transition-all duration-300 rounded-full"></div>
                     </div>
                 </div>
 
-                {{-- Mobile Stepper (Premium Compact Progress Bar) --}}
-                <div class="flex sm:hidden flex-col items-center w-full px-2">
-                    <div class="flex justify-between w-full items-center mb-2.5">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Langkah <span id="mobile-step-num" class="text-gray-800">1</span> dari 3</span>
-                        <span class="text-xs font-extrabold text-[#22AF85] uppercase tracking-wider" id="mobile-step-name">Validasi</span>
-                    </div>
-                    <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                        <div id="mobile-step-progress" class="bg-[#22AF85] h-full w-1/3 transition-all duration-500 rounded-full"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Alert Area --}}
-        <div id="alert-box" class="hidden mb-6 p-4 rounded-lg border flex items-start gap-3 animate-fade-in">
-            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" id="alert-icon" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-            </svg>
-            <div>
-                <p class="text-sm font-bold" id="alert-title"></p>
-                <p class="text-sm mt-0.5 text-gray-600" id="alert-message"></p>
-            </div>
-        </div>
-
-        {{-- Step Card Containers --}}
-        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-
-            {{-- STEP 1: VALIDATION --}}
-            <div id="step-content-1" class="transition-all duration-300">
-                <form id="form-step-1" class="space-y-6">
-                    <div>
-                        <label for="spk_number" class="block text-sm font-bold text-gray-700 mb-1.5">Nomor SPK</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            </div>
-                            <input type="text" id="spk_number" required placeholder="Contoh: S-2604-23-0962-MY" 
-                                   class="block w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20 transition-all">
-                        </div>
-                        <p class="mt-1.5 text-xs text-gray-500">Nomor Surat Perintah Kerja yang Anda terima saat pengerjaan selesai.</p>
-                    </div>
-
-                    <div>
-                        <label for="customer_phone" class="block text-sm font-bold text-gray-700 mb-1.5">Nomor WhatsApp Pelanggan</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                            </div>
-                            <input type="tel" id="customer_phone" required placeholder="Contoh: 628123456789" 
-                                   class="block w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20 transition-all">
-                        </div>
-                        <p class="mt-1.5 text-xs text-gray-500">Gunakan nomor telepon yang Anda daftarkan saat melakukan transaksi.</p>
-                    </div>
-
-                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                        <h4 class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Ketentuan Garansi:</h4>
-                        <ul class="text-xs text-amber-700 space-y-1.5 list-disc pl-4">
-                            <li>Status pengerjaan pesanan harus sudah <strong>SELESAI</strong>.</li>
-                            <li>Klaim diajukan sebelum masa garansi berakhir (sesuai paket pengerjaan).</li>
-                            <li>Tidak diperkenankan mengajukan klaim berulang untuk SPK yang sedang diproses (*Pending* atau *Approved*).</li>
-                        </ul>
-                    </div>
-
-                    {{-- Checkbox T&C --}}
-                    <div class="flex items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                        <input type="checkbox" id="agree_terms" required 
-                               class="w-5 h-5 rounded border-gray-300 text-[#22AF85] focus:ring-[#22AF85]/20 focus:ring-2 mt-0.5 accent-[#22AF85] cursor-pointer">
-                        <label for="agree_terms" class="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
-                            Saya telah membaca dan menyetujui <span id="btn-open-terms" class="text-[#22AF85] hover:text-[#178a67] font-bold underline cursor-pointer">Syarat & Ketentuan</span> klaim garansi.
-                        </label>
-                    </div>
-
-                    <button type="submit" id="btn-submit-step-1" 
-                            class="w-full py-3 px-6 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                        <span id="btn-text-1">Cek Ketersediaan Garansi</span>
-                        <svg id="btn-spinner-1" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <div class="flex gap-4 pt-6 border-t border-surface-container">
+                    <button type="button" id="btn-back-step-1" 
+                            class="flex-1 py-3.5 px-6 bg-white border-2 border-on-surface text-on-surface font-bold rounded-xl transition-all hover:bg-surface-container shadow-[2px_2px_0px_0px_#1c1b1b] hover:shadow-none active:scale-[0.98]">
+                        Kembali
+                    </button>
+                    <button type="submit" id="btn-submit-step-2" 
+                            class="flex-[2] py-3.5 px-6 bg-primary text-white font-bold rounded-xl border-2 border-on-surface custom-shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        <span>Kirim Klaim Garansi</span>
+                        <svg id="btn-spinner-2" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                     </button>
-                </form>
-            </div>
-
-            {{-- STEP 2: FORM SUBMISSION --}}
-            <div id="step-content-2" class="hidden transition-all duration-300">
-                
-                {{-- Customer / Shoe Information Card --}}
-                <div class="mb-8 p-5 bg-[#e8f8f5]/40 border border-[#22AF85]/20 rounded-2xl flex flex-col sm:flex-row justify-between gap-4">
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Pelanggan</p>
-                        <p class="font-bold text-gray-900" id="info-customer-name">-</p>
-                        <p class="text-xs text-gray-500 mt-1" id="info-spk-number">-</p>
-                    </div>
-                    <div class="sm:border-l sm:border-gray-200/60 sm:pl-6">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Detail Sepatu</p>
-                        <p class="font-bold text-gray-900" id="info-shoe-details">-</p>
-                        <p class="text-xs text-gray-500 mt-1" id="info-shoe-color">-</p>
-                    </div>
-                    <div class="sm:border-l sm:border-gray-200/60 sm:pl-6 flex flex-col justify-center">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-[#e8f8f5] text-[#22AF85] rounded-full border border-[#22AF85]/20 w-fit" id="info-warranty-badge">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#22AF85] animate-pulse"></span>
-                            Garansi Aktif
-                        </span>
-                        <p class="text-xs text-gray-500 mt-1.5 font-medium" id="info-warranty-expires">-</p>
-                    </div>
                 </div>
-
-                <form id="form-step-2" class="space-y-6" enctype="multipart/form-data">
-                    <div>
-                        <div class="flex justify-between items-center mb-1.5">
-                            <label for="problem_description" class="block text-sm font-bold text-gray-700">Detail Keluhan Kerusakan</label>
-                            <span class="text-xs text-gray-400" id="char-counter-desc">0 / 1000</span>
-                        </div>
-                        <textarea id="problem_description" required minlength="10" maxlength="1000" rows="4" 
-                                  placeholder="Tuliskan secara detail bagian sepatu mana yang rusak kembali (misal: Sol bagian tumit sepatu kanan terkelupas lagi setelah dipakai 2 kali)..."
-                                  class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20 transition-all"></textarea>
-                        <p class="mt-1.5 text-xs text-gray-400">Jelaskan kondisi kerusakan yang terjadi secara spesifik agar tim kami mudah memprosesnya (min 10 karakter).</p>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between items-center mb-1.5">
-                            <label for="penggunaan" class="block text-sm font-bold text-gray-700">Keterangan Penggunaan Sepatu</label>
-                            <span class="text-xs text-gray-400" id="char-counter-use">0 / 100</span>
-                        </div>
-                        <input type="text" id="penggunaan" required minlength="5" maxlength="100" placeholder="Contoh: Dipakai jalan santai di mall, dipakai lari pagi" 
-                               class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20 transition-all">
-                        <p class="mt-1.5 text-xs text-gray-400">Bagaimana sepatu ini digunakan setelah diserahkan ke Anda?</p>
-                    </div>
-
-                    {{-- Upload Foto Kerusakan --}}
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Bukti Kerusakan (1 - 3 Foto)</label>
-                        <div id="dropzone-problem" class="border-2 border-dashed border-gray-300 hover:border-[#22AF85] rounded-2xl p-5 sm:p-6 text-center cursor-pointer transition-colors bg-gray-50/30">
-                            <input type="file" id="problem_photos" multiple accept="image/*" class="hidden">
-                            <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="text-sm font-bold text-gray-700 block">
-                                <span class="hidden sm:inline">Tarik gambar Anda kemari, atau </span>
-                                <span class="text-[#22AF85] hover:text-[#178a67]">pilih file / ambil foto</span>
-                            </span>
-                            <span class="text-xs text-gray-400 block mt-1">Hanya file JPG, PNG, atau WEBP. Maksimal 20MB per file.</span>
-                        </div>
-                        {{-- Thumbnail Previews --}}
-                        <div id="preview-problem" class="grid grid-cols-3 gap-4 mt-4"></div>
-                    </div>
-
-                    {{-- Upload Bukti Google Review --}}
-                    <div class="border-t border-gray-100 pt-6">
-                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4 flex gap-3">
-                            <span class="text-xl">🌟</span>
-                            <div>
-                                <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Dapatkan Claim Priority:</h4>
-                                <p class="text-xs text-blue-700 leading-relaxed">
-                                    Unggah screenshot bukti ulasan Bintang 5 Anda di Google Maps kami untuk mempercepat proses persetujuan admin. Anda bisa memberi ulasan melalui 
-                                    <a href="https://maps.app.goo.gl/rSxrp8gRqce2Euxr5" target="_blank" class="underline font-bold text-[#22AF85]">Link Google Maps Kami</a>.
-                                </p>
-                            </div>
-                        </div>
-
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Bukti Screenshot Google Review (1 Foto)</label>
-                        <div id="dropzone-review" class="border-2 border-dashed border-gray-300 hover:border-[#22AF85] rounded-2xl p-5 sm:p-6 text-center cursor-pointer transition-colors bg-gray-50/30">
-                            <input type="file" id="google_review_photo" accept="image/*" class="hidden">
-                            <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="text-sm font-bold text-gray-700 block">
-                                <span class="hidden sm:inline">Tarik gambar ulasan Anda kemari, atau </span>
-                                <span class="text-[#22AF85] hover:text-[#178a67]">pilih file / screenshot</span>
-                            </span>
-                            <span class="text-xs text-gray-400 block mt-1">Maksimal 20MB. Format JPG, PNG, atau WEBP.</span>
-                        </div>
-                        {{-- Single Preview --}}
-                        <div id="preview-review" class="mt-4 max-w-[200px]"></div>
-                    </div>
-
-                    {{-- Submission Progress Bar --}}
-                    <div id="upload-progress-container" class="hidden space-y-2">
-                        <div class="flex justify-between items-center text-xs font-bold text-gray-600">
-                            <span>Sedang mengunggah data klaim...</span>
-                            <span id="upload-percent">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                            <div id="upload-progress-bar" class="bg-[#22AF85] h-full w-0 transition-all duration-300 rounded-full"></div>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4 pt-4 border-t border-gray-100">
-                        <button type="button" id="btn-back-step-1" 
-                                class="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors">
-                            Kembali
-                        </button>
-                        <button type="submit" id="btn-submit-step-2" 
-                                class="flex-[2] py-3 px-6 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                            <span>Kirim Klaim Garansi</span>
-                            <svg id="btn-spinner-2" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            {{-- STEP 3: SUCCESS --}}
-            <div id="step-content-3" class="hidden text-center py-6 transition-all duration-300">
-                <div class="w-20 h-20 bg-[#e8f8f5] text-[#22AF85] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-[#22AF85]/20 animate-bounce">
-                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                </div>
-
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Klaim Garansi Berhasil Diajukan!</h3>
-                <p class="text-gray-500 max-w-md mx-auto text-sm leading-relaxed mb-8">
-                    Data laporan Anda sudah masuk ke sistem backend. Tim verifikator kami akan meninjau keluhan Anda dalam kurun waktu 1x24 jam kerja.
-                </p>
-
-                {{-- Submitted Info Card --}}
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 max-w-md mx-auto text-left space-y-4 mb-8">
-                    <div class="flex justify-between items-center border-b border-gray-200/60 pb-3">
-                        <span class="text-xs text-gray-500 font-bold uppercase">Nomor SPK</span>
-                        <span class="text-sm font-bold text-gray-900" id="success-spk">-</span>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-gray-200/60 pb-3">
-                        <span class="text-xs text-gray-500 font-bold uppercase">Nama Pelanggan</span>
-                        <span class="text-sm font-semibold text-gray-800" id="success-customer">-</span>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-gray-200/60 pb-3">
-                        <span class="text-xs text-gray-500 font-bold uppercase">Status Pengajuan</span>
-                        <span class="inline-flex px-2.5 py-0.5 text-xs font-bold bg-amber-50 text-amber-700 rounded-full border border-amber-200" id="success-status">PENDING</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-500 font-bold uppercase">Tanggal Pengajuan</span>
-                        <span class="text-xs font-medium text-gray-600" id="success-date">-</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                    <a href="{{ route('home') }}" class="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors text-sm">
-                        Kembali ke Beranda
-                    </a>
-                    <a href="{{ route('tracking.index') }}" class="flex-1 py-3 px-6 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl transition-colors text-sm">
-                        Lacak Pesanan Lain
-                    </a>
-                </div>
-            </div>
-
+            </form>
         </div>
+
+        {{-- STEP 3: SUCCESS --}}
+        <div id="step-content-3" class="hidden text-center py-6 transition-all duration-300">
+            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_0px_#1c1b1b] border-4 border-white animate-bounce">
+                <span class="material-symbols-outlined text-[36px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+            </div>
+
+            <h3 class="text-2xl sm:text-headline-lg font-bold text-on-surface mb-2">Klaim Garansi Berhasil Diajukan!</h3>
+            <p class="text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed mb-8 font-medium">
+                Data laporan Anda sudah masuk ke sistem backend. Tim verifikator kami akan meninjau keluhan Anda dalam kurun waktu 1x24 jam kerja.
+            </p>
+
+            {{-- Submitted Info Card --}}
+            <div class="bg-surface-container-low rounded-2xl p-6 border-2 border-on-surface custom-shadow-hard max-w-md mx-auto text-left space-y-4 mb-8">
+                <div class="flex justify-between items-center border-b border-on-surface/20 pb-3">
+                    <span class="text-xs text-on-surface-variant font-bold uppercase">Nomor SPK</span>
+                    <span class="text-sm font-bold text-on-surface font-mono" id="success-spk">-</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-on-surface/20 pb-3">
+                    <span class="text-xs text-on-surface-variant font-bold uppercase">Nama Pelanggan</span>
+                    <span class="text-sm font-semibold text-on-surface" id="success-customer">-</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-on-surface/20 pb-3">
+                    <span class="text-xs text-on-surface-variant font-bold uppercase">Status Pengajuan</span>
+                    <span class="inline-flex px-2.5 py-0.5 text-xs font-bold bg-secondary-container text-on-secondary-container rounded-full border border-on-surface" id="success-status">PENDING</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-on-surface-variant font-bold uppercase">Tanggal Pengajuan</span>
+                    <span class="text-xs font-medium text-on-surface-variant" id="success-date">-</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <a href="{{ route('home') }}" class="flex-1 py-3.5 px-6 bg-white border-2 border-on-surface text-on-surface font-bold rounded-xl transition-all hover:bg-surface-container shadow-[2px_2px_0px_0px_#1c1b1b] hover:shadow-none active:scale-[0.98] text-sm text-center">
+                    Kembali ke Beranda
+                </a>
+                <a href="{{ route('tracking.index') }}" class="flex-1 py-3.5 px-6 bg-primary text-white border-2 border-on-surface text-sm font-bold rounded-xl transition-all hover:brightness-110 shadow-[2px_2px_0px_0px_#1c1b1b] hover:shadow-none active:scale-[0.98] text-center">
+                    Lacak Pesanan
+                </a>
+            </div>
+        </div>
+
     </div>
-</div>
+</main>
 
 {{-- Modal Syarat & Ketentuan (Big 4 Styling - Bottom Sheet on Mobile) --}}
 <div id="terms-modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -382,22 +414,22 @@
     <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" id="close-modal-bg"></div>
 
     {{-- Modal Panel --}}
-    <div class="mobile-bottom-sheet desktop-modal w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all border border-gray-100 flex flex-col max-h-[85vh] sm:max-h-[90vh] z-10 animate-fade-in">
+    <div class="mobile-bottom-sheet desktop-modal w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all border-2 border-on-surface custom-shadow-hard flex flex-col max-h-[85vh] sm:max-h-[90vh] z-10 animate-fade-in">
         {{-- Drag Handle (Mobile Only) --}}
         <div class="flex sm:hidden justify-center py-3 bg-white cursor-pointer rounded-t-3xl flex-shrink-0" id="modal-drag-handle">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
         </div>
 
         {{-- Header --}}
-        <div class="px-6 pb-4 pt-2 sm:pt-4 border-b border-gray-100 flex items-center justify-between bg-white z-10 flex-shrink-0">
+        <div class="px-6 pb-4 pt-2 sm:pt-4 border-b border-on-surface/10 flex items-center justify-between bg-white z-10 flex-shrink-0">
             <div class="flex items-center gap-2">
                 <x-application-logo class="h-8 w-auto" />
                 <div>
-                    <h3 class="text-sm font-extrabold text-gray-900" id="modal-title">Syarat & Ketentuan Garansi</h3>
-                    <p class="text-[10px] text-gray-400">Shoe Workshop Peraturan & Kebijakan</p>
+                    <h3 class="text-sm font-extrabold text-on-surface" id="modal-title">Syarat & Ketentuan Garansi</h3>
+                    <p class="text-[10px] text-on-surface-variant">Shoe Workshop Peraturan & Kebijakan</p>
                 </div>
             </div>
-            <button type="button" id="btn-close-terms" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100">
+            <button type="button" id="btn-close-terms" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-lg hover:bg-surface-container">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -405,11 +437,11 @@
         </div>
 
         {{-- Body --}}
-        <div class="px-6 py-5 overflow-y-auto space-y-4 text-xs text-gray-650 leading-relaxed flex-1">
-            <div class="text-center pb-3 border-b border-gray-100">
-                <p class="font-extrabold text-gray-900 text-sm">Kebijakan Garansi Shoe Workshop</p>
+        <div class="px-6 py-5 overflow-y-auto space-y-4 text-xs text-on-surface-variant leading-relaxed flex-1">
+            <div class="text-center pb-3 border-b border-on-surface/10">
+                <p class="font-extrabold text-on-surface text-sm">Kebijakan Garansi Shoe Workshop</p>
             </div>
-            <ol class="list-decimal pl-5 space-y-3">
+            <ol class="list-decimal pl-5 space-y-3 font-semibold">
                 <li>Garansi ini hanya berlaku untuk sepatu kamu yang direparasi di Shoe Workshop, sesuai dengan jasa yang dipilih ketika melakukan reparasi sepatu.</li>
                 <li>Waktu garansi adalah 100 hari setelah tanggal sepatu selesai dikerjakan oleh Shoe Workshop.</li>
                 <li>Garansi menjadi tidak berlaku jika pihak Shoe Workshop menemukan adanya unsur kesengajaan, penyalahgunaan garansi, campur tangan pihak ketiga dalam perbaikan, pemakaian yang tidak sesuai, serta force majeure yang menyebabkan kerusakan pada sepatu.</li>
@@ -425,49 +457,18 @@
         </div>
 
         {{-- Footer --}}
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
-            <div class="text-[10px] text-gray-400 hidden sm:block">Jam Operasional: Senin - Minggu (09.00 - 17.00)</div>
-            <button type="button" id="btn-agree-modal" class="w-full sm:w-auto px-5 py-2.5 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl text-xs transition-colors shadow-sm shadow-[#22AF85]/10">
+        <div class="px-6 py-4 bg-surface-container-low border-t border-on-surface/10 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
+            <div class="text-[10px] text-on-surface-variant hidden sm:block font-bold">Jam Operasional: Senin - Minggu (09.00 - 17.00)</div>
+            <button type="button" id="btn-agree-modal" class="w-full sm:w-auto px-5 py-2.5 bg-primary hover:brightness-110 text-white font-bold rounded-xl text-xs transition-colors shadow-sm">
                 Saya Setuju & Lanjutkan
             </button>
         </div>
     </div>
 </div>
-</main>
 
 @include('components.footer', ['settings' => $settings])
 
 {{-- JavaScript Logic --}}
-@section('head')
-<style>
-    @media (max-width: 639px) {
-        .mobile-bottom-sheet {
-            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            transition: transform 0.15s ease-out;
-            will-change: transform;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-    }
-    @media (min-width: 640px) {
-        .desktop-modal {
-            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-    }
-    .animate-fade-in {
-        animation: simpleFadeIn 0.3s ease-out forwards;
-    }
-    @keyframes simpleFadeIn {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // API Base configuration
@@ -542,12 +543,23 @@
         const successStatus = document.getElementById('success-status');
         const successDate = document.getElementById('success-date');
 
+        // Input micro-interactions (matching tracking page)
+        const inputsAndTextareas = document.querySelectorAll('input[type="text"], input[type="tel"], textarea');
+        inputsAndTextareas.forEach(el => {
+            el.addEventListener('focus', () => {
+                el.parentElement.classList.add('scale-[1.01]');
+            });
+            el.addEventListener('blur', () => {
+                el.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+
         // Helper: Alert Display
         function showAlert(type, title, message) {
-            alertBox.className = `mb-6 p-4 rounded-xl border flex items-start gap-3 animate-fade-in ${
+            alertBox.className = `mb-6 p-4 rounded-xl border-2 border-on-surface custom-shadow-hard flex items-start gap-3 animate-fade-in ${
                 type === 'error' 
-                ? 'bg-red-50 border-red-200 text-red-800' 
-                : 'bg-green-50 border-green-200 text-green-800'
+                ? 'bg-error-container text-on-error-container' 
+                : 'bg-primary-container/10 text-on-primary-container'
             }`;
             alertTitle.textContent = title;
             alertMessage.textContent = message;
@@ -732,9 +744,9 @@
                 step1Content.classList.remove('hidden');
                 
                 // Indicators reset
-                progressLine1.className = "h-full bg-gray-200 transition-all duration-500 w-0";
-                stepCircle2.className = "w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold transition-all duration-300";
-                stepText2.className = "text-xs font-semibold mt-2 text-gray-400";
+                progressLine1.className = "h-full bg-surface-container-highest transition-all duration-500 w-0";
+                stepCircle2.className = "w-12 h-12 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold border-4 border-white transition-all duration-300";
+                stepText2.className = "text-xs font-semibold mt-2 text-on-surface-variant";
 
                 if (mobileStepNum) mobileStepNum.textContent = "1";
                 if (mobileStepName) mobileStepName.textContent = "Validasi";
@@ -745,13 +757,13 @@
                 step2Content.classList.remove('hidden');
 
                 // Progress Line active
-                progressLine1.className = "h-full bg-[#22AF85] transition-all duration-500 w-full";
-                stepCircle2.className = "w-10 h-10 rounded-full bg-[#22AF85] text-white flex items-center justify-center font-bold ring-4 ring-[#22AF85]/20 transition-all duration-300";
-                stepText2.className = "text-xs font-bold mt-2 text-gray-800";
+                progressLine1.className = "h-full bg-primary transition-all duration-500 w-full";
+                stepCircle2.className = "w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold ring-4 ring-primary/20 border-4 border-white transition-all duration-300";
+                stepText2.className = "text-xs font-bold mt-2 text-on-surface";
                 
-                progressLine2.className = "h-full bg-gray-200 transition-all duration-500 w-0";
-                stepCircle3.className = "w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold transition-all duration-300";
-                stepText3.className = "text-xs font-semibold mt-2 text-gray-400";
+                progressLine2.className = "h-full bg-surface-container-highest transition-all duration-500 w-0";
+                stepCircle3.className = "w-12 h-12 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold border-4 border-white transition-all duration-300";
+                stepText3.className = "text-xs font-semibold mt-2 text-on-surface-variant";
 
                 if (mobileStepNum) mobileStepNum.textContent = "2";
                 if (mobileStepName) mobileStepName.textContent = "Klaim Form";
@@ -762,9 +774,13 @@
                 step3Content.classList.remove('hidden');
 
                 // Progress Line all active
-                progressLine2.className = "h-full bg-[#22AF85] transition-all duration-500 w-full";
-                stepCircle3.className = "w-10 h-10 rounded-full bg-[#22AF85] text-white flex items-center justify-center font-bold ring-4 ring-[#22AF85]/20 transition-all duration-300";
-                stepText3.className = "text-xs font-bold mt-2 text-gray-800";
+                progressLine1.className = "h-full bg-primary transition-all duration-500 w-full";
+                stepCircle2.className = "w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold ring-4 ring-primary/20 border-4 border-white transition-all duration-300";
+                stepText2.className = "text-xs font-bold mt-2 text-on-surface";
+
+                progressLine2.className = "h-full bg-primary transition-all duration-500 w-full";
+                stepCircle3.className = "w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold ring-4 ring-primary/20 border-4 border-white transition-all duration-300";
+                stepText3.className = "text-xs font-bold mt-2 text-on-surface";
 
                 if (mobileStepNum) mobileStepNum.textContent = "3";
                 if (mobileStepName) mobileStepName.textContent = "Selesai";
@@ -780,16 +796,38 @@
 
         // Dropzones - Problem Photos File Management
         dropzoneProblem.addEventListener('click', () => fileInputProblem.click());
-        dropzoneProblem.addEventListener('dragover', (e) => { e.preventDefault(); dropzoneProblem.classList.add('border-[#22AF85]', 'bg-gray-100/50'); });
-        dropzoneProblem.addEventListener('dragleave', () => dropzoneProblem.classList.remove('border-[#22AF85]', 'bg-gray-100/50'));
+        dropzoneProblem.addEventListener('dragover', (e) => { e.preventDefault(); dropzoneProblem.classList.add('border-primary', 'bg-surface-container-low'); });
+        dropzoneProblem.addEventListener('dragleave', () => dropzoneProblem.classList.remove('border-primary', 'bg-surface-container-low'));
         dropzoneProblem.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropzoneProblem.classList.remove('border-[#22AF85]', 'bg-gray-100/50');
+            dropzoneProblem.classList.remove('border-primary', 'bg-surface-container-low');
             handleProblemPhotos(e.dataTransfer.files);
         });
         fileInputProblem.addEventListener('change', () => {
             handleProblemPhotos(fileInputProblem.files);
         });
+
+        let problemObjectUrls = [];
+        function renderProblemPreviews() {
+            // Revoke old URLs to prevent memory leaks
+            problemObjectUrls.forEach(url => URL.revokeObjectURL(url));
+            problemObjectUrls = [];
+
+            previewProblem.innerHTML = "";
+            problemPhotosList.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = "relative rounded-xl overflow-hidden border border-gray-200 group h-28 bg-gray-100";
+                const url = URL.createObjectURL(file);
+                problemObjectUrls.push(url);
+                div.innerHTML = `
+                    <img src="${url}" class="w-full h-full object-cover">
+                    <button type="button" class="absolute top-1 right-1 bg-red-650/90 text-white rounded-full p-1 hover:bg-red-700 transition-colors shadow-sm" onclick="removeProblemPhoto(${index})">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                `;
+                previewProblem.appendChild(div);
+            });
+        }
 
         function handleProblemPhotos(files) {
             hideAlert();
@@ -814,26 +852,6 @@
             renderProblemPreviews();
         }
 
-        function renderProblemPreviews() {
-            previewProblem.innerHTML = "";
-            problemPhotosList.forEach((file, index) => {
-                const reader = new FileReader();
-                const div = document.createElement('div');
-                div.className = "relative rounded-xl overflow-hidden border border-gray-200 group h-28 bg-gray-100";
-                
-                reader.onload = function(e) {
-                    div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-full object-cover">
-                        <button type="button" class="absolute top-1 right-1 bg-red-600/90 text-white rounded-full p-1 hover:bg-red-700 transition-colors shadow-sm" onclick="removeProblemPhoto(${index})">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    `;
-                }
-                reader.readAsDataURL(file);
-                previewProblem.appendChild(div);
-            });
-        }
-
         window.removeProblemPhoto = function(index) {
             problemPhotosList.splice(index, 1);
             renderProblemPreviews();
@@ -841,11 +859,11 @@
 
         // Dropzones - Google Review Photo File Management
         dropzoneReview.addEventListener('click', () => fileInputReview.click());
-        dropzoneReview.addEventListener('dragover', (e) => { e.preventDefault(); dropzoneReview.classList.add('border-[#22AF85]', 'bg-gray-100/50'); });
-        dropzoneReview.addEventListener('dragleave', () => dropzoneReview.classList.remove('border-[#22AF85]', 'bg-gray-100/50'));
+        dropzoneReview.addEventListener('dragover', (e) => { e.preventDefault(); dropzoneReview.classList.add('border-primary', 'bg-surface-container-low'); });
+        dropzoneReview.addEventListener('dragleave', () => dropzoneReview.classList.remove('border-primary', 'bg-surface-container-low'));
         dropzoneReview.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropzoneReview.classList.remove('border-[#22AF85]', 'bg-gray-100/50');
+            dropzoneReview.classList.remove('border-primary', 'bg-surface-container-low');
             if(e.dataTransfer.files.length > 0) handleReviewPhoto(e.dataTransfer.files[0]);
         });
         fileInputReview.addEventListener('change', () => {
@@ -867,23 +885,24 @@
             renderReviewPreview();
         }
 
+        let reviewObjectUrl = null;
         function renderReviewPreview() {
+            if (reviewObjectUrl) {
+                URL.revokeObjectURL(reviewObjectUrl);
+                reviewObjectUrl = null;
+            }
             previewReview.innerHTML = "";
             if (!reviewPhotoFile) return;
 
-            const reader = new FileReader();
             const div = document.createElement('div');
             div.className = "relative rounded-xl overflow-hidden border border-gray-200 group h-28 bg-gray-100";
-            
-            reader.onload = function(e) {
-                div.innerHTML = `
-                    <img src="${e.target.result}" class="w-full h-full object-cover">
-                    <button type="button" class="absolute top-1 right-1 bg-red-600/90 text-white rounded-full p-1 hover:bg-red-700 transition-colors shadow-sm" onclick="removeReviewPhoto()">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                `;
-            }
-            reader.readAsDataURL(reviewPhotoFile);
+            reviewObjectUrl = URL.createObjectURL(reviewPhotoFile);
+            div.innerHTML = `
+                <img src="${reviewObjectUrl}" class="w-full h-full object-cover">
+                <button type="button" class="absolute top-1 right-1 bg-red-650/90 text-white rounded-full p-1 hover:bg-red-700 transition-colors shadow-sm" onclick="removeReviewPhoto()">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            `;
             previewReview.appendChild(div);
         }
 
@@ -1080,6 +1099,5 @@
         }
     });
 </script>
-@endsection
 
 @endsection

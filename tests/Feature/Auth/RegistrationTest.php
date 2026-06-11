@@ -28,4 +28,24 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
     }
+
+    public function test_new_users_can_register_with_phone(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Phone User',
+            'email' => 'phone@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'phone' => '08123456789',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+
+        // Verify the phone is normalized with 62 prefix
+        $this->assertDatabaseHas('users', [
+            'email' => 'phone@example.com',
+            'phone' => '628123456789',
+        ]);
+    }
 }

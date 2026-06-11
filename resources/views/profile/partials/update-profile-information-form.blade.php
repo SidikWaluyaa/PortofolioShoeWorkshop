@@ -13,9 +13,25 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
+
+        {{-- Avatar Field --}}
+        <div>
+            <x-input-label for="avatar" :value="__('Foto Profil (Avatar)')" />
+            <div class="mt-2 flex items-center gap-4">
+                @if ($user->avatar_path)
+                    <img id="avatar-preview" src="{{ asset('storage/' . $user->avatar_path) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-xl object-cover border border-gray-200">
+                @else
+                    <div id="avatar-preview-placeholder" class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-400 font-bold text-lg">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                @endif
+                <input type="file" id="avatar" name="avatar" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200" />
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -45,6 +61,28 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="phone" :value="__('Nomor Telepon')" />
+            <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" placeholder="Contoh: 08123456789" />
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        <div>
+            <x-input-label for="role" :value="__('Role')" />
+            @if(auth()->user()->isAdmin())
+                <select id="role" name="role" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                    <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>User (Donatur)</option>
+                    <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+            @else
+                <select id="role" name="role" disabled class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm cursor-not-allowed text-gray-500">
+                    <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User (Donatur)</option>
+                    <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+            @endif
+            <x-input-error class="mt-2" :messages="$errors->get('role')" />
         </div>
 
         <div class="flex items-center gap-4">
