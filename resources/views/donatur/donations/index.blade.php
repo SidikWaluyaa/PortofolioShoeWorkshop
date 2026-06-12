@@ -58,12 +58,17 @@
                         <tbody class="divide-y divide-gray-100">
                             @foreach($donations as $donation)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <img src="{{ asset('storage/' . $donation->foto_path) }}" alt="{{ $donation->nama_sepatu }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100">
-                                        <span class="font-medium text-gray-900">{{ $donation->nama_sepatu }}</span>
-                                    </div>
-                                </td>
+                                 <td class="px-6 py-4">
+                                     <div class="flex items-center gap-3">
+                                         <img src="{{ asset('storage/' . ($donation->foto_path[0] ?? '')) }}" alt="{{ $donation->nama_sepatu }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100 flex-shrink-0">
+                                         <div>
+                                             @if($donation->spk)
+                                                 <span class="font-mono text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded block w-fit mb-0.5">{{ $donation->spk }}</span>
+                                             @endif
+                                             <span class="font-medium text-gray-900">{{ $donation->nama_sepatu }}</span>
+                                         </div>
+                                     </div>
+                                 </td>
                                 <td class="px-6 py-4 text-gray-600">{{ $donation->ukuran }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
@@ -98,15 +103,26 @@
                                 </td>
                                 <td class="px-6 py-4 text-gray-500 text-xs">{{ $donation->created_at->format('d M Y') }}</td>
                                 <td class="px-6 py-4">
-                                    @if($donation->status === 'pending' && $donation->metode_pengiriman === 'ekspedisi')
-                                        <button @click="openResiModal('{{ $donation->id }}', '{{ $donation->nama_ekspedisi }}', '{{ $donation->no_resi }}', '{{ route('donatur.donations.update-resi', $donation) }}')" 
-                                                class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                            {{ $donation->no_resi ? 'Edit Resi' : 'Input Resi' }}
-                                        </button>
-                                    @else
-                                        <span class="text-xs text-gray-400">—</span>
-                                    @endif
+                                    <div class="flex items-center gap-2">
+                                        @if($donation->status === 'pending')
+                                            <a href="{{ route('donatur.donations.edit', $donation) }}" 
+                                               class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm flex items-center gap-1">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                                Edit
+                                            </a>
+                                            @if($donation->metode_pengiriman === 'ekspedisi')
+                                                <button @click="openResiModal('{{ $donation->id }}', '{{ $donation->nama_ekspedisi }}', '{{ $donation->no_resi }}', '{{ route('donatur.donations.update-resi', $donation) }}')" 
+                                                        class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm flex items-center gap-1">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                                    {{ $donation->no_resi ? 'Edit Resi' : 'Input Resi' }}
+                                                </button>
+                                            @endif
+                                        @else
+                                            <span class="text-xs text-gray-400">—</span>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach

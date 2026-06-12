@@ -29,12 +29,32 @@ class DonationController extends Controller
 
     public function approve(Request $request, Donation $donation)
     {
-        $request->validate([
+        $validated = $request->validate([
             'foto_bukti' => 'required|image',
             'catatan_admin' => 'nullable|string|max:2000',
+            'nama' => 'required|string|max:150',
+            'brand' => 'nullable|string|max:100',
+            'ukuran' => 'nullable|string|max:50',
+            'kategori' => 'required|in:sepatu,tas,topi',
+            'kondisi' => 'required|in:baru,seperti_baru,sudah_diperbaiki',
+            'deskripsi' => 'nullable|string',
         ]);
 
-        $this->donationService->approve($donation, $request->file('foto_bukti'), $request->input('catatan_admin'));
+        $inspectionData = [
+            'nama' => $validated['nama'],
+            'brand' => $validated['brand'],
+            'ukuran' => $validated['ukuran'],
+            'kategori' => $validated['kategori'],
+            'kondisi' => $validated['kondisi'],
+            'deskripsi' => $validated['deskripsi'] ?? null,
+        ];
+
+        $this->donationService->approve(
+            $donation,
+            $request->file('foto_bukti'),
+            $inspectionData,
+            $validated['catatan_admin'] ?? null
+        );
 
         $referer = $request->header('referer');
         if ($referer && str_contains($referer, '/admin/donations') && !preg_match('/\/admin\/donations\/\d+/', $referer)) {

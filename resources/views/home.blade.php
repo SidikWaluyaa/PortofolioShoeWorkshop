@@ -23,6 +23,7 @@
             <a href="{{ route('home') }}" class="text-sm font-semibold text-[#22AF85] active-nav-border">Beranda</a>
             <a href="#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
             <a href="#portfolio" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Portfolio</a>
+            <a href="{{ route('katalog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Donasi</a>
             <a href="{{ route('tracking.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Tracking</a>
             <a href="{{ route('warranty.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Garansi</a>
         </div>
@@ -102,6 +103,7 @@
         <a href="{{ route('home') }}"         @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-[#22AF85] bg-green-50 rounded-lg">Beranda</a>
         <a href="#layanan"                     @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
         <a href="#portfolio"                   @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Portfolio</a>
+        <a href="{{ route('katalog.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Donasi</a>
         <a href="{{ route('blog.index') }}"    @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Artikel</a>
         <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
         <a href="{{ route('warranty.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Garansi</a>
@@ -144,7 +146,7 @@
 <main class="pt-20">
 
 {{-- 1. HERO --}}
-@include('components.hero', ['hero' => $hero])
+@include('components.hero', ['heroes' => $heroes])
 
 {{-- 2. LAYANAN --}}
 <section id="layanan" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
@@ -288,5 +290,79 @@
 
 {{-- FOOTER --}}
 @include('components.footer', ['settings' => $settings])
+
+@guest
+<!-- Floating Top Banner -->
+<div x-data="registerBanner()"
+     x-init="initBanner()"
+     x-show="isOpen"
+     class="fixed top-24 left-1/2 -translate-x-1/2 z-[49] w-[calc(100%-2rem)] max-w-4xl"
+     style="display: none;"
+     x-cloak>
+    
+    <div x-show="isOpen"
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="opacity-0 -translate-y-8 scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+         x-transition:leave-end="opacity-0 -translate-y-8 scale-95"
+         class="bg-[#1c1c17]/95 backdrop-blur-md text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- Text & Icon -->
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#22AF85] flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-[#22AF85]/20 animate-pulse-soft">
+                <span class="material-symbols-outlined !text-[20px] fill-1">volunteer_activism</span>
+            </div>
+            <div class="text-center md:text-left">
+                <p class="text-sm font-extrabold tracking-tight">Mulai Berbagi Kebaikan Hari Ini! 🎉</p>
+                <p class="text-xs text-gray-400 mt-0.5 font-medium">Daftar sebagai Donatur untuk mendonasikan sepatu bekas Anda & lacak riwayat reparasinya secara real-time.</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-end">
+            <a href="{{ route('register') }}" 
+               class="px-5 py-2 bg-[#22AF85] hover:bg-[#1f9d77] text-white text-xs font-extrabold rounded-xl transition-all shadow-md shadow-[#22AF85]/10 whitespace-nowrap active:scale-95">
+                Daftar Sekarang
+            </a>
+            <button @click="closeBanner()" class="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+                <span class="material-symbols-outlined !text-[20px]">close</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function registerBanner() {
+    return {
+        isOpen: false,
+        initBanner() {
+            const dismissed = sessionStorage.getItem('register_banner_dismissed');
+            if (!dismissed) {
+                setTimeout(() => {
+                    this.isOpen = true;
+                }, 800); // Smooth premium delay
+            }
+        },
+        closeBanner() {
+            this.isOpen = false;
+            sessionStorage.setItem('register_banner_dismissed', 'true');
+        }
+    }
+}
+</script>
+
+<style>
+@keyframes pulse-soft {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+.animate-pulse-soft {
+    animation: pulse-soft 2s infinite ease-in-out;
+}
+[x-cloak] { display: none !important; }
+</style>
+@endguest
 
 @endsection

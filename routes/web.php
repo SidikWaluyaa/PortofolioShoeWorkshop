@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\WarrantyClaimController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -14,8 +15,16 @@ Route::get('/klaim-garansi', [WarrantyClaimController::class, 'index'])->name('w
 Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 
+Route::get('/donasi-katalog', [\App\Http\Controllers\DonationCatalogController::class, 'index'])->name('katalog.index');
+Route::get('/donasi-katalog/filter', [\App\Http\Controllers\DonationCatalogController::class, 'filter'])->name('katalog.filter');
+Route::get('/donasi-katalog/{item}', [\App\Http\Controllers\DonationCatalogController::class, 'show'])->name('katalog.show');
+Route::get('/donasi-katalog/{item}/ajukan', [\App\Http\Controllers\DonationCatalogController::class, 'requestForm'])->name('katalog.request.form');
+Route::get('/donasi-katalog/{item}/sukses/{requestId}', [\App\Http\Controllers\DonationCatalogController::class, 'requestSuccess'])->name('katalog.success');
+Route::post('/donasi-katalog/{item}/request', [\App\Http\Controllers\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
+
 Route::get('/dashboard', function () {
-    if (auth()->user()->isAdmin()) {
+    $user = Auth::user();
+    if ($user instanceof \App\Models\User && $user->isAdmin()) {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('donatur.dashboard');
@@ -26,11 +35,18 @@ Route::get('/dashboard', function () {
 // ──────────────────────────────────────────────────────────
 Route::middleware(['auth', 'verified'])->prefix('donatur')->name('donatur.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Donatur\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Catalog
+    Route::get('/katalog', [\App\Http\Controllers\Donatur\DonationCatalogController::class, 'index'])->name('katalog.index');
+    Route::get('/katalog/filter', [\App\Http\Controllers\Donatur\DonationCatalogController::class, 'filter'])->name('katalog.filter');
+    Route::post('/katalog/{item}/request', [\App\Http\Controllers\Donatur\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
 
     // Donations
     Route::get('/donations', [\App\Http\Controllers\Donatur\DonationController::class, 'index'])->name('donations.index');
     Route::get('/donations/create', [\App\Http\Controllers\Donatur\DonationController::class, 'create'])->name('donations.create');
     Route::post('/donations', [\App\Http\Controllers\Donatur\DonationController::class, 'store'])->name('donations.store');
+    Route::get('/donations/{donation}/edit', [\App\Http\Controllers\Donatur\DonationController::class, 'edit'])->name('donations.edit');
+    Route::put('/donations/{donation}', [\App\Http\Controllers\Donatur\DonationController::class, 'update'])->name('donations.update');
     Route::patch('/donations/{donation}/resi', [\App\Http\Controllers\Donatur\DonationController::class, 'updateResi'])->name('donations.update-resi');
 
     // Daily Check-In
@@ -83,6 +99,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // Rewards Management
     Route::resource('rewards', \App\Http\Controllers\Admin\RewardController::class);
+
+    // Catalog Items & Requests Management
+    Route::resource('donation-items', \App\Http\Controllers\Admin\DonationItemController::class);
+    Route::resource('donation-requests', \App\Http\Controllers\Admin\DonationRequestController::class)->only(['index', 'update']);
 });
 
 Route::middleware('auth')->group(function () {

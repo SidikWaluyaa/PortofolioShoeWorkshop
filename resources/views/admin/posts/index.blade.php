@@ -50,7 +50,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
-                                    {{ $post->published_at ? $post->published_at->format('d M Y, H:i') : '-' }}
+                                    {{ $post->published_at ? $post->published_at->format('d M Y, H:i') . ' WIB' : '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a href="{{ route('admin.posts.edit', $post) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>

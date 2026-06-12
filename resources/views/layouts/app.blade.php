@@ -21,7 +21,7 @@
         }
     </script>
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         html { font-size: 14px; }
@@ -32,7 +32,7 @@
     searchQuery: '', 
     openSections: {
         'Utama': {{ request()->routeIs('admin.dashboard*') || request()->routeIs('admin.settings*') ? 'true' : 'false' }},
-        'Transaksi & Reparasi': {{ request()->routeIs('admin.tracking*') || request()->routeIs('admin.warranty-claims*') || request()->routeIs('admin.donations*') ? 'true' : 'false' }},
+        'Transaksi & Reparasi': {{ request()->routeIs('admin.tracking*') || request()->routeIs('admin.warranty-claims*') || request()->routeIs('admin.donations*') || request()->routeIs('admin.donation-items*') || request()->routeIs('admin.donation-requests*') ? 'true' : 'false' }},
         'Loyalitas Donatur': {{ request()->routeIs('admin.checkins*') || request()->routeIs('admin.rewards*') ? 'true' : 'false' }},
         'Konten Website': {{ request()->routeIs('admin.hero*') || request()->routeIs('admin.services*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.reviews*') || request()->routeIs('admin.workflow*') || request()->routeIs('admin.posts*') || request()->routeIs('admin.trust*') || request()->routeIs('admin.about*') || request()->routeIs('admin.cta*') ? 'true' : 'false' }}
     }
@@ -107,9 +107,11 @@
                     'icon_active' => 'text-white',
                     'icon_inactive' => 'text-emerald-400 group-hover:text-emerald-500',
                     'links' => [
-                        ['route' => 'admin.tracking.index', 'label' => 'Lacak Order', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01'],
+                        ['route' => 'admin.tracking.index', 'label' => 'Lacak Order', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 112-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01'],
                         ['route' => 'admin.warranty-claims.index', 'label' => 'Klaim Garansi', 'icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'],
                         ['route' => 'admin.donations.index', 'label' => 'Donasi Sepatu', 'icon' => 'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7'],
+                        ['route' => 'admin.donation-items.index', 'label' => 'Katalog Barang Donasi', 'icon' => 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'],
+                        ['route' => 'admin.donation-requests.index', 'label' => 'Permohonan Barang', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
                     ]
                 ],
                 [

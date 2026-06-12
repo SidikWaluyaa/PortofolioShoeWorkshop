@@ -169,9 +169,8 @@
                                                 <span class="inline-block px-2 py-1 bg-gray-100 text-gray-500 rounded text-xs font-bold">○ Menunggu</span>
                                                 @endif
                                             </td>
-                                            <td class="py-3 px-3 text-gray-600">
                                                 @if($timestamp)
-                                                    {{ \Carbon\Carbon::parse($timestamp)->format('d/m/Y H:i') }}
+                                                    {{ \Carbon\Carbon::parse($timestamp)->format('d/m/Y H:i') }} WIB
                                                 @else
                                                     -
                                                 @endif

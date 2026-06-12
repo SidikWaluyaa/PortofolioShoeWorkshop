@@ -116,7 +116,7 @@
                         <td class="px-6 py-4">
                             <span class="font-mono font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg text-sm">{{ $claim->unique_code }}</span>
                         </td>
-                        <td class="px-6 py-4 text-gray-500">{{ $claim->claimed_at->format('d M Y, H:i') }}</td>
+                        <td class="px-6 py-4 text-gray-500">{{ $claim->claimed_at->format('d M Y, H:i') }} WIB</td>
                     </tr>
                     @endforeach
                 </tbody>

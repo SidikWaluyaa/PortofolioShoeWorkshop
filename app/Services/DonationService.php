@@ -12,9 +12,16 @@ class DonationService
     /**
      * Create a new donation submission from a user.
      */
-    public function create(array $data, UploadedFile $foto): Donation
+    public function create(array $data, mixed $foto): Donation
     {
-        $fotoPath = ImageCompressionHelper::compressAndStore($foto, 'donations/sepatu');
+        $fotoPaths = [];
+        if (is_array($foto)) {
+            foreach ($foto as $file) {
+                $fotoPaths[] = ImageCompressionHelper::compressAndStore($file, 'donations/sepatu');
+            }
+        } else {
+            $fotoPaths[] = ImageCompressionHelper::compressAndStore($foto, 'donations/sepatu');
+        }
 
         return Donation::create([
             'user_id' => Auth::id(),
@@ -23,7 +30,7 @@ class DonationService
             'kondisi' => $data['kondisi'],
             'harga' => $data['harga'] ?? 0,
             'deskripsi' => $data['deskripsi'] ?? null,
-            'foto_path' => $fotoPath,
+            'foto_path' => $fotoPaths,
             'metode_pengiriman' => $data['metode_pengiriman'],
             'nama_ekspedisi' => $data['nama_ekspedisi'] ?? null,
             'no_resi' => $data['no_resi'] ?? null,
@@ -56,9 +63,9 @@ class DonationService
     }
 
     /**
-     * Approve a donation (admin action). Requires uploading proof photo.
+     * Approve a donation (admin action). Requires uploading proof photo and catalog inspection data.
      */
-    public function approve(Donation $donation, UploadedFile $fotoBukti, ?string $catatan = null): Donation
+    public function approve(Donation $donation, UploadedFile $fotoBukti, array $inspectionData, ?string $catatan = null): Donation
     {
         $fotoBuktiPath = ImageCompressionHelper::compressAndStore($fotoBukti, 'donations/bukti');
 
@@ -68,6 +75,19 @@ class DonationService
             'catatan_admin' => $catatan,
             'verified_by' => Auth::id(),
             'verified_at' => now(),
+        ]);
+
+        \App\Models\DonationItem::create([
+            'donation_id' => $donation->id,
+            'nama' => $inspectionData['nama'],
+            'brand' => $inspectionData['brand'] ?? null,
+            'kategori' => $inspectionData['kategori'],
+            'kondisi' => $inspectionData['kondisi'],
+            'status' => 'tersedia',
+            'deskripsi' => $inspectionData['deskripsi'] ?? null,
+            'foto_utama_path' => $donation->foto_path[0] ?? '',
+            'foto_detail' => $donation->foto_path,
+            'ukuran' => $inspectionData['ukuran'] ?? null,
         ]);
 
         return $donation;
@@ -114,6 +134,54 @@ class DonationService
             'nama_ekspedisi' => $namaEkspedisi,
             'no_resi' => $noResi,
         ]);
+
+        return $donation;
+    }
+
+    /**
+     * Update a pending donation submission from a user.
+     */
+    public function update(Donation $donation, array $data, mixed $fotos = null, array $existingPhotos = []): Donation
+    {
+        if ($donation->status !== 'pending') {
+            throw new \Exception('Donasi hanya dapat diubah ketika status masih pending.');
+        }
+
+        $updateData = [
+            'nama_sepatu' => $data['nama_sepatu'],
+            'ukuran' => $data['ukuran'],
+            'kondisi' => $data['kondisi'],
+            'harga' => $data['harga'] ?? 0,
+            'deskripsi' => $data['deskripsi'] ?? null,
+            'metode_pengiriman' => $data['metode_pengiriman'],
+            'nama_ekspedisi' => $data['nama_ekspedisi'] ?? null,
+            'no_resi' => $data['no_resi'] ?? null,
+        ];
+
+        // Compress and store new photos
+        $newFotoPaths = [];
+        if ($fotos) {
+            if (is_array($fotos)) {
+                foreach ($fotos as $file) {
+                    $newFotoPaths[] = ImageCompressionHelper::compressAndStore($file, 'donations/sepatu');
+                }
+            } else {
+                $newFotoPaths[] = ImageCompressionHelper::compressAndStore($fotos, 'donations/sepatu');
+            }
+        }
+
+        // Combine valid remaining existing photos and new photos
+        $currentPhotos = $donation->foto_path ?? [];
+        $validExisting = array_values(array_intersect($existingPhotos, $currentPhotos));
+        $finalFotoPaths = array_merge($validExisting, $newFotoPaths);
+
+        if (count($finalFotoPaths) === 0) {
+            throw new \Exception('Sepatu harus memiliki setidaknya satu foto.');
+        }
+
+        $updateData['foto_path'] = $finalFotoPaths;
+
+        $donation->update($updateData);
 
         return $donation;
     }

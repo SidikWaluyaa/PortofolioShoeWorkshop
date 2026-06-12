@@ -85,8 +85,10 @@ class User extends Authenticatable
 
     /**
      * Mutator to ensure phone starts with '62' prefix.
+     *
+     * @param string|null $value
      */
-    public function setPhoneAttribute($value)
+    public function setPhoneAttribute(?string $value): void
     {
         if (empty($value)) {
             $this->attributes['phone'] = null;

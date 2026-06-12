@@ -12,6 +12,18 @@
         buktiPreview: null,
         openModal(donation, approveUrl, rejectUrl, distributeUrl) {
             this.activeDonation = donation;
+            this.activeDonation.brand = this.activeDonation.brand || '';
+            this.activeDonation.kategori = this.activeDonation.kategori || 'sepatu';
+            
+            // Auto calculate catalog conditions select default
+            if (this.activeDonation.kondisi >= 90) {
+                this.activeDonation.kondisi_katalog = 'baru';
+            } else if (this.activeDonation.kondisi >= 70) {
+                this.activeDonation.kondisi_katalog = 'seperti_baru';
+            } else {
+                this.activeDonation.kondisi_katalog = 'sudah_diperbaiki';
+            }
+
             this.approveUrl = approveUrl;
             this.rejectUrl = rejectUrl;
             this.distributeUrl = distributeUrl;
@@ -50,33 +62,40 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse($donations as $donation)
                         @php
-                            $donationData = [
-                                'id' => $donation->id,
-                                'user_name' => $donation->user->name,
-                                'user_email' => $donation->user->email,
-                                'nama_sepatu' => $donation->nama_sepatu,
-                                'ukuran' => $donation->ukuran,
-                                'kondisi' => $donation->kondisi,
-                                'harga_formatted' => 'Rp ' . number_format($donation->harga, 0, ',', '.'),
-                                'metode_pengiriman' => str_replace('_', ' ', $donation->metode_pengiriman),
-                                'nama_ekspedisi' => $donation->nama_ekspedisi,
-                                'no_resi' => $donation->no_resi,
-                                'tanggal' => $donation->created_at->format('d M Y, H:i'),
-                                'status' => $donation->status,
-                                'deskripsi' => $donation->deskripsi,
-                                'catatan_admin' => $donation->catatan_admin,
-                                'verifier_name' => $donation->verifier ? $donation->verifier->name : null,
-                                'verified_at' => $donation->verified_at ? $donation->verified_at->format('d M Y, H:i') : null,
-                                'foto_url' => asset('storage/' . $donation->foto_path),
-                                'foto_bukti_url' => $donation->foto_bukti_path ? asset('storage/' . $donation->foto_bukti_path) : null,
-                            ];
+                             $donationData = [
+                                 'id' => $donation->id,
+                                 'user_name' => $donation->user->name,
+                                 'user_email' => $donation->user->email,
+                                 'spk' => $donation->spk,
+                                 'nama_sepatu' => $donation->nama_sepatu,
+                                 'ukuran' => $donation->ukuran,
+                                 'kondisi' => $donation->kondisi,
+                                 'harga_formatted' => 'Rp ' . number_format($donation->harga, 0, ',', '.'),
+                                 'metode_pengiriman' => str_replace('_', ' ', $donation->metode_pengiriman),
+                                 'nama_ekspedisi' => $donation->nama_ekspedisi,
+                                 'no_resi' => $donation->no_resi,
+                                 'tanggal' => $donation->created_at->format('d M Y, H:i') . ' WIB',
+                                 'status' => $donation->status,
+                                 'deskripsi' => $donation->deskripsi,
+                                 'catatan_admin' => $donation->catatan_admin,
+                                 'verifier_name' => $donation->verifier ? $donation->verifier->name : null,
+                                 'verified_at' => $donation->verified_at ? $donation->verified_at->format('d M Y, H:i') . ' WIB' : null,
+                                 'foto_url' => asset('storage/' . ($donation->foto_path[0] ?? '')),
+                                 'foto_urls' => collect($donation->foto_path)->map(fn($path) => asset('storage/' . $path))->toArray(),
+                                 'foto_bukti_url' => $donation->foto_bukti_path ? asset('storage/' . $donation->foto_bukti_path) : null,
+                             ];
                         @endphp
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 font-medium text-gray-900">{{ $donation->user->name }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <img src="{{ asset('storage/' . $donation->foto_path) }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100">
-                                    <span class="text-gray-950 font-medium">{{ $donation->nama_sepatu }}</span>
+                                    <img src="{{ asset('storage/' . ($donation->foto_path[0] ?? '')) }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100 flex-shrink-0">
+                                    <div>
+                                        @if($donation->spk)
+                                            <span class="font-mono text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded block w-fit mb-0.5">{{ $donation->spk }}</span>
+                                        @endif
+                                        <span class="text-gray-950 font-medium">{{ $donation->nama_sepatu }}</span>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ $donation->ukuran }}</td>
@@ -167,6 +186,10 @@
                                     <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Informasi Utama</h4>
                                     <div class="grid grid-cols-2 gap-4 text-xs">
                                         <div>
+                                            <span class="text-gray-500 block mb-1">Nomor SPK</span>
+                                            <span class="font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg text-xs" x-text="activeDonation.spk || '-'"></span>
+                                        </div>
+                                        <div>
                                             <span class="text-gray-500 block mb-1">Nama Sepatu</span>
                                             <span class="font-bold text-gray-900 text-sm" x-text="activeDonation.nama_sepatu"></span>
                                         </div>
@@ -228,15 +251,19 @@
                                 {{-- Photos --}}
                                 <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                                     <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Bukti Visual (Klik untuk perbesar)</h4>
-                                    <div class="grid grid-cols-2 gap-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-2">Foto Sepatu (Donatur)</span>
-                                            <div class="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 cursor-zoom-in group"
-                                                 @click="lightboxUrl = activeDonation.foto_url, showLightbox = true">
-                                                <img :src="activeDonation.foto_url" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-                                                </div>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <template x-for="(url, idx) in activeDonation.foto_urls" :key="idx">
+                                                    <div class="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 cursor-zoom-in group"
+                                                         @click="lightboxUrl = url, showLightbox = true">
+                                                        <img :src="url" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                                                        </div>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </div>
                                         <template x-if="activeDonation.foto_bukti_url">
@@ -267,6 +294,8 @@
                                             </h4>
                                             <form :action="approveUrl" method="POST" enctype="multipart/form-data" class="space-y-4">
                                                 @csrf
+                                                
+                                                {{-- Foto Bukti Penerimaan --}}
                                                 <div>
                                                     <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Foto Bukti Penerimaan <span class="text-red-500">*</span></label>
                                                     <div class="border-2 border-dashed border-gray-200 hover:border-emerald-400 rounded-xl p-4 text-center cursor-pointer transition relative bg-gray-50/50"
@@ -286,14 +315,72 @@
                                                     <input type="file" name="foto_bukti" x-ref="approveFileInput" accept="image/*" required class="hidden"
                                                            @change="buktiPreview = URL.createObjectURL($event.target.files[0])">
                                                 </div>
+
+                                                <div class="border-t border-gray-100 pt-3">
+                                                    <p class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                                        <span>🛠️</span> Inspeksi Katalog (Koreksi Data)
+                                                    </p>
+
+                                                    {{-- Nama Sepatu & Brand --}}
+                                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                                        <div>
+                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Barang <span class="text-red-500">*</span></label>
+                                                            <input type="text" name="nama" x-model="activeDonation.nama_sepatu" required
+                                                                   class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Brand</label>
+                                                            <input type="text" name="brand" x-model="activeDonation.brand"
+                                                                   class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                                                                   placeholder="Misal: Nike">
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Ukuran & Kategori --}}
+                                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                                        <div>
+                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Ukuran</label>
+                                                            <input type="text" name="ukuran" x-model="activeDonation.ukuran"
+                                                                   class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kategori <span class="text-red-500">*</span></label>
+                                                            <select name="kategori" x-model="activeDonation.kategori" required
+                                                                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                                                <option value="sepatu">Sepatu</option>
+                                                                <option value="tas">Tas</option>
+                                                                <option value="topi">Topi</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Kondisi Katalog --}}
+                                                    <div class="mb-3">
+                                                        <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kondisi Katalog <span class="text-[9px] text-gray-400 font-normal normal-case" x-text="'(Donatur: ' + activeDonation.kondisi + '%)'"></span> <span class="text-red-500">*</span></label>
+                                                        <select name="kondisi" x-model="activeDonation.kondisi_katalog" required
+                                                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                                            <option value="baru">Baru</option>
+                                                            <option value="seperti_baru">Like New</option>
+                                                            <option value="sudah_diperbaiki">Sudah Diperbaiki</option>
+                                                        </select>
+                                                    </div>
+
+                                                    {{-- Deskripsi Katalog --}}
+                                                    <div class="mb-3">
+                                                        <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Deskripsi Katalog</label>
+                                                        <textarea name="deskripsi" x-model="activeDonation.deskripsi" rows="2"
+                                                                  class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs resize-none focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                                                                  placeholder="Kondisi detail untuk katalog..."></textarea>
+                                                    </div>
+                                                </div>
                                                 
-                                                <div>
-                                                    <label for="modal_catatan_admin_approve" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Catatan Verifikasi</label>
+                                                <div class="border-t border-gray-100 pt-3">
+                                                    <label for="modal_catatan_admin_approve" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Catatan Verifikasi (Opsional)</label>
                                                     <textarea name="catatan_admin" id="modal_catatan_admin_approve" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none" placeholder="Catatan opsional..."></textarea>
                                                 </div>
                                                 
                                                 <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-emerald-500/25">
-                                                    Setujui Donasi
+                                                    Setujui Donasi & Rilis
                                                 </button>
                                             </form>
                                         </div>

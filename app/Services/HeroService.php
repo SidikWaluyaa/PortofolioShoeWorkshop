@@ -11,6 +11,11 @@ class HeroService
         return HeroSection::where('is_active', true)->first();
     }
 
+    public function getActiveHeroes()
+    {
+        return HeroSection::where('is_active', true)->orderBy('id', 'desc')->get();
+    }
+
     public function getAll()
     {
         return HeroSection::all();

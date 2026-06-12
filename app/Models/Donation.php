@@ -8,6 +8,7 @@ class Donation extends Model
 {
     protected $fillable = [
         'user_id',
+        'spk',
         'nama_sepatu',
         'ukuran',
         'kondisi',
@@ -24,6 +25,26 @@ class Donation extends Model
         'verified_at',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($donation) {
+            if (empty($donation->spk)) {
+                $donation->spk = self::generateSpkNumber();
+            }
+        });
+    }
+
+    public static function generateSpkNumber()
+    {
+        $dateStr = now()->format('Ymd');
+        do {
+            $random = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $spk = "SPK-DN-{$dateStr}-{$random}";
+        } while (self::where('spk', $spk)->exists());
+
+        return $spk;
+    }
+
     protected function casts(): array
     {
         return [
@@ -31,6 +52,27 @@ class Donation extends Model
             'harga' => 'integer',
             'verified_at' => 'datetime',
         ];
+    }
+
+    public function setFotoPathAttribute(mixed $value)
+    {
+        if (is_array($value)) {
+            $this->attributes['foto_path'] = json_encode($value);
+        } else {
+            $this->attributes['foto_path'] = $value;
+        }
+    }
+
+    public function getFotoPathAttribute(mixed $value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+        $decoded = json_decode($value, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+        return [$value];
     }
 
     /**
@@ -47,5 +89,13 @@ class Donation extends Model
     public function verifier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    /**
+     * Get the donation item generated in the catalog from this donation.
+     */
+    public function donationItem(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(DonationItem::class);
     }
 }

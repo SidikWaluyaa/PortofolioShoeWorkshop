@@ -167,6 +167,6 @@ class ProfileTest extends TestCase
         $user->refresh();
 
         $this->assertNotNull($user->avatar_path);
-        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($user->avatar_path);
+        $this->assertTrue(\Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar_path));
     }
 }

@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(PostSeeder::class);
+        $this->call(DonationItemSeeder::class);
 
         HeroSection::create([
             'title' => 'Reparasi & Perawatan Sepatu Profesional',
@@ -35,6 +36,17 @@ class DatabaseSeeder extends Seeder
             'primary_cta_link' => 'https://wa.me/628123456789',
             'secondary_cta_text' => 'Lihat Hasil Before–After',
             'secondary_cta_link' => '#portfolio',
+            'is_active' => true,
+        ]);
+
+        HeroSection::create([
+            'title' => 'Salurkan Sepatu Layak Pakai Anda',
+            'subtitle' => 'Bantu sesama dengan mendonasikan sepatu bekas layak pakai Anda. Kami akan merestorasi sepatu tersebut agar kembali bersih, kokoh, dan siap disalurkan kepada mereka yang membutuhkan.',
+            'primary_cta_text' => 'Mulai Donasi Sepatu',
+            'primary_cta_link' => '/donatur/donations/create',
+            'secondary_cta_text' => 'Lihat Katalog Donasi',
+            'secondary_cta_link' => '/donasi-katalog',
+            'image' => 'hero/open_donasi_hero.png',
             'is_active' => true,
         ]);
 

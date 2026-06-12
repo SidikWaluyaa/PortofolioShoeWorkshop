@@ -14,6 +14,7 @@
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Donatur</span><span class="font-bold text-gray-900">{{ $donation->user->name }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Email</span><span class="text-gray-700">{{ $donation->user->email }}</span></div>
+                    <div><span class="text-gray-500 block text-xs font-medium mb-1">Nomor SPK</span><span class="font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg text-xs">{{ $donation->spk ?? '-' }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Nama Sepatu</span><span class="font-bold text-gray-900">{{ $donation->nama_sepatu }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Ukuran</span><span class="text-gray-700">{{ $donation->ukuran }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Kondisi</span>
@@ -30,7 +31,7 @@
                     @if($donation->no_resi)
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">No. Resi</span><span class="font-mono text-gray-700">{{ $donation->no_resi }}</span></div>
                     @endif
-                    <div><span class="text-gray-500 block text-xs font-medium mb-1">Tanggal Pengajuan</span><span class="text-gray-700">{{ $donation->created_at->format('d M Y, H:i') }}</span></div>
+                    <div><span class="text-gray-500 block text-xs font-medium mb-1">Tanggal Pengajuan</span><span class="text-gray-700">{{ $donation->created_at->format('d M Y, H:i') }} WIB</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Status</span>
                         @php $sc = ['pending'=>'bg-amber-100 text-amber-700','diterima'=>'bg-emerald-100 text-emerald-700','disalurkan'=>'bg-blue-100 text-blue-700','ditolak'=>'bg-red-100 text-red-700']; @endphp
                         <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $sc[$donation->status] }}">{{ ucfirst($donation->status) }}</span>
@@ -47,7 +48,7 @@
                     <span class="text-gray-500 block text-xs font-medium mb-1">Catatan Admin</span>
                     <p class="text-sm text-gray-700">{{ $donation->catatan_admin }}</p>
                     @if($donation->verifier)
-                    <p class="text-xs text-gray-400 mt-1">Oleh: {{ $donation->verifier->name }} • {{ $donation->verified_at->format('d M Y, H:i') }}</p>
+                    <p class="text-xs text-gray-400 mt-1">Oleh: {{ $donation->verifier->name }} • {{ $donation->verified_at->format('d M Y, H:i') }} WIB</p>
                     @endif
                 </div>
                 @endif
@@ -56,15 +57,19 @@
             {{-- Photos --}}
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Foto</h3>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <p class="text-xs font-medium text-gray-500 mb-2">Foto Sepatu (Donatur)</p>
-                        <img src="{{ asset('storage/' . $donation->foto_path) }}" alt="Foto Sepatu" class="w-full h-48 object-cover rounded-xl bg-gray-100">
+                        <div class="grid grid-cols-2 gap-2">
+                            @foreach($donation->foto_path as $path)
+                                <img src="{{ asset('storage/' . $path) }}" alt="Foto Sepatu" class="w-full h-32 object-cover rounded-xl bg-gray-100 border border-gray-150">
+                            @endforeach
+                        </div>
                     </div>
                     @if($donation->foto_bukti_path)
                     <div>
                         <p class="text-xs font-medium text-gray-500 mb-2">Bukti Penerimaan (Admin)</p>
-                        <img src="{{ asset('storage/' . $donation->foto_bukti_path) }}" alt="Bukti Penerimaan" class="w-full h-48 object-cover rounded-xl bg-gray-100">
+                        <img src="{{ asset('storage/' . $donation->foto_bukti_path) }}" alt="Bukti Penerimaan" class="w-full h-48 object-cover rounded-xl bg-gray-100 border border-gray-150">
                     </div>
                     @endif
                 </div>
@@ -79,16 +84,93 @@
                 <h3 class="text-base font-bold text-emerald-700 mb-4">✅ Setujui Donasi</h3>
                 <form action="{{ route('admin.donations.approve', $donation) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    
+                    {{-- Foto Bukti Penerimaan --}}
                     <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Foto Bukti Penerimaan <span class="text-red-500">*</span></label>
-                        <input type="file" name="foto_bukti" accept="image/*" required class="w-full text-sm border border-gray-200 rounded-xl p-2">
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Foto Bukti Penerimaan <span class="text-red-500">*</span></label>
+                        <input type="file" name="foto_bukti" accept="image/*" required class="w-full text-sm border border-gray-200 rounded-xl p-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                         @error('foto_bukti') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Catatan (Opsional)</label>
-                        <textarea name="catatan_admin" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm resize-none" placeholder="Catatan verifikasi..."></textarea>
+
+                    <div class="border-t border-gray-100 my-5 pt-4">
+                        <p class="text-xs font-black text-emerald-800 uppercase tracking-wider mb-3 flex items-center gap-1">
+                            <span>🛠️</span> Inspeksi Katalog (Koreksi Data)
+                        </p>
+                        
+                        {{-- Nama Sepatu & Brand --}}
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="nama" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Barang <span class="text-red-500">*</span></label>
+                                <input type="text" name="nama" id="nama" value="{{ old('nama', $donation->nama_sepatu) }}" required
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                @error('nama') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label for="brand" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Brand</label>
+                                <input type="text" name="brand" id="brand" value="{{ old('brand') }}"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                       placeholder="Misal: Nike">
+                                @error('brand') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        {{-- Ukuran & Kategori --}}
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="ukuran" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Ukuran</label>
+                                <input type="text" name="ukuran" id="ukuran" value="{{ old('ukuran', $donation->ukuran) }}"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                @error('ukuran') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label for="kategori" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kategori <span class="text-red-500">*</span></label>
+                                <select name="kategori" id="kategori" required
+                                        class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                    <option value="sepatu" {{ old('kategori') === 'sepatu' ? 'selected' : '' }}>Sepatu</option>
+                                    <option value="tas" {{ old('kategori') === 'tas' ? 'selected' : '' }}>Tas</option>
+                                    <option value="topi" {{ old('kategori') === 'topi' ? 'selected' : '' }}>Topi</option>
+                                </select>
+                                @error('kategori') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        {{-- Kondisi Katalog --}}
+                        <div class="mb-4">
+                            <label for="kondisi" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kondisi Katalog <span class="text-[9px] text-gray-400 font-normal normal-case">(Donatur: {{ $donation->kondisi }}%)</span> <span class="text-red-500">*</span></label>
+                            <select name="kondisi" id="kondisi" required
+                                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                @php
+                                    $defaultKondisi = 'sudah_diperbaiki';
+                                    if ($donation->kondisi >= 90) {
+                                        $defaultKondisi = 'baru';
+                                    } elseif ($donation->kondisi >= 70) {
+                                        $defaultKondisi = 'seperti_baru';
+                                    }
+                                @endphp
+                                <option value="baru" {{ old('kondisi', $defaultKondisi) === 'baru' ? 'selected' : '' }}>Baru</option>
+                                <option value="seperti_baru" {{ old('kondisi', $defaultKondisi) === 'seperti_baru' ? 'selected' : '' }}>Seperti Baru</option>
+                                <option value="sudah_diperbaiki" {{ old('kondisi', $defaultKondisi) === 'sudah_diperbaiki' ? 'selected' : '' }}>Sudah Diperbaiki</option>
+                            </select>
+                            @error('kondisi') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Deskripsi Katalog --}}
+                        <div class="mb-4">
+                            <label for="deskripsi" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Deskripsi Katalog</label>
+                            <textarea name="deskripsi" id="deskripsi" rows="2"
+                                      class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs resize-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                      placeholder="Jelaskan kondisi detail barang untuk katalog...">{{ old('deskripsi', $donation->deskripsi) }}</textarea>
+                            @error('deskripsi') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition">Setujui</button>
+
+                    <div class="border-t border-gray-100 my-4 pt-4 mb-4">
+                        <label for="catatan_admin" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Catatan Verifikasi (Opsional)</label>
+                        <textarea name="catatan_admin" id="catatan_admin" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs resize-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition" placeholder="Catatan internal verifikasi..."></textarea>
+                        @error('catatan_admin') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/25">Setujui & Rilis ke Katalog</button>
                 </form>
             </div>
 

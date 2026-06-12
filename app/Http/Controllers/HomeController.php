@@ -31,7 +31,7 @@ class HomeController extends Controller
     public function index()
     {
         $data = [
-            'hero'             => $this->heroService->getActive(),
+            'heroes'           => $this->heroService->getActiveHeroes(),
             'trustItems'       => $this->trustService->getActive(),
             'services'         => $this->serviceCatalogService->getActive(),
             'portfolio'        => $this->portfolioService->getActive(),
