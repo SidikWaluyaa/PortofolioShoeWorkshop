@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('status', ['tersedia', 'disalurkan'])->default('tersedia')->index();
             $table->text('deskripsi')->nullable();
             $table->string('foto_utama_path', 255);
-            $table->json('foto_detail')->nullable();
+            $table->longText('foto_detail')->nullable();
             $table->timestamps();
         });
     }
