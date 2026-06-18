@@ -10,7 +10,7 @@
         </a>
     </div>
 
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 max-w-4xl" x-data="imageUploads()">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 max-w-4xl" x-data="formApp()">
         <form action="{{ route('admin.donation-items.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
@@ -88,6 +88,93 @@
                     @error('status')
                         <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
                     @enderror
+                </div>
+            </div>
+
+            {{-- Informasi Tambahan (Spesifikasi & Kelayakan) --}}
+            <div class="border-t border-gray-100 pt-6">
+                <h3 class="text-sm font-extrabold text-gray-800 uppercase tracking-wider mb-4">Informasi Spesifikasi & Kelayakan</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {{-- Berat Barang --}}
+                    <div>
+                        <label for="berat" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Berat Barang (Gram)</label>
+                        <input type="number" id="berat" name="berat" value="{{ old('berat') }}" min="0" placeholder="Contoh: 850 (untuk 0.85 kg)"
+                               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition" />
+                        @error('berat')
+                            <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Skor Kelayakan --}}
+                    <div>
+                        <label for="score_kelayakan" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Skor Kelayakan (%)</label>
+                        <input type="number" id="score_kelayakan" name="score_kelayakan" value="{{ old('score_kelayakan') }}" min="0" max="100" placeholder="Contoh: 90"
+                               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition" />
+                        @error('score_kelayakan')
+                            <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            {{-- Dinamis Service Repeater --}}
+            <div class="border-t border-gray-100 pt-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-extrabold text-gray-800 uppercase tracking-wider">Jasa Restorasi / Reparasi</h3>
+                    <button type="button" @click="addService()" class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#22AF85]/10 hover:bg-[#22AF85]/20 text-[#22AF85] text-xs font-bold rounded-lg transition">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        Tambah Jasa
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <template x-for="(srv, index) in services" :key="index">
+                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200 relative space-y-4 sm:space-y-0 sm:flex sm:items-center sm:gap-4 pr-12">
+                            {{-- Layanan Workshop Dropdown --}}
+                            <div class="flex-1">
+                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-1.5">Layanan (Dropdown)</label>
+                                <select :name="`services[${index}][service_id]`" x-model="srv.service_id"
+                                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-[#22AF85]">
+                                    <option value="">-- Pilih Layanan --</option>
+                                    @foreach($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->icon }} {{ $service->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Jasa Kustom / Manual --}}
+                            <div class="flex-1">
+                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-1.5">Jasa Kustom (Manual)</label>
+                                <input type="text" :name="`services[${index}][jasa_nama_manual]`" x-model="srv.jasa_nama_manual" placeholder="Isi jika kustom"
+                                       class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:border-[#22AF85]" />
+                            </div>
+
+                            {{-- Biaya Jasa --}}
+                            <div class="w-full sm:w-36">
+                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-1.5">Biaya Jasa (Rp)</label>
+                                <input type="number" :name="`services[${index}][jasa_harga]`" x-model="srv.jasa_harga" placeholder="Contoh: 50000"
+                                       class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:border-[#22AF85]" />
+                            </div>
+
+                            {{-- Estimasi Waktu --}}
+                            <div class="w-full sm:w-28">
+                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-1.5">Waktu (Hari)</label>
+                                <input type="number" :name="`services[${index}][jasa_estimasi_waktu]`" x-model="srv.jasa_estimasi_waktu" placeholder="Contoh: 3"
+                                       class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:border-[#22AF85]" />
+                            </div>
+
+                            {{-- Hapus Baris button --}}
+                            <button type="button" @click="removeService(index)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-1 rounded transition">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </template>
+
+                    <template x-if="services.length === 0">
+                        <div class="py-8 text-center text-gray-450 text-xs border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                            Tidak ada jasa restorasi terdaftar. Klik "+ Tambah Jasa" untuk menambahkan.
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -188,11 +275,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <script>
-        function imageUploads() {
+        function formApp() {
             return {
                 utamaPreviewUrl: '',
                 detailPreviews: [],
                 detailFiles: [],
+                services: [
+                    { service_id: '', jasa_nama_manual: '', jasa_harga: '', jasa_estimasi_waktu: '' }
+                ],
+
+                addService() {
+                    this.services.push({ service_id: '', jasa_nama_manual: '', jasa_harga: '', jasa_estimasi_waktu: '' });
+                },
+
+                removeService(index) {
+                    this.services.splice(index, 1);
+                },
 
                 previewUtama(e) {
                     const file = e.target.files[0];
@@ -222,10 +320,6 @@
                 },
 
                 updateDetailInput() {
-                    // Update the actual file input files list if possible (read-only for standard inputs,
-                    // but we can pass them in the backend via array. It is fine as browser will send
-                    // whatever was selected. To allow removals we could just let the backend receive them).
-                    // This is primarily for visual feedback, but to fully bind file lists in JS:
                     const dataTransfer = new DataTransfer();
                     this.detailFiles.forEach(file => dataTransfer.items.add(file));
                     document.getElementById('foto_detail').files = dataTransfer.files;

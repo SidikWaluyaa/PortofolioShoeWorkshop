@@ -1,4 +1,4 @@
-﻿@extends('layouts.main')
+@extends('layouts.main')
 @section('seo_title', 'Klaim Garansi | Shoe Workshop')
 @section('seo_description', 'Ajukan klaim garansi reparasi sepatu kamu secara mudah dan cepat di Shoe Workshop.')
 
@@ -177,7 +177,7 @@
     </div>
 
     {{-- Alert Area --}}
-    <div id="alert-box" class="hidden mb-6 p-4 rounded-xl border-2 border-on-surface custom-shadow-hard flex items-start gap-3 animate-fade-in">
+    <div id="alert-box" class="hidden mb-6 p-4 rounded-xl border-2 border-on-surface custom-shadow-hard items-start gap-3 animate-fade-in">
         <svg class="w-5 h-5 flex-shrink-0 mt-0.5" id="alert-icon" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
         </svg>
@@ -408,7 +408,7 @@
 </main>
 
 {{-- Modal Syarat & Ketentuan (Big 4 Styling - Bottom Sheet on Mobile) --}}
-<div id="terms-modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div id="terms-modal" class="hidden fixed inset-0 z-[100] items-end sm:items-center justify-center p-0 sm:p-4" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     {{-- Backdrop --}}
     <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" id="close-modal-bg"></div>
 
@@ -1039,12 +1039,14 @@
 
         function openModal() {
             termsModal.classList.remove('hidden');
+            termsModal.classList.add('flex');
             document.body.classList.add('overflow-hidden');
             if (modalPanel) modalPanel.style.transform = '';
         }
 
         function closeModal() {
             termsModal.classList.add('hidden');
+            termsModal.classList.remove('flex');
             document.body.classList.remove('overflow-hidden');
             if (modalPanel) modalPanel.style.transform = '';
         }

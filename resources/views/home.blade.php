@@ -144,6 +144,12 @@
 </header>
 
 <main class="pt-20">
+    <div class="relative overflow-hidden bg-home-grid w-full">
+        <!-- Glowing background blobs (Aurora style) -->
+        <div class="absolute top-0 right-[-10%] w-[550px] h-[550px] rounded-full bg-[#22AF85]/15 blur-[110px] pointer-events-none z-0"></div>
+        <div class="absolute top-[25%] left-[-15%] w-[650px] h-[650px] rounded-full bg-[#FFC232]/8 blur-[130px] pointer-events-none z-0"></div>
+        <div class="absolute bottom-[35%] right-[-5%] w-[600px] h-[600px] rounded-full bg-[#22AF85]/8 blur-[110px] pointer-events-none z-0"></div>
+        <div class="absolute bottom-[10%] left-[5%] w-[550px] h-[550px] rounded-full bg-[#FFC232]/12 blur-[110px] pointer-events-none z-0"></div>
 
 {{-- 1. HERO --}}
 @include('components.hero', ['heroes' => $heroes])
@@ -174,7 +180,7 @@
 </section>
 
 {{-- 5. REVIEW --}}
-<section id="review" class="py-20 sm:py-24 bg-gray-50 border-y border-gray-200 scroll-mt-20" x-data="reviewCarousel()">
+<section id="review" class="py-20 sm:py-24 bg-gray-50/60 backdrop-blur-md border-y border-gray-200 scroll-mt-20 relative z-10" x-data="reviewCarousel()">
     <div class="px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
             <div class="max-w-[600px] space-y-4">
@@ -286,6 +292,7 @@
 {{-- 9. CTA FINAL --}}
 @include('components.cta', ['cta' => $cta])
 
+    </div>
 </main>
 
 {{-- FOOTER --}}

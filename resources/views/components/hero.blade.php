@@ -6,9 +6,9 @@
             // Odd index (1, 3...) gets reversed layout (left image, right text)
             $isEven = ($index % 2 === 0);
         @endphp
-        <section class="min-h-[500px] lg:min-h-[700px] flex flex-col {{ $isEven ? 'lg:flex-row' : 'lg:flex-row-reverse' }} overflow-hidden border-b border-gray-200 bg-white">
+        <section class="min-h-[500px] lg:min-h-[700px] flex flex-col {{ $isEven ? 'lg:flex-row' : 'lg:flex-row-reverse' }} overflow-hidden border-b border-gray-200 bg-white/40 backdrop-blur-md relative z-10">
             {{-- Text Content Section --}}
-            <div class="w-full lg:w-1/2 bg-white flex items-center justify-center px-5 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-0">
+            <div class="w-full lg:w-1/2 bg-transparent flex items-center justify-center px-5 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-0">
                 <div class="max-w-[540px] space-y-5 sm:space-y-8 w-full">
                     <div class="space-y-2.5">
                         <p class="text-xs sm:text-sm font-bold tracking-[0.2em] text-gray-400 uppercase">

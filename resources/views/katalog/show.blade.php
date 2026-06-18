@@ -219,20 +219,20 @@
                             // Helper: resolve correct public URL based on where the file is stored
                             // foto_utama_path may be in public/images/ (use asset()) 
                             // foto_detail paths are stored via Storage::disk('public') (use asset('storage/...'))
-                            function detailUrl(string $path): string {
+                            $detailUrl = function (string $path): string {
                                 if (str_starts_with($path, 'http') || str_starts_with($path, 'images/')) {
                                     return asset($path);
                                 }
                                 return asset('storage/' . $path);
-                            }
+                            };
                         @endphp
                         
                         @for($i = 0; $i < 3; $i++)
                             @if(isset($detailPhotos[$i]))
-                                <button @click="activeImage = '{{ detailUrl($detailPhotos[$i]) }}'; activeIndex = {{ $i + 1 }}" 
+                                <button @click="activeImage = '{{ $detailUrl($detailPhotos[$i]) }}'; activeIndex = {{ $i + 1 }}" 
                                         :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
                                         class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white p-1.5 sm:p-2 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
-                                    <img alt="Detail {{ $i + 1 }}" class="max-w-full max-h-full object-contain" src="{{ detailUrl($detailPhotos[$i]) }}"/>
+                                    <img alt="Detail {{ $i + 1 }}" class="max-w-full max-h-full object-contain" src="{{ $detailUrl($detailPhotos[$i]) }}"/>
                                 </button>
                             @else
                                 <!-- Placeholder thumbnails -->
@@ -299,10 +299,35 @@
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Ukuran</p>
                                 <p class="text-sm font-bold text-[#1c1c17] mt-1">{{ $item->ukuran ?? 'Semua Ukuran' }}</p>
                             </div>
-                            <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 col-span-2 sm:col-span-1">
+                            <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Warna / Colorway</p>
                                 <p class="text-sm font-bold text-[#1c1c17] mt-1">{{ $color }}</p>
                             </div>
+                            <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Berat Barang</p>
+                                <p class="text-sm font-bold text-[#1c1c17] mt-1">{{ $item->berat_formatted }}</p>
+                            </div>
+                            @if($item->score_kelayakan)
+                            <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Skor Kelayakan Barang</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <div class="flex-grow bg-gray-250 h-2.5 rounded-full overflow-hidden">
+                                        @php
+                                            $scoreVal = $item->score_kelayakan;
+                                            $barColors = [
+                                                'emerald' => 'bg-emerald-500',
+                                                'teal' => 'bg-teal-500',
+                                                'amber' => 'bg-amber-500',
+                                                'red' => 'bg-red-500'
+                                            ];
+                                            $barColor = $barColors[$item->score_kelayakan_color] ?? 'bg-[#22AF85]';
+                                        @endphp
+                                        <div class="{{ $barColor }} h-full rounded-full transition-all duration-500" style="width: {{ $scoreVal }}%"></div>
+                                    </div>
+                                    <span class="text-sm font-black text-gray-800 whitespace-nowrap">{{ $scoreVal }}%</span>
+                                </div>
+                            </div>
+                            @endif
                         </div>
 
                         <!-- Product Description -->
@@ -312,6 +337,47 @@
                                 {{ $item->deskripsi ?? 'Barang ini telah melalui proses kurasi dan perbaikan detail oleh tim Shoe Workshop untuk menjamin kelayakan pakai bagi penerima donasi.' }}
                             </p>
                         </div>
+
+                        <!-- Restoration/Service details if applicable -->
+                        @if($item->reparationServices->isNotEmpty())
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">🛠️ Rincian Layanan Restorasi Workshop</h3>
+                            <div class="divide-y divide-slate-200">
+                                @foreach($item->reparationServices as $rs)
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 py-3 first:pt-0">
+                                        <div>
+                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Jasa Pengerjaan</p>
+                                            <p class="text-sm font-bold text-slate-800 mt-0.5">
+                                                @if($rs->service)
+                                                    <span class="inline-block mr-1">{{ $rs->service->icon }}</span>
+                                                @endif
+                                                {{ $rs->jasa_nama }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Estimasi Waktu</p>
+                                            <p class="text-sm font-semibold text-slate-700 mt-0.5">{{ $rs->jasa_estimasi_waktu_formatted }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Nilai/Harga Jasa</p>
+                                            <p class="text-sm font-bold text-slate-850 mt-0.5">{{ $rs->jasa_harga_formatted }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <!-- Total Row -->
+                            <div class="border-t border-slate-200 pt-3 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                <div>
+                                    <p class="text-[10px] text-slate-400 font-black uppercase">Total Estimasi Durasi (Max)</p>
+                                    <p class="text-sm font-black text-[#22AF85]">{{ $item->jasa_estimasi_waktu_formatted }}</p>
+                                </div>
+                                <div class="sm:text-right">
+                                    <p class="text-[10px] text-slate-400 font-black uppercase">Total Nilai Restorasi</p>
+                                    <p class="text-base font-black text-[#22AF85]">{{ $item->jasa_harga_formatted }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
 
                         <!-- Environmental Impact Indicator -->
                         @php

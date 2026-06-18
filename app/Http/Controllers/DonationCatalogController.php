@@ -84,7 +84,7 @@ class DonationCatalogController extends Controller
     /**
      * Show the success page after a donation request.
      */
-    public function requestSuccess(DonationItem $item, $requestId)
+    public function requestSuccess(DonationItem $item, int $requestId)
     {
         // Retrieve session data from requestItem redirect
         $waUrl      = session('wa_url', '#');

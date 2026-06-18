@@ -104,6 +104,26 @@
                             @if($item->deskripsi)
                                 <p class="text-xs text-gray-400 font-normal mt-0.5 line-clamp-1 max-w-xs">{{ $item->deskripsi }}</p>
                             @endif
+                            <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                                @if($item->jasa_nama)
+                                    <span class="text-[9px] font-black bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.5 rounded" title="Jasa Pengerjaan">🔧 {{ $item->jasa_nama }}</span>
+                                @endif
+                                @if($item->berat)
+                                    <span class="text-[9px] font-black bg-blue-50 text-blue-700 border border-blue-100 px-1.5 py-0.5 rounded" title="Berat">⚖️ {{ $item->berat_formatted }}</span>
+                                @endif
+                                @if($item->score_kelayakan)
+                                    @php
+                                        $colorMap = [
+                                            'emerald' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                            'teal' => 'bg-teal-50 text-teal-700 border-teal-100',
+                                            'amber' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                            'red' => 'bg-red-50 text-red-700 border-red-100',
+                                        ];
+                                        $colorClass = $colorMap[$item->score_kelayakan_color] ?? 'bg-gray-50 text-gray-700 border-gray-100';
+                                    @endphp
+                                    <span class="text-[9px] font-black border px-1.5 py-0.5 rounded {{ $colorClass }}" title="Skor Kelayakan">🎯 {{ $item->score_kelayakan }}%</span>
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 text-gray-600 font-semibold">{{ $item->brand ?? '-' }}</td>
                         <td class="px-6 py-4">

@@ -196,4 +196,59 @@ class DonationCatalogTest extends TestCase
         // Controller now returns 422 for unavailable items
         $response->assertStatus(422);
     }
+
+    public function test_catalog_item_with_jasa_berat_and_score_can_be_rendered(): void
+    {
+        // Create a mock service
+        $service = \App\Models\Service::create([
+            'name' => 'Premium Reglue',
+            'description' => 'Sol premium reglue',
+            'icon' => '🔧',
+            'is_active' => true,
+            'order' => 1
+        ]);
+
+        $item = DonationItem::create([
+            'nama' => 'Tas Kulit Eksklusif',
+            'brand' => 'Gucci',
+            'kategori' => 'tas',
+            'status' => 'tersedia',
+            'kondisi' => 'sudah_diperbaiki',
+            'foto_utama_path' => 'images/katalog/leather_bag.png',
+            'berat' => 1200, // 1.2 kg
+            'score_kelayakan' => 95,
+        ]);
+
+        $item->reparationServices()->create([
+            'service_id' => $service->id,
+            'jasa_harga' => 125000,
+            'jasa_estimasi_waktu' => 4,
+        ]);
+
+        $item->reparationServices()->create([
+            'service_id' => null,
+            'jasa_nama_manual' => 'Special Stitching',
+            'jasa_harga' => 30000,
+            'jasa_estimasi_waktu' => 2,
+        ]);
+
+        // Get index page
+        $response = $this->get(route('katalog.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Tas Kulit Eksklusif');
+        $response->assertSee('Premium Reglue');
+        $response->assertSee('Special Stitching');
+        $response->assertSee('1,2 kg');
+        $response->assertSee('95% Layak');
+
+        // Get show detail page
+        $responseDetail = $this->get(route('katalog.show', $item->id));
+        $responseDetail->assertStatus(200);
+        $responseDetail->assertSee('Tas Kulit Eksklusif');
+        $responseDetail->assertSee('Premium Reglue');
+        $responseDetail->assertSee('Special Stitching');
+        $responseDetail->assertSee('Rp 155.000'); // Sum of 125000 + 30000
+        $responseDetail->assertSee('4 Hari');      // Max of 4 and 2
+        $responseDetail->assertSee('95%');
+    }
 }

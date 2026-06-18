@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DonationItem extends Model
@@ -13,6 +14,11 @@ class DonationItem extends Model
     protected $appends = [
         'foto_utama_url',
         'foto_detail_urls',
+        'jasa_nama',
+        'jasa_harga_formatted',
+        'jasa_estimasi_waktu_formatted',
+        'berat_formatted',
+        'score_kelayakan_color',
     ];
 
     protected $fillable = [
@@ -26,14 +32,24 @@ class DonationItem extends Model
         'foto_detail',
         'kondisi',
         'ukuran',
+        'berat',
+        'score_kelayakan',
     ];
 
     /**
      * Get the original donation that generated this catalog item.
      */
-    public function donation(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function donation(): BelongsTo
     {
         return $this->belongsTo(Donation::class);
+    }
+
+    /**
+     * Get the multiple services applied to this donation item.
+     */
+    public function reparationServices(): HasMany
+    {
+        return $this->hasMany(DonationItemService::class, 'donation_item_id');
     }
 
     /**
@@ -76,6 +92,82 @@ class DonationItem extends Model
             }
             return asset('storage/' . $path);
         }, $this->foto_detail);
+    }
+
+    /**
+     * Get the combined service names.
+     */
+    public function getJasaNamaAttribute(): ?string
+    {
+        $names = $this->reparationServices->map(function ($rs) {
+            return $rs->jasa_nama;
+        })->filter()->all();
+
+        return !empty($names) ? implode(', ', $names) : null;
+    }
+
+    /**
+     * Get the total price of all services applied to this item.
+     */
+    public function getJasaHargaTotalAttribute(): int
+    {
+        return $this->reparationServices->sum('jasa_harga');
+    }
+
+    /**
+     * Get the formatted total price of the services.
+     */
+    public function getJasaHargaFormattedAttribute(): string
+    {
+        $total = $this->jasa_harga_total;
+        if ($total === 0) {
+            return 'Gratis / N/A';
+        }
+        return 'Rp ' . number_format($total, 0, ',', '.');
+    }
+
+    /**
+     * Get the formatted maximum estimation time.
+     */
+    public function getJasaEstimasiWaktuFormattedAttribute(): string
+    {
+        $max = $this->reparationServices->max('jasa_estimasi_waktu');
+        if (is_null($max) || $max === 0) {
+            return 'N/A';
+        }
+        return $max . ' Hari';
+    }
+
+    /**
+     * Get the formatted weight.
+     */
+    public function getBeratFormattedAttribute(): string
+    {
+        if (is_null($this->berat)) {
+            return '-';
+        }
+        if ($this->berat >= 1000) {
+            return number_format($this->berat / 1000, 1, ',', '.') . ' kg';
+        }
+        return $this->berat . ' g';
+    }
+
+    /**
+     * Get the CSS color class based on the feasibility score.
+     */
+    public function getScoreKelayakanColorAttribute(): string
+    {
+        $score = $this->score_kelayakan ?? 0;
+        if ($score >= 90) {
+            return 'emerald'; // Excellent
+        }
+        if ($score >= 70) {
+            return 'teal'; // Very Good
+        }
+        if ($score >= 50) {
+            return 'amber'; // Good
+        }
+        return 'red'; // Needs Attention
     }
 
     /**

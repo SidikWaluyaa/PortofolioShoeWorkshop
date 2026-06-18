@@ -29,6 +29,22 @@
                     <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold rounded">
                         {{ $condLabels[$item->kondisi] ?? ucfirst($item->kondisi) }}
                     </span>
+
+                    <!-- Score Kelayakan Badge (Top-Left on image) -->
+                    @if($item->score_kelayakan)
+                        @php
+                            $scoreColors = [
+                                'emerald' => 'bg-emerald-600/90 text-white',
+                                'teal' => 'bg-teal-600/90 text-white',
+                                'amber' => 'bg-amber-600/90 text-white',
+                                'red' => 'bg-red-600/90 text-white',
+                            ];
+                            $scoreColorClass = $scoreColors[$item->score_kelayakan_color] ?? 'bg-gray-600/90 text-white';
+                        @endphp
+                        <span class="absolute top-2 left-2 px-2 py-0.5 backdrop-blur-sm text-[10px] font-bold rounded {{ $scoreColorClass }}">
+                            🎯 {{ $item->score_kelayakan }}% Layak
+                        </span>
+                    @endif
                 </div>
 
                 <!-- Body -->
@@ -67,10 +83,31 @@
                             @endif
                         </h4>
 
-                        <!-- Brand -->
-                        <p class="text-[#22AF85] font-bold text-xs mb-2">
-                            Brand: {{ $item->brand ?? 'Generic' }}
-                        </p>
+                        <!-- Brand & Price -->
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-[#22AF85] font-bold text-xs">
+                                Brand: {{ $item->brand ?? 'Generic' }}
+                            </p>
+                            @if($item->jasa_harga_total > 0)
+                                <span class="text-xs font-black text-[#191c1d] px-2 py-0.5 bg-gray-100 rounded-lg">
+                                    {{ $item->jasa_harga_formatted }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Specifications badges (Jasa, Berat) -->
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            @if($item->jasa_nama)
+                                <span class="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded text-[10px] font-bold" title="Jasa Reparasi">
+                                    🔧 {{ $item->jasa_nama }}
+                                </span>
+                            @endif
+                            @if($item->berat)
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-800 border border-blue-100 rounded text-[10px] font-bold" title="Berat">
+                                    ⚖️ {{ $item->berat_formatted }}
+                                </span>
+                            @endif
+                        </div>
 
                         <!-- Description -->
                         <p class="text-sm text-[#3d4947] font-normal line-clamp-2 mb-4">

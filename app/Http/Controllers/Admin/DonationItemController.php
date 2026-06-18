@@ -23,25 +23,29 @@ class DonationItemController extends Controller
             });
         }
 
+        $brandCol = 'donation_items.brand';
+        $kategoriCol = 'donation_items.kategori';
+        $statusCol = 'donation_items.status';
+
         if ($request->filled('brand')) {
-            $query->where('brand', $request->input('brand'));
+            $query->where($brandCol, '=', $request->input('brand'));
         }
 
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->input('kategori'));
+            $query->where($kategoriCol, '=', $request->input('kategori'));
         }
 
         if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
+            $query->where($statusCol, '=', $request->input('status'));
         }
 
         $items = $query->latest()->paginate(10)->withQueryString();
 
-        $brands = DonationItem::whereNotNull('brand')
-            ->where('brand', '!=', '')
+        $brands = DonationItem::whereNotNull($brandCol)
+            ->where($brandCol, '!=', '')
             ->distinct()
-            ->orderBy('brand')
-            ->pluck('brand');
+            ->orderBy($brandCol)
+            ->pluck($brandCol);
 
         return view('admin.donation_items.index', compact('items', 'brands'));
     }
@@ -51,7 +55,9 @@ class DonationItemController extends Controller
      */
     public function create()
     {
-        return view('admin.donation_items.create');
+        $orderCol = 'services.order';
+        $services = \App\Models\Service::orderBy($orderCol)->get();
+        return view('admin.donation_items.create', compact('services'));
     }
 
     /**
@@ -70,6 +76,13 @@ class DonationItemController extends Controller
             'foto_utama' => ['required', 'image', 'max:20480'], // Max 20MB
             'foto_detail' => ['nullable', 'array'],
             'foto_detail.*' => ['image', 'max:20480'],
+            'berat' => ['nullable', 'integer', 'min:0'],
+            'score_kelayakan' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'services' => ['nullable', 'array'],
+            'services.*.service_id' => ['nullable', 'exists:services,id'],
+            'services.*.jasa_nama_manual' => ['nullable', 'string', 'max:150'],
+            'services.*.jasa_harga' => ['nullable', 'integer', 'min:0'],
+            'services.*.jasa_estimasi_waktu' => ['nullable', 'integer', 'min:0'],
         ]);
 
         // Store primary photo with compression
@@ -86,7 +99,7 @@ class DonationItemController extends Controller
             }
         }
 
-        DonationItem::create([
+        $donationItem = DonationItem::create([
             'nama' => $request->nama,
             'brand' => $request->brand,
             'kategori' => $request->kategori,
@@ -96,7 +109,23 @@ class DonationItemController extends Controller
             'deskripsi' => $request->deskripsi,
             'foto_utama_path' => $fotoUtamaPath,
             'foto_detail' => $fotoDetailPaths,
+            'berat' => $request->berat,
+            'score_kelayakan' => $request->score_kelayakan,
         ]);
+
+        // Save multiple services
+        if ($request->filled('services')) {
+            foreach ($request->services as $srv) {
+                if (!empty($srv['service_id']) || !empty($srv['jasa_nama_manual'])) {
+                    $donationItem->reparationServices()->create([
+                        'service_id' => $srv['service_id'] ?: null,
+                        'jasa_nama_manual' => $srv['jasa_nama_manual'] ?: null,
+                        'jasa_harga' => $srv['jasa_harga'] ?? 0,
+                        'jasa_estimasi_waktu' => $srv['jasa_estimasi_waktu'] ?? 0,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.donation-items.index')
                          ->with('success', 'Barang katalog berhasil ditambahkan.');
@@ -107,7 +136,11 @@ class DonationItemController extends Controller
      */
     public function edit(DonationItem $donationItem)
     {
-        return view('admin.donation_items.edit', compact('donationItem'));
+        $orderCol = 'services.order';
+        $services = \App\Models\Service::orderBy($orderCol)->get();
+        // Load relationships
+        $donationItem->load('reparationServices');
+        return view('admin.donation_items.edit', compact('donationItem', 'services'));
     }
 
     /**
@@ -126,6 +159,13 @@ class DonationItemController extends Controller
             'foto_utama' => ['nullable', 'image', 'max:20480'],
             'foto_detail' => ['nullable', 'array'],
             'foto_detail.*' => ['image', 'max:20480'],
+            'berat' => ['nullable', 'integer', 'min:0'],
+            'score_kelayakan' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'services' => ['nullable', 'array'],
+            'services.*.service_id' => ['nullable', 'exists:services,id'],
+            'services.*.jasa_nama_manual' => ['nullable', 'string', 'max:150'],
+            'services.*.jasa_harga' => ['nullable', 'integer', 'min:0'],
+            'services.*.jasa_estimasi_waktu' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $data = [
@@ -136,6 +176,8 @@ class DonationItemController extends Controller
             'ukuran' => $request->ukuran,
             'status' => $request->status,
             'deskripsi' => $request->deskripsi,
+            'berat' => $request->berat,
+            'score_kelayakan' => $request->score_kelayakan,
         ];
 
         // Replace primary photo if new one uploaded
@@ -175,6 +217,21 @@ class DonationItemController extends Controller
         $data['foto_detail'] = $currentPaths;
 
         $donationItem->update($data);
+
+        // Sync services: delete existing and insert updated list
+        $donationItem->reparationServices()->delete();
+        if ($request->filled('services')) {
+            foreach ($request->services as $srv) {
+                if (!empty($srv['service_id']) || !empty($srv['jasa_nama_manual'])) {
+                    $donationItem->reparationServices()->create([
+                        'service_id' => $srv['service_id'] ?: null,
+                        'jasa_nama_manual' => $srv['jasa_nama_manual'] ?: null,
+                        'jasa_harga' => $srv['jasa_harga'] ?? 0,
+                        'jasa_estimasi_waktu' => $srv['jasa_estimasi_waktu'] ?? 0,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.donation-items.index')
                          ->with('success', 'Barang katalog berhasil diperbarui.');

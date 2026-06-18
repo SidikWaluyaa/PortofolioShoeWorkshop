@@ -1,5 +1,5 @@
 @if($cta)
-<section class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-16 bg-white">
+<section class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-16 bg-transparent relative z-10">
     <div class="max-w-7xl mx-auto bg-[#22AF85] rounded-[40px] p-12 md:p-24 overflow-hidden relative text-white text-center shadow-xl">
         {{-- Blur blobs --}}
         <div class="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
