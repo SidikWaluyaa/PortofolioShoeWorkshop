@@ -269,35 +269,257 @@
                 </div>
             @endif
 
+            <!-- Mobile Sticky Filter Bar -->
+            <div class="lg:hidden block sticky top-[72px] z-30 bg-white border border-gray-200 rounded-2xl shadow-sm -mx-2 mb-2 p-3">
+                <!-- Search Row -->
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="flex-grow flex items-center bg-gray-55 rounded-xl px-3 py-2 border border-gray-200 focus-within:border-[#22AF85] focus-within:ring-1 focus-within:ring-[#22AF85] transition-all">
+                        <span class="material-symbols-outlined text-gray-400 mr-2 !text-[18px]">search</span>
+                        <input type="text" x-model="search" @input.debounce.300ms="page = 1; fetchFilter()"
+                               placeholder="Cari nama, brand..." class="bg-transparent border-none p-0 focus:ring-0 text-xs w-full text-gray-700 placeholder-gray-400"/>
+                    </div>
+                </div>
+
+                <!-- Pills Row -->
+                <div class="flex items-center justify-between border-t border-gray-100 pt-2">
+                    <div class="flex-grow overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-1.5 pr-2">
+                        <!-- Category pills -->
+                        <button @click="toggleCategory('sepatu')"
+                                :class="categories.includes('sepatu') ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
+                            👞 Sepatu
+                        </button>
+                        <button @click="toggleCategory('tas')"
+                                :class="categories.includes('tas') ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
+                            🎒 Tas
+                        </button>
+                        <button @click="toggleCategory('topi')"
+                                :class="categories.includes('topi') ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
+                            🧢 Topi
+                        </button>
+
+                        <span class="text-gray-300">|</span>
+
+                        <!-- Condition pills -->
+                        <button @click="setCondition(condition === 'baru' ? '' : 'baru')"
+                                :class="condition === 'baru' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
+                            🆕 Baru
+                        </button>
+                        <button @click="setCondition(condition === 'seperti_baru' ? '' : 'seperti_baru')"
+                                :class="condition === 'seperti_baru' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
+                            ✨ Like New
+                        </button>
+                        <button @click="setCondition(condition === 'sudah_diperbaiki' ? '' : 'sudah_diperbaiki')"
+                                :class="condition === 'sudah_diperbaiki' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
+                            🔧 Refurbished
+                        </button>
+
+                        <span class="text-gray-300">|</span>
+
+                        <!-- Status pills -->
+                        <button @click="setStatus(status === 'tersedia' ? '' : 'tersedia')"
+                                :class="status === 'tersedia' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
+                            Tersedia
+                        </button>
+                        <button @click="setStatus(status === 'disalurkan' ? '' : 'disalurkan')"
+                                :class="status === 'disalurkan' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
+                            Disalurkan
+                        </button>
+                    </div>
+
+                    <div class="w-px h-6 bg-gray-200 mx-1 shrink-0"></div>
+
+                    <!-- Filter Button to Open Bottom Sheet -->
+                    <button @click="mobileFilterOpen = true"
+                            class="px-2 py-1 flex flex-col items-center justify-center text-[10px] font-bold text-gray-700 hover:text-[#22AF85] shrink-0 active:scale-95 transition-all">
+                        <span class="material-symbols-outlined !text-[18px]">filter_list</span>
+                        <span>Filter</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Filter Drawer (Bottom Sheet) -->
+            <div x-show="mobileFilterOpen" class="fixed inset-0 z-[60] lg:hidden" style="display: none;" x-cloak>
+                <!-- Backdrop -->
+                <div x-show="mobileFilterOpen"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     @click="mobileFilterOpen = false"
+                     class="fixed inset-0 bg-black/60 backdrop-blur-xs"></div>
+                
+                <!-- Drawer Panel -->
+                <div x-show="mobileFilterOpen"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="translate-y-full"
+                     x-transition:enter-end="translate-y-0"
+                     x-transition:leave="transition ease-in duration-200 transform"
+                     x-transition:leave-start="translate-y-0"
+                     x-transition:leave-end="translate-y-full"
+                     class="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto z-10 flex flex-col border-t border-gray-200">
+                    
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-gray-700 !text-[20px]">filter_list</span>
+                            <h3 class="text-base font-bold text-gray-900">Semua Filter</h3>
+                        </div>
+                        <button @click="mobileFilterOpen = false" class="p-1 rounded-full hover:bg-gray-150">
+                            <span class="material-symbols-outlined text-gray-500 !text-[20px]">close</span>
+                        </button>
+                    </div>
+                    
+                    <div class="p-6 space-y-6 flex-grow overflow-y-auto">
+                        <!-- Category -->
+                        <div>
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Kategori</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" value="sepatu" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
+                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-[#22AF85] peer-checked:text-white peer-checked:border-[#22AF85] bg-gray-50 border-gray-200 text-gray-650 transition-all">👞 Sepatu</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" value="tas" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
+                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-[#22AF85] peer-checked:text-white peer-checked:border-[#22AF85] bg-gray-50 border-gray-200 text-gray-655 transition-all">🎒 Tas</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" value="topi" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
+                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-[#22AF85] peer-checked:text-white peer-checked:border-[#22AF85] bg-gray-50 border-gray-200 text-gray-655 transition-all">🧢 Topi</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div>
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Harga Jasa Reparasi</h4>
+                            <div class="relative min-h-[40px] mt-2 px-1">
+                                <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
+                                <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                                     :style="`left: ${(minPrice / maxPriceLimit) * 100}%; right: ${100 - (maxPrice / maxPriceLimit) * 100}%`"></div>
+                                
+                                <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="minPrice"
+                                       @input="page = 1; if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                
+                                <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="maxPrice"
+                                       @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                            </div>
+                            <div class="flex items-center justify-between gap-3 mt-4">
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                    <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
+                                    <div class="flex items-center gap-1 mt-0.5">
+                                        <span class="text-xs font-bold text-gray-400">Rp</span>
+                                        <input type="number" x-model.number="minPrice" @input="page = 1; if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
+                                               class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                    </div>
+                                </div>
+                                <span class="text-gray-400 text-xs font-medium select-none">—</span>
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                    <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
+                                    <div class="flex items-center gap-1 mt-0.5">
+                                        <span class="text-xs font-bold text-gray-400">Rp</span>
+                                        <input type="number" x-model.number="maxPrice" @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
+                                               class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Condition -->
+                        <div>
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Kondisi</h4>
+                            <div class="flex flex-col gap-3">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === ''" @change="page = 1; setCondition('')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Semua Kondisi</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'baru'" @change="page = 1; setCondition('baru')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Baru</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'seperti_baru'" @change="page = 1; setCondition('seperti_baru')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Like New</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'sudah_diperbaiki'" @change="page = 1; setCondition('sudah_diperbaiki')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Refurbished</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div>
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Status</h4>
+                            <div class="flex flex-col gap-3">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="status_filter_mobile" :checked="status === ''" @change="page = 1; setStatus('')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Semua Status</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="status_filter_mobile" :checked="status === 'tersedia'" @change="page = 1; setStatus('tersedia')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Tersedia</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="status_filter_mobile" :checked="status === 'disalurkan'" @change="page = 1; setStatus('disalurkan')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Sudah Disalurkan</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 border-t border-gray-100 bg-gray-50 flex gap-4 sticky bottom-0 z-10">
+                        <button @click="clearAll()"
+                                class="w-1/2 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-bold active:scale-95 transition-all">
+                            Reset
+                        </button>
+                        <button @click="mobileFilterOpen = false"
+                                class="w-1/2 py-3.5 bg-[#22AF85] text-white rounded-xl text-sm font-bold active:scale-95 transition-all shadow-md shadow-[#22AF85]/20">
+                            Tampilkan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <!-- Sidebar Filter -->
-                <aside class="lg:col-span-1 space-y-8">
+                <!-- Sidebar Filter (Desktop Only) -->
+                <aside class="hidden lg:block lg:col-span-1 space-y-5 lg:sticky lg:top-[95px] lg:self-start lg:max-h-[calc(100vh-130px)] lg:overflow-y-auto pr-2">
                     {{-- Search Bar --}}
                     <div>
-                        <h3 class="text-xl font-bold text-[#191c1d] mb-4">Cari Barang</h3>
+                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Cari Barang</h3>
                         <div class="flex items-center bg-white rounded-xl px-4 py-3 border border-gray-200 shadow-sm focus-within:border-[#22AF85] focus-within:ring-1 focus-within:ring-[#22AF85] transition-all">
                             <span class="material-symbols-outlined text-gray-400 mr-2 !text-[20px]">search</span>
-                            <input type="text" x-model="search" @input.debounce.300ms="fetchFilter()"
+                            <input type="text" x-model="search" @input.debounce.300ms="page = 1; fetchFilter()"
                                    placeholder="Cari nama, brand..." class="bg-transparent border-none p-0 focus:ring-0 text-sm w-full text-gray-700 placeholder-gray-400"/>
                         </div>
                     </div>
 
                     {{-- Kategori Filter --}}
                     <div>
-                        <h3 class="text-xl font-bold text-[#191c1d] mb-4">Kategori</h3>
+                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Kategori</h3>
                         <div class="flex flex-col gap-3">
                             <label class="flex items-center gap-3 cursor-pointer group select-none">
-                                <input type="checkbox" value="sepatu" x-model="categories" @change="updateCategoryFilter()"
+                                <input type="checkbox" value="sepatu" x-model="categories" @change="page = 1; updateCategoryFilter()"
                                        class="w-5 h-5 rounded border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Sepatu</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group select-none">
-                                <input type="checkbox" value="tas" x-model="categories" @change="updateCategoryFilter()"
+                                <input type="checkbox" value="tas" x-model="categories" @change="page = 1; updateCategoryFilter()"
                                        class="w-5 h-5 rounded border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Tas</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group select-none">
-                                <input type="checkbox" value="topi" x-model="categories" @change="updateCategoryFilter()"
+                                <input type="checkbox" value="topi" x-model="categories" @change="page = 1; updateCategoryFilter()"
                                        class="w-5 h-5 rounded border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Topi</span>
                             </label>
@@ -306,7 +528,7 @@
 
                     {{-- Price Range Filter --}}
                     <div>
-                        <h3 class="text-xl font-bold text-[#191c1d] mb-4">Harga Jasa Reparasi</h3>
+                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Harga Jasa Reparasi</h3>
                         <div class="relative min-h-[40px] mt-2 px-1">
                             <!-- Track background -->
                             <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
@@ -316,11 +538,11 @@
                             
                             <!-- HTML Range inputs -->
                             <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="minPrice"
-                                   @input="if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
+                                   @input="page = 1; if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
                                    class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                             
                             <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="maxPrice"
-                                   @input="if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
+                                   @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
                                    class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                         </div>
                         <div class="flex items-center justify-between gap-3 mt-4">
@@ -329,7 +551,7 @@
                                 <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
                                 <div class="flex items-center gap-1 mt-0.5">
                                     <span class="text-xs font-bold text-gray-400">Rp</span>
-                                    <input type="number" x-model.number="minPrice" @input="if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
+                                    <input type="number" x-model.number="minPrice" @input="page = 1; if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
                                            class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
                                 </div>
                             </div>
@@ -342,7 +564,7 @@
                                 <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
                                 <div class="flex items-center gap-1 mt-0.5">
                                     <span class="text-xs font-bold text-gray-400">Rp</span>
-                                    <input type="number" x-model.number="maxPrice" @input="if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
+                                    <input type="number" x-model.number="maxPrice" @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
                                            class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
                                 </div>
                             </div>
@@ -351,25 +573,25 @@
 
                     {{-- Kondisi Filter --}}
                     <div>
-                        <h3 class="text-xl font-bold text-[#191c1d] mb-4">Kondisi</h3>
+                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Kondisi</h3>
                         <div class="flex flex-col gap-3">
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="kondisi_filter" :checked="condition === ''" @change="setCondition('')"
+                                <input type="radio" name="kondisi_filter" :checked="condition === ''" @change="page = 1; setCondition('')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Semua Kondisi</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="kondisi_filter" :checked="condition === 'baru'" @change="setCondition('baru')"
+                                <input type="radio" name="kondisi_filter" :checked="condition === 'baru'" @change="page = 1; setCondition('baru')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Baru</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="kondisi_filter" :checked="condition === 'seperti_baru'" @change="setCondition('seperti_baru')"
+                                <input type="radio" name="kondisi_filter" :checked="condition === 'seperti_baru'" @change="page = 1; setCondition('seperti_baru')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Like New</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="kondisi_filter" :checked="condition === 'sudah_diperbaiki'" @change="setCondition('sudah_diperbaiki')"
+                                <input type="radio" name="kondisi_filter" :checked="condition === 'sudah_diperbaiki'" @change="page = 1; setCondition('sudah_diperbaiki')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Refurbished</span>
                             </label>
@@ -378,20 +600,20 @@
 
                     {{-- Status Filter --}}
                     <div>
-                        <h3 class="text-xl font-bold text-[#191c1d] mb-4">Status</h3>
+                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Status</h3>
                         <div class="flex flex-col gap-3">
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="status_filter" :checked="status === ''" @change="setStatus('')"
+                                <input type="radio" name="status_filter" :checked="status === ''" @change="page = 1; setStatus('')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Semua Status</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="status_filter" :checked="status === 'tersedia'" @change="setStatus('tersedia')"
+                                <input type="radio" name="status_filter" :checked="status === 'tersedia'" @change="page = 1; setStatus('tersedia')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Tersedia</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="status_filter" :checked="status === 'disalurkan'" @change="setStatus('disalurkan')"
+                                <input type="radio" name="status_filter" :checked="status === 'disalurkan'" @change="page = 1; setStatus('disalurkan')"
                                        class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
                                 <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Sudah Disalurkan</span>
                             </label>
@@ -417,7 +639,7 @@
                         </p>
                         <div class="flex items-center gap-2 self-end sm:self-auto">
                             <label for="sort-dropdown" class="text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Urutkan:</label>
-                            <select id="sort-dropdown" x-model="sort" @change="setSort(sort)"
+                            <select id="sort-dropdown" x-model="sort" @change="page = 1; setSort(sort)"
                                     class="text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 py-2 focus:ring-[#22AF85] focus:border-[#22AF85] outline-none cursor-pointer shadow-sm">
                                 <option value="">Terbaru (Default)</option>
                                 <option value="harga_termurah">Harga Reparasi Termurah</option>
@@ -575,7 +797,7 @@
                :href="whatsappUrl" target="_blank" id="waLink">
                 Hubungi via WhatsApp
             </a>
-            <button class="text-sm text-[#3d4947] hover:underline" @click="closeAll()">Kembali ke Katalog</button>
+                            <button class="text-sm text-[#3d4947] hover:underline" @click="closeAll()">Kembali ke Katalog</button>
         </div>
     </div>
 
@@ -593,6 +815,8 @@
             maxPrice: {{ $maxPriceLimit }},
             maxPriceLimit: {{ $maxPriceLimit }},
             sort: '',
+            page: 1,
+            mobileFilterOpen: false,
             loading: false,
             detailOpen: false,
             formOpen: false,
@@ -643,6 +867,7 @@
                 this.minPrice = urlParams.get('min_price') ? parseInt(urlParams.get('min_price')) : 0;
                 this.maxPrice = urlParams.get('max_price') ? parseInt(urlParams.get('max_price')) : this.maxPriceLimit;
                 this.sort = urlParams.get('sort') || '';
+                this.page = urlParams.get('page') ? parseInt(urlParams.get('page')) : 1;
                 
                 this.debouncedFetchFilter = this.debounce(() => {
                     this.fetchFilter();
@@ -656,6 +881,47 @@
                         this.closeForm();
                     }
                 });
+
+                // Listen to browser Back/Forward navigation (history popstate)
+                window.addEventListener('popstate', () => {
+                    const params = new URLSearchParams(window.location.search);
+                    this.search = params.get('search') || '';
+                    const cat = params.get('category');
+                    if (cat) {
+                        this.categories = cat === 'none' ? [] : cat.split(',').filter(c => c !== '');
+                    } else {
+                        this.categories = ['sepatu', 'tas', 'topi'];
+                    }
+                    this.condition = params.get('condition') || '';
+                    this.status = params.get('status') || '';
+                    this.minPrice = params.get('min_price') ? parseInt(params.get('min_price')) : 0;
+                    this.maxPrice = params.get('max_price') ? parseInt(params.get('max_price')) : this.maxPriceLimit;
+                    this.sort = params.get('sort') || '';
+                    this.page = params.get('page') ? parseInt(params.get('page')) : 1;
+                    this.fetchFilter();
+                });
+
+                // Event delegation for AJAX pagination clicks
+                const gridContainer = document.getElementById('item-grid-container');
+                if (gridContainer) {
+                    gridContainer.addEventListener('click', (e) => {
+                        const anchor = e.target.closest('.pagination-link');
+                        if (anchor) {
+                            e.preventDefault();
+                            const href = anchor.getAttribute('href');
+                            if (href) {
+                                const url = new URL(href);
+                                const pageVal = url.searchParams.get('page') || 1;
+                                this.page = parseInt(pageVal);
+                                this.fetchFilter();
+                                this.updateUrl();
+                                
+                                // Scroll grid container to top for premium mobile navigation UX
+                                gridContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+                        }
+                    });
+                }
             },
 
             async fetchFilter() {
@@ -680,6 +946,7 @@
                     if (!isNaN(maxVal) && maxVal < this.maxPriceLimit) url.searchParams.set('max_price', maxVal);
                     
                     if (this.sort) url.searchParams.set('sort', this.sort);
+                    if (this.page && this.page > 1) url.searchParams.set('page', this.page);
 
                     const response = await fetch(url.toString(), {
                         headers: {
@@ -747,28 +1014,48 @@
                 } else {
                     url.searchParams.delete('sort');
                 }
+
+                if (this.page && this.page > 1) {
+                    url.searchParams.set('page', this.page);
+                } else {
+                    url.searchParams.delete('page');
+                }
                 
                 window.history.pushState({}, '', url.toString());
             },
 
+            toggleCategory(cat) {
+                this.page = 1;
+                if (this.categories.includes(cat)) {
+                    this.categories = this.categories.filter(c => c !== cat);
+                } else {
+                    this.categories.push(cat);
+                }
+                this.updateCategoryFilter();
+            },
+
             updateCategoryFilter() {
+                this.page = 1;
                 this.fetchFilter();
                 this.updateUrl();
             },
 
             setCondition(cond) {
+                this.page = 1;
                 this.condition = cond;
                 this.fetchFilter();
                 this.updateUrl();
             },
 
             setStatus(stat) {
+                this.page = 1;
                 this.status = stat;
                 this.fetchFilter();
                 this.updateUrl();
             },
 
             setSort(sortVal) {
+                this.page = 1;
                 this.sort = sortVal;
                 this.fetchFilter();
                 this.updateUrl();
@@ -782,6 +1069,8 @@
                 this.minPrice = 0;
                 this.maxPrice = this.maxPriceLimit;
                 this.sort = '';
+                this.page = 1;
+                this.mobileFilterOpen = false;
                 this.fetchFilter();
                 this.updateUrl();
             },
