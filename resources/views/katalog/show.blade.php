@@ -181,11 +181,54 @@
         <!-- Main Content -->
         <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-16 py-8 flex-grow flex flex-col gap-6">
             
-            <!-- Back Navigation -->
-            <a href="{{ route('katalog.index') }}" class="inline-flex items-center gap-2 group text-gray-500 hover:text-[#22AF85] transition-colors cursor-pointer w-fit">
-                <span class="material-symbols-outlined transition-transform group-hover:-translate-x-1">arrow_back</span>
-                <span class="text-sm font-semibold">Kembali ke Katalog</span>
-            </a>
+            <!-- Breadcrumbs Navigation (Big 4 Tech Company Standard) -->
+            <nav aria-label="Breadcrumb" class="w-full">
+                <ol class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold text-gray-500" itemscope itemtype="https://schema.org/BreadcrumbList">
+                    
+                    {{-- 1. Beranda --}}
+                    <li class="flex items-center gap-1.5 sm:gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="{{ route('home') }}" class="hover:text-[#22AF85] transition-colors flex items-center gap-1 text-gray-400 hover:scale-105 active:scale-95" itemprop="item">
+                            <span class="material-symbols-outlined !text-[16px]">home</span>
+                            <span itemprop="name" class="hidden sm:inline">Beranda</span>
+                        </a>
+                        <meta itemprop="position" content="1" />
+                    </li>
+                    <li class="flex items-center text-gray-300 select-none">
+                        <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                    </li>
+                    
+                    {{-- 2. Katalog Donasi --}}
+                    <li class="flex items-center gap-1.5 sm:gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="{{ route('katalog.index') }}" class="hover:text-[#22AF85] transition-colors" itemprop="item">
+                            <span itemprop="name">Donasi</span>
+                        </a>
+                        <meta itemprop="position" content="2" />
+                    </li>
+                    <li class="flex items-center text-gray-300 select-none">
+                        <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                    </li>
+
+                    {{-- 3. Kategori Dinamis --}}
+                    @php
+                        $catLabels = ['sepatu' => 'Sepatu', 'tas' => 'Tas', 'topi' => 'Topi'];
+                        $catLabel = $catLabels[$item->kategori] ?? ucfirst($item->kategori);
+                    @endphp
+                    <li class="flex items-center gap-1.5 sm:gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="{{ route('katalog.index') }}?category={{ $item->kategori }}" class="hover:text-[#22AF85] transition-colors" itemprop="item">
+                            <span itemprop="name">{{ $catLabel }}</span>
+                        </a>
+                        <meta itemprop="position" content="3" />
+                    </li>
+                    <li class="flex items-center text-gray-300 select-none">
+                        <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                    </li>
+
+                    {{-- 4. Halaman Aktif (Nama Produk) --}}
+                    <li class="text-[#22AF85] font-extrabold max-w-[140px] sm:max-w-[350px] truncate" aria-current="page" title="{{ $item->nama }}">
+                        {{ $item->nama }}
+                    </li>
+                </ol>
+            </nav>
 
             <!-- Detail Product Container -->
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 grid grid-cols-1 lg:grid-cols-12">
