@@ -66,6 +66,8 @@
                 <a href="{{ route('warranty.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Garansi</a>
             </div>
 
+            {{-- CTA & Account Buttons --}}
+            <div class="hidden md:flex items-center gap-4">
 
 
                 <div class="relative" x-data="{ openAccount: false }">
@@ -141,6 +143,8 @@
             <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
             <a href="{{ route('warranty.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Garansi</a>
 
+            <div class="pt-2 space-y-2">
+
 
                 <div class="border-t border-gray-100 pt-2 mt-2">
                     @auth
@@ -189,7 +193,7 @@
                 <div class="lg:col-span-5 bg-gray-50 p-6 flex flex-col gap-6 border-b lg:border-b-0 lg:border-r border-gray-200">
                     <!-- Large Primary View -->
                     <div class="relative group aspect-square max-h-[360px] sm:max-h-[450px] w-full rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center p-4 sm:p-8">
-                        <img :src="activeImage" alt="{{ $item->nama }}" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"/>
+                        <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"/>
                         <div class="absolute top-3 left-3 bg-green-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm flex items-center gap-1 z-10">
                             <span class="material-symbols-outlined !text-[12px]">verified</span>
                             Kualitas Terverifikasi
