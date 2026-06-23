@@ -92,11 +92,18 @@
         @endforeach
     </div>
 
-    <!-- Pagination -->
-    @if($items->hasPages())
-        <div class="mt-8 flex justify-center donatur-catalog-pagination">
-            {{ $items->links('components.donatur-pagination') }}
-        </div>
-    @endif
+    <!-- Load More Section -->
+    <div id="load-more-container" class="mt-8 flex flex-col items-center gap-4 w-full py-6 border-t border-gray-150">
+        <p class="text-sm font-semibold text-gray-500">
+            Showing <span class="font-extrabold text-gray-900" id="current-count-display">{{ $items->lastItem() }}</span> of <span class="font-extrabold text-gray-900">{{ $items->total() }}</span> results
+        </p>
+        @if($items->hasMorePages())
+            <button id="load-more-btn" data-next-page="{{ $items->currentPage() + 1 }}"
+                    class="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-500/10 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined !text-[18px]">expand_more</span>
+                Muat Lebih Banyak
+            </button>
+        @endif
+    </div>
 @endif
 

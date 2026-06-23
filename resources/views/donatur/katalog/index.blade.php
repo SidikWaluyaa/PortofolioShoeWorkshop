@@ -758,23 +758,18 @@
                     this.fetchFilter();
                 });
 
-                // Event delegation for AJAX pagination clicks
+                // Event delegation for Load More button clicks
                 const gridContainer = document.getElementById('item-grid-container');
                 if (gridContainer) {
                     gridContainer.addEventListener('click', (e) => {
-                        const anchor = e.target.closest('.pagination-link');
-                        if (anchor) {
+                        const btn = e.target.closest('#load-more-btn');
+                        if (btn) {
                             e.preventDefault();
-                            const href = anchor.getAttribute('href');
-                            if (href) {
-                                const url = new URL(href);
-                                const pageVal = url.searchParams.get('page') || 1;
-                                this.page = parseInt(pageVal);
-                                this.fetchFilter();
+                            const nextPage = parseInt(btn.getAttribute('data-next-page'));
+                            if (nextPage) {
+                                this.page = nextPage;
+                                this.fetchFilter(true);
                                 this.updateUrl();
-                                
-                                // Scroll grid container to top for premium mobile navigation UX
-                                gridContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                             }
                         }
                     });
@@ -790,7 +785,7 @@
                 return map[cond] || cond;
             },
 
-            async fetchFilter() {
+            async fetchFilter(isAppend = false) {
                 this.loading = true;
                 try {
                     const url = new URL("{{ route('donatur.katalog.filter') }}", window.location.origin);
@@ -822,7 +817,24 @@
 
                     if (response.ok) {
                         const html = await response.text();
-                        document.getElementById('item-grid-container').innerHTML = html;
+                        if (isAppend) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newGrid = doc.querySelector('.grid');
+                            const existingGrid = document.querySelector('#item-grid-container .grid');
+                            if (newGrid && existingGrid) {
+                                Array.from(newGrid.children).forEach(card => {
+                                    existingGrid.appendChild(card);
+                                });
+                            }
+                            const newContainer = doc.getElementById('load-more-container');
+                            const existingContainer = document.getElementById('load-more-container');
+                            if (newContainer && existingContainer) {
+                                existingContainer.replaceWith(newContainer);
+                            }
+                        } else {
+                            document.getElementById('item-grid-container').innerHTML = html;
+                        }
                     } else {
                         console.error('Filtering failed');
                     }
