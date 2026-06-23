@@ -63,17 +63,13 @@
             <a href="{{ route('home') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Beranda</a>
             <a href="{{ route('home') }}#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
             <a href="{{ route('portfolio.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Portfolio</a>
+            <a href="{{ route('blog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Artikel</a>
             <a href="{{ route('katalog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Donasi</a>
             <a href="{{ route('tracking.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Tracking</a>
             <a href="{{ route('warranty.index') }}" class="text-sm font-semibold text-[#22AF85] active-nav-border">Garansi</a>
         </div>
 
-        {{-- CTA Button --}}
-        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-           class="hidden md:inline-flex items-center gap-2 px-6 py-2.5 bg-[#FFC232] text-[#1c1c17] text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#FFC232]/20">
-            <span class="material-symbols-outlined !text-[20px]">chat</span>
-            Konsultasi via WhatsApp
-        </a>
+
 
         {{-- Hamburger --}}
         <button @click="open=!open" class="lg:hidden p-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
@@ -93,16 +89,12 @@
         <a href="{{ route('home') }}"         @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Beranda</a>
         <a href="{{ route('home') }}#layanan" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
         <a href="{{ route('portfolio.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Portfolio</a>
+        <a href="{{ route('blog.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Artikel</a>
         <a href="{{ route('katalog.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Donasi</a>
         <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
         <a href="{{ route('warranty.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-[#22AF85] bg-green-50 rounded-lg">Garansi</a>
         <a href="{{ route('home') }}#kontak"  @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Kontak</a>
-        <div class="pt-2">
-            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#FFC232] text-[#1c1c17] text-sm font-bold rounded-lg">
-                <span class="material-symbols-outlined !text-[20px]">chat</span>
-                Konsultasi via WhatsApp
-            </a>
-        </div>
+
     </div>
 </header>
 

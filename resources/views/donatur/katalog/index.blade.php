@@ -1,7 +1,119 @@
 <x-donatur-layout>
     <x-slot name="header">Katalog Donasi</x-slot>
+    <style>
+        /* Hide spin buttons for range-linked number inputs */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
 
     <div x-data="catalogApp()" x-init="initApp()" class="space-y-6 pb-12">
+        @if(isset($activeCampaigns) && $activeCampaigns->isNotEmpty())
+            <div x-data="{
+                activeSlide: 0,
+                slidesCount: {{ $activeCampaigns->count() }},
+                intervalId: null,
+                isMobile: window.innerWidth < 640,
+                startAutoSlide() {
+                    if (this.slidesCount > 1) {
+                        this.intervalId = setInterval(() => {
+                            this.next();
+                        }, 5000);
+                    }
+                },
+                stopAutoSlide() {
+                    if (this.intervalId) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = null;
+                    }
+                },
+                next() {
+                    this.activeSlide = (this.activeSlide + 1) % this.slidesCount;
+                },
+                prev() {
+                    this.activeSlide = (this.activeSlide - 1 + this.slidesCount) % this.slidesCount;
+                }
+            }"
+            x-init="startAutoSlide()"
+            @mouseenter="stopAutoSlide()"
+            @mouseleave="startAutoSlide()"
+            @resize.window="isMobile = window.innerWidth < 640"
+            class="w-full relative group overflow-hidden">
+                
+                <!-- Carousel Slides Container -->
+                <div class="flex transition-transform duration-500 ease-in-out w-full"
+                     :style="isMobile ? `transform: translateX(calc(-${activeSlide * 82}% + 9%))` : `transform: translateX(-${activeSlide * 100}%)`">
+                    @foreach($activeCampaigns as $index => $campaign)
+                        <div class="w-[82%] sm:w-full flex-shrink-0 px-2 sm:px-0 transition-all duration-500"
+                             :class="activeSlide === {{ $index }} ? 'opacity-100 scale-100' : 'opacity-60 scale-95 sm:scale-100 sm:opacity-100'">
+                            
+                            @if($campaign->type === 'text_only')
+                                <!-- Text Only Glassmorphic Banner -->
+                                <div class="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-50/50 to-emerald-500/5 p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-all hover:shadow-md aspect-[12/5] sm:aspect-auto h-auto sm:h-auto justify-center">
+                                    <div class="absolute -right-16 -top-16 w-36 h-36 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                                    <div class="space-y-1 relative z-10 flex-grow max-w-3xl">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-700 uppercase tracking-wider">
+                                            Promosi
+                                        </span>
+                                        <h3 class="text-xs sm:text-lg md:text-xl font-extrabold text-gray-900 truncate">
+                                            {{ $campaign->title }}
+                                        </h3>
+                                        <p class="text-[10px] sm:text-xs md:text-sm text-gray-500 line-clamp-1 sm:line-clamp-none leading-relaxed font-normal">
+                                            {{ $campaign->promo_text }}
+                                        </p>
+                                    </div>
+                                    <div class="flex-shrink-0 relative z-10 hidden sm:block">
+                                        <a href="{{ route('campaigns.click', $campaign->id) }}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-6 py-3.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 active:scale-95 transition-all shadow-md shadow-emerald-500/10">
+                                            {{ $campaign->cta_text }}
+                                            <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Image Banner (Uploaded or External Link) -->
+                                <div class="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all group/item">
+                                    <!-- Campaign Banner Image -->
+                                    <a href="{{ route('campaigns.click', $campaign->id) }}" target="_blank" class="block relative overflow-hidden w-full">
+                                        <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/5 transition-colors z-10"></div>
+                                        <img src="{{ $campaign->banner_url }}" alt="{{ $campaign->title }}" class="w-full h-auto block group-hover/item:scale-[1.005] transition-transform duration-500" />
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Navigation Controls (Only show if multiple slides) -->
+                <div x-show="slidesCount > 1" style="display: none;">
+                    <!-- Prev Button -->
+                    <button @click="prev()" 
+                            class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 border border-gray-200 text-gray-700 shadow-md flex items-center justify-center hover:bg-white active:scale-90 transition-all opacity-0 group-hover:opacity-100 z-20">
+                        <span class="material-symbols-outlined !text-[24px]">chevron_left</span>
+                    </button>
+                    <!-- Next Button -->
+                    <button @click="next()" 
+                            class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 border border-gray-200 text-gray-700 shadow-md flex items-center justify-center hover:bg-white active:scale-90 transition-all opacity-0 group-hover:opacity-100 z-20">
+                        <span class="material-symbols-outlined !text-[24px]">chevron_right</span>
+                    </button>
+
+                    <!-- Indicators -->
+                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+                        <template x-for="idx in Array.from({ length: slidesCount }, (_, i) => i)" :key="idx">
+                            <button @click="activeSlide = idx" 
+                                    :class="activeSlide === idx ? 'w-6 bg-emerald-500' : 'w-2 bg-gray-300 hover:bg-gray-400'"
+                                    class="h-2 rounded-full transition-all duration-300"></button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <!-- Sidebar Filter -->
@@ -26,25 +138,68 @@
                     </h3>
                     <div class="flex flex-col gap-3">
                         <label class="flex items-center gap-3 cursor-pointer group select-none">
-                            <input type="radio" name="kategori_filter" :checked="category === ''" @change="setCategory('')"
-                                   class="w-5 h-5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
-                            <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Semua Kategori</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer group select-none">
-                            <input type="radio" name="kategori_filter" :checked="category === 'sepatu'" @change="setCategory('sepatu')"
+                            <input type="checkbox" value="sepatu" x-model="categories" @change="updateCategoryFilter()"
                                    class="w-5 h-5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
                             <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Sepatu</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group select-none">
-                            <input type="radio" name="kategori_filter" :checked="category === 'tas'" @change="setCategory('tas')"
+                            <input type="checkbox" value="tas" x-model="categories" @change="updateCategoryFilter()"
                                    class="w-5 h-5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
                             <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Tas</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group select-none">
-                            <input type="radio" name="kategori_filter" :checked="category === 'topi'" @change="setCategory('topi')"
+                            <input type="checkbox" value="topi" x-model="categories" @change="updateCategoryFilter()"
                                    class="w-5 h-5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
                             <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Topi</span>
                         </label>
+                    </div>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gray-400 !text-[18px]">payments</span>
+                        Harga Jasa Reparasi
+                    </h3>
+                    <div class="relative min-h-[40px] mt-2 px-1">
+                        <!-- Track background -->
+                        <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
+                        <!-- Track active range -->
+                        <div class="absolute h-2 rounded bg-emerald-500 top-1/2 -translate-y-1/2"
+                             :style="`left: ${(minPrice / maxPriceLimit) * 100}%; right: ${100 - (maxPrice / maxPriceLimit) * 100}%`"></div>
+                        
+                        <!-- HTML Range inputs -->
+                        <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="minPrice"
+                               @input="if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
+                               class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-emerald-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-emerald-500 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                        
+                        <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="maxPrice"
+                               @input="if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
+                               class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-emerald-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-emerald-500 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                    </div>
+                    <div class="flex items-center justify-between gap-3 mt-4">
+                        <!-- Min Price Input Card -->
+                        <div class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition-all">
+                            <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <span class="text-xs font-bold text-gray-400">Rp</span>
+                                <input type="number" x-model.number="minPrice" @input="if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
+                                       class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                            </div>
+                        </div>
+
+                        <!-- Separator -->
+                        <span class="text-gray-400 text-xs font-medium select-none">—</span>
+
+                        <!-- Max Price Input Card -->
+                        <div class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition-all">
+                            <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <span class="text-xs font-bold text-gray-400">Rp</span>
+                                <input type="number" x-model.number="maxPrice" @input="if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
+                                       class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -77,10 +232,60 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- Status Filter -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gray-400 !text-[18px]">rule</span>
+                        Status
+                    </h3>
+                    <div class="flex flex-col gap-3">
+                        <label class="flex items-center gap-3 cursor-pointer group select-none">
+                            <input type="radio" name="status_filter" :checked="status === ''" @change="setStatus('')"
+                                   class="w-5 h-5 border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Semua Status</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group select-none">
+                            <input type="radio" name="status_filter" :checked="status === 'tersedia'" @change="setStatus('tersedia')"
+                                   class="w-5 h-5 border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Tersedia</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group select-none">
+                            <input type="radio" name="status_filter" :checked="status === 'disalurkan'" @change="setStatus('disalurkan')"
+                                   class="w-5 h-5 border-gray-300 text-emerald-500 focus:ring-emerald-500"/>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">Sudah Disalurkan</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Hapus Semua Filter -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                    <button @click="clearAll()"
+                            class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl text-sm font-bold active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <span class="material-symbols-outlined !text-[18px]">delete_sweep</span>
+                        HAPUS SEMUA
+                    </button>
+                </div>
             </aside>
 
             <!-- Product Grid Area -->
             <div class="lg:col-span-3 relative">
+                <!-- Sorting & Header Info -->
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                    <p class="text-sm font-semibold text-gray-500">
+                        Menampilkan katalog donasi hasil restorasi terbaik
+                    </p>
+                    <div class="flex items-center gap-2 self-end sm:self-auto">
+                        <label for="sort-dropdown" class="text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Urutkan:</label>
+                        <select id="sort-dropdown" x-model="sort" @change="setSort(sort)"
+                                class="text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-xl px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none cursor-pointer shadow-sm">
+                            <option value="">Terbaru (Default)</option>
+                            <option value="harga_termurah">Harga Reparasi Termurah</option>
+                            <option value="harga_termahal">Harga Reparasi Termahal</option>
+                            <option value="rate_kelayakan">Rate Kelayakan (%)</option>
+                        </select>
+                    </div>
+                </div>
                 <!-- Loading Overlay -->
                 <div x-show="loading" x-transition class="absolute inset-0 bg-white/70 z-10 flex items-center justify-center rounded-2xl" style="display: none;">
                     <div class="flex flex-col items-center gap-3">
@@ -227,7 +432,7 @@
                     <h3 class="text-xl font-bold text-gray-900">Pengajuan Berhasil!</h3>
                     <p class="text-xs text-gray-500 mt-2 leading-relaxed">Data Anda telah kami simpan. Hubungi WhatsApp Admin untuk memverifikasi dan mempercepat proses pengiriman.</p>
                 </div>
-                <a class="block w-full py-4 bg-[#25D366] text-white rounded-xl text-sm font-bold hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
+                <a class="w-full py-4 bg-[#25D366] text-white rounded-xl text-sm font-bold hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
                    :href="whatsappUrl" target="_blank">
                     Hubungi via WhatsApp
                 </a>
@@ -240,8 +445,13 @@
     function catalogApp() {
         return {
             search: '',
-            category: '',
+            categories: [],
             condition: '',
+            status: '',
+            minPrice: 0,
+            maxPrice: {{ $maxPriceLimit }},
+            maxPriceLimit: {{ $maxPriceLimit }},
+            sort: '',
             loading: false,
             detailOpen: false,
             formOpen: false,
@@ -263,11 +473,39 @@
             },
             generalError: '',
 
+            debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            },
+
             initApp() {
                 const urlParams = new URLSearchParams(window.location.search);
                 this.search = urlParams.get('search') || '';
-                this.category = urlParams.get('category') || '';
+                
+                const catParam = urlParams.get('category');
+                if (catParam) {
+                    if (catParam === 'none') {
+                        this.categories = [];
+                    } else {
+                        this.categories = catParam.split(',').filter(c => c !== '');
+                    }
+                } else {
+                    this.categories = ['sepatu', 'tas', 'topi'];
+                }
+                
                 this.condition = urlParams.get('condition') || '';
+                this.status = urlParams.get('status') || '';
+                this.minPrice = urlParams.get('min_price') ? parseInt(urlParams.get('min_price')) : 0;
+                this.maxPrice = urlParams.get('max_price') ? parseInt(urlParams.get('max_price')) : this.maxPriceLimit;
+                this.sort = urlParams.get('sort') || '';
+                
+                this.debouncedFetchFilter = this.debounce(() => {
+                    this.fetchFilter();
+                    this.updateUrl();
+                }, 300);
                 
                 window.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
@@ -291,8 +529,23 @@
                 try {
                     const url = new URL("{{ route('donatur.katalog.filter') }}", window.location.origin);
                     if (this.search) url.searchParams.set('search', this.search);
-                    if (this.category) url.searchParams.set('category', this.category);
+                    
+                    if (this.categories.length === 0) {
+                        url.searchParams.set('category', 'none');
+                    } else if (this.categories.length < 3) {
+                        url.searchParams.set('category', this.categories.join(','));
+                    }
+                    
                     if (this.condition) url.searchParams.set('condition', this.condition);
+                    if (this.status) url.searchParams.set('status', this.status);
+                    
+                    const minVal = parseInt(this.minPrice);
+                    if (!isNaN(minVal) && minVal > 0) url.searchParams.set('min_price', minVal);
+                    
+                    const maxVal = parseInt(this.maxPrice);
+                    if (!isNaN(maxVal) && maxVal < this.maxPriceLimit) url.searchParams.set('max_price', maxVal);
+                    
+                    if (this.sort) url.searchParams.set('sort', this.sort);
 
                     const response = await fetch(url.toString(), {
                         headers: {
@@ -313,30 +566,94 @@
                 }
             },
 
-            setCategory(cat) {
-                this.category = cat;
-                this.fetchFilter();
-                
+            updateUrl() {
                 const url = new URL(window.location.href);
-                if (cat) {
-                    url.searchParams.set('category', cat);
+                if (this.search) {
+                    url.searchParams.set('search', this.search);
+                } else {
+                    url.searchParams.delete('search');
+                }
+                
+                if (this.categories.length === 0) {
+                    url.searchParams.set('category', 'none');
+                } else if (this.categories.length < 3) {
+                    url.searchParams.set('category', this.categories.join(','));
                 } else {
                     url.searchParams.delete('category');
                 }
+                
+                if (this.condition) {
+                    url.searchParams.set('condition', this.condition);
+                } else {
+                    url.searchParams.delete('condition');
+                }
+                
+                if (this.status) {
+                    url.searchParams.set('status', this.status);
+                } else {
+                    url.searchParams.delete('status');
+                }
+                
+                const minVal = parseInt(this.minPrice);
+                if (!isNaN(minVal) && minVal > 0) {
+                    url.searchParams.set('min_price', minVal);
+                } else {
+                    url.searchParams.delete('min_price');
+                }
+                
+                const maxVal = parseInt(this.maxPrice);
+                if (!isNaN(maxVal) && maxVal < this.maxPriceLimit) {
+                    url.searchParams.set('max_price', maxVal);
+                } else {
+                    url.searchParams.delete('max_price');
+                }
+                
+                if (this.sort) {
+                    url.searchParams.set('sort', this.sort);
+                } else {
+                    url.searchParams.delete('sort');
+                }
+                
                 window.history.pushState({}, '', url.toString());
+            },
+
+            updateCategoryFilter() {
+                this.fetchFilter();
+                this.updateUrl();
             },
 
             setCondition(cond) {
                 this.condition = cond;
                 this.fetchFilter();
-                
-                const url = new URL(window.location.href);
-                if (cond) {
-                    url.searchParams.set('condition', cond);
-                } else {
-                    url.searchParams.delete('condition');
-                }
-                window.history.pushState({}, '', url.toString());
+                this.updateUrl();
+            },
+
+            setStatus(stat) {
+                this.status = stat;
+                this.fetchFilter();
+                this.updateUrl();
+            },
+
+            setSort(sortVal) {
+                this.sort = sortVal;
+                this.fetchFilter();
+                this.updateUrl();
+            },
+
+            clearAll() {
+                this.search = '';
+                this.categories = ['sepatu', 'tas', 'topi'];
+                this.condition = '';
+                this.status = '';
+                this.minPrice = 0;
+                this.maxPrice = this.maxPriceLimit;
+                this.sort = '';
+                this.fetchFilter();
+                this.updateUrl();
+            },
+
+            formatRupiah(val) {
+                return 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(val);
             },
 
             openDetail(item) {

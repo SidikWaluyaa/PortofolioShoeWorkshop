@@ -43,8 +43,8 @@ class DonationService
      */
     public function getByUser(int $userId, int $perPage = 10)
     {
-        return Donation::where('user_id', $userId)
-            ->orderByDesc('created_at')
+        return Donation::where((string) 'user_id', $userId)
+            ->orderByDesc((string) 'created_at')
             ->paginate($perPage);
     }
 
@@ -53,10 +53,10 @@ class DonationService
      */
     public function getAllForAdmin(int $perPage = 15, ?string $statusFilter = null)
     {
-        $query = Donation::with('user', 'verifier')->orderByDesc('created_at');
+        $query = Donation::with('user', (string) 'verifier')->orderByDesc((string) 'created_at');
 
         if ($statusFilter) {
-            $query->where('status', $statusFilter);
+            $query->where((string) 'status', $statusFilter);
         }
 
         return $query->paginate($perPage);

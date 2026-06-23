@@ -34,7 +34,7 @@
         'Utama': {{ request()->routeIs('admin.dashboard*') || request()->routeIs('admin.settings*') ? 'true' : 'false' }},
         'Transaksi & Reparasi': {{ request()->routeIs('admin.tracking*') || request()->routeIs('admin.warranty-claims*') || request()->routeIs('admin.donations*') || request()->routeIs('admin.donation-items*') || request()->routeIs('admin.donation-requests*') ? 'true' : 'false' }},
         'Loyalitas Donatur': {{ request()->routeIs('admin.checkins*') || request()->routeIs('admin.rewards*') ? 'true' : 'false' }},
-        'Konten Website': {{ request()->routeIs('admin.hero*') || request()->routeIs('admin.services*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.reviews*') || request()->routeIs('admin.workflow*') || request()->routeIs('admin.posts*') || request()->routeIs('admin.trust*') || request()->routeIs('admin.about*') || request()->routeIs('admin.cta*') ? 'true' : 'false' }}
+        'Konten Website': {{ request()->routeIs('admin.hero*') || request()->routeIs('admin.services*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.reviews*') || request()->routeIs('admin.workflow*') || request()->routeIs('admin.posts*') || request()->routeIs('admin.trust*') || request()->routeIs('admin.about*') || request()->routeIs('admin.cta*') || request()->routeIs('admin.campaigns*') ? 'true' : 'false' }}
     }
 }">
 <div class="flex h-screen overflow-hidden">
@@ -141,6 +141,7 @@
                         ['route' => 'admin.trust.index', 'label' => 'Trust Strip', 'icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'],
                         ['route' => 'admin.about.index', 'label' => 'Tentang Kami', 'icon' => 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
                         ['route' => 'admin.cta.index', 'label' => 'Call to Action', 'icon' => 'M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5'],
+                        ['route' => 'admin.campaigns.index', 'label' => 'Iklan & Kampanye', 'icon' => 'M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z'],
                     ]
                 ]
             ];

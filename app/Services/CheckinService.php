@@ -24,7 +24,7 @@ class CheckinService
         $today = Carbon::today();
 
         // Check if already checked in today
-        $existingCheckin = DailyLogin::where('user_id', $user->id)
+        $existingCheckin = DailyLogin::where((string) 'user_id', $user->id)
             ->whereDate('tanggal_checkin', $today)
             ->first();
 
@@ -33,8 +33,8 @@ class CheckinService
         }
 
         // Get the last check-in for this user (that hasn't been part of a completed+claimed cycle)
-        $lastCheckin = DailyLogin::where('user_id', $user->id)
-            ->orderByDesc('tanggal_checkin')
+        $lastCheckin = DailyLogin::where((string) 'user_id', $user->id)
+            ->orderByDesc((string) 'tanggal_checkin')
             ->first();
 
         $mingguKe = 1;
@@ -89,8 +89,8 @@ class CheckinService
      */
     public function getStreakStatus(int $userId): array
     {
-        $lastCheckin = DailyLogin::where('user_id', $userId)
-            ->orderByDesc('tanggal_checkin')
+        $lastCheckin = DailyLogin::where((string) 'user_id', $userId)
+            ->orderByDesc((string) 'tanggal_checkin')
             ->first();
 
         if (!$lastCheckin) {
@@ -116,19 +116,19 @@ class CheckinService
         }
 
         // Get all check-ins for the current minggu_ke
-        $checkins = DailyLogin::where('user_id', $userId)
-            ->where('minggu_ke', $currentMingguKe)
-            ->orderBy('hari_ke')
+        $checkins = DailyLogin::where((string) 'user_id', $userId)
+            ->where((string) 'minggu_ke', $currentMingguKe)
+            ->orderBy((string) 'hari_ke')
             ->get();
 
         // Streak is complete if there are 7 approved check-ins
-        $approvedCount = $checkins->where('status', 'approved')->count();
+        $approvedCount = $checkins->where((string) 'status', 'approved')->count();
         $streakComplete = $approvedCount >= 7;
 
         // Can claim if streak complete and not yet claimed
-        $canClaim = $streakComplete && !$checkins->contains('reward_claimed', true);
+        $canClaim = $streakComplete && !$checkins->contains((string) 'reward_claimed', true);
 
-        $alreadyCheckedInToday = DailyLogin::where('user_id', $userId)
+        $alreadyCheckedInToday = DailyLogin::where((string) 'user_id', $userId)
             ->whereDate('tanggal_checkin', Carbon::today())
             ->exists();
 
@@ -156,8 +156,8 @@ class CheckinService
         $checkin->update(['status' => 'rejected']);
 
         // Also reject all other check-ins in the same cycle
-        DailyLogin::where('user_id', $checkin->user_id)
-            ->where('minggu_ke', $checkin->minggu_ke)
+        DailyLogin::where((string) 'user_id', $checkin->user_id)
+            ->where((string) 'minggu_ke', $checkin->minggu_ke)
             ->update(['status' => 'rejected']);
 
         return $checkin;
@@ -169,9 +169,9 @@ class CheckinService
     public function getPendingCheckins(int $perPage = 20)
     {
         return DailyLogin::with('user')
-            ->where('hari_ke', 7)
-            ->where('status', 'pending')
-            ->orderByDesc('created_at')
+            ->where((string) 'hari_ke', 7)
+            ->where((string) 'status', 'pending')
+            ->orderByDesc((string) 'created_at')
             ->paginate($perPage);
     }
 
@@ -181,15 +181,15 @@ class CheckinService
     public function getAllCheckins(int $perPage = 20, ?string $statusFilter = null, ?string $hariFilter = null)
     {
         $query = DailyLogin::with('user')
-            ->orderByDesc('created_at')
-            ->orderByDesc('id');
+            ->orderByDesc((string) 'created_at')
+            ->orderByDesc((string) 'id');
 
         if ($hariFilter && $hariFilter !== 'all') {
-            $query->where('hari_ke', (int)$hariFilter);
+            $query->where((string) 'hari_ke', (int)$hariFilter);
         }
 
         if ($statusFilter) {
-            $query->where('status', $statusFilter);
+            $query->where((string) 'status', $statusFilter);
         }
 
         return $query->paginate($perPage);

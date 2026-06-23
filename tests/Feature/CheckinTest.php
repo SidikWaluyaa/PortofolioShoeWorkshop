@@ -162,9 +162,9 @@ class CheckinTest extends TestCase
         $this->checkinService->reject($checkin7);
 
         // Assert all check-ins for this minggu_ke are now rejected
-        $rejectedCount = DailyLogin::where('user_id', $user->id)
-            ->where('minggu_ke', 1)
-            ->where('status', 'rejected')
+        $rejectedCount = DailyLogin::where((string) 'user_id', $user->id)
+            ->where((string) 'minggu_ke', 1)
+            ->where((string) 'status', 'rejected')
             ->count();
 
         $this->assertEquals(7, $rejectedCount);

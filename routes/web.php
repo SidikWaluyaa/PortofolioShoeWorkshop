@@ -21,6 +21,7 @@ Route::get('/donasi-katalog/{item}', [\App\Http\Controllers\DonationCatalogContr
 Route::get('/donasi-katalog/{item}/ajukan', [\App\Http\Controllers\DonationCatalogController::class, 'requestForm'])->name('katalog.request.form');
 Route::get('/donasi-katalog/{item}/sukses/{requestId}', [\App\Http\Controllers\DonationCatalogController::class, 'requestSuccess'])->name('katalog.success');
 Route::post('/donasi-katalog/{item}/request', [\App\Http\Controllers\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
+Route::get('/campaigns/{campaign}/click', [\App\Http\Controllers\CampaignClickController::class, 'trackClick'])->name('campaigns.click');
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
@@ -103,6 +104,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     // Catalog Items & Requests Management
     Route::resource('donation-items', \App\Http\Controllers\Admin\DonationItemController::class);
     Route::resource('donation-requests', \App\Http\Controllers\Admin\DonationRequestController::class)->only(['index', 'update']);
+    Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
 });
 
 Route::middleware('auth')->group(function () {

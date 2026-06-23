@@ -94,6 +94,41 @@ class DonationCatalogTest extends TestCase
         $response->assertDontSee('Sepatu Nike Air');
     }
 
+    public function test_catalog_filtering_by_status(): void
+    {
+        $item1 = DonationItem::create([
+            'nama' => 'Sepatu Compass Baru',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+
+        $item2 = DonationItem::create([
+            'nama' => 'Sepatu Compass Lama',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'disalurkan',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+
+        // Filter by 'tersedia'
+        $responseTersedia = $this->get(route('katalog.filter', ['status' => 'tersedia']), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        $responseTersedia->assertStatus(200);
+        $responseTersedia->assertSee('Sepatu Compass Baru');
+        $responseTersedia->assertDontSee('Sepatu Compass Lama');
+
+        // Filter by 'disalurkan'
+        $responseDisalurkan = $this->get(route('katalog.filter', ['status' => 'disalurkan']), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        $responseDisalurkan->assertStatus(200);
+        $responseDisalurkan->assertSee('Sepatu Compass Lama');
+        $responseDisalurkan->assertDontSee('Sepatu Compass Baru');
+    }
+
     public function test_catalog_searching_by_name(): void
     {
         $item1 = DonationItem::create([
@@ -250,5 +285,130 @@ class DonationCatalogTest extends TestCase
         $responseDetail->assertSee('Rp 155.000'); // Sum of 125000 + 30000
         $responseDetail->assertSee('4 Hari');      // Max of 4 and 2
         $responseDetail->assertSee('95%');
+    }
+
+    public function test_catalog_multi_category_filtering(): void
+    {
+        DonationItem::create([
+            'nama' => 'Sepatu Compass',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+        DonationItem::create([
+            'nama' => 'Tas Kulit',
+            'brand' => 'Gucci',
+            'kategori' => 'tas',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/leather_bag.png',
+        ]);
+        DonationItem::create([
+            'nama' => 'Topi Vintage',
+            'brand' => 'Adidas',
+            'kategori' => 'topi',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+
+        // Filter by 'sepatu,tas'
+        $response = $this->get(route('katalog.filter', ['category' => 'sepatu,tas']), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertSee('Sepatu Compass');
+        $response->assertSee('Tas Kulit');
+        $response->assertDontSee('Topi Vintage');
+    }
+
+    public function test_catalog_price_range_filtering(): void
+    {
+        $itemCheap = DonationItem::create([
+            'nama' => 'Sepatu Murah',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+        $itemCheap->reparationServices()->create([
+            'jasa_harga' => 20000,
+        ]);
+
+        $itemExpensive = DonationItem::create([
+            'nama' => 'Sepatu Mahal',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+        $itemExpensive->reparationServices()->create([
+            'jasa_harga' => 150000,
+        ]);
+
+        // Filter min_price = 50000
+        $responseMin = $this->get(route('katalog.filter', ['min_price' => 50000]), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        $responseMin->assertSee('Sepatu Mahal');
+        $responseMin->assertDontSee('Sepatu Murah');
+
+        // Filter max_price = 50000
+        $responseMax = $this->get(route('katalog.filter', ['max_price' => 50000]), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        $responseMax->assertSee('Sepatu Murah');
+        $responseMax->assertDontSee('Sepatu Mahal');
+    }
+
+    public function test_catalog_sorting_options(): void
+    {
+        $item1 = DonationItem::create([
+            'nama' => 'Sepatu Pertama',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'score_kelayakan' => 60,
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+        $item1->reparationServices()->create([
+            'jasa_harga' => 100000,
+        ]);
+
+        $item2 = DonationItem::create([
+            'nama' => 'Sepatu Kedua',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'score_kelayakan' => 90,
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+        $item2->reparationServices()->create([
+            'jasa_harga' => 50000,
+        ]);
+
+        // Sort by 'harga_termurah'
+        $responseCheap = $this->get(route('katalog.filter', ['sort' => 'harga_termurah']), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        // HTML order check: 'Sepatu Kedua' should appear before 'Sepatu Pertama'
+        $htmlCheap = $responseCheap->getContent();
+        $posSecondCheap = strpos($htmlCheap, 'Sepatu Kedua');
+        $posFirstCheap = strpos($htmlCheap, 'Sepatu Pertama');
+        $this->assertTrue($posSecondCheap < $posFirstCheap);
+
+        // Sort by 'harga_termahal'
+        $responseExpensive = $this->get(route('katalog.filter', ['sort' => 'harga_termahal']), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        $htmlExpensive = $responseExpensive->getContent();
+        $posSecondExpensive = strpos($htmlExpensive, 'Sepatu Kedua');
+        $posFirstExpensive = strpos($htmlExpensive, 'Sepatu Pertama');
+        $this->assertTrue($posFirstExpensive < $posSecondExpensive);
+
+        // Sort by 'rate_kelayakan'
+        $responseKelayakan = $this->get(route('katalog.filter', ['sort' => 'rate_kelayakan']), [
+            'HTTP_X-Requested-With' => 'XMLHttpRequest'
+        ]);
+        $htmlKelayakan = $responseKelayakan->getContent();
+        $posSecondKelayakan = strpos($htmlKelayakan, 'Sepatu Kedua'); // 90%
+        $posFirstKelayakan = strpos($htmlKelayakan, 'Sepatu Pertama'); // 60%
+        $this->assertTrue($posSecondKelayakan < $posFirstKelayakan);
     }
 }

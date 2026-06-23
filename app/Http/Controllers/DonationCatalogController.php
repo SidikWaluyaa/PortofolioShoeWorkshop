@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\DonationItem;
 use App\Models\DonationRequest;
+use App\Models\Campaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ class DonationCatalogController extends Controller
     {
         $categories = ['sepatu', 'tas', 'topi'];
         $conditions = ['baru', 'seperti_baru', 'sudah_diperbaiki'];
+        $statuses = ['tersedia', 'disalurkan'];
         
         // Build query for initial render
         $query = DonationItem::query();
@@ -32,22 +34,83 @@ class DonationCatalogController extends Controller
             });
         }
 
-        if ($request->filled('category') && in_array($request->input('category'), $categories)) {
-            $query->where('kategori', $request->input('category'));
+        if ($request->filled('category')) {
+            $selectedCategories = explode(',', $request->input('category'));
+            $validCategories = array_intersect($selectedCategories, $categories);
+            if (!empty($validCategories)) {
+                $query->whereIn('kategori', $validCategories);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($request->filled('condition') && in_array($request->input('condition'), $conditions)) {
-            $query->where('kondisi', $request->input('condition'));
+            $query->where((string) 'kondisi', $request->input('condition'));
         }
 
-        // Ordered by status 'tersedia' first (descending alphabetically puts 't' before 'd'), then latest
-        $items = $query->orderBy('status', 'desc')
-                       ->latest()
-                       ->paginate(12);
+        if ($request->filled('status') && in_array($request->input('status'), $statuses)) {
+            $query->where((string) 'status', $request->input('status'));
+        }
+
+        // Include total reparation price sum in query
+        $query->withSum('reparationServices as total_reparation_price', 'jasa_harga');
+
+        if ($request->filled('min_price')) {
+            $minPrice = (int) $request->input('min_price');
+            $query->where(function ($sub) use ($minPrice) {
+                $sub->selectRaw('COALESCE(SUM(jasa_harga), 0)')
+                    ->from('donation_item_services')
+                    ->whereColumn('donation_item_id', 'donation_items.id');
+            }, '>=', $minPrice);
+        }
+
+        if ($request->filled('max_price')) {
+            $maxPrice = (int) $request->input('max_price');
+            $query->where(function ($sub) use ($maxPrice) {
+                $sub->selectRaw('COALESCE(SUM(jasa_harga), 0)')
+                    ->from('donation_item_services')
+                    ->whereColumn('donation_item_id', 'donation_items.id');
+            }, '<=', $maxPrice);
+        }
+
+        // Prioritize status 'tersedia' first, then sort selection
+        $query->orderBy((string) 'status', 'desc');
+
+        if ($request->filled('sort')) {
+            $sort = $request->input('sort');
+            if ($sort === 'harga_termurah') {
+                $query->orderBy((string) 'total_reparation_price', 'asc');
+            } elseif ($sort === 'harga_termahal') {
+                $query->orderBy((string) 'total_reparation_price', 'desc');
+            } elseif ($sort === 'rate_kelayakan') {
+                $query->orderBy((string) 'score_kelayakan', 'desc');
+            } else {
+                $query->latest();
+            }
+        } else {
+            $query->latest();
+        }
+
+        $items = $query->paginate(12);
 
         $settings = Setting::pluck('value', 'key')->all();
 
-        return view('katalog.index', compact('items', 'categories', 'settings'));
+        // Calculate dynamic maximum price limit for slider
+        $maxPriceDb = (int) DB::table((string) 'donation_item_services')
+            ->selectRaw('donation_item_id, SUM(jasa_harga) as total')
+            ->groupBy('donation_item_id')
+            ->pluck('total')
+            ->max() ?? 500000;
+        $maxPriceLimit = max($maxPriceDb, 100000);
+
+        // Fetch active campaigns for top of catalog (rendered as carousel slider)
+        $activeCampaigns = Campaign::active()->where((string) 'position', 'catalog_top')->get();
+        foreach ($activeCampaigns as $campaign) {
+            $campaign->increment('views_count');
+        }
+        $activeCampaign = $activeCampaigns->first(); // Backwards compatibility for tests
+
+        return view('katalog.index', compact('items', 'categories', 'settings', 'activeCampaigns', 'activeCampaign', 'maxPriceLimit'));
     }
 
     /**
@@ -58,8 +121,8 @@ class DonationCatalogController extends Controller
         $settings = Setting::pluck('value', 'key')->all();
         
         // Fetch 4 other latest donation items, excluding current item, prioritized by status 'tersedia'
-        $otherItems = DonationItem::where('id', '!=', $item->id)
-            ->orderBy('status', 'desc')
+        $otherItems = DonationItem::where((string) 'id', '!=', $item->id)
+            ->orderBy((string) 'status', 'desc')
             ->latest()
             ->take(4)
             ->get();
@@ -103,6 +166,7 @@ class DonationCatalogController extends Controller
     {
         $categories = ['sepatu', 'tas', 'topi'];
         $conditions = ['baru', 'seperti_baru', 'sudah_diperbaiki'];
+        $statuses = ['tersedia', 'disalurkan'];
         $query = DonationItem::query();
 
         if ($request->filled('search')) {
@@ -114,17 +178,64 @@ class DonationCatalogController extends Controller
             });
         }
 
-        if ($request->filled('category') && in_array($request->input('category'), $categories)) {
-            $query->where('kategori', $request->input('category'));
+        if ($request->filled('category')) {
+            $selectedCategories = explode(',', $request->input('category'));
+            $validCategories = array_intersect($selectedCategories, $categories);
+            if (!empty($validCategories)) {
+                $query->whereIn('kategori', $validCategories);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($request->filled('condition') && in_array($request->input('condition'), $conditions)) {
-            $query->where('kondisi', $request->input('condition'));
+            $query->where((string) 'kondisi', $request->input('condition'));
         }
 
-        $items = $query->orderBy('status', 'desc')
-                       ->latest()
-                       ->paginate(12);
+        if ($request->filled('status') && in_array($request->input('status'), $statuses)) {
+            $query->where((string) 'status', $request->input('status'));
+        }
+
+        // Include total reparation price sum in query
+        $query->withSum('reparationServices as total_reparation_price', 'jasa_harga');
+
+        if ($request->filled('min_price')) {
+            $minPrice = (int) $request->input('min_price');
+            $query->where(function ($sub) use ($minPrice) {
+                $sub->selectRaw('COALESCE(SUM(jasa_harga), 0)')
+                    ->from('donation_item_services')
+                    ->whereColumn('donation_item_id', 'donation_items.id');
+            }, '>=', $minPrice);
+        }
+
+        if ($request->filled('max_price')) {
+            $maxPrice = (int) $request->input('max_price');
+            $query->where(function ($sub) use ($maxPrice) {
+                $sub->selectRaw('COALESCE(SUM(jasa_harga), 0)')
+                    ->from('donation_item_services')
+                    ->whereColumn('donation_item_id', 'donation_items.id');
+            }, '<=', $maxPrice);
+        }
+
+        // Prioritize status 'tersedia' first, then sort selection
+        $query->orderBy((string) 'status', 'desc');
+
+        if ($request->filled('sort')) {
+            $sort = $request->input('sort');
+            if ($sort === 'harga_termurah') {
+                $query->orderBy((string) 'total_reparation_price', 'asc');
+            } elseif ($sort === 'harga_termahal') {
+                $query->orderBy((string) 'total_reparation_price', 'desc');
+            } elseif ($sort === 'rate_kelayakan') {
+                $query->orderBy((string) 'score_kelayakan', 'desc');
+            } else {
+                $query->latest();
+            }
+        } else {
+            $query->latest();
+        }
+
+        $items = $query->paginate(12);
 
         // Return the rendered partial HTML grid
         return view('katalog.partials.item-grid', compact('items'))->render();

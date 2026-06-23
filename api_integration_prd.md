@@ -7,11 +7,13 @@ This document outlines the Product Requirements and API Integration Specificatio
 ## 1. Product Requirements (PRD)
 
 ### Objectives
+
 - Allow customers to log in using their phone number on the sibling website.
 - Display a comprehensive timeline/history of customer shoe repairs (both completed and ongoing).
 - Expose detailed shoe status, repair services applied, and uploaded photos (before/after/QC stages) directly to the customer.
 
 ### Security Model
+
 - **Authentication**: Backend-to-backend communication. The sibling website verifies the customer's phone number (via OTP/SMS/Password) on its side, and then fetches the data securely from the main system backend using a secret client API key.
 - **Abuse Prevention**: Throttling/Rate Limiting is enforced on the endpoint to prevent brute-force attacks on phone numbers.
 
@@ -20,9 +22,11 @@ This document outlines the Product Requirements and API Integration Specificatio
 ## 2. API Specification
 
 ### Endpoint
+
 `GET /api/v1/customer-portal/orders`
 
 ### Request Headers
+
 | Header | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `X-API-KEY` | String | Yes | The secret API Key matching the `dashboard_api_key` configuration. |
@@ -31,6 +35,7 @@ This document outlines the Product Requirements and API Integration Specificatio
 > The API Key can also be passed via the query parameter `api_key` or `key` if needed (e.g., `/api/v1/customer-portal/orders?phone=...&api_key=SECRET`), though using the header `X-API-KEY` is highly recommended for security.
 
 ### Query Parameters
+
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `phone` | String | Yes | The customer's phone number. Can be in formats like `0812...`, `62812...`, or `+62 812-...`. The main system automatically normalizes this input. |

@@ -263,7 +263,7 @@
                                 };
 
                                 $hasUnpaid = ($order['payment']['remaining_balance'] ?? 0) > 0;
-                                $coverPhoto = collect($order['photos'] ?? [])->firstWhere('is_spk_cover', true) ?? collect($order['photos'] ?? [])->first();
+                                $coverPhoto = collect($order['photos'] ?? [])->firstWhere((string) 'is_spk_cover', true) ?? collect($order['photos'] ?? [])->first();
                             @endphp
 
                             <div x-show="isOrderVisible(orders[{{ $index }}])" class="reparation-order-card bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col h-full">

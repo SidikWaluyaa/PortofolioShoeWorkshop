@@ -23,6 +23,7 @@
             <a href="{{ route('home') }}" class="text-sm font-semibold text-[#22AF85] active-nav-border">Beranda</a>
             <a href="#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
             <a href="#portfolio" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Portfolio</a>
+            <a href="{{ route('blog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Artikel</a>
             <a href="{{ route('katalog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Donasi</a>
             <a href="{{ route('tracking.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Tracking</a>
             <a href="{{ route('warranty.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Garansi</a>
@@ -30,11 +31,7 @@
 
         {{-- CTA & Account Buttons --}}
         <div class="hidden md:flex items-center gap-4">
-            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}"
-               class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#FFC232] text-[#1c1c17] text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#FFC232]/20">
-                <span class="material-symbols-outlined !text-[20px]">chat</span>
-                Konsultasi via WhatsApp
-            </a>
+
 
             <div class="relative" x-data="{ openAccount: false }">
                 <button @click="openAccount = !openAccount" @click.outside="openAccount = false"
@@ -108,10 +105,7 @@
         <a href="{{ route('tracking.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Tracking</a>
         <a href="{{ route('warranty.index') }}" @click="open=false" class="block px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Garansi</a>
         <div class="pt-2 space-y-2">
-            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#FFC232] text-[#1c1c17] text-sm font-bold rounded-lg">
-                <span class="material-symbols-outlined !text-[20px]">chat</span>
-                Konsultasi via WhatsApp
-            </a>
+
             <div class="border-t border-gray-100 pt-2 mt-2">
                 @auth
                     <p class="px-3 py-1.5 text-xs font-semibold text-gray-400">Akun: {{ Auth::user()->name }}</p>

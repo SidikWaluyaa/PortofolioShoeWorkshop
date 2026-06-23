@@ -42,9 +42,9 @@ class DailyLogin extends Model
      */
     public function getStreakCheckinsAttribute()
     {
-        return self::where('user_id', $this->user_id)
-            ->where('minggu_ke', $this->minggu_ke)
-            ->orderBy('hari_ke')
+        return self::where((string) 'user_id', $this->user_id)
+            ->where((string) 'minggu_ke', $this->minggu_ke)
+            ->orderBy((string) 'hari_ke')
             ->get();
     }
 }
