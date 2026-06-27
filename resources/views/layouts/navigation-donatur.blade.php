@@ -49,6 +49,12 @@
 
                     {{-- Actions --}}
                     <div class="py-1">
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-[#22AF85] hover:bg-[#22AF85]/10 transition-all">
+                                <span class="material-symbols-outlined !text-[18px]">admin_panel_settings</span>
+                                Panel Admin
+                            </a>
+                        @endif
                         <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
                             <span class="material-symbols-outlined !text-[18px]">home</span>
                             Kembali ke Beranda Utama
@@ -99,6 +105,12 @@
                 <p class="text-xs font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
                 <p class="text-[10px] text-gray-400 truncate mt-0.5">{{ Auth::user()->email }}</p>
             </div>
+            @if(Auth::user()->isAdmin())
+                <a href="{{ route('admin.dashboard') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#22AF85] hover:bg-[#22AF85]/10 rounded-lg">
+                    <span class="material-symbols-outlined !text-[20px]">admin_panel_settings</span>
+                    Panel Admin
+                </a>
+            @endif
             <a href="{{ route('home') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                 <span class="material-symbols-outlined !text-[20px]">home</span>
                 Kembali ke Beranda Utama

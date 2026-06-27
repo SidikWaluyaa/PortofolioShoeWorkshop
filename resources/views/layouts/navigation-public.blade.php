@@ -54,30 +54,37 @@
 
                         {{-- Donatur Sidebar Menu Links inside Dropdown --}}
                         <div class="py-1">
-                            <a href="{{ route('donatur.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
-                                <span class="material-symbols-outlined !text-[18px]">dashboard</span>
-                                Dashboard Donatur
-                            </a>
-                            <a href="{{ route('donatur.reparation-history.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
-                                <span class="material-symbols-outlined !text-[18px]">history</span>
-                                Riwayat Reparasi
-                            </a>
-                            <a href="{{ route('donatur.donations.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
-                                <span class="material-symbols-outlined !text-[18px]">inventory_2</span>
-                                Donasi Saya
-                            </a>
-                            <a href="{{ route('donatur.katalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
-                                <span class="material-symbols-outlined !text-[18px]">apps</span>
-                                Katalog Donasi
-                            </a>
-                            <a href="{{ route('donatur.checkin.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
-                                <span class="material-symbols-outlined !text-[18px]">event_available</span>
-                                Daily Check-In
-                            </a>
-                            <a href="{{ route('donatur.rewards.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
-                                <span class="material-symbols-outlined !text-[18px]">card_membership</span>
-                                Rewards Saya
-                            </a>
+                            @if(Auth::user()->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-[#22AF85] hover:bg-[#22AF85]/10 transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">admin_panel_settings</span>
+                                    Panel Admin
+                                </a>
+                            @else
+                                <a href="{{ route('donatur.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">dashboard</span>
+                                    Dashboard Donatur
+                                </a>
+                                <a href="{{ route('donatur.reparation-history.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">history</span>
+                                    Riwayat Reparasi
+                                </a>
+                                <a href="{{ route('donatur.donations.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">inventory_2</span>
+                                    Donasi Saya
+                                </a>
+                                <a href="{{ route('donatur.katalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">apps</span>
+                                    Katalog Donasi
+                                </a>
+                                <a href="{{ route('donatur.checkin.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">event_available</span>
+                                    Daily Check-In
+                                </a>
+                                <a href="{{ route('donatur.rewards.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">card_membership</span>
+                                    Rewards Saya
+                                </a>
+                            @endif
                         </div>
 
                         <div class="border-t border-gray-50 py-1">
@@ -138,30 +145,37 @@
                     <p class="text-xs font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
                     <p class="text-[10px] text-gray-400 truncate mt-0.5">{{ Auth::user()->email }}</p>
                 </div>
-                <a href="{{ route('donatur.dashboard') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">dashboard</span>
-                    Dashboard Donatur
-                </a>
-                <a href="{{ route('donatur.reparation-history.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">history</span>
-                    Riwayat Reparasi
-                </a>
-                <a href="{{ route('donatur.donations.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">inventory_2</span>
-                    Donasi Saya
-                </a>
-                <a href="{{ route('donatur.katalog.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">apps</span>
-                    Katalog Donasi
-                </a>
-                <a href="{{ route('donatur.checkin.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">event_available</span>
-                    Daily Check-In
-                </a>
-                <a href="{{ route('donatur.rewards.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">card_membership</span>
-                    Rewards Saya
-                </a>
+                @if(Auth::user()->isAdmin())
+                    <a href="{{ route('admin.dashboard') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#22AF85] hover:bg-[#22AF85]/10 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">admin_panel_settings</span>
+                        Panel Admin
+                    </a>
+                @else
+                    <a href="{{ route('donatur.dashboard') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">dashboard</span>
+                        Dashboard Donatur
+                    </a>
+                    <a href="{{ route('donatur.reparation-history.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">history</span>
+                        Riwayat Reparasi
+                    </a>
+                    <a href="{{ route('donatur.donations.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">inventory_2</span>
+                        Donasi Saya
+                    </a>
+                    <a href="{{ route('donatur.katalog.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">apps</span>
+                        Katalog Donasi
+                    </a>
+                    <a href="{{ route('donatur.checkin.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">event_available</span>
+                        Daily Check-In
+                    </a>
+                    <a href="{{ route('donatur.rewards.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">card_membership</span>
+                        Rewards Saya
+                    </a>
+                @endif
                 <a href="{{ route('profile.edit') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                     <span class="material-symbols-outlined !text-[20px]">person</span>
                     Edit Profil
