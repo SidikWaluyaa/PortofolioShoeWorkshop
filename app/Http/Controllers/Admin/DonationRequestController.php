@@ -79,19 +79,25 @@ class DonationRequestController extends Controller
         // Sorting by request creation or items
         $sort = $request->input('sort', 'latest');
         if ($sort === 'oldest') {
-            $query->select('donation_items.*')
-                  ->leftJoin('donation_requests', 'donation_items.id', '=', 'donation_requests.donation_item_id')
-                  ->groupBy('donation_items.id')
-                  ->orderByRaw('MIN(donation_requests.created_at) ASC');
+            $query->orderBy(
+                DonationRequest::select('created_at')
+                    ->whereColumn('donation_item_id', 'donation_items.id')
+                    ->oldest()
+                    ->limit(1),
+                'asc'
+            );
         } elseif ($sort === 'name_asc') {
             $query->orderBy('nama', 'asc');
         } elseif ($sort === 'name_desc') {
             $query->orderBy('nama', 'desc');
         } else {
-            $query->select('donation_items.*')
-                  ->leftJoin('donation_requests', 'donation_items.id', '=', 'donation_requests.donation_item_id')
-                  ->groupBy('donation_items.id')
-                  ->orderByRaw('MAX(donation_requests.created_at) DESC');
+            $query->orderBy(
+                DonationRequest::select('created_at')
+                    ->whereColumn('donation_item_id', 'donation_items.id')
+                    ->latest()
+                    ->limit(1),
+                'desc'
+            );
         }
 
         // Paginate donation items having requests
