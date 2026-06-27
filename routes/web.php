@@ -102,8 +102,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::resource('rewards', \App\Http\Controllers\Admin\RewardController::class);
 
     // Catalog Items & Requests Management
+    Route::get('donation-items/export-excel', [\App\Http\Controllers\Admin\DonationItemController::class, 'exportExcel'])->name('donation-items.export-excel');
+    Route::get('donation-items/export-pdf', [\App\Http\Controllers\Admin\DonationItemController::class, 'exportPdf'])->name('donation-items.export-pdf');
     Route::resource('donation-items', \App\Http\Controllers\Admin\DonationItemController::class);
-    Route::resource('donation-requests', \App\Http\Controllers\Admin\DonationRequestController::class)->only(['index', 'update']);
+    Route::resource('donation-requests', \App\Http\Controllers\Admin\DonationRequestController::class)->only(['index', 'update', 'destroy']);
+    Route::post('donation-requests/{donationRequest}/send-rejection-email', [\App\Http\Controllers\Admin\DonationRequestController::class, 'sendRejectionEmail'])->name('donation-requests.send-rejection-email');
+    Route::post('donation-requests/{donationRequest}/send-approval-email', [\App\Http\Controllers\Admin\DonationRequestController::class, 'sendApprovalEmail'])->name('donation-requests.send-approval-email');
     Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
 });
 

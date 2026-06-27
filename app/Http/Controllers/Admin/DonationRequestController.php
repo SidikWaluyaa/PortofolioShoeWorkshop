@@ -3,23 +3,103 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\DonationRequest;
+use App\Models\DonationItem;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DonationRequestController extends Controller
 {
     /**
      * Display a listing of the donation requests.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $requests = DonationRequest::with(['donationItem', 'user'])
-                                   ->latest()
-                                   ->paginate(10);
-                                   
-        return view('admin.donation_requests.index', compact('requests'));
+        $query = DonationItem::whereHas('requests');
+
+        // Apply filters
+        // 1. Search filter
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('kode_barang', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhereHas('requests', function ($rq) use ($search) {
+                      $rq->where('nama_pemohon', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('kontak_pemohon', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // 2. Status filter on requests (has any request with this status)
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            $query->whereHas('requests', function ($rq) use ($status) {
+                $rq->where('status', '=', $status);
+            });
+        }
+
+        // 3. Category filter on item
+        if ($request->filled('kategori')) {
+            $query->where('kategori', '=', $request->input('kategori'));
+        }
+
+        // 4. Tipe Pengaju filter on requests
+        if ($request->filled('tipe_pengaju')) {
+            $tipe = $request->input('tipe_pengaju');
+            $query->whereHas('requests', function ($rq) use ($tipe) {
+                if ($tipe === 'registered') {
+                    $rq->whereNotNull('user_id');
+                } elseif ($tipe === 'guest') {
+                    $rq->whereNull('user_id');
+                }
+            });
+        }
+
+        // 5. Date range filter on requests
+        if ($request->filled('date_range')) {
+            $range = $request->input('date_range');
+            $query->whereHas('requests', function ($rq) use ($range) {
+                if (str_contains($range, ' to ')) {
+                    $parts = explode(' to ', $range);
+                    $startDate = trim($parts[0]);
+                    $endDate = trim($parts[1]);
+                    $rq->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                } else {
+                    $date = trim($range);
+                    $rq->whereBetween('created_at', [$date . ' 00:00:00', $date . ' 23:59:59']);
+                }
+            });
+        }
+
+        // Sorting by request creation or items
+        $sort = $request->input('sort', 'latest');
+        if ($sort === 'oldest') {
+            $query->select('donation_items.*')
+                  ->leftJoin('donation_requests', 'donation_items.id', '=', 'donation_requests.donation_item_id')
+                  ->groupBy('donation_items.id')
+                  ->orderByRaw('MIN(donation_requests.created_at) ASC');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('nama', 'asc');
+        } elseif ($sort === 'name_desc') {
+            $query->orderBy('nama', 'desc');
+        } else {
+            $query->select('donation_items.*')
+                  ->leftJoin('donation_requests', 'donation_items.id', '=', 'donation_requests.donation_item_id')
+                  ->groupBy('donation_items.id')
+                  ->orderByRaw('MAX(donation_requests.created_at) DESC');
+        }
+
+        // Paginate donation items having requests
+        $items = $query->with(['requests' => function ($q) {
+            $q->orderBy('created_at', 'desc');
+        }])->paginate(10)->withQueryString();
+
+        return view('admin.donation_requests.index', compact('items'));
     }
 
     /**
@@ -32,17 +112,30 @@ class DonationRequestController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($request, $donationRequest) {
+            $otherRequests = collect();
+
+            DB::transaction(function () use ($request, $donationRequest, &$otherRequests) {
                 $oldStatus = $donationRequest->status;
                 $newStatus = $request->status;
 
                 $donationRequest->update(['status' => $newStatus]);
 
-                // If approved, mark the item as 'disalurkan' (distributed)
+                // If approved, mark the item as 'disalurkan' (distributed) and auto-reject other pending requests
                 if ($newStatus === 'disetujui') {
                     $donationRequest->donationItem->update(['status' => 'disalurkan']);
                     if ($donationRequest->donationItem->donation) {
                         $donationRequest->donationItem->donation->update(['status' => 'disalurkan']);
+                    }
+
+                    // Find other pending requests for the same item
+                    $otherRequests = DonationRequest::where('donation_item_id', $donationRequest->donation_item_id)
+                        ->where('id', '!=', $donationRequest->id)
+                        ->where('status', 'pending')
+                        ->get();
+
+                    // Update their status to 'ditolak'
+                    foreach ($otherRequests as $otherReq) {
+                        $otherReq->update(['status' => 'ditolak']);
                     }
                 }
                 // If changed back from approved, restore the item to 'tersedia' (available)
@@ -54,13 +147,194 @@ class DonationRequestController extends Controller
                 }
             });
 
+            $emailMsg = '';
+
+            // Auto-send email notification on approval
+            if ($request->status === 'disetujui' && !empty($donationRequest->email)) {
+                try {
+                    Mail::to($donationRequest->email)->send(
+                        new \App\Mail\DonationRequestApprovedMail($donationRequest)
+                    );
+                    $emailMsg = ' Email notifikasi persetujuan terkirim ke ' . $donationRequest->email . '.';
+                } catch (\Exception $mailEx) {
+                    Log::error('Failed to send approval email: ' . $mailEx->getMessage());
+                    $emailMsg = ' ⚠️ Gagal mengirim email persetujuan ke ' . $donationRequest->email . '.';
+                }
+            }
+
+            // Auto-send email notification on rejection (for the primary request)
+            if ($request->status === 'ditolak' && !empty($donationRequest->email)) {
+                try {
+                    Mail::to($donationRequest->email)->send(
+                        new \App\Mail\DonationRequestRejectedMail($donationRequest)
+                    );
+                    $emailMsg = ' Email notifikasi penolakan terkirim ke ' . $donationRequest->email . '.';
+                } catch (\Exception $mailEx) {
+                    Log::error('Failed to send rejection email: ' . $mailEx->getMessage());
+                    $emailMsg = ' ⚠️ Gagal mengirim email penolakan ke ' . $donationRequest->email . '.';
+                }
+            }
+
+            // Auto-send rejection email notifications for automatically rejected requests (Opsi A)
+            $autoRejectedIds = [];
+            if ($request->status === 'disetujui' && $otherRequests->isNotEmpty()) {
+                $successMailCount = 0;
+                foreach ($otherRequests as $otherReq) {
+                    $autoRejectedIds[] = $otherReq->id;
+                    if (!empty($otherReq->email)) {
+                        try {
+                            Mail::to($otherReq->email)->send(
+                                new \App\Mail\DonationRequestRejectedMail($otherReq)
+                            );
+                            $successMailCount++;
+                        } catch (\Exception $mailEx) {
+                            Log::error('Failed to send auto-rejection email to ' . $otherReq->email . ': ' . $mailEx->getMessage());
+                        }
+                    }
+                }
+                if ($successMailCount > 0) {
+                    $emailMsg .= " {$otherRequests->count()} permohonan lain untuk barang ini otomatis ditolak & {$successMailCount} email penolakan terkirim.";
+                } else {
+                    $emailMsg .= " {$otherRequests->count()} permohonan lain untuk barang ini otomatis ditolak.";
+                }
+            }
+
+            $successMsg = 'Status permohonan berhasil diperbarui.' . $emailMsg;
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $successMsg,
+                    'new_status' => $request->status,
+                    'auto_rejected_ids' => $autoRejectedIds,
+                ]);
+            }
+
             return redirect()->route('admin.donation-requests.index')
-                             ->with('success', 'Status permohonan berhasil diperbarui.');
+                             ->with('success', $successMsg);
 
         } catch (\Exception $e) {
             Log::error('Admin donation request status update failed: ' . $e->getMessage());
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan sistem saat memperbarui status permohonan.',
+                ], 500);
+            }
+
             return redirect()->back()
                              ->with('error', 'Terjadi kesalahan sistem saat memperbarui status permohonan.');
+        }
+    }
+
+    /**
+     * Manually send approval notification email.
+     */
+    public function sendApprovalEmail(Request $request, DonationRequest $donationRequest)
+    {
+        if (empty($donationRequest->email)) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Pemohon tidak memiliki alamat email.'], 422);
+            }
+            return redirect()->route('admin.donation-requests.index')
+                             ->with('error', 'Gagal mengirim email: Pemohon tidak memiliki alamat email.');
+        }
+
+        try {
+            Mail::to($donationRequest->email)->send(
+                new \App\Mail\DonationRequestApprovedMail($donationRequest)
+            );
+
+            $msg = '✅ Email notifikasi persetujuan berhasil dikirim ke ' . $donationRequest->email;
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => true, 'message' => $msg]);
+            }
+            return redirect()->route('admin.donation-requests.index')->with('success', $msg);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send approval email: ' . $e->getMessage());
+            $msg = '❌ Gagal mengirim email persetujuan ke ' . $donationRequest->email . '. Silakan periksa konfigurasi SMTP.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 500);
+            }
+            return redirect()->route('admin.donation-requests.index')->with('error', $msg);
+        }
+    }
+
+    /**
+     * Manually send rejection notification email.
+     */
+    public function sendRejectionEmail(Request $request, DonationRequest $donationRequest)
+    {
+        if (empty($donationRequest->email)) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Pemohon tidak memiliki alamat email.'], 422);
+            }
+            return redirect()->route('admin.donation-requests.index')
+                             ->with('error', 'Gagal mengirim email: Pemohon tidak memiliki alamat email.');
+        }
+
+        try {
+            Mail::to($donationRequest->email)->send(
+                new \App\Mail\DonationRequestRejectedMail($donationRequest)
+            );
+
+            $msg = '✅ Email notifikasi penolakan berhasil dikirim ke ' . $donationRequest->email;
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => true, 'message' => $msg]);
+            }
+            return redirect()->route('admin.donation-requests.index')->with('success', $msg);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send rejection email: ' . $e->getMessage());
+            $msg = '❌ Gagal mengirim email penolakan ke ' . $donationRequest->email . '. Silakan periksa konfigurasi SMTP.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 500);
+            }
+            return redirect()->route('admin.donation-requests.index')->with('error', $msg);
+        }
+    }
+
+    /**
+     * Remove the specified donation request.
+     */
+    public function destroy(Request $request, DonationRequest $donationRequest)
+    {
+        try {
+            DB::transaction(function () use ($donationRequest) {
+                // If it was approved, revert the item and donation status back
+                if ($donationRequest->status === 'disetujui') {
+                    if ($donationRequest->donationItem) {
+                        $donationRequest->donationItem->update(['status' => 'tersedia']);
+                        if ($donationRequest->donationItem->donation) {
+                            $donationRequest->donationItem->donation->update(['status' => 'diterima']);
+                        }
+                    }
+                }
+                $donationRequest->delete();
+            });
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => true, 'message' => 'Permohonan berhasil dihapus.']);
+            }
+
+            return redirect()->route('admin.donation-requests.index')
+                             ->with('success', 'Permohonan berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            Log::error('Admin donation request deletion failed: ' . $e->getMessage());
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Terjadi kesalahan sistem saat menghapus permohonan.'], 500);
+            }
+
+            return redirect()->back()
+                             ->with('error', 'Terjadi kesalahan sistem saat menghapus permohonan.');
         }
     }
 }

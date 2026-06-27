@@ -19,10 +19,13 @@ class DonationItem extends Model
         'jasa_estimasi_waktu_formatted',
         'berat_formatted',
         'score_kelayakan_color',
+        'is_quota_full',
+        'pending_requests_count',
     ];
 
     protected $fillable = [
         'donation_id',
+        'kode_barang',
         'nama',
         'brand',
         'kategori',
@@ -35,6 +38,22 @@ class DonationItem extends Model
         'berat',
         'score_kelayakan',
     ];
+
+    protected static function booted()
+    {
+        static::created(function ($item) {
+            if (empty($item->kode_barang)) {
+                $suffix = [
+                    'sepatu' => 'DS',
+                    'tas' => 'DT',
+                    'topi' => 'DP',
+                ][$item->kategori] ?? 'DS';
+                
+                $item->kode_barang = str_pad($item->id, 3, '0', STR_PAD_LEFT) . '-' . $suffix;
+                $item->saveQuietly();
+            }
+        });
+    }
 
     /**
      * Get the original donation that generated this catalog item.
@@ -176,5 +195,29 @@ class DonationItem extends Model
     public function requests(): HasMany
     {
         return $this->hasMany(DonationRequest::class);
+    }
+
+    /**
+     * Check if the quota for requesting this item is full (maximum 5 pending requests).
+     */
+    public function isQuotaFull(): bool
+    {
+        return $this->requests()->where('status', 'pending')->count() >= 5;
+    }
+
+    /**
+     * Get whether the quota is full (attribute).
+     */
+    public function getIsQuotaFullAttribute(): bool
+    {
+        return $this->isQuotaFull();
+    }
+
+    /**
+     * Get the number of pending requests for this item (attribute).
+     */
+    public function getPendingRequestsCountAttribute(): int
+    {
+        return $this->requests()->where('status', 'pending')->count();
     }
 }

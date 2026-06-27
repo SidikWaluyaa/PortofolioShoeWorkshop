@@ -31,18 +31,22 @@
                     </span>
 
                     <!-- Score Kelayakan Badge -->
+                    <!-- Score Kelayakan Badge -->
                     @if($item->score_kelayakan)
-                        @php
-                            $scoreColors = [
-                                'emerald' => 'bg-emerald-600/90 text-white',
-                                'teal' => 'bg-teal-600/90 text-white',
-                                'amber' => 'bg-amber-600/90 text-white',
-                                'red' => 'bg-red-600/90 text-white',
-                            ];
-                            $scoreColorClass = $scoreColors[$item->score_kelayakan_color] ?? 'bg-gray-600/90 text-white';
-                        @endphp
-                        <span class="absolute top-2 left-2 px-1.5 sm:px-2 py-0.5 backdrop-blur-sm text-[9px] sm:text-[10px] font-bold rounded {{ $scoreColorClass }}">
-                            🎯 {{ $item->score_kelayakan }}% Layak
+                        <span class="absolute top-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm border border-gray-250/30 rounded-lg flex items-center gap-1 shadow-sm select-none">
+                            <span class="flex items-center gap-0.5">
+                                @php
+                                    $stars = round(($item->score_kelayakan / 100) * 5);
+                                @endphp
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= $stars)
+                                        <span class="material-symbols-outlined !text-[12px] text-amber-400 fill-1">star</span>
+                                    @else
+                                        <span class="material-symbols-outlined !text-[12px] text-gray-300">star</span>
+                                    @endif
+                                @endfor
+                            </span>
+                            <span class="text-[9px] font-black text-gray-650 ml-0.5">{{ $item->score_kelayakan }}% Layak</span>
                         </span>
                     @endif
                 </div>

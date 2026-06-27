@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DonationItemController extends Controller
 {
-    public function index(Request $request)
+    protected function getFilteredQuery(Request $request)
     {
         $query = DonationItem::query();
 
@@ -19,6 +19,7 @@ class DonationItemController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
                   ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('kode_barang', 'like', "%{$search}%")
                   ->orWhere('deskripsi', 'like', "%{$search}%");
             });
         }
@@ -39,7 +40,14 @@ class DonationItemController extends Controller
             $query->where($statusCol, '=', $request->input('status'));
         }
 
-        $items = $query->latest()->paginate(10)->withQueryString();
+        return $query;
+    }
+
+    public function index(Request $request)
+    {
+        $brandCol = 'donation_items.brand';
+        $sortOrder = $request->input('sort', 'desc') === 'asc' ? 'asc' : 'desc';
+        $items = $this->getFilteredQuery($request)->orderBy('id', $sortOrder)->paginate(10)->withQueryString();
 
         $brands = DonationItem::whereNotNull($brandCol)
             ->where($brandCol, '!=', '')
@@ -48,6 +56,99 @@ class DonationItemController extends Controller
             ->pluck($brandCol);
 
         return view('admin.donation_items.index', compact('items', 'brands'));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $sortOrder = $request->input('sort', 'desc') === 'asc' ? 'asc' : 'desc';
+        $items = $this->getFilteredQuery($request)->orderBy('id', $sortOrder)->get();
+
+        $filename = 'katalog-donasi-' . date('Y-m-d-His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($items) {
+            $file = fopen('php://output', 'w');
+            
+            // UTF-8 BOM
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Column Headers
+            fputcsv($file, [
+                'ID',
+                'Kode Barang',
+                'Nama Barang',
+                'Brand',
+                'Kategori',
+                'Kondisi',
+                'Ukuran',
+                'Berat',
+                'Skor Kelayakan (%)',
+                'Status',
+                'Jasa Pengerjaan',
+                'Total Biaya Jasa',
+                'Estimasi Pengerjaan',
+                'Deskripsi',
+                'Tanggal Ditambahkan',
+            ], ',');
+
+            foreach ($items as $item) {
+                // Get services details
+                $servicesList = $item->reparationServices->map(function ($rs) {
+                    return $rs->jasa_nama . ' (' . $rs->jasa_harga_formatted . ')';
+                })->implode(', ');
+
+                fputcsv($file, [
+                    $item->id,
+                    $item->kode_barang ?? '-',
+                    $item->nama,
+                    $item->brand ?? '-',
+                    ucfirst($item->kategori),
+                    str_replace('_', ' ', ucfirst($item->kondisi)),
+                    $item->ukuran ?? '-',
+                    $item->berat_formatted,
+                    ($item->score_kelayakan ?? '-') . ($item->score_kelayakan ? '%' : ''),
+                    $item->status === 'tersedia' ? 'Tersedia' : 'Sudah Disalurkan',
+                    $servicesList ?: '-',
+                    $item->jasa_harga_formatted,
+                    $item->jasa_estimasi_waktu_formatted,
+                    $item->deskripsi ?? '-',
+                    $item->created_at->format('Y-m-d H:i:s'),
+                ], ',');
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $sortOrder = $request->input('sort', 'desc') === 'asc' ? 'asc' : 'desc';
+        $items = $this->getFilteredQuery($request)->orderBy('id', $sortOrder)->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.donation_items.pdf', [
+            'items' => $items,
+            'filters' => [
+                'search' => $request->input('search'),
+                'brand' => $request->input('brand'),
+                'kategori' => $request->input('kategori'),
+                'status' => $request->input('status'),
+                'sort' => $request->input('sort'),
+            ]
+        ]);
+
+        $pdf->setPaper('a4', 'landscape');
+
+        $filename = 'katalog-donasi-' . date('Y-m-d-His') . '.pdf';
+        return $pdf->stream($filename);
     }
 
     /**

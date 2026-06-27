@@ -40,98 +40,127 @@
                 <a href="{{ route('donatur.donations.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition">+ Donasi Sepatu Pertama</a>
             </div>
         @else
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50">
-                                <th class="px-6 py-4">Sepatu</th>
-                                <th class="px-6 py-4">Ukuran</th>
-                                <th class="px-6 py-4">Kondisi</th>
-                                <th class="px-6 py-4">Estimasi Nilai</th>
-                                <th class="px-6 py-4">Metode</th>
-                                <th class="px-6 py-4">Status</th>
-                                <th class="px-6 py-4">Tanggal</th>
-                                <th class="px-6 py-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach($donations as $donation)
-                            <tr class="hover:bg-gray-50 transition">
-                                 <td class="px-6 py-4">
-                                     <div class="flex items-center gap-3">
-                                         <img src="{{ asset('storage/' . ($donation->foto_path[0] ?? '')) }}" alt="{{ $donation->nama_sepatu }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100 flex-shrink-0">
-                                         <div>
-                                             @if($donation->spk)
-                                                 <span class="font-mono text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded block w-fit mb-0.5">{{ $donation->spk }}</span>
-                                             @endif
-                                             <span class="font-medium text-gray-900">{{ $donation->nama_sepatu }}</span>
-                                         </div>
-                                     </div>
-                                 </td>
-                                <td class="px-6 py-4 text-gray-600">{{ $donation->ukuran }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-16 h-2 rounded-full bg-gray-200 overflow-hidden">
-                                            <div class="h-full rounded-full {{ $donation->kondisi >= 70 ? 'bg-emerald-500' : ($donation->kondisi >= 40 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $donation->kondisi }}%"></div>
-                                        </div>
-                                        <span class="text-xs font-medium text-gray-500">{{ $donation->kondisi }}%</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600">Rp {{ number_format($donation->harga, 0, ',', '.') }}</td>
-                                <td class="px-6 py-4 text-gray-600">
-                                    <span class="capitalize">{{ str_replace('_', ' ', $donation->metode_pengiriman) }}</span>
-                                    @if($donation->no_resi)
-                                        <p class="text-xs text-gray-400 mt-0.5"><span class="font-bold text-gray-600">{{ $donation->nama_ekspedisi }}:</span> {{ $donation->no_resi }}</p>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $statusColors = [
-                                            'pending' => 'bg-amber-100 text-amber-700',
-                                            'diterima' => 'bg-emerald-100 text-emerald-700',
-                                            'disalurkan' => 'bg-blue-100 text-blue-700',
-                                            'ditolak' => 'bg-red-100 text-red-700',
-                                        ];
-                                    @endphp
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $statusColors[$donation->status] }}">
-                                        {{ ucfirst($donation->status) }}
-                                    </span>
-                                    @if($donation->catatan_admin)
-                                        <p class="text-xs text-gray-400 mt-1 max-w-[150px] truncate" title="{{ $donation->catatan_admin }}">{{ $donation->catatan_admin }}</p>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-gray-500 text-xs">{{ $donation->created_at->format('d M Y') }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        @if($donation->status === 'pending')
-                                            <a href="{{ route('donatur.donations.edit', $donation) }}" 
-                                               class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm flex items-center gap-1">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                </svg>
-                                                Edit
-                                            </a>
-                                            @if($donation->metode_pengiriman === 'ekspedisi')
-                                                <button @click="openResiModal('{{ $donation->id }}', '{{ $donation->nama_ekspedisi }}', '{{ $donation->no_resi }}', '{{ route('donatur.donations.update-resi', $donation) }}')" 
-                                                        class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition duration-150 shadow-sm flex items-center gap-1">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                                    {{ $donation->no_resi ? 'Edit Resi' : 'Input Resi' }}
-                                                </button>
-                                            @endif
-                                        @else
-                                            <span class="text-xs text-gray-400">—</span>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">
+                @foreach($donations as $donation)
+                @php
+                    $statusColors = [
+                        'pending' => 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+                        'diterima' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+                        'disalurkan' => 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+                        'ditolak' => 'bg-red-500/10 text-red-600 border-red-500/20',
+                    ];
+                @endphp
+                <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col h-full border border-gray-200/80">
+                    {{-- Card Image Header --}}
+                    <div class="relative overflow-hidden bg-gray-50 flex items-center justify-center">
+                        <img src="{{ asset('storage/' . ($donation->foto_path[0] ?? '')) }}" 
+                             alt="{{ $donation->nama_sepatu }}" 
+                             class="w-full h-32 sm:h-48 md:h-52 object-cover bg-gray-55 group-hover:scale-105 transition-transform duration-500">
+                        
+                        {{-- Floating Badges --}}
+                        <div class="absolute top-2 right-2">
+                            <span class="px-1.5 sm:px-2 py-0.5 border rounded text-[8px] sm:text-[9px] font-extrabold tracking-wider uppercase {{ $statusColors[$donation->status] }}">
+                                {{ $donation->status }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Card Body --}}
+                    <div class="p-3 sm:p-4 flex-grow flex flex-col justify-between">
+                        <div>
+                            @if($donation->spk)
+                            <div class="mb-1.5">
+                                <span class="font-mono text-[8px] sm:text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">
+                                    {{ $donation->spk }}
+                                </span>
+                            </div>
+                            @endif
+
+                            {{-- Shoe Name --}}
+                            <h4 class="font-bold text-xs sm:text-sm md:text-base text-[#191c1d] mb-1.5 truncate" title="{{ $donation->nama_sepatu }}">
+                                {{ $donation->nama_sepatu }}
+                            </h4>
+
+                            {{-- Brand & Size & Price --}}
+                            <div class="space-y-1 mb-3">
+                                <div class="flex items-center justify-between text-[9px] sm:text-[10px] text-gray-400 font-extrabold uppercase tracking-wider">
+                                    <span>Ukuran: {{ $donation->ukuran }}</span>
+                                    <span>{{ str_replace('_', ' ', $donation->metode_pengiriman) }}</span>
+                                </div>
+                                <div class="text-[10px] sm:text-xs font-semibold text-gray-500">
+                                    Estimasi: <span class="font-bold text-gray-950">Rp {{ number_format($donation->harga, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Condition progress bar --}}
+                            <div class="mb-3">
+                                <div class="flex items-center justify-between text-[10px] sm:text-xs mb-1">
+                                    <span class="text-gray-500 font-medium">Kondisi</span>
+                                    <span class="font-bold {{ $donation->kondisi >= 70 ? 'text-emerald-500' : ($donation->kondisi >= 40 ? 'text-amber-500' : 'text-red-500') }}">{{ $donation->kondisi }}%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full {{ $donation->kondisi >= 70 ? 'bg-emerald-500' : ($donation->kondisi >= 40 ? 'bg-amber-500' : 'bg-red-500') }}" 
+                                         style="width: {{ $donation->kondisi }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Delivery Method info --}}
+                        <div class="border-t border-gray-100 pt-3 mt-auto space-y-1.5">
+                            <div class="flex items-center justify-between text-[10px] sm:text-xs">
+                                <span class="text-gray-400 font-medium">Metode</span>
+                                <span class="font-bold text-gray-700 capitalize text-[10px] sm:text-xs">{{ str_replace('_', ' ', $donation->metode_pengiriman) }}</span>
+                            </div>
+                            
+                            @if($donation->no_resi)
+                            <div class="p-2 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-between text-[9px] sm:text-[11px] gap-2">
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[8px] sm:text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">No. Resi</span>
+                                    <span class="font-bold text-gray-750 font-mono truncate mt-0.5" title="{{ $donation->no_resi }}">{{ $donation->no_resi }}</span>
+                                </div>
+                                <span class="px-1.5 py-0.5 bg-gray-200/60 rounded text-[8px] sm:text-[9px] font-extrabold text-gray-600 uppercase tracking-wider shrink-0">{{ $donation->nama_ekspedisi }}</span>
+                            </div>
+                            @endif
+
+                            @if($donation->catatan_admin)
+                            <div class="p-2 bg-red-50 border border-red-100 text-red-700 text-[10px] rounded-lg flex flex-col gap-0.5">
+                                <span class="font-bold uppercase tracking-wider text-[8px] text-red-500">Catatan Admin:</span>
+                                <p class="font-medium text-red-600 leading-normal line-clamp-2" title="{{ $donation->catatan_admin }}">{{ $donation->catatan_admin }}</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Card Footer Action Buttons --}}
+                    <div class="px-3 sm:px-4 py-3 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                        @if($donation->status === 'pending')
+                            <div class="flex items-center gap-1.5 w-full">
+                                <a href="{{ route('donatur.donations.edit', $donation) }}" 
+                                   class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 bg-amber-500 hover:brightness-105 active:scale-95 text-white text-[10px] sm:text-xs font-bold rounded-lg transition duration-150 shadow-sm">
+                                    <span class="material-symbols-outlined !text-[14px]">edit</span>
+                                    Edit
+                                </a>
+                                @if($donation->metode_pengiriman === 'ekspedisi')
+                                    <button @click="openResiModal('{{ $donation->id }}', '{{ $donation->nama_ekspedisi }}', '{{ $donation->no_resi }}', '{{ route('donatur.donations.update-resi', $donation) }}')" 
+                                            class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 bg-indigo-600 hover:brightness-105 active:scale-95 text-white text-[10px] sm:text-xs font-bold rounded-lg transition duration-150 shadow-sm">
+                                        <span class="material-symbols-outlined !text-[14px]">local_shipping</span>
+                                        Resi
+                                    </button>
+                                @endif
+                            </div>
+                        @else
+                            <div class="flex items-center justify-between w-full text-[10px] sm:text-xs text-gray-400">
+                                <span class="font-medium">Tanggal</span>
+                                <span class="font-bold text-gray-650">{{ $donation->created_at->format('d M Y') }}</span>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gray-100">
-                    {{ $donations->links() }}
-                </div>
+                @endforeach
+            </div>
+
+            <div class="mt-8">
+                {{ $donations->links() }}
             </div>
         @endif
 

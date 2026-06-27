@@ -26,7 +26,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('home', absolute: false));
     }
 
     public function test_new_users_can_register_with_phone(): void
@@ -40,7 +40,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('home', absolute: false));
 
         // Verify the phone is normalized with 62 prefix
         $this->assertDatabaseHas('users', [

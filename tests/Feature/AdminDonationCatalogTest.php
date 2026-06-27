@@ -328,8 +328,10 @@ class AdminDonationCatalogTest extends TestCase
         $request = DonationRequest::create([
             'donation_item_id' => $item->id,
             'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
             'kontak_pemohon' => '6281299998888',
             'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
             'status' => 'pending',
         ]);
 
@@ -364,8 +366,10 @@ class AdminDonationCatalogTest extends TestCase
         $request = DonationRequest::create([
             'donation_item_id' => $item->id,
             'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
             'kontak_pemohon' => '6281299998888',
             'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
             'status' => 'pending',
         ]);
 
@@ -399,8 +403,10 @@ class AdminDonationCatalogTest extends TestCase
         $request = DonationRequest::create([
             'donation_item_id' => $item->id,
             'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
             'kontak_pemohon' => '6281299998888',
             'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
             'status' => 'disetujui',
         ]);
 
@@ -447,8 +453,10 @@ class AdminDonationCatalogTest extends TestCase
         $request = DonationRequest::create([
             'donation_item_id' => $item->id,
             'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
             'kontak_pemohon' => '6281299998888',
             'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
             'status' => 'pending',
         ]);
 
@@ -462,6 +470,64 @@ class AdminDonationCatalogTest extends TestCase
         
         // Assert the original donation's status cascaded to 'disalurkan'
         $this->assertEquals('disalurkan', $donation->fresh()->status);
+    }
+
+    /**
+     * Test admin approving donation request auto rejects other pending requests for the same item.
+     */
+    public function test_admin_approving_donation_request_auto_rejects_other_pending_requests_and_sends_emails(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        $item = DonationItem::create([
+            'nama' => 'Nike Air Zoom',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/nike.jpg',
+        ]);
+
+        // Approved request
+        $request1 = DonationRequest::create([
+            'donation_item_id' => $item->id,
+            'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
+            'kontak_pemohon' => '6281299998888',
+            'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
+            'status' => 'pending',
+        ]);
+
+        // Request 2 (should be auto-rejected)
+        $request2 = DonationRequest::create([
+            'donation_item_id' => $item->id,
+            'nama_pemohon' => 'John Smith',
+            'email' => 'john@gmail.com',
+            'kontak_pemohon' => '6281299991111',
+            'alamat_pengiriman' => 'Jl. Tebet No. 12, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu sekolah.',
+            'status' => 'pending',
+        ]);
+
+        $response = $this->patch(route('admin.donation-requests.update', $request1), [
+            'status' => 'disetujui'
+        ]);
+
+        $response->assertRedirect(route('admin.donation-requests.index'));
+        $this->assertEquals('disetujui', $request1->fresh()->status);
+        $this->assertEquals('ditolak', $request2->fresh()->status);
+
+        // Assert both approval and auto-rejection emails were sent
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DonationRequestApprovedMail::class, function ($mail) use ($request1) {
+            return $mail->donationRequest->id === $request1->id;
+        });
+
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DonationRequestRejectedMail::class, function ($mail) use ($request2) {
+            return $mail->donationRequest->id === $request2->id;
+        });
     }
 
     /**
@@ -496,8 +562,10 @@ class AdminDonationCatalogTest extends TestCase
         $request = DonationRequest::create([
             'donation_item_id' => $item->id,
             'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
             'kontak_pemohon' => '6281299998888',
             'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
             'status' => 'disetujui',
         ]);
 
@@ -511,5 +579,393 @@ class AdminDonationCatalogTest extends TestCase
         
         // Assert the original donation's status reverted to 'diterima'
         $this->assertEquals('diterima', $donation->fresh()->status);
+    }
+
+    /**
+     * Test regular user cannot download catalog PDF or export Excel.
+     */
+    public function test_regular_user_cannot_export_catalog(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        $this->actingAs($user);
+
+        $this->get(route('admin.donation-items.export-pdf'))->assertStatus(403);
+        $this->get(route('admin.donation-items.export-excel'))->assertStatus(403);
+    }
+
+    /**
+     * Test admin can download catalog PDF.
+     */
+    public function test_admin_can_download_pdf_export(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        DonationItem::create([
+            'nama' => 'Adidas Ultraboost',
+            'brand' => 'Adidas',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/adidas.jpg',
+        ]);
+
+        $response = $this->get(route('admin.donation-items.export-pdf'));
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+    }
+
+    /**
+     * Test admin can export catalog Excel/CSV.
+     */
+    public function test_admin_can_export_excel_csv(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        $item = DonationItem::create([
+            'nama' => 'Nike Pegasus',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/nike.jpg',
+        ]);
+
+        $response = $this->get(route('admin.donation-items.export-excel'));
+        $response->assertStatus(200);
+        $this->assertTrue(
+            str_contains($response->headers->get('content-type'), 'text/csv') || 
+            str_contains($response->headers->get('content-type'), 'application/octet-stream')
+        );
+
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+
+        $this->assertStringContainsString('Nike Pegasus', $content);
+        $this->assertStringContainsString('Nike', $content);
+        $this->assertStringContainsString($item->fresh()->kode_barang, $content);
+    }
+
+    /**
+     * Test exports respect filters.
+     */
+    public function test_exports_respect_filters(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        DonationItem::create([
+            'nama' => 'Nike Pegasus',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/nike.jpg',
+        ]);
+
+        DonationItem::create([
+            'nama' => 'Adidas Ultraboost',
+            'brand' => 'Adidas',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/adidas.jpg',
+        ]);
+
+        // Filter by Nike
+        $response = $this->get(route('admin.donation-items.export-excel', ['brand' => 'Nike']));
+        $response->assertStatus(200);
+
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+
+        $this->assertStringContainsString('Nike Pegasus', $content);
+        $this->assertStringNotContainsString('Adidas Ultraboost', $content);
+    }
+
+    /**
+     * Test unique kode_barang is auto-generated on item creation.
+     */
+    public function test_donation_item_auto_generates_kode_barang(): void
+    {
+        $itemSepatu = DonationItem::create([
+            'nama' => 'Adidas Super',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/adidas.jpg',
+        ]);
+
+        $itemTas = DonationItem::create([
+            'nama' => 'Eiger Bag',
+            'kategori' => 'tas',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/tas.jpg',
+        ]);
+
+        $itemTopi = DonationItem::create([
+            'nama' => 'Nike Cap',
+            'kategori' => 'topi',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/topi.jpg',
+        ]);
+
+        $this->assertEquals(str_pad($itemSepatu->id, 3, '0', STR_PAD_LEFT) . '-DS', $itemSepatu->fresh()->kode_barang);
+        $this->assertEquals(str_pad($itemTas->id, 3, '0', STR_PAD_LEFT) . '-DT', $itemTas->fresh()->kode_barang);
+        $this->assertEquals(str_pad($itemTopi->id, 3, '0', STR_PAD_LEFT) . '-DP', $itemTopi->fresh()->kode_barang);
+    }
+
+    /**
+     * Test admin can sort donation items ascending and descending.
+     */
+    public function test_admin_can_sort_donation_items(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        $item1 = DonationItem::create([
+            'nama' => 'Item Pertama',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/first.jpg',
+        ]);
+
+        $item2 = DonationItem::create([
+            'nama' => 'Item Kedua',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/second.jpg',
+        ]);
+
+        // Default / Descending: Item Kedua (newer) first
+        $responseDesc = $this->get(route('admin.donation-items.index'));
+        $responseDesc->assertStatus(200);
+        $htmlDesc = $responseDesc->getContent();
+        $this->assertTrue(strpos($htmlDesc, 'Item Kedua') < strpos($htmlDesc, 'Item Pertama'));
+
+        // Ascending: Item Pertama (older) first
+        $responseAsc = $this->get(route('admin.donation-items.index', ['sort' => 'asc']));
+        $responseAsc->assertStatus(200);
+        $htmlAsc = $responseAsc->getContent();
+        $this->assertTrue(strpos($htmlAsc, 'Item Pertama') < strpos($htmlAsc, 'Item Kedua'));
+    }
+
+    /**
+     * Test email is sent via manual approval email button.
+     */
+    public function test_email_is_queued_on_request_approval(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        $item = DonationItem::create([
+            'nama' => 'Nike Air Zoom',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/nike.jpg',
+        ]);
+
+        $request = DonationRequest::create([
+            'donation_item_id' => $item->id,
+            'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
+            'kontak_pemohon' => '6281299998888',
+            'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
+            'status' => 'disetujui',
+        ]);
+
+        $response = $this->post(route('admin.donation-requests.send-approval-email', $request));
+        $response->assertRedirect(route('admin.donation-requests.index'));
+        $response->assertSessionHas('success');
+
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DonationRequestApprovedMail::class, function ($mail) use ($request) {
+            return $mail->donationRequest->id === $request->id;
+        });
+    }
+
+    /**
+     * Test email is sent via manual rejection email button.
+     */
+    public function test_email_is_queued_on_request_rejection(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        $item = DonationItem::create([
+            'nama' => 'Nike Air Zoom Rejection',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/nike.jpg',
+        ]);
+
+        $request = DonationRequest::create([
+            'donation_item_id' => $item->id,
+            'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
+            'kontak_pemohon' => '6281299998888',
+            'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
+            'status' => 'ditolak',
+        ]);
+
+        $response = $this->post(route('admin.donation-requests.send-rejection-email', $request));
+        $response->assertRedirect(route('admin.donation-requests.index'));
+        $response->assertSessionHas('success');
+
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DonationRequestRejectedMail::class, function ($mail) use ($request) {
+            return $mail->donationRequest->id === $request->id;
+        });
+    }
+
+    /**
+     * Test admin can filter and sort donation requests list.
+     */
+    public function test_admin_can_filter_and_sort_donation_requests(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $user1 = User::factory()->create(['name' => 'Registered User']);
+        $this->actingAs($admin);
+
+        // 1. Create a donation item and request for sepatu by Registered User
+        $itemSepatu = DonationItem::create([
+            'nama' => 'Sneakers Sepatu Super',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/first.jpg',
+        ]);
+        $requestSepatu = DonationRequest::create([
+            'donation_item_id' => $itemSepatu->id,
+            'user_id' => $user1->id,
+            'nama_pemohon' => 'Budi Santoso',
+            'email' => 'budi@gmail.com',
+            'kontak_pemohon' => '6281234567890',
+            'alamat_pengiriman' => 'Bandung',
+            'alasan' => 'Butuh sepatu donasi.',
+            'status' => 'pending',
+        ]);
+        \Illuminate\Support\Facades\DB::table('donation_requests')
+            ->where('id', $requestSepatu->id)
+            ->update(['created_at' => now()->subDays(5)]);
+
+        // 2. Create a donation item and request for tas by Guest (user_id is null)
+        $itemTas = DonationItem::create([
+            'nama' => 'Tas Backpack Brown',
+            'brand' => 'BackpackCo',
+            'kategori' => 'tas',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/second.jpg',
+        ]);
+        $requestTas = DonationRequest::create([
+            'donation_item_id' => $itemTas->id,
+            'user_id' => null,
+            'nama_pemohon' => 'Ani Wijaya',
+            'email' => 'ani@gmail.com',
+            'kontak_pemohon' => '6281299998888',
+            'alamat_pengiriman' => 'Jakarta',
+            'alasan' => 'Butuh tas sekolah.',
+            'status' => 'disetujui',
+            'created_at' => now(),
+        ]);
+
+        // Assert 1: Search matches applicant name
+        $response = $this->get(route('admin.donation-requests.index', ['search' => 'Ani']));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        $this->assertTrue($items->contains('id', $itemTas->id));
+        $this->assertFalse($items->contains('id', $itemSepatu->id));
+
+        // Assert 2: Search matches item code
+        $response = $this->get(route('admin.donation-requests.index', ['search' => $itemSepatu->kode_barang]));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        $this->assertTrue($items->contains('id', $itemSepatu->id));
+        $this->assertFalse($items->contains('id', $itemTas->id));
+
+        // Assert 3: Filter by status
+        $response = $this->get(route('admin.donation-requests.index', ['status' => 'disetujui']));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        $this->assertTrue($items->contains('id', $itemTas->id));
+        $this->assertFalse($items->contains('id', $itemSepatu->id));
+
+        // Assert 4: Filter by category (kategori)
+        $response = $this->get(route('admin.donation-requests.index', ['kategori' => 'sepatu']));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        $this->assertTrue($items->contains('id', $itemSepatu->id));
+        $this->assertFalse($items->contains('id', $itemTas->id));
+
+        // Assert 5: Filter by applicant type (tipe_pengaju)
+        $response = $this->get(route('admin.donation-requests.index', ['tipe_pengaju' => 'registered']));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        $this->assertTrue($items->contains('id', $itemSepatu->id));
+        $this->assertFalse($items->contains('id', $itemTas->id));
+
+        // Assert 6: Filter by date range (Flatpickr range)
+        $startDate = now()->subDays(6)->format('Y-m-d');
+        $endDate = now()->subDays(4)->format('Y-m-d');
+        $response = $this->get(route('admin.donation-requests.index', ['date_range' => "{$startDate} to {$endDate}"]));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        $this->assertTrue($items->contains('id', $itemSepatu->id));
+        $this->assertFalse($items->contains('id', $itemTas->id));
+
+        // Assert 7: Sort by name descending
+        $response = $this->get(route('admin.donation-requests.index', ['sort' => 'name_desc']));
+        $response->assertStatus(200);
+        $items = $response->original->getData()['items'];
+        // sneakers (S) should appear after tas (T) in alphabetical name order desc -> Tas (T) first
+        $this->assertEquals($itemTas->id, $items->first()->id);
+    }
+
+    /**
+     * Test admin can delete donation request and revert associated item status if approved.
+     */
+    public function test_admin_can_delete_donation_request(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        // 1. Create a donation item and request
+        $item = DonationItem::create([
+            'nama' => 'Test Shoe for Deletion',
+            'brand' => 'Nike',
+            'kategori' => 'sepatu',
+            'status' => 'disalurkan', // set as disalurkan to simulate approved state
+            'foto_utama_path' => 'katalog/test.jpg',
+        ]);
+        
+        $request = DonationRequest::create([
+            'donation_item_id' => $item->id,
+            'nama_pemohon' => 'Jane Doe',
+            'email' => 'jane@gmail.com',
+            'kontak_pemohon' => '6281299998888',
+            'alamat_pengiriman' => 'Jl. Kebagusan No. 5, Jakarta Selatan',
+            'alasan' => 'Butuh sepatu donasi.',
+            'status' => 'disetujui',
+        ]);
+
+        // Delete request
+        $response = $this->delete(route('admin.donation-requests.destroy', $request));
+        $response->assertRedirect(route('admin.donation-requests.index'));
+        $response->assertSessionHas('success', 'Permohonan berhasil dihapus.');
+
+        // Assert record is deleted from DB
+        $this->assertDatabaseMissing('donation_requests', [
+            'id' => $request->id
+        ]);
+
+        // Assert item status is reverted back to 'tersedia'
+        $this->assertDatabaseHas('donation_items', [
+            'id' => $item->id,
+            'status' => 'tersedia'
+        ]);
     }
 }

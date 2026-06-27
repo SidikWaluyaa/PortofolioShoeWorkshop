@@ -169,8 +169,10 @@ class DonationCatalogTest extends TestCase
 
         $payload = [
             'nama_pemohon' => 'Budi Santoso',
+            'email' => 'budi@gmail.com',
             'kontak_pemohon' => '081234567890',
             'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung, Jawa Barat',
+            'alasan' => 'Saya butuh sepatu ini untuk sekolah.',
         ];
 
         $response = $this->post(route('katalog.request', $item->id), $payload);
@@ -182,8 +184,10 @@ class DonationCatalogTest extends TestCase
         $this->assertDatabaseHas('donation_requests', [
             'donation_item_id' => $item->id,
             'nama_pemohon' => 'Budi Santoso',
+            'email' => 'budi@gmail.com',
             'kontak_pemohon' => '6281234567890', // Normalised
             'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung, Jawa Barat',
+            'alasan' => 'Saya butuh sepatu ini untuk sekolah.',
             'status' => 'pending',
         ]);
     }
@@ -200,14 +204,16 @@ class DonationCatalogTest extends TestCase
 
         $payload = [
             'nama_pemohon' => '',
+            'email' => 'not-an-email',
             'kontak_pemohon' => 'invalid-phone',
             'alamat_pengiriman' => 'short',
+            'alasan' => '',
         ];
 
         // Use regular post so we get redirect-back with validation errors
         $response = $this->post(route('katalog.request', $item->id), $payload);
 
-        $response->assertSessionHasErrors(['nama_pemohon', 'kontak_pemohon', 'alamat_pengiriman']);
+        $response->assertSessionHasErrors(['nama_pemohon', 'email', 'kontak_pemohon', 'alamat_pengiriman', 'alasan']);
     }
 
     public function test_catalog_request_unavailable_item_fails(): void
@@ -222,8 +228,10 @@ class DonationCatalogTest extends TestCase
 
         $payload = [
             'nama_pemohon' => 'Budi Santoso',
+            'email' => 'budi@gmail.com',
             'kontak_pemohon' => '081234567890',
             'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung, Jawa Barat',
+            'alasan' => 'Saya butuh sepatu ini untuk sekolah.',
         ];
 
         $response = $this->post(route('katalog.request', $item->id), $payload);
@@ -410,5 +418,102 @@ class DonationCatalogTest extends TestCase
         $posSecondKelayakan = strpos($htmlKelayakan, 'Sepatu Kedua'); // 90%
         $posFirstKelayakan = strpos($htmlKelayakan, 'Sepatu Pertama'); // 60%
         $this->assertTrue($posSecondKelayakan < $posFirstKelayakan);
+    }
+
+    /**
+     * Test donation item quota limit logic.
+     */
+    public function test_donation_item_quota_limit(): void
+    {
+        $item = DonationItem::create([
+            'nama' => 'Sepatu Quota Test',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/test.jpg',
+        ]);
+
+        // 1. Assert initial quota state
+        $this->assertFalse($item->isQuotaFull());
+        $this->assertFalse($item->is_quota_full);
+
+        // 2. Add 5 pending requests
+        for ($i = 0; $i < 5; $i++) {
+            DonationRequest::create([
+                'donation_item_id' => $item->id,
+                'nama_pemohon' => 'User ' . $i,
+                'email' => "user{$i}@gmail.com",
+                'kontak_pemohon' => '62812345678' . $i,
+                'alamat_pengiriman' => 'Bandung',
+                'alasan' => 'Butuh sepatu donasi.',
+                'status' => 'pending',
+            ]);
+        }
+
+        // 3. Assert quota is now full
+        $this->assertTrue($item->isQuotaFull());
+        $this->assertTrue($item->is_quota_full);
+
+        // 4. Try loading request form - should redirect with error
+        $response = $this->get(route('katalog.request.form', $item));
+        $response->assertRedirect(route('katalog.show', $item));
+        $response->assertSessionHas('error', 'Kuota pengajuan untuk barang ini sudah penuh.');
+
+        // 5. Try submitting request via POST - should return 422 JSON error
+        $responsePost = $this->postJson(route('katalog.request', $item), [
+            'nama_pemohon' => 'Another User',
+            'email' => 'another@gmail.com',
+            'kontak_pemohon' => '6281299990000',
+            'alamat_pengiriman' => 'Jakarta Selatan',
+            'alasan' => 'Butuh sekali.',
+        ]);
+        $responsePost->assertStatus(422);
+        $responsePost->assertJsonFragment([
+            'message' => 'Kuota pengajuan untuk barang ini sudah penuh.'
+        ]);
+    }
+
+    /**
+     * Test donatur catalog request fails when quota is full.
+     */
+    public function test_donatur_catalog_request_fails_when_quota_full(): void
+    {
+        $user = \App\Models\User::factory()->create(['role' => 'user']);
+        $this->actingAs($user);
+
+        $item = DonationItem::create([
+            'nama' => 'Sepatu Quota Donatur',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'katalog/test.jpg',
+        ]);
+
+        // Add 5 pending requests
+        for ($i = 0; $i < 5; $i++) {
+            DonationRequest::create([
+                'donation_item_id' => $item->id,
+                'nama_pemohon' => 'User ' . $i,
+                'email' => "user{$i}@gmail.com",
+                'kontak_pemohon' => '62812345678' . $i,
+                'alamat_pengiriman' => 'Bandung',
+                'alasan' => 'Butuh sepatu donasi.',
+                'status' => 'pending',
+            ]);
+        }
+
+        // Try submitting request via POST donatur route
+        $response = $this->postJson(route('donatur.katalog.request', $item), [
+            'nama_pemohon' => 'Another User',
+            'email' => 'another@gmail.com',
+            'kontak_pemohon' => '6281299990000',
+            'alamat_pengiriman' => 'Jakarta Selatan',
+            'alasan' => 'Butuh sekali.',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonFragment([
+            'message' => 'Kuota pengajuan untuk barang ini sudah penuh.'
+        ]);
     }
 }

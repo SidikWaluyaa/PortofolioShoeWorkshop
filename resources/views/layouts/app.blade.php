@@ -156,21 +156,21 @@
                      class="bg-gray-50/40 border border-gray-100/80 rounded-2xl p-2 transition-all duration-300 hover:bg-gray-50/70 hover:border-gray-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
                      
                      {{-- Toggle Button --}}
-                     <button @click="openSections['{{ $sec['title'] }}'] = !openSections['{{ $sec['title'] }}']" 
+                     <button @click="openSections['{!! $sec['title'] !!}'] = !openSections['{!! $sec['title'] !!}']" 
                              class="w-full flex items-center justify-between px-2.5 py-1.5 text-[10px] font-black text-gray-500 uppercase tracking-wider hover:text-gray-800 transition-colors focus:outline-none">
                          <div class="flex items-center gap-2">
                              <span class="w-1.5 h-1.5 rounded-full {{ $sec['dot_color'] }}"></span>
                              <span>{{ $sec['title'] }}</span>
                          </div>
                          <svg class="w-3.5 h-3.5 transform transition-transform duration-200 text-gray-400" 
-                              :class="openSections['{{ $sec['title'] }}'] || searchQuery ? 'rotate-180 text-gray-600' : ''" 
+                              :class="openSections['{!! $sec['title'] !!}'] || searchQuery ? 'rotate-180 text-gray-600' : ''" 
                               fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
                          </svg>
                      </button>
                      
                      {{-- Links --}}
-                     <div x-show="openSections['{{ $sec['title'] }}'] || searchQuery"
+                     <div x-show="openSections['{!! $sec['title'] !!}'] || searchQuery"
                           x-transition:enter="transition ease-out duration-200"
                           x-transition:enter-start="opacity-0 transform -translate-y-1"
                           x-transition:enter-end="opacity-100 transform translate-y-0"

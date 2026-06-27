@@ -205,10 +205,18 @@ class DonationCatalogController extends Controller
             ], 422);
         }
 
+        if ($item->isQuotaFull()) {
+            return response()->json([
+                'message' => 'Kuota pengajuan untuk barang ini sudah penuh.'
+            ], 422);
+        }
+
         $request->validate([
             'nama_pemohon' => ['required', 'string', 'max:150'],
+            'email' => ['required', 'email', 'max:150'],
             'kontak_pemohon' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
             'alamat_pengiriman' => ['required', 'string', 'min:10'],
+            'alasan' => ['required', 'string'],
         ]);
 
         try {
@@ -225,8 +233,10 @@ class DonationCatalogController extends Controller
                     'donation_item_id' => $item->id,
                     'user_id' => Auth::id(),
                     'nama_pemohon' => $request->nama_pemohon,
+                    'email' => $request->email,
                     'kontak_pemohon' => $cleaned,
                     'alamat_pengiriman' => $request->alamat_pengiriman,
+                    'alasan' => $request->alasan,
                     'status' => 'pending',
                 ]);
             });

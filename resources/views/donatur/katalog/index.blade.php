@@ -565,7 +565,7 @@
                         </div>
                         <h2 class="text-2xl font-extrabold text-gray-900 leading-snug" x-text="activeItem?.nama"></h2>
                         
-                        <div class="grid grid-cols-2 gap-3 border-t border-b border-gray-100 py-4 my-2">
+                        <div class="grid grid-cols-3 gap-3 border-t border-b border-gray-100 py-4 my-2">
                             <div>
                                 <span class="text-[10px] font-bold text-gray-400 uppercase">Kondisi</span>
                                 <p class="text-sm font-bold text-gray-800 mt-0.5" x-text="activeItem ? formatCondition(activeItem.kondisi) : ''"></p>
@@ -573,6 +573,10 @@
                             <div>
                                 <span class="text-[10px] font-bold text-gray-400 uppercase">Ukuran</span>
                                 <p class="text-sm font-bold text-gray-800 mt-0.5" x-text="activeItem?.ukuran || '-'"></p>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Kuota Pengajuan</span>
+                                <p class="text-sm font-bold mt-0.5" :class="activeItem?.is_quota_full ? 'text-red-650' : 'text-emerald-600'" x-text="activeItem ? (activeItem.pending_requests_count + '/5') : '0/5'"></p>
                             </div>
                         </div>
                         
@@ -582,12 +586,19 @@
                         </div>
                     </div>
 
-                    <div class="pt-6 border-t border-gray-100 mt-6 flex gap-3">
-                        <button class="flex-grow py-3.5 bg-emerald-500 text-white rounded-xl text-xs font-bold hover:bg-emerald-600 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                                :disabled="activeItem?.status !== 'tersedia'"
+                    <div class="pt-6 border-t border-gray-100 mt-6 flex flex-col gap-3">
+                        <template x-if="activeItem?.is_quota_full && activeItem?.status === 'tersedia'">
+                            <div class="p-3 bg-amber-50 text-amber-700 text-xs font-bold rounded-xl border border-amber-100 flex items-center gap-1.5 mb-2 leading-normal">
+                                <span class="material-symbols-outlined !text-[16px] text-amber-600 shrink-0">info</span>
+                                Item donasi ini dalam proses pengajuan.
+                            </div>
+                        </template>
+
+                        <button class="w-full py-3.5 bg-emerald-500 text-white rounded-xl text-xs font-bold hover:bg-emerald-600 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                :disabled="activeItem?.status !== 'tersedia' || activeItem?.is_quota_full"
                                 @click="openForm()">
                             <span class="material-symbols-outlined !text-[16px]">send</span>
-                            Ajukan Permohonan
+                            <span x-text="activeItem?.is_quota_full && activeItem?.status === 'tersedia' ? 'Dalam Proses Pengajuan' : 'Ajukan Permohonan'"></span>
                         </button>
                     </div>
                 </div>
@@ -613,6 +624,12 @@
                         <span x-show="errors.nama_pemohon" x-text="errors.nama_pemohon" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
                     </div>
                     <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Email Aktif</label>
+                        <input class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-55 text-sm"
+                               type="email" x-model="form.email" required placeholder="Contoh: budi@gmail.com"/>
+                        <span x-show="errors.email" x-text="errors.email" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
+                    </div>
+                    <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">Nomor WhatsApp</label>
                         <div class="relative flex items-center">
                             <span class="absolute left-4 text-xs font-black text-gray-400 select-none">+62</span>
@@ -627,6 +644,12 @@
                         <textarea class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-55 text-sm"
                                   rows="3" x-model="form.alamat_pengiriman" required placeholder="Alamat lengkap jalan, nomor, RT/RW, kecamatan..."></textarea>
                         <span x-show="errors.alamat_pengiriman" x-text="errors.alamat_pengiriman" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Alasan Mengajukan Donasi</label>
+                        <textarea class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-55 text-sm"
+                                  rows="3" x-model="form.alasan" required placeholder="Jelaskan mengapa Anda membutuhkan barang ini..."></textarea>
+                        <span x-show="errors.alasan" x-text="errors.alasan" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
                     </div>
                     
                     <button class="w-full py-4 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 active:scale-[0.99] transition-all shadow-md shadow-emerald-500/10 mt-6 flex items-center justify-center gap-2"
@@ -971,9 +994,10 @@
                 this.detailOpen = false;
                 this.formOpen = true;
                 this.generalError = '';
-                this.errors = { nama_pemohon: '', kontak_pemohon: '', alamat_pengiriman: '' };
+                this.errors = { nama_pemohon: '', email: '', kontak_pemohon: '', alamat_pengiriman: '', alasan: '' };
                 
                 this.form.nama_pemohon = "{{ Auth::user()->name }}";
+                this.form.email = "{{ Auth::user()->email }}";
                 this.form.kontak_pemohon = "{{ Auth::user()->phone ? (str_starts_with(Auth::user()->phone, '62') ? substr(Auth::user()->phone, 2) : Auth::user()->phone) : '' }}";
             },
 
@@ -983,8 +1007,8 @@
             },
 
             resetFormFields() {
-                this.form = { nama_pemohon: '', kontak_pemohon: '', alamat_pengiriman: '' };
-                this.errors = { nama_pemohon: '', kontak_pemohon: '', alamat_pengiriman: '' };
+                this.form = { nama_pemohon: '', email: '', kontak_pemohon: '', alamat_pengiriman: '', alasan: '' };
+                this.errors = { nama_pemohon: '', email: '', kontak_pemohon: '', alamat_pengiriman: '', alasan: '' };
                 this.generalError = '';
             },
 
@@ -998,7 +1022,7 @@
             async submitRequest() {
                 this.submitting = true;
                 this.generalError = '';
-                this.errors = { nama_pemohon: '', kontak_pemohon: '', alamat_pengiriman: '' };
+                this.errors = { nama_pemohon: '', email: '', kontak_pemohon: '', alamat_pengiriman: '', alasan: '' };
 
                 try {
                     const url = `/donatur/katalog/${this.activeItem.id}/request`;
