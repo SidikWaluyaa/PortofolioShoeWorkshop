@@ -172,6 +172,15 @@
             color: #475569;
             font-size: 9px;
         }
+        .img-thumbnail {
+            width: 90px;
+            height: auto;
+            max-height: 90px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -240,25 +249,48 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 4%;">No</th>
-                <th style="width: 10%;">Kode</th>
-                <th style="width: 18%;">Nama Barang</th>
-                <th style="width: 10%;">Brand</th>
-                <th style="width: 10%;">Kategori</th>
-                <th style="width: 10%;">Kondisi</th>
-                <th style="width: 6%;">Ukuran</th>
-                <th style="width: 6%;">Berat</th>
-                <th style="width: 6%;">Kelayakan</th>
-                <th style="width: 12%;">Jasa Reparasi</th>
+                <th style="width: 3%;">No</th>
+                <th style="width: 13%;">Foto</th>
+                <th style="width: 8%;">Kode</th>
+                <th style="width: 15%;">Nama Barang</th>
+                <th style="width: 8%;">Brand</th>
+                <th style="width: 8%;">Kategori</th>
+                <th style="width: 8%;">Kondisi</th>
+                <th style="width: 5%;">Ukuran</th>
+                <th style="width: 5%;">Berat</th>
+                <th style="width: 5%;">Kelayakan</th>
+                <th style="width: 14%;">Jasa Reparasi</th>
                 <th style="width: 8%;">Status</th>
             </tr>
         </thead>
         <tbody>
             @forelse($items as $index => $item)
+                @php
+                    $imageSrc = null;
+                    if (!empty($item->foto_utama_path)) {
+                        if (Str::startsWith($item->foto_utama_path, 'images/') || Str::startsWith($item->foto_utama_path, 'storage/')) {
+                            $filePath = public_path($item->foto_utama_path);
+                        } else {
+                            $filePath = storage_path('app/public/' . $item->foto_utama_path);
+                        }
+                        
+                        if (file_exists($filePath)) {
+                            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                            $imageSrc = 'data:image/' . $extension . ';base64,' . base64_encode(file_get_contents($filePath));
+                        }
+                    }
+                @endphp
                 <tr>
-                    <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td style="font-family: monospace; font-weight: bold; color: #475569;">{{ $item->kode_barang ?? '-' }}</td>
-                    <td class="text-bold">
+                    <td style="text-align: center; vertical-align: middle;">{{ $index + 1 }}</td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        @if($imageSrc)
+                            <img src="{{ $imageSrc }}" class="img-thumbnail" alt="Foto">
+                        @else
+                            <span class="text-gray" style="font-size: 8px; font-style: italic;">No Photo</span>
+                        @endif
+                    </td>
+                    <td style="font-family: monospace; font-weight: bold; color: #475569; vertical-align: middle;">{{ $item->kode_barang ?? '-' }}</td>
+                    <td class="text-bold" style="vertical-align: middle;">
                         {{ $item->nama }}
                         @if($item->deskripsi)
                             <div class="text-gray" style="font-weight: normal; font-size: 8px; margin-top: 3px;">
@@ -266,23 +298,23 @@
                             </div>
                         @endif
                     </td>
-                    <td>{{ $item->brand ?? '-' }}</td>
-                    <td>
+                    <td style="vertical-align: middle;">{{ $item->brand ?? '-' }}</td>
+                    <td style="vertical-align: middle;">
                         <span class="badge badge-{{ $item->kategori }}">
                             {{ $item->kategori === 'sepatu' ? '👞 Sepatu' : ($item->kategori === 'tas' ? '🎒 Tas' : '🧢 Topi') }}
                         </span>
                     </td>
-                    <td>
+                    <td style="vertical-align: middle;">
                         <span class="badge badge-kondisi">
                             {{ str_replace('_', ' ', ucfirst($item->kondisi)) }}
                         </span>
                     </td>
-                    <td>{{ $item->ukuran ?? '-' }}</td>
-                    <td>{{ $item->berat_formatted }}</td>
-                    <td class="text-bold" style="color: {{ $item->score_kelayakan >= 90 ? '#065f46' : ($item->score_kelayakan >= 70 ? '#0f766e' : ($item->score_kelayakan >= 50 ? '#b45309' : '#b91c1c')) }}">
+                    <td style="vertical-align: middle;">{{ $item->ukuran ?? '-' }}</td>
+                    <td style="vertical-align: middle;">{{ $item->berat_formatted }}</td>
+                    <td class="text-bold" style="color: {{ $item->score_kelayakan >= 90 ? '#065f46' : ($item->score_kelayakan >= 70 ? '#0f766e' : ($item->score_kelayakan >= 50 ? '#b45309' : '#b91c1c')) }}; vertical-align: middle;">
                         {{ $item->score_kelayakan ? $item->score_kelayakan . '%' : '-' }}
                     </td>
-                    <td>
+                    <td style="vertical-align: middle;">
                         @if($item->reparationServices->isNotEmpty())
                             <ul class="services-list">
                                 @foreach($item->reparationServices as $rs)
@@ -293,7 +325,7 @@
                             <span class="text-gray">-</span>
                         @endif
                     </td>
-                    <td>
+                    <td style="vertical-align: middle;">
                         <span class="badge badge-{{ $item->status }}">
                             {{ $item->status === 'tersedia' ? 'Tersedia' : 'Disalurkan' }}
                         </span>
@@ -301,7 +333,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="11" style="text-align: center; color: #64748b; padding: 20px;">
+                    <td colspan="12" style="text-align: center; color: #64748b; padding: 20px;">
                         Tidak ada data barang donasi ditemukan.
                     </td>
                 </tr>
