@@ -620,7 +620,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
                         spk_number: spk,
@@ -897,6 +898,7 @@
             const xhr = new XMLHttpRequest();
             xhr.open('POST', `${API_URL}/submit`, true);
             xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
             // Track upload progress
             xhr.upload.onprogress = function(event) {
