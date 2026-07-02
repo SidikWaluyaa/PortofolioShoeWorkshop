@@ -46,7 +46,7 @@
 
 @include('layouts.navigation-public')
 
-<main class="pt-24 pb-16 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<main class="pt-24 pb-16 max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop">
     
     {{-- Header Section --}}
     <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">

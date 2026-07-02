@@ -27,14 +27,38 @@
 
                         <div class="mb-4">
                             <x-input-label for="image" :value="__('About Image')" />
-                            @if($about->image)
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $about->image) }}" alt="Current About" class="h-20 w-40 object-cover">
-                                </div>
-                            @endif
-                            <input id="image" name="image" type="file" class="mt-1 block w-full" />
+
+                            {{-- Current / Live Preview --}}
+                            <div class="mt-2 mb-3">
+                                @if($about->image)
+                                    <p class="text-xs text-gray-500 mb-1">Foto saat ini:</p>
+                                    <img id="image-preview"
+                                         src="{{ asset('storage/' . $about->image) }}"
+                                         alt="Current About"
+                                         class="h-40 w-64 object-cover rounded-lg border border-gray-200 shadow-sm">
+                                @else
+                                    <p class="text-xs text-gray-500 mb-1">Preview:</p>
+                                    <img id="image-preview"
+                                         src=""
+                                         alt="Preview"
+                                         class="h-40 w-64 object-cover rounded-lg border border-gray-200 shadow-sm hidden">
+                                @endif
+                            </div>
+
+                            <input id="image" name="image" type="file" accept="image/*" class="mt-1 block w-full" />
+                            <p class="text-xs text-gray-400 mt-1">Biarkan kosong jika tidak ingin mengganti gambar.</p>
                             <x-input-error class="mt-2" :messages="$errors->get('image')" />
                         </div>
+
+                        <script>
+                            document.getElementById('image').addEventListener('change', function(e) {
+                                const file = e.target.files[0];
+                                if (!file) return;
+                                const preview = document.getElementById('image-preview');
+                                preview.src = URL.createObjectURL(file);
+                                preview.classList.remove('hidden');
+                            });
+                        </script>
 
                         <div class="block mb-4">
                             <label for="is_active" class="inline-flex items-center">

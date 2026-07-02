@@ -216,7 +216,7 @@
                 
                 <!-- Guideline Image -->
                 <div class="rounded-xl overflow-hidden border border-gray-100 shadow-sm mb-4 bg-gray-50 aspect-[16/9] flex items-center justify-center">
-                    <img src="{{ asset('storage/donations/guideline.jpg') }}" alt="Panduan Angle Foto Sepatu" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/contoh_angle_sepatu.jpg') }}" alt="Panduan Angle Foto Sepatu" class="w-full h-full object-cover">
                 </div>
 
                 <!-- Legend of Angles -->

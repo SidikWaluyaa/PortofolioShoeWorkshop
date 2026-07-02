@@ -77,7 +77,7 @@
                         </div>
 
                         <!-- Title -->
-                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 h-9 sm:h-12 hover:text-[#22AF85] transition-colors" title="{{ $item->nama }}">
+                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-[#22AF85] transition-colors" title="{{ $item->nama }}">
                             @if($item->status === 'tersedia')
                                 <a href="{{ route('katalog.show', $item->id) }}">
                                     {{ $item->nama }}
@@ -114,7 +114,7 @@
                         </div>
 
                         <!-- Description -->
-                        <p class="text-xs sm:text-sm text-[#3d4947] font-normal line-clamp-2 mb-4 h-8 sm:h-10">
+                        <p class="text-xs sm:text-sm text-[#3d4947] font-normal line-clamp-2 mb-4 min-h-[2rem] sm:min-h-[2.5rem]">
                             {{ $item->deskripsi ?? 'Tidak ada deskripsi barang.' }}
                         </p>
                     </div>

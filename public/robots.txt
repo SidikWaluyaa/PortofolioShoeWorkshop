@@ -5,4 +5,4 @@ Disallow: /login
 Disallow: /register
 Disallow: /dashboard
 
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://shoeworkshop.id/sitemap.xml

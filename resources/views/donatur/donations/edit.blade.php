@@ -8,7 +8,7 @@
                 <form action="{{ route('donatur.donations.update', $donation) }}" method="POST" enctype="multipart/form-data" 
                       x-data="{ 
                           metode: '{{ old('metode_pengiriman', $donation->metode_pengiriman) }}', 
-                          existingPhotos: @json($donation->foto_path ?? []), 
+                          existingPhotos: {{ json_encode($donation->foto_path ?? []) }}, 
                           uploadedFiles: [], 
                           triggerInput() { 
                               this.$refs.fileInput.click(); 
@@ -253,7 +253,7 @@
                 
                 <!-- Guideline Image -->
                 <div class="rounded-xl overflow-hidden border border-gray-100 shadow-sm mb-4 bg-gray-50 aspect-[16/9] flex items-center justify-center">
-                    <img src="{{ asset('storage/donations/guideline.jpg') }}" alt="Panduan Angle Foto Sepatu" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/contoh_angle_sepatu.jpg') }}" alt="Panduan Angle Foto Sepatu" class="w-full h-full object-cover">
                 </div>
 
                 <!-- Legend of Angles -->

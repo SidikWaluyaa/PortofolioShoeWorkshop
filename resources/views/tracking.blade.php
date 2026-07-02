@@ -19,7 +19,7 @@
 
 @include('layouts.navigation-public')
 
-<main class="pt-24 pb-16 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<main class="pt-24 pb-16 max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop">
     @if(isset($query) && $query)
         @if(isset($result) && $result)
             <!-- Search & Header Section -->

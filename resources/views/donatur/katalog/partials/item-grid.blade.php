@@ -72,7 +72,7 @@
                         </div>
 
                         <!-- Title -->
-                        <h4 class="font-bold text-sm sm:text-base text-gray-900 mb-1 leading-snug line-clamp-2 h-9 sm:h-6 hover:text-emerald-600 transition-colors cursor-pointer" title="{{ $item->nama }}" @click="openDetail({{ $itemJson }})">
+                        <h4 class="font-bold text-sm sm:text-base text-gray-900 mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-emerald-600 transition-colors cursor-pointer" title="{{ $item->nama }}" @click="openDetail({{ $itemJson }})">
                             {{ $item->nama }}
                         </h4>
 
@@ -90,7 +90,7 @@
                         </div>
 
                         <!-- Description -->
-                        <p class="text-xs text-gray-500 font-normal line-clamp-2 mb-4 leading-relaxed h-8 sm:h-10">
+                        <p class="text-xs text-gray-500 font-normal line-clamp-2 mb-4 leading-relaxed min-h-[2rem] sm:min-h-[2.5rem]">
                             {{ $item->deskripsi ?? 'Tidak ada deskripsi barang.' }}
                         </p>
 
