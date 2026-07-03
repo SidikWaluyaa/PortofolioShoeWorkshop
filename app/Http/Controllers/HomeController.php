@@ -42,6 +42,11 @@ class HomeController extends Controller
             'settings'         => $this->settingService->all(),
             'latestPosts'      => $this->blogService->getActive(3),
             'reviews'          => $this->reviewService->getActive(),
+            'donationShowcase' => \App\Models\DonationItem::with('reparationServices.service', 'donation.user')
+                                    ->where('status', 'tersedia')
+                                    ->latest()
+                                    ->take(8)
+                                    ->get(),
         ];
 
         return view('home', $data);

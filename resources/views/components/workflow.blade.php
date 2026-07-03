@@ -28,7 +28,7 @@
     </div>
 
     {{-- Right Steps Timeline --}}
-    <div class="relative pl-12 md:pl-0 flex flex-col gap-0">
+    <div class="relative flex flex-col gap-0">
         @foreach($workflow as $i => $step)
         @php
         $descs = [
@@ -40,17 +40,17 @@
         ];
         $isLast = $i === count($workflow) - 1;
         @endphp
-        <div class="relative flex flex-col md:flex-row gap-4 md:gap-6 group {{ !$isLast ? 'pb-12' : '' }} items-center md:items-start text-center md:text-left">
+        <div class="relative flex flex-row gap-4 md:gap-6 group {{ !$isLast ? 'pb-12' : '' }} items-start text-left">
             @if(!$isLast)
             {{-- Connecting line segment --}}
-            <div class="absolute left-1/2 md:left-[-33px] top-10 bottom-0 w-[2px] bg-gray-200 -translate-x-1/2 md:translate-x-0 z-0"></div>
+            <div class="absolute left-[19px] md:left-[-33px] top-10 bottom-0 w-[2px] bg-gray-200 z-0"></div>
             @endif
             
             {{-- Circle with Emoji from Database --}}
             <div class="w-10 h-10 bg-white border-2 border-[#22AF85] rounded-full flex items-center justify-center z-10 text-lg shadow-sm shrink-0 md:absolute md:-left-[53px]">
                 {{ $step->icon }}
             </div>
-            <div>
+            <div class="pt-1 md:pt-0">
                 <h4 class="font-bold text-sm sm:text-base text-[#1c1c17] mb-2 group-hover:text-[#22AF85] transition-colors">
                     {{ $step->title }}
                 </h4>

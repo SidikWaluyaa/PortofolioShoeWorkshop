@@ -93,9 +93,9 @@
         <p class="text-gray-500 text-base leading-relaxed">Transformasi luar biasa dari sepatu yang sudah rusak menjadi tampak seperti baru. Dengan proses deep cleaning organik dan repaint premium, kami mengembalikan kejayaan klasiknya.</p>
         @endif
         <a href="{{ route('portfolio.index') }}"
-           class="inline-flex items-center gap-2 text-sm font-semibold text-[#22AF85] hover:gap-4 transition-all duration-300">
+           class="inline-flex items-center justify-center gap-2 px-6 py-3.5 border-2 border-[#22AF85] text-[#22AF85] bg-transparent hover:bg-[#22AF85] hover:text-white rounded-xl font-bold transition-all duration-300 group mt-4">
             Lihat Portfolio Lainnya
-            <span class="material-symbols-outlined">arrow_forward</span>
+            <span class="material-symbols-outlined !text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </a>
     </div>
 </div>

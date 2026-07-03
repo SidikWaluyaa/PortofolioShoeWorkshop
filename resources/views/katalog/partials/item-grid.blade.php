@@ -137,17 +137,19 @@
         @endforeach
     </div>
 
-    <!-- Load More Section -->
-    <div id="load-more-container" class="mt-8 flex flex-col items-center gap-4 w-full py-6 border-t border-gray-200/60">
-        <p class="text-sm font-semibold text-gray-500">
-            Showing <span class="font-extrabold text-[#191c1d]" id="current-count-display">{{ $items->lastItem() }}</span> of <span class="font-extrabold text-[#191c1d]">{{ $items->total() }}</span> results
-        </p>
-        @if($items->hasMorePages())
-            <button id="load-more-btn" data-next-page="{{ $items->currentPage() + 1 }}"
-                    class="px-8 py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined !text-[18px]">expand_more</span>
-                Muat Lebih Banyak
-            </button>
-        @endif
-    </div>
+    @if($items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+        <!-- Load More Section -->
+        <div id="load-more-container" class="mt-8 flex flex-col items-center gap-4 w-full py-6 border-t border-gray-200/60">
+            <p class="text-sm font-semibold text-gray-500">
+                Showing <span class="font-extrabold text-[#191c1d]" id="current-count-display">{{ $items->lastItem() }}</span> of <span class="font-extrabold text-[#191c1d]">{{ $items->total() }}</span> results
+            </p>
+            @if($items->hasMorePages())
+                <button id="load-more-btn" data-next-page="{{ $items->currentPage() + 1 }}"
+                        class="px-8 py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined !text-[18px]">expand_more</span>
+                    Muat Lebih Banyak
+                </button>
+            @endif
+        </div>
+    @endif
 @endif

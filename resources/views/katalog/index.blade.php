@@ -27,14 +27,17 @@
     @include('layouts.navigation-public')
 
     <div class="pt-20 flex-grow flex flex-col">
+        {{-- Hero header --}}
+        <div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100 w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Katalog Donasi</span>
+                <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Katalog Donasi Barang</h1>
+                <p class="text-gray-500 max-w-xl mx-auto text-base">Temukan barang berkualitas hasil perbaikan workshop kami yang siap disalurkan kepada yang membutuhkan.</p>
+            </div>
+        </div>
+
         <!-- Main Content Cluster -->
         <main class="max-w-[1280px] w-full mx-auto px-6 lg:px-10 py-10 flex-grow flex flex-col gap-8">
-            <!-- Page Header -->
-            <div class="space-y-2">
-                <p class="text-xs font-bold text-[#22AF85] tracking-widest uppercase">Katalog Donasi</p>
-                <h1 class="text-3xl md:text-4xl font-extrabold text-[#1c1c17]">Katalog Donasi Barang</h1>
-                <p class="text-sm text-gray-500 max-w-2xl">Temukan barang berkualitas hasil perbaikan workshop kami yang siap disalurkan kepada yang membutuhkan.</p>
-            </div>
 
             @if(isset($activeCampaigns) && $activeCampaigns->isNotEmpty())
                 <div x-data="{

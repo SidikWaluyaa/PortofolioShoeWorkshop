@@ -214,5 +214,77 @@
             </span>
         </button>
     </div>
+
+    @guest
+        <!-- Registration Modal Popup -->
+        <div x-data="registerModal()" 
+             x-init="initModal()" 
+             x-show="isOpen"
+             @scroll.window="handleScroll"
+             class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6" 
+             style="display: none;" 
+             x-cloak>
+             
+            <!-- Backdrop -->
+            <div x-show="isOpen" 
+                 x-transition:enter="transition ease-out duration-500"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click="closeModal()"
+                 class="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"></div>
+
+            <!-- Modal Card -->
+            <div x-show="isOpen" 
+                 x-transition:enter="transition ease-out duration-500 delay-100"
+                 x-transition:enter-start="opacity-0 scale-90 translate-y-8"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-8"
+                 class="relative w-full max-w-[420px] bg-transparent rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col z-10">
+                 
+                <!-- Close button top right -->
+                <button @click="closeModal()" class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-black/10 backdrop-blur-md text-white hover:bg-black/30 hover:scale-110 active:scale-95 transition-all z-20">
+                    <span class="material-symbols-outlined !text-[20px]">close</span>
+                </button>
+
+                <!-- Image Link -->
+                <a href="{{ route('register') }}" class="block w-full cursor-pointer hover:scale-[1.01] transition-transform duration-300 relative z-10">
+                    <img src="{{ asset('images/pop-up.png') }}" alt="Daftar Sebagai Donatur" class="w-full h-auto object-cover rounded-3xl block">
+                </a>
+            </div>
+        </div>
+
+        <script>
+            function registerModal() {
+                return {
+                    isOpen: false,
+                    hasAppeared: false,
+                    initModal() {
+                        const dismissed = sessionStorage.getItem('register_modal_dismissed');
+                        if (dismissed) {
+                            this.hasAppeared = true;
+                        }
+                    },
+                    handleScroll() {
+                        if (this.hasAppeared) return;
+                        
+                        // Munculkan popup saat user scroll lebih dari 400px (LCP sangat aman)
+                        if (window.scrollY > 400) {
+                            this.isOpen = true;
+                            this.hasAppeared = true;
+                        }
+                    },
+                    closeModal() {
+                        this.isOpen = false;
+                        sessionStorage.setItem('register_modal_dismissed', 'true');
+                    }
+                }
+            }
+        </script>
+    @endguest
 </body>
 </html>

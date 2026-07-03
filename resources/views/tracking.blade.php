@@ -29,6 +29,15 @@
 @include('layouts.navigation-public')
 
 <main class="pt-20 pb-16 min-h-screen bg-gray-50">
+    {{-- Header --}}
+    <div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Tracking Pesanan</span>
+            <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Lacak Pesanan Anda</h1>
+            <p class="text-gray-500 max-w-xl mx-auto text-base">Masukkan nomor SPK (Surat Perintah Kerja) untuk melihat progres pengerjaan sepatu secara real-time.</p>
+        </div>
+    </div>
+
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
     @if(isset($query) && $query)
@@ -272,14 +281,7 @@
 
     @else
         {{-- ── WELCOME / EMPTY STATE ── --}}
-        <div class="max-w-md mx-auto py-20 text-center fade-in-up">
-            <div class="w-20 h-20 bg-[#e8f8f5] text-[#22AF85] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <span class="material-symbols-outlined !text-[40px]" style="font-variation-settings:'FILL' 1">package_2</span>
-            </div>
-            <h1 class="text-2xl font-extrabold text-[#1c1c17] mb-2">Lacak Pesanan Anda</h1>
-            <p class="text-sm text-gray-400 mb-8 max-w-xs mx-auto leading-relaxed">
-                Masukkan nomor SPK (Surat Perintah Kerja) untuk melihat progres pengerjaan sepatu secara real-time.
-            </p>
+        <div class="max-w-md mx-auto py-10 text-center fade-in-up">
             <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <form method="GET" action="{{ route('tracking.index') }}">
                     <div class="relative">
