@@ -77,7 +77,7 @@
                         </div>
 
                         <!-- Title -->
-                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 h-9 sm:h-12 hover:text-[#22AF85] transition-colors" title="{{ $item->nama }}">
+                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-[#22AF85] transition-colors" title="{{ $item->nama }}">
                             @if($item->status === 'tersedia')
                                 <a href="{{ route('katalog.show', $item->id) }}">
                                     {{ $item->nama }}
@@ -114,7 +114,7 @@
                         </div>
 
                         <!-- Description -->
-                        <p class="text-xs sm:text-sm text-[#3d4947] font-normal line-clamp-2 mb-4 h-8 sm:h-10">
+                        <p class="text-xs sm:text-sm text-[#3d4947] font-normal line-clamp-2 mb-4 min-h-[2rem] sm:min-h-[2.5rem]">
                             {{ $item->deskripsi ?? 'Tidak ada deskripsi barang.' }}
                         </p>
                     </div>
@@ -137,17 +137,19 @@
         @endforeach
     </div>
 
-    <!-- Load More Section -->
-    <div id="load-more-container" class="mt-8 flex flex-col items-center gap-4 w-full py-6 border-t border-gray-200/60">
-        <p class="text-sm font-semibold text-gray-500">
-            Showing <span class="font-extrabold text-[#191c1d]" id="current-count-display">{{ $items->lastItem() }}</span> of <span class="font-extrabold text-[#191c1d]">{{ $items->total() }}</span> results
-        </p>
-        @if($items->hasMorePages())
-            <button id="load-more-btn" data-next-page="{{ $items->currentPage() + 1 }}"
-                    class="px-8 py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined !text-[18px]">expand_more</span>
-                Muat Lebih Banyak
-            </button>
-        @endif
-    </div>
+    @if($items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+        <!-- Load More Section -->
+        <div id="load-more-container" class="mt-8 flex flex-col items-center gap-4 w-full py-6 border-t border-gray-200/60">
+            <p class="text-sm font-semibold text-gray-500">
+                Showing <span class="font-extrabold text-[#191c1d]" id="current-count-display">{{ $items->lastItem() }}</span> of <span class="font-extrabold text-[#191c1d]">{{ $items->total() }}</span> results
+            </p>
+            @if($items->hasMorePages())
+                <button id="load-more-btn" data-next-page="{{ $items->currentPage() + 1 }}"
+                        class="px-8 py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined !text-[18px]">expand_more</span>
+                    Muat Lebih Banyak
+                </button>
+            @endif
+        </div>
+    @endif
 @endif

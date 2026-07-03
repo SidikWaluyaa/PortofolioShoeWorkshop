@@ -4,10 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('seo_title', config('app.name'))</title>
-    <meta name="description" content="@yield('seo_description')">
-    <meta name="keywords" content="@yield('seo_keywords')">
+    <meta name="author" content="Shoe Workshop">
     <meta name="robots" content="index, follow">
+
+    {{-- Primary SEO --}}
+    <title>@yield('seo_title', config('app.name'))</title>
+    <meta name="description" content="@yield('seo_description', 'Shoe Workshop – jasa reparasi sepatu, cuci, repaint, reglue, jahit profesional. Garansi kualitas, proses cepat.')">
+    <meta name="keywords" content="@yield('seo_keywords', 'reparasi sepatu, cuci sepatu, repaint sepatu, shoe repair bandung')">
+
+    {{-- Canonical URL --}}
+    <link rel="canonical" href="@yield('canonical_url', 'https://shoeworkshop.id/')">
+
+    {{-- Open Graph / Facebook --}}
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="Shoe Workshop">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:title" content="@yield('seo_title', 'Shoe Workshop | Reparasi Sepatu Profesional')">
+    <meta property="og:description" content="@yield('seo_description', 'Shoe Workshop – jasa reparasi sepatu, cuci, repaint, reglue, jahit profesional. Garansi kualitas, proses cepat.')">
+    <meta property="og:url" content="@yield('canonical_url', 'https://shoeworkshop.id/')">
+    <meta property="og:image" content="@yield('og_image', 'https://shoeworkshop.id/images/og-default.jpg')">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Shoe Workshop – Reparasi & Perawatan Sepatu Profesional">
+
+    {{-- Twitter / X Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('seo_title', 'Shoe Workshop | Reparasi Sepatu Profesional')">
+    <meta name="twitter:description" content="@yield('seo_description', 'Shoe Workshop – jasa reparasi sepatu, cuci, repaint, reglue, jahit profesional. Garansi kualitas, proses cepat.')">
+    <meta name="twitter:image" content="@yield('og_image', 'https://shoeworkshop.id/images/og-default.jpg')">
+
     {{-- PWA Meta Tags --}}
     <link rel="manifest" href="/manifest.webmanifest">
     <meta name="theme-color" content="#22AF85">
@@ -16,11 +41,24 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Shoe Workshop">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+    {{-- Favicon --}}
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
+    {{-- Preconnect to external origins --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght@0..1,100..700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
+    {{-- Critical Font: Preload first weight, then full range --}}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"></noscript>
+
+    {{-- Material Symbols: non-blocking load --}}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght@0..1,100..700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght@0..1,100..700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght@0..1,100..700&display=swap"></noscript>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -83,6 +121,9 @@
         }
     </style>
     @yield('head')
+
+    {{-- Structured Data (JSON-LD) --}}
+    @yield('schema_json')
 </head>
 <body class="antialiased bg-white text-[#1c1c17] overflow-x-hidden">
     @yield('content')
@@ -121,7 +162,7 @@
                         </p>
                     </div>
                 </div>
-                <button @click="open = false" class="text-white/80 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10">
+                <button @click="open = false" aria-label="Tutup chat" class="text-white/80 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10">
                     <span class="material-symbols-outlined !text-[20px]">close</span>
                 </button>
             </div>
@@ -150,6 +191,8 @@
         
         <!-- Toggle Button -->
         <button @click="open = !open" 
+                aria-label="Hubungi kami via WhatsApp"
+                :aria-expanded="open"
                 class="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-xl shadow-[#25D366]/30 hover:scale-110 active:scale-95 transition-all relative group cursor-pointer">
             
             <!-- Pulse ripple element -->
@@ -171,5 +214,77 @@
             </span>
         </button>
     </div>
+
+    @guest
+        <!-- Registration Modal Popup -->
+        <div x-data="registerModal()" 
+             x-init="initModal()" 
+             x-show="isOpen"
+             @scroll.window="handleScroll"
+             class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6" 
+             style="display: none;" 
+             x-cloak>
+             
+            <!-- Backdrop -->
+            <div x-show="isOpen" 
+                 x-transition:enter="transition ease-out duration-500"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click="closeModal()"
+                 class="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"></div>
+
+            <!-- Modal Card -->
+            <div x-show="isOpen" 
+                 x-transition:enter="transition ease-out duration-500 delay-100"
+                 x-transition:enter-start="opacity-0 scale-90 translate-y-8"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-8"
+                 class="relative w-full max-w-[420px] bg-transparent rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col z-10">
+                 
+                <!-- Close button top right -->
+                <button @click="closeModal()" class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-black/10 backdrop-blur-md text-white hover:bg-black/30 hover:scale-110 active:scale-95 transition-all z-20">
+                    <span class="material-symbols-outlined !text-[20px]">close</span>
+                </button>
+
+                <!-- Image Link -->
+                <a href="{{ route('register') }}" class="block w-full cursor-pointer hover:scale-[1.01] transition-transform duration-300 relative z-10">
+                    <img src="{{ asset('images/pop-up.png') }}" alt="Daftar Sebagai Donatur" class="w-full h-auto object-cover rounded-3xl block">
+                </a>
+            </div>
+        </div>
+
+        <script>
+            function registerModal() {
+                return {
+                    isOpen: false,
+                    hasAppeared: false,
+                    initModal() {
+                        const dismissed = sessionStorage.getItem('register_modal_dismissed');
+                        if (dismissed) {
+                            this.hasAppeared = true;
+                        }
+                    },
+                    handleScroll() {
+                        if (this.hasAppeared) return;
+                        
+                        // Munculkan popup saat user scroll lebih dari 400px (LCP sangat aman)
+                        if (window.scrollY > 400) {
+                            this.isOpen = true;
+                            this.hasAppeared = true;
+                        }
+                    },
+                    closeModal() {
+                        this.isOpen = false;
+                        sessionStorage.setItem('register_modal_dismissed', 'true');
+                    }
+                }
+            }
+        </script>
+    @endguest
 </body>
 </html>

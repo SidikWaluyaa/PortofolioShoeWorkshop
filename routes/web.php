@@ -5,13 +5,17 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\WarrantyClaimController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
 Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
 Route::get('/klaim-garansi', [WarrantyClaimController::class, 'index'])->name('warranty.index');
+Route::post('/klaim-garansi/api/check', [WarrantyClaimController::class, 'check']);
+Route::post('/klaim-garansi/api/submit', [WarrantyClaimController::class, 'submit']);
 Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 

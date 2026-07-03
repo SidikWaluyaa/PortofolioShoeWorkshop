@@ -4,6 +4,7 @@
 
 @section('head')
 <style>
+    @verbatim
     @keyframes bounce-x {
         0%, 100% { transform: translateX(0); }
         50% { transform: translateX(4px); }
@@ -12,6 +13,14 @@
         display: inline-block;
         animation: bounce-x 1.2s ease-in-out infinite;
     }
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up {
+        animation: fade-in-up 0.5s ease both;
+    }
+    @endverbatim
 </style>
 @endsection
 
@@ -19,312 +28,294 @@
 
 @include('layouts.navigation-public')
 
-<main class="pt-24 pb-16 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<main class="pt-20 pb-16 min-h-screen bg-gray-50">
+    {{-- Header --}}
+    <div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Tracking Pesanan</span>
+            <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Lacak Pesanan Anda</h1>
+            <p class="text-gray-500 max-w-xl mx-auto text-base">Masukkan nomor SPK (Surat Perintah Kerja) untuk melihat progres pengerjaan sepatu secara real-time.</p>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
     @if(isset($query) && $query)
         @if(isset($result) && $result)
-            <!-- Search & Header Section -->
-            <header class="mb-6 md:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                    <p class="font-label-bold text-label-bold text-primary mb-2 uppercase tracking-widest">Tracking Order</p>
-                    <h1 class="text-3xl md:text-headline-xl font-bold mb-4 text-on-surface break-all sm:break-normal">{{ $result['spk_number'] ?? '-' }}</h1>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-bold text-label-bold">{{ strtoupper($result['current_status']['label'] ?? '-') }}</span>
-                        @if(isset($result['estimated_finish_date']))
-                        <span class="text-on-surface-variant font-body-sm text-body-sm">Estimasi Selesai: {{ \Carbon\Carbon::parse($result['estimated_finish_date'])->format('d M Y') }}</span>
-                        @endif
-                    </div>
-                </div>
-                <div class="w-full md:w-[400px]">
-                    <form method="GET" action="{{ route('tracking.index') }}">
-                        <div class="relative">
-                            <input class="w-full bg-white border-2 border-on-surface px-4 sm:px-6 py-3.5 sm:py-4 rounded-xl focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none" 
-                                   placeholder="Cari SPK Number lain..." 
-                                   name="q" 
-                                   value="{{ $query ?? '' }}" 
-                                   type="text"
-                                   required/>
-                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-secondary-container p-2 rounded-lg text-on-surface active:scale-90 transition-transform">
-                                <span class="material-symbols-outlined">search</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </header>
 
-            <!-- Status Overview Stepper -->
-            <section class="mb-6 md:mb-10 bg-white p-5 sm:p-8 rounded-2xl border-2 border-on-surface custom-shadow-hard">
-                {{-- Mobile scroll hint --}}
-                <div class="flex justify-between items-center mb-4 md:hidden">
-                    <span class="text-xs font-extrabold uppercase text-on-surface-variant tracking-wider">Status Progres</span>
-                    <div class="flex items-center gap-1.5 text-xs text-primary font-bold">
-                        <span>Geser untuk detail</span>
-                        <span class="material-symbols-outlined !text-[16px] animate-bounce-horizontal">arrow_forward</span>
+            {{-- ── TOP SEARCH BAR ── --}}
+            <div class="mb-8">
+                <form method="GET" action="{{ route('tracking.index') }}">
+                    <div class="relative max-w-md">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 !text-[20px]">search</span>
+                        <input
+                            class="w-full bg-white border border-gray-200 pl-10 pr-12 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] outline-none transition-all shadow-sm"
+                            placeholder="Cari nomor SPK lain..."
+                            name="q"
+                            value="{{ $query ?? '' }}"
+                            type="text"
+                            required/>
+                        <button type="submit" aria-label="Cari"
+                            class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#22AF85] text-white p-1.5 rounded-lg active:scale-90 transition-transform">
+                            <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
+                        </button>
                     </div>
-                </div>
+                </form>
+            </div>
 
-                <div class="overflow-x-auto scrollbar-none scroll-smooth">
-                    <div class="min-w-[680px] md:min-w-0 flex justify-between relative py-2">
-                        <!-- Progress Line Background -->
-                        <div class="absolute top-[22px] left-0 w-full h-[2px] bg-surface-container-highest -z-0"></div>
-                        <!-- Active Progress Line -->
-                        @php
-                            $timelineArray = (array) $result['timeline'];
-                            $totalStages = count($timelineArray);
-                            $completedCount = 0;
-                            foreach ($timelineArray as $stage) {
-                                if ($stage['is_completed'] ?? false) {
-                                    $completedCount++;
-                                }
-                            }
-                            $percent = $totalStages > 1 ? (($completedCount - 1) / ($totalStages - 1)) * 100 : 0;
-                            $percent = max(0, min(100, $percent));
-                        @endphp
-                        <div class="absolute top-[22px] left-0 h-[2px] bg-primary -z-0 transition-all duration-1000" style="width: {{ $percent }}%"></div>
-                        <!-- Steps -->
+            {{-- ── HEADER: SPK + STATUS ── --}}
+            <div class="mb-6 fade-in-up">
+                <p class="text-xs font-bold text-[#22AF85] tracking-widest uppercase mb-1">Tracking Order</p>
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-[#1c1c17] tracking-tight font-mono">{{ $result['spk_number'] ?? '-' }}</h1>
+                    <span class="bg-[#22AF85] text-white text-xs font-bold px-3 py-1 rounded-full">{{ strtoupper($result['current_status']['label'] ?? '-') }}</span>
+                    @if(isset($result['estimated_finish_date']))
+                        <span class="text-gray-400 text-xs">Est. Selesai: {{ \Carbon\Carbon::parse($result['estimated_finish_date'])->format('d M Y') }}</span>
+                    @endif
+                </div>
+            </div>
+
+            {{-- ── PROGRESS STEPPER ── --}}
+            @php
+                $timelineArray = (array) $result['timeline'];
+                $totalStages = count($timelineArray);
+                $completedCount = 0;
+                foreach ($timelineArray as $stage) {
+                    if ($stage['is_completed'] ?? false) $completedCount++;
+                }
+                $percent = $totalStages > 1 ? (($completedCount - 1) / ($totalStages - 1)) * 100 : 0;
+                $percent = max(0, min(100, $percent));
+            @endphp
+
+            <div class="mb-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6 fade-in-up" style="animation-delay:.05s">
+                <div class="flex items-center justify-between mb-3 md:hidden">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Progres</span>
+                    <span class="flex items-center gap-1 text-xs text-[#22AF85] font-bold">
+                        <span>Geser</span>
+                        <span class="material-symbols-outlined !text-[14px] animate-bounce-horizontal">arrow_forward</span>
+                    </span>
+                </div>
+                <div class="overflow-x-auto scrollbar-none">
+                    <div class="min-w-[560px] md:min-w-0 flex justify-between items-start relative pt-1 pb-3">
+                        {{-- Track --}}
+                        <div class="absolute top-[18px] left-0 w-full h-[2px] bg-gray-100"></div>
+                        <div class="absolute top-[18px] left-0 h-[2px] bg-[#22AF85] transition-all duration-1000" style="width:{{ $percent }}%"></div>
+
                         @foreach($timelineArray as $stageKey => $stage)
                             @php
-                                $isCompleted = $stage['is_completed'] ?? false;
-                                $isCurrent = $stage['is_current'] ?? false;
-                                $icon = 'circle';
-                                $labelLower = strtolower($stage['label'] ?? '');
-                                if (str_contains($labelLower, 'terima') || str_contains($labelLower, 'diterima')) {
-                                    $icon = 'check_circle';
-                                } elseif (str_contains($labelLower, 'cuci') || str_contains($labelLower, 'clean')) {
-                                    $icon = 'cleaning_services';
-                                } elseif (str_contains($labelLower, 'reparasi') || str_contains($labelLower, 'proses') || str_contains($labelLower, 'reglue') || str_contains($labelLower, 'repaint')) {
-                                    $icon = 'construction';
-                                } elseif (str_contains($labelLower, 'selesai') || str_contains($labelLower, 'ready')) {
-                                    $icon = 'verified';
-                                } elseif (str_contains($labelLower, 'kirim') || str_contains($labelLower, 'dikirim') || str_contains($labelLower, 'ambil')) {
-                                    $icon = 'local_shipping';
-                                } else {
-                                    $icon = $isCompleted ? 'check_circle' : 'circle';
-                                }
+                                $done = $stage['is_completed'] ?? false;
+                                $curr = $stage['is_current'] ?? false;
+                                $lbl = strtolower($stage['label'] ?? '');
+                                if (str_contains($lbl,'terima') || str_contains($lbl,'diterima')) $ico='check_circle';
+                                elseif (str_contains($lbl,'cuci')) $ico='cleaning_services';
+                                elseif (str_contains($lbl,'reparasi')||str_contains($lbl,'repaint')||str_contains($lbl,'reglue')||str_contains($lbl,'service')) $ico='construction';
+                                elseif (str_contains($lbl,'selesai')||str_contains($lbl,'ready')) $ico='verified';
+                                elseif (str_contains($lbl,'kirim')||str_contains($lbl,'ambil')) $ico='local_shipping';
+                                elseif (str_contains($lbl,'qc')||str_contains($lbl,'check')) $ico='fact_check';
+                                else $ico = $done ? 'check_circle' : 'circle';
                             @endphp
-                            <div class="flex flex-col items-center gap-3 relative z-10">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 {{ $isCompleted || $isCurrent ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant' }}">
-                                    <span class="material-symbols-outlined" style="{{ $isCompleted || $isCurrent ? "font-variation-settings: 'FILL' 1;" : '' }}">{{ $icon }}</span>
+                            <div class="flex flex-col items-center gap-2 relative z-10 min-w-[70px]">
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center border-2 border-white shadow-sm text-white transition-all
+                                    {{ $done || $curr ? 'bg-[#22AF85]' : 'bg-gray-200 text-gray-400' }}">
+                                    <span class="material-symbols-outlined !text-[16px]" @if($done || $curr) style="font-variation-settings:'FILL' 1" @endif>{{ $ico }}</span>
                                 </div>
-                                <span class="font-label-bold text-label-bold {{ $isCompleted || $isCurrent ? 'text-primary' : 'text-on-surface-variant' }}">{{ strtoupper($stage['label'] ?? '') }}</span>
+                                <span class="text-[9px] font-bold text-center uppercase leading-tight {{ $done || $curr ? 'text-[#22AF85]' : 'text-gray-400' }}">{{ $stage['label'] ?? '' }}</span>
                             </div>
                         @endforeach
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- Main Content Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-gutter items-start">
-                <!-- Left Column: Customer & Progress Photos -->
-                <div class="order-2 lg:order-1 lg:col-span-7 flex flex-col gap-6 md:gap-gutter">
-                    <!-- Customer & Item Info -->
-                    <div class="bg-white p-5 sm:p-8 rounded-2xl border border-on-surface tracking-card">
-                        <h3 class="text-2xl sm:text-headline-lg font-bold mb-6">Detail Pesanan</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+            {{-- ── MAIN GRID ── --}}
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start">
+
+                {{-- LEFT: Detail + Dokumentasi --}}
+                <div class="lg:col-span-3 flex flex-col gap-4 sm:gap-6 order-2 lg:order-1">
+
+                    {{-- Detail Pesanan --}}
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 fade-in-up" style="animation-delay:.1s">
+                        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Detail Pesanan</h2>
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="font-label-bold text-label-bold text-on-surface-variant uppercase mb-1">Pelanggan</p>
-                                <p class="text-lg sm:text-title-md font-bold text-on-surface">{{ $result['customer_name'] ?? '-' }}</p>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Pelanggan</p>
+                                <p class="text-base font-bold text-[#1c1c17]">{{ $result['customer_name'] ?? '-' }}</p>
                                 @if($result['shoe']['size'] ?? null)
-                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Ukuran Sepatu: {{ $result['shoe']['size'] ?? '-' }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">Ukuran: {{ $result['shoe']['size'] }}</p>
                                 @endif
                             </div>
                             <div>
-                                <p class="font-label-bold text-label-bold text-on-surface-variant uppercase mb-1">Item & Layanan</p>
-                                <p class="text-lg sm:text-title-md font-bold text-on-surface">{{ ($result['shoe']['brand'] ?? '') . ' ' . ($result['shoe']['type'] ?? '-') }}</p>
-                                <div class="flex flex-wrap gap-2 mt-2">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Sepatu</p>
+                                <p class="text-base font-bold text-[#1c1c17]">{{ ($result['shoe']['brand'] ?? '') . ' ' . ($result['shoe']['type'] ?? '-') }}</p>
+                                <div class="flex flex-wrap gap-1.5 mt-2">
                                     @if($result['services'] ?? null)
                                         @foreach($result['services'] as $service)
-                                        <span class="bg-surface-container px-2 py-1 rounded text-[10px] font-bold uppercase text-on-surface-variant">{{ $service['service_name'] ?? '-' }}</span>
+                                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">{{ $service['service_name'] ?? '-' }}</span>
                                         @endforeach
-                                    @else
-                                        -
                                     @endif
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Documentation -->
+                    {{-- Dokumentasi --}}
                     @if(($result['visual_photos']['before_photo_url'] ?? null) || ($result['visual_photos']['after_photo_url'] ?? null))
-                    <div class="bg-white p-5 sm:p-8 rounded-2xl border border-on-surface tracking-card">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-2xl sm:text-headline-lg font-bold">Workshop Documentation</h3>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 fade-in-up" style="animation-delay:.15s">
+                        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Workshop Documentation</h2>
+                        <div class="grid grid-cols-2 gap-3">
                             @if($result['visual_photos']['before_photo_url'] ?? null)
-                            <div class="relative group">
-                                <img class="w-full h-48 sm:h-64 object-cover rounded-xl grayscale" src="{{ $result['visual_photos']['before_photo_url'] }}" alt="Sebelum"/>
-                                <span class="absolute top-4 left-4 bg-on-surface text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">BEFORE</span>
+                            <div class="relative">
+                                <img class="w-full h-40 sm:h-48 object-cover rounded-xl" src="{{ $result['visual_photos']['before_photo_url'] }}" alt="Before" loading="lazy"/>
+                                <span class="absolute top-2.5 left-2.5 bg-black/70 text-white px-2 py-0.5 rounded-full text-[9px] font-bold">BEFORE</span>
                             </div>
                             @endif
                             @if($result['visual_photos']['after_photo_url'] ?? null)
-                            <div class="relative group">
-                                <img class="w-full h-48 sm:h-64 object-cover rounded-xl" src="{{ $result['visual_photos']['after_photo_url'] }}" alt="Sesudah/Progres"/>
-                                <span class="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">AFTER / PROGRESS</span>
+                            <div class="relative">
+                                <img class="w-full h-40 sm:h-48 object-cover rounded-xl" src="{{ $result['visual_photos']['after_photo_url'] }}" alt="After/Progress" loading="lazy"/>
+                                <span class="absolute top-2.5 left-2.5 bg-[#22AF85] text-white px-2 py-0.5 rounded-full text-[9px] font-bold">AFTER / PROGRESS</span>
                             </div>
                             @endif
                         </div>
                     </div>
                     @endif
+
+                    {{-- Footer Actions --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 fade-in-up" style="animation-delay:.25s">
+                        <a href="{{ route('warranty.index') }}?spk_number={{ $result['spk_number'] ?? '' }}"
+                            class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex items-center gap-3 hover:border-[#22AF85] hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-red-50 text-red-500 rounded-lg flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined !text-[20px]">verified_user</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-[#1c1c17] group-hover:text-[#22AF85] transition-colors leading-snug">Ajukan Klaim Garansi</p>
+                                <p class="text-[11px] text-gray-400 mt-0.5 leading-snug">Garansi 100 hari kerja</p>
+                            </div>
+                            <span class="material-symbols-outlined text-gray-300 !text-[18px] shrink-0">arrow_forward_ios</span>
+                        </a>
+                        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank"
+                            class="bg-[#22AF85] rounded-xl border border-[#22AF85] shadow-sm p-4 flex items-center gap-3 hover:bg-[#1d9974] transition-all group">
+                            <div class="w-10 h-10 bg-white/20 text-white rounded-lg flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined !text-[20px]">support_agent</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white leading-snug">Chat Konsultan</p>
+                                <p class="text-[11px] text-white/70 mt-0.5 leading-snug">Tanya soal progres sepatu</p>
+                            </div>
+                            <span class="material-symbols-outlined text-white/50 !text-[18px] shrink-0">arrow_forward_ios</span>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Right Column: Timeline -->
-                <div class="order-1 lg:order-2 lg:col-span-5">
-                    <div class="bg-white p-5 sm:p-8 rounded-2xl border border-on-surface tracking-card h-full">
-                        <h3 class="text-2xl sm:text-headline-lg font-bold mb-8">Timeline Pengerjaan</h3>
-                        <div class="space-y-10 relative">
-                            <!-- Connecting Line -->
-                            <div class="absolute top-2 left-6 bottom-4 w-1 bg-surface-container-highest -z-0"></div>
-                            
-                            <!-- Timeline Items -->
-                            @foreach($timelineArray as $stageKey => $stage)
-                                @php
-                                    $isCompleted = $stage['is_completed'] ?? false;
-                                    $isCurrent = $stage['is_current'] ?? false;
-                                    $timestamp = $stage['waktu'] ?? null;
-                                @endphp
-                                <div class="flex gap-4 sm:gap-6 relative z-10 {{ $isCompleted || $isCurrent ? '' : 'opacity-70' }}">
-                                    <div class="w-12 h-12 rounded-full border-4 border-white flex items-center justify-center shrink-0 {{ $isCurrent ? 'bg-primary-container text-white' : ($isCompleted ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant') }}">
-                                        @if($isCurrent)
-                                            <span class="material-symbols-outlined text-white text-[20px]">rebase_edit</span>
-                                        @elseif($isCompleted)
-                                            <span class="material-symbols-outlined text-white text-[20px]">check</span>
-                                        @else
-                                            <span class="material-symbols-outlined text-on-surface-variant text-[20px]">schedule</span>
-                                        @endif
-                                    </div>
-                                    <div class="flex flex-col gap-1">
-                                        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                                            <span class="text-base sm:text-title-md font-bold text-on-surface">{{ $stage['label'] ?? '-' }}</span>
+                {{-- RIGHT: Timeline --}}
+                <div class="lg:col-span-2 order-1 lg:order-2 fade-in-up" style="animation-delay:.2s">
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6">
+                        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-5">Timeline Pengerjaan</h2>
+                        <div class="relative">
+                            <div class="absolute top-3 left-[17px] bottom-3 w-[2px] bg-gray-100"></div>
+                            <div class="space-y-5">
+                                @foreach($timelineArray as $stageKey => $stage)
+                                    @php
+                                        $isCompleted = $stage['is_completed'] ?? false;
+                                        $isCurrent   = $stage['is_current'] ?? false;
+                                        $timestamp   = $stage['waktu'] ?? null;
+                                    @endphp
+                                    <div class="flex gap-3 relative z-10 {{ (!$isCompleted && !$isCurrent) ? 'opacity-50' : '' }}">
+                                        <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center shrink-0 shadow-sm
+                                            {{ $isCurrent ? 'bg-[#FFC232] text-white' : ($isCompleted ? 'bg-[#22AF85] text-white' : 'bg-gray-100 text-gray-400') }}">
                                             @if($isCurrent)
-                                                <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Sedang Berjalan</span>
+                                                <span class="material-symbols-outlined !text-[16px]">autorenew</span>
                                             @elseif($isCompleted)
-                                                <span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Selesai</span>
+                                                <span class="material-symbols-outlined !text-[16px]">check</span>
                                             @else
-                                                <span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Menunggu</span>
+                                                <span class="material-symbols-outlined !text-[16px]">schedule</span>
                                             @endif
                                         </div>
-                                        @if($timestamp)
-                                            <p class="text-on-surface-variant font-body-sm text-body-sm">{{ \Carbon\Carbon::parse($timestamp)->format('d M Y, H:i') }} WIB</p>
-                                        @endif
-                                        @if($isCurrent && isset($result['current_status']['description']))
-                                            <p class="font-body-md text-body-md mt-2 text-on-surface">{{ $result['current_status']['description'] }}</p>
-                                        @endif
+                                        <div class="flex-1 pt-1.5">
+                                            <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
+                                                <span class="text-sm font-bold text-[#1c1c17]">{{ $stage['label'] ?? '-' }}</span>
+                                                @if($isCurrent)
+                                                    <span class="bg-[#FFC232]/20 text-[#b38a00] text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Sedang Berjalan</span>
+                                                @elseif($isCompleted)
+                                                    <span class="bg-[#22AF85]/10 text-[#22AF85] text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Selesai</span>
+                                                @else
+                                                    <span class="bg-gray-100 text-gray-400 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Menunggu</span>
+                                                @endif
+                                            </div>
+                                            @if($timestamp)
+                                                <p class="text-[11px] text-gray-400">{{ \Carbon\Carbon::parse($timestamp)->format('d M Y, H:i') }} WIB</p>
+                                            @endif
+                                            @if($isCurrent && isset($result['current_status']['description']))
+                                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">{{ $result['current_status']['description'] }}</p>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Footer Actions / Support -->
-            <section class="mt-6 md:mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-gutter">
-                <a href="{{ route('warranty.index') }}?spk_number={{ $result['spk_number'] ?? '' }}" class="bg-white p-5 sm:p-8 rounded-2xl border-2 border-on-surface flex items-start gap-4 sm:gap-6 hover:translate-x-2 transition-transform cursor-pointer group text-left">
-                    <div class="bg-error-container text-on-error-container w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-[24px] sm:text-[32px]">verified_user</span>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-xl sm:text-[24px] font-bold mb-2 group-hover:text-primary transition-colors text-on-surface">Ajukan Klaim Garansi</h4>
-                        <p class="font-body-sm text-body-sm sm:text-body-md text-on-surface-variant">Layanan kami dilindungi garansi hasil pengerjaan selama 100 hari kerja.</p>
-                    </div>
-                    <span class="material-symbols-outlined self-center text-on-surface-variant ml-auto">arrow_forward_ios</span>
-                </a>
-                
-                <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank" class="bg-secondary-container p-5 sm:p-8 rounded-2xl border-2 border-on-surface flex items-start gap-4 sm:gap-6 hover:translate-x-2 transition-transform cursor-pointer group custom-shadow-hard text-left">
-                    <div class="bg-on-secondary-container text-white w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-[24px] sm:text-[32px]">support_agent</span>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-xl sm:text-[24px] font-bold mb-2 text-on-secondary-container">Chat Konsultan Workshop</h4>
-                        <p class="font-body-sm text-body-sm sm:text-body-md text-on-secondary-fixed-variant">Ada pertanyaan tentang progres sepatu Anda? Hubungi tim ahli kami.</p>
-                    </div>
-                    <span class="material-symbols-outlined self-center text-on-secondary-container ml-auto">arrow_forward_ios</span>
-                </a>
-            </section>
-
         @elseif(isset($error) && $error)
-            <!-- Error State: Order Not Found -->
-            <div class="max-w-xl mx-auto py-16 text-center">
-                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-error/20">
-                    <span class="material-symbols-outlined text-[36px] sm:text-[48px]">error</span>
+            {{-- ── ERROR STATE ── --}}
+            <div class="max-w-md mx-auto py-16 text-center fade-in-up">
+                <div class="w-16 h-16 bg-red-50 text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                    <span class="material-symbols-outlined !text-[32px]">search_off</span>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-on-surface mb-3 tracking-tight">Pesanan Tidak Ditemukan</h2>
-                <p class="text-on-surface-variant text-sm mb-8 max-w-md mx-auto">
-                    {{ $error }}
-                </p>
-                <div class="bg-white p-5 sm:p-6 rounded-2xl border-2 border-on-surface custom-shadow-hard">
+                <h2 class="text-xl font-extrabold text-[#1c1c17] mb-2">Pesanan Tidak Ditemukan</h2>
+                <p class="text-sm text-gray-400 mb-8 max-w-xs mx-auto">{{ $error }}</p>
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                     <form method="GET" action="{{ route('tracking.index') }}">
                         <div class="relative">
-                            <input class="w-full bg-white border-2 border-on-surface px-4 sm:px-6 py-3.5 sm:py-4 rounded-xl focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none" 
-                                   placeholder="Cari nomor SPK lain..." 
-                                   name="q" 
-                                   value="{{ $query ?? '' }}" 
-                                   type="text"
-                                   required/>
-                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-secondary-container p-2 rounded-lg text-on-surface active:scale-90 transition-transform">
-                                <span class="material-symbols-outlined">search</span>
+                            <input class="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl text-sm focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] outline-none transition-all"
+                                   placeholder="Coba nomor SPK lain..."
+                                   name="q" value="{{ $query ?? '' }}" type="text" required/>
+                            <button type="submit" aria-label="Cari"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#22AF85] text-white p-1.5 rounded-lg active:scale-90 transition-transform">
+                                <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         @endif
+
     @else
-        <!-- Welcome State: Standby search -->
-        <div class="max-w-xl mx-auto py-16 text-center">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-[#e8f8f5] text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-primary/20">
-                <span class="material-symbols-outlined text-[36px] sm:text-[48px]" style="font-variation-settings: 'FILL' 1;">package_2</span>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-on-surface mb-3 tracking-tight">Lacak Status Pesanan Anda</h2>
-            <p class="text-on-surface-variant text-sm mb-8 max-w-md mx-auto">
-                Masukkan nomor SPK (Surat Perintah Kerja) Anda untuk melihat progres pengerjaan sepatu secara real-time.
-            </p>
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border-2 border-on-surface custom-shadow-hard">
+        {{-- ── WELCOME / EMPTY STATE ── --}}
+        <div class="max-w-md mx-auto py-10 text-center fade-in-up">
+            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <form method="GET" action="{{ route('tracking.index') }}">
                     <div class="relative">
-                        <input class="w-full bg-white border-2 border-on-surface px-4 sm:px-6 py-3.5 sm:py-4 rounded-xl focus:ring-0 focus:border-primary transition-all font-body-md text-body-md outline-none" 
-                               placeholder="Masukkan nomor SPK..." 
-                               name="q" 
-                               value="{{ $query ?? '' }}" 
-                               type="text"
-                               required/>
-                        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-secondary-container p-2 rounded-lg text-on-surface active:scale-90 transition-transform">
-                            <span class="material-symbols-outlined">search</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-300 !text-[20px]">search</span>
+                        <input class="w-full bg-gray-50 border border-gray-200 pl-10 pr-12 py-3 rounded-xl text-sm focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] outline-none transition-all"
+                               placeholder="Contoh: S-2603-28-0882-IK"
+                               name="q" value="{{ $query ?? '' }}" type="text" required/>
+                        <button type="submit" aria-label="Cari"
+                            class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#22AF85] text-white p-1.5 rounded-lg active:scale-90 transition-transform">
+                            <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                         </button>
                     </div>
                 </form>
             </div>
+            <p class="text-xs text-gray-300 mt-5">Nomor SPK tersedia di resi atau WhatsApp konfirmasi pesanan Anda.</p>
         </div>
     @endif
+
+    </div>
 </main>
 
 @include('components.footer', ['settings' => $settings])
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Micro-interactions for tracking ID copy or search animation
-        const searchInput = document.querySelector('input');
-        if (searchInput) {
-            searchInput.addEventListener('focus', () => {
-                searchInput.parentElement.classList.add('scale-[1.02]');
-            });
-            searchInput.addEventListener('blur', () => {
-                searchInput.parentElement.classList.remove('scale-[1.02]');
-            });
-        }
-
-        // Simple Fade-in effect for timeline items
-        const timelineItems = document.querySelectorAll('.space-y-10 > div');
-        timelineItems.forEach((item, index) => {
+        const timelineItems = document.querySelectorAll('.space-y-5 > div');
+        timelineItems.forEach((item, i) => {
             item.style.opacity = '0';
-            item.style.transform = 'translateY(20px)';
-            item.style.transition = `all 0.5s ease ${index * 0.1}s`;
-            
+            item.style.transform = 'translateY(12px)';
+            item.style.transition = `all 0.4s ease ${i * 0.08}s`;
             setTimeout(() => {
-                const isHalfOpaque = item.classList.contains('opacity-70');
-                item.style.opacity = isHalfOpaque ? '0.7' : '1';
+                item.style.opacity = item.classList.contains('opacity-50') ? '0.5' : '1';
                 item.style.transform = 'translateY(0)';
-            }, 100);
+            }, 80);
         });
     });
 </script>

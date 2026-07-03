@@ -9,15 +9,11 @@
 <main class="pt-20">
 
 {{-- Header --}}
-<div class="bg-[#f5f0e8] py-14">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="flex items-center justify-center gap-3 mb-4">
-            <div class="h-px w-12 bg-gray-400"></div>
-            <p class="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Before & After</p>
-            <div class="h-px w-12 bg-gray-400"></div>
-        </div>
-        <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-3">Portfolio</h1>
-        <p class="text-gray-500 text-sm">Geser slider untuk melihat perbandingan sebelum dan sesudah pengerjaan</p>
+<div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Before & After</span>
+        <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Portfolio</h1>
+        <p class="text-gray-500 max-w-xl mx-auto text-base">Geser slider untuk melihat perbandingan sebelum dan sesudah pengerjaan</p>
     </div>
 </div>
 

@@ -46,24 +46,25 @@
 
 @include('layouts.navigation-public')
 
-<main class="pt-24 pb-16 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-    
-    {{-- Header Section --}}
-    <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-            <p class="font-label-bold text-label-bold text-primary mb-2 uppercase tracking-widest">Garansi Workshop</p>
-            <h1 class="text-3xl md:text-headline-xl font-bold mb-4 text-on-surface">Klaim Garansi Reparasi</h1>
-            <p class="text-on-surface-variant font-body-md text-body-md max-w-xl">
-                Ajukan klaim perbaikan jika hasil reparasi sepatu Anda tidak sesuai dengan standar garansi kami.
-            </p>
+<div class="pt-20 w-full">
+    {{-- Header --}}
+    <div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Garansi Workshop</span>
+            <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Klaim Garansi Reparasi</h1>
+            <p class="text-gray-500 max-w-xl mx-auto text-base">Ajukan klaim perbaikan jika hasil reparasi sepatu Anda tidak sesuai dengan standar garansi kami.</p>
+            
+            <div class="mt-8 flex justify-center">
+                <a href="{{ route('tracking.index') }}" class="inline-flex items-center gap-2 px-6 py-3.5 bg-white border-2 border-[#22AF85] text-[#22AF85] rounded-xl font-bold transition-all hover:bg-[#22AF85] hover:text-white group shadow-sm">
+                    <span class="material-symbols-outlined !text-[18px]">package_2</span>
+                    Lacak Status Pesanan
+                </a>
+            </div>
         </div>
-        <div class="shrink-0">
-            <a href="{{ route('tracking.index') }}" class="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-on-surface text-on-surface font-semibold text-xs rounded-xl hover:translate-x-[2px] hover:translate-y-[2px] transition-transform shadow-[4px_4px_0px_0px_#1c1b1b] hover:shadow-none">
-                <span class="material-symbols-outlined !text-[18px]">package_2</span>
-                Lacak Status Pesanan
-            </a>
-        </div>
-    </header>
+    </div>
+</div>
+
+<main class="pt-12 pb-16 max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop">
 
     {{-- Stepper Progress Card --}}
     <div class="mb-8 bg-white p-5 sm:p-8 rounded-2xl border-2 border-on-surface custom-shadow-hard">
@@ -620,7 +621,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
                         spk_number: spk,
@@ -897,6 +899,7 @@
             const xhr = new XMLHttpRequest();
             xhr.open('POST', `${API_URL}/submit`, true);
             xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
             // Track upload progress
             xhr.upload.onprogress = function(event) {

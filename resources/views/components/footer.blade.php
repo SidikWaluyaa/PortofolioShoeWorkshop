@@ -74,6 +74,10 @@
                         <span>{{ $settings['address'] }}</span>
                     </li>
                     @endif
+                    <li class="flex gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-[#22AF85] flex-shrink-0">schedule</span>
+                        <span>Senin - Minggu: 09.00 - 17.00 WIB</span>
+                    </li>
                 </ul>
             </div>
         </div>

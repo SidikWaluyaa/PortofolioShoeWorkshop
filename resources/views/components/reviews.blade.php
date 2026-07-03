@@ -1,7 +1,7 @@
 @if(count($reviews) > 0)
 <div x-ref="track" class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none pb-4">
     @foreach($reviews as $review)
-    <div class="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] snap-start bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6 hover:shadow-xl hover:border-[#22AF85]/20 transition-all duration-300">
+    <div class="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] snap-start bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6 hover:shadow-xl hover:border-[#22AF85]/20 transition-all duration-300 overflow-hidden">
         {{-- Stars --}}
         <div class="flex text-[#22AF85]">
             @for($s = 1; $s <= 5; $s++)
@@ -10,7 +10,7 @@
         </div>
 
         {{-- Content --}}
-        <p class="text-sm sm:text-base text-[#1c1c17] italic leading-relaxed line-clamp-4">
+        <p class="text-sm sm:text-base text-[#1c1c17] italic leading-relaxed line-clamp-4 break-words overflow-hidden">
             "{{ $review->content }}"
         </p>
 
@@ -24,9 +24,9 @@
             </div>
             @endif
             <div>
-                <p class="font-bold text-[#1c1c17] text-sm sm:text-base">{{ $review->name }}</p>
+                <p class="font-bold text-[#1c1c17] text-sm sm:text-base truncate max-w-[180px]">{{ $review->name }}</p>
                 @if($review->location)
-                <p class="text-xs text-gray-400 uppercase tracking-wider">{{ $review->location }}</p>
+                <p class="text-xs text-gray-400 uppercase tracking-wider truncate max-w-[180px]">{{ $review->location }}</p>
                 @endif
             </div>
         </div>

@@ -36,6 +36,9 @@ class ProjectController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        $data['is_featured'] = $request->has('is_featured');
+        $data['is_active'] = $request->has('is_active');
+
         if ($request->hasFile('before_image')) {
             $data['before_image'] = $request->file('before_image')->store('portfolio', 'public');
         }
@@ -66,6 +69,9 @@ class ProjectController extends Controller
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ]);
+
+        $data['is_featured'] = $request->has('is_featured');
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('before_image')) {
             if ($project->before_image) {
