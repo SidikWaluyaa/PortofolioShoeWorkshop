@@ -172,6 +172,7 @@ class DonationItemController extends Controller
             'kategori' => ['required', 'string', 'in:sepatu,tas,topi'],
             'kondisi' => ['required', 'string', 'in:baru,seperti_baru,sudah_diperbaiki'],
             'ukuran' => ['nullable', 'string', 'max:50'],
+            'warna' => ['nullable', 'string', 'max:50'],
             'status' => ['required', 'string', 'in:tersedia,disalurkan'],
             'deskripsi' => ['nullable', 'string'],
             'foto_utama' => ['required', 'image', 'max:20480'], // Max 20MB
@@ -184,19 +185,20 @@ class DonationItemController extends Controller
             'services.*.jasa_nama_manual' => ['nullable', 'string', 'max:150'],
             'services.*.jasa_harga' => ['nullable', 'integer', 'min:0'],
             'services.*.jasa_estimasi_waktu' => ['nullable', 'integer', 'min:0'],
+            'services.*.is_mandatory' => ['nullable', 'boolean'],
         ]);
 
         // Store primary photo with compression
         $fotoUtamaPath = '';
         if ($request->hasFile('foto_utama')) {
-            $fotoUtamaPath = ImageCompressionHelper::compressAndStore($request->file('foto_utama'), 'katalog');
+            $fotoUtamaPath = ImageCompressionHelper::compressAndStore($request->file('foto_utama'), 'katalog', null, true);
         }
 
         // Store detailed photos
         $fotoDetailPaths = [];
         if ($request->hasFile('foto_detail')) {
             foreach ($request->file('foto_detail') as $file) {
-                $fotoDetailPaths[] = ImageCompressionHelper::compressAndStore($file, 'katalog');
+                $fotoDetailPaths[] = ImageCompressionHelper::compressAndStore($file, 'katalog', null, true);
             }
         }
 
@@ -206,6 +208,7 @@ class DonationItemController extends Controller
             'kategori' => $request->kategori,
             'kondisi' => $request->kondisi,
             'ukuran' => $request->ukuran,
+            'warna' => $request->warna,
             'status' => $request->status,
             'deskripsi' => $request->deskripsi,
             'foto_utama_path' => $fotoUtamaPath,
@@ -223,6 +226,7 @@ class DonationItemController extends Controller
                         'jasa_nama_manual' => $srv['jasa_nama_manual'] ?: null,
                         'jasa_harga' => $srv['jasa_harga'] ?? 0,
                         'jasa_estimasi_waktu' => $srv['jasa_estimasi_waktu'] ?? 0,
+                        'is_mandatory' => isset($srv['is_mandatory']) ? filter_var($srv['is_mandatory'], FILTER_VALIDATE_BOOLEAN) : false,
                     ]);
                 }
             }
@@ -255,6 +259,7 @@ class DonationItemController extends Controller
             'kategori' => ['required', 'string', 'in:sepatu,tas,topi'],
             'kondisi' => ['required', 'string', 'in:baru,seperti_baru,sudah_diperbaiki'],
             'ukuran' => ['nullable', 'string', 'max:50'],
+            'warna' => ['nullable', 'string', 'max:50'],
             'status' => ['required', 'string', 'in:tersedia,disalurkan'],
             'deskripsi' => ['nullable', 'string'],
             'foto_utama' => ['nullable', 'image', 'max:20480'],
@@ -267,6 +272,7 @@ class DonationItemController extends Controller
             'services.*.jasa_nama_manual' => ['nullable', 'string', 'max:150'],
             'services.*.jasa_harga' => ['nullable', 'integer', 'min:0'],
             'services.*.jasa_estimasi_waktu' => ['nullable', 'integer', 'min:0'],
+            'services.*.is_mandatory' => ['nullable', 'boolean'],
         ]);
 
         $data = [
@@ -275,6 +281,7 @@ class DonationItemController extends Controller
             'kategori' => $request->kategori,
             'kondisi' => $request->kondisi,
             'ukuran' => $request->ukuran,
+            'warna' => $request->warna,
             'status' => $request->status,
             'deskripsi' => $request->deskripsi,
             'berat' => $request->berat,
@@ -286,7 +293,7 @@ class DonationItemController extends Controller
             if ($donationItem->foto_utama_path && Storage::disk('public')->exists($donationItem->foto_utama_path)) {
                 Storage::disk('public')->delete($donationItem->foto_utama_path);
             }
-            $data['foto_utama_path'] = ImageCompressionHelper::compressAndStore($request->file('foto_utama'), 'katalog');
+            $data['foto_utama_path'] = ImageCompressionHelper::compressAndStore($request->file('foto_utama'), 'katalog', null, true);
         }
 
         // Selectively delete individual detail photos by index
@@ -309,7 +316,7 @@ class DonationItemController extends Controller
         if ($request->hasFile('foto_detail')) {
             $newPaths = [];
             foreach ($request->file('foto_detail') as $file) {
-                $newPaths[] = ImageCompressionHelper::compressAndStore($file, 'katalog');
+                $newPaths[] = ImageCompressionHelper::compressAndStore($file, 'katalog', null, true);
             }
             $currentPaths = array_merge($currentPaths, $newPaths);
         }
@@ -329,6 +336,7 @@ class DonationItemController extends Controller
                         'jasa_nama_manual' => $srv['jasa_nama_manual'] ?: null,
                         'jasa_harga' => $srv['jasa_harga'] ?? 0,
                         'jasa_estimasi_waktu' => $srv['jasa_estimasi_waktu'] ?? 0,
+                        'is_mandatory' => isset($srv['is_mandatory']) ? filter_var($srv['is_mandatory'], FILTER_VALIDATE_BOOLEAN) : false,
                     ]);
                 }
             }

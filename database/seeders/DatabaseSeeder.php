@@ -61,10 +61,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $services = [
-            ['name' => 'Deep Clean', 'description' => 'Pembersihan menyeluruh untuk mengangkat kotoran membandel dan noda.', 'icon' => '✨'],
-            ['name' => 'Repaint', 'description' => 'Pewarnaan ulang sepatu dengan cat premium agar warna kembali sempurna.', 'icon' => '🎨'],
-            ['name' => 'Reglue', 'description' => 'Perbaikan sol sepatu yang lepas agar kuat dan nyaman digunakan.', 'icon' => '🔧'],
-            ['name' => 'Perbaikan Upper', 'description' => 'Perbaikan bagian atas sepatu seperti sobek, retak, atau mengelupas.', 'icon' => '👞'],
+            ['name' => 'Reglue', 'description' => 'Perbaikan sol sepatu yang lepas agar kuat dan nyaman digunakan kembali.', 'icon' => '🔧'],
+            ['name' => 'Ganti Sole', 'description' => 'Penggantian sol sepatu secara keseluruhan dengan sol baru yang berkualitas.', 'icon' => '👟'],
+            ['name' => 'Upper', 'description' => 'Perbaikan bagian atas (upper) sepatu seperti sobek, retak, atau material yang mengelupas.', 'icon' => '👞'],
+            ['name' => 'Treatment', 'description' => 'Pembersihan dan perawatan menyeluruh (deep clean & care) untuk mengembalikan kesegaran sepatu.', 'icon' => '✨'],
         ];
         foreach ($services as $index => $service) {
             Service::create(['name' => $service['name'], 'description' => $service['description'], 'icon' => $service['icon'], 'order' => $index, 'is_active' => true]);

@@ -76,6 +76,16 @@
                     @enderror
                 </div>
 
+                {{-- Warna --}}
+                <div>
+                    <label for="warna" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Warna</label>
+                    <input type="text" id="warna" name="warna" value="{{ old('warna', $donationItem->warna) }}" placeholder="Contoh: Hitam, Biru Navy"
+                           class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition" />
+                    @error('warna')
+                        <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Status --}}
                 <div>
                     <label for="status" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Status Ketersediaan <span class="text-red-500">*</span></label>
@@ -162,6 +172,15 @@
                                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:border-[#22AF85]" />
                             </div>
 
+                            {{-- Jasa Wajib --}}
+                            <div class="w-full sm:w-24">
+                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-1.5 text-center">Wajib?</label>
+                                <div class="flex items-center justify-center mt-2">
+                                    <input type="checkbox" :name="`services[${index}][is_mandatory]`" value="1" x-model="srv.is_mandatory"
+                                           class="w-5 h-5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500 cursor-pointer" />
+                                </div>
+                            </div>
+
                             {{-- Hapus Baris button --}}
                             <button type="button" @click="removeService(index)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-1 rounded transition">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -194,7 +213,7 @@
                     <label class="block text-xs font-black text-gray-700 uppercase tracking-wider">Foto Utama</label>
                     <p class="text-xs text-gray-400">Pilih berkas baru untuk mengganti foto utama saat ini.</p>
                     
-                    <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 hover:border-[#22AF85] rounded-2xl h-48 bg-gray-50 hover:bg-[#22AF85]/5 transition overflow-hidden group">
+                    <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 hover:border-[#22AF85] rounded-2xl aspect-square max-h-[300px] w-full max-w-[300px] bg-gray-50 hover:bg-[#22AF85]/5 transition overflow-hidden group">
                         <input type="file" id="foto_utama" name="foto_utama" accept="image/*" @change="previewUtama"
                                class="absolute inset-0 opacity-0 cursor-pointer z-10" />
                         
@@ -227,7 +246,7 @@
                     <label class="block text-xs font-black text-gray-700 uppercase tracking-wider">Foto Detail (Multi-Sudut)</label>
                     <p class="text-xs text-gray-400">Pilih foto untuk <strong>ditambahkan</strong> ke foto detail yang sudah ada. Gunakan tombol ✕ di bawah untuk menghapus foto tertentu.</p>
                     
-                    <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 hover:border-[#22AF85] rounded-2xl h-40 bg-gray-50 hover:bg-[#22AF85]/5 transition overflow-hidden group">
+                    <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 hover:border-[#22AF85] rounded-2xl aspect-square max-h-[300px] w-full max-w-[300px] bg-gray-50 hover:bg-[#22AF85]/5 transition overflow-hidden group">
                         <input type="file" id="foto_detail" name="foto_detail[]" accept="image/*" multiple @change="previewDetail"
                                class="absolute inset-0 opacity-0 cursor-pointer z-10" />
                         
@@ -261,7 +280,7 @@
 
                             {{-- Foto lama yang masih ada (bisa dihapus) --}}
                             <template x-for="(url, index) in currentDetails" :key="'old-' + index">
-                                <div class="relative rounded-xl border border-gray-200 h-24 overflow-hidden group">
+                                <div class="relative rounded-xl border border-gray-200 aspect-square overflow-hidden group">
                                     <img :src="url" class="w-full h-full object-cover transition group-hover:brightness-75" />
                                     <button type="button"
                                             @click="removeCurrentDetail(index)"
@@ -278,7 +297,7 @@
 
                             {{-- Foto baru yang baru dipilih (preview, bisa dibatalkan) --}}
                             <template x-for="(url, index) in detailPreviews" :key="'new-' + index">
-                                <div class="relative rounded-xl border-2 border-[#22AF85] h-24 overflow-hidden group">
+                                <div class="relative rounded-xl border border-gray-200 aspect-square overflow-hidden group">
                                     <img :src="url" class="w-full h-full object-cover transition group-hover:brightness-75" />
                                     <button type="button" @click="removeDetail(index)"
                                             class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-md p-1 shadow-md transition opacity-0 group-hover:opacity-100 z-10"
@@ -333,17 +352,34 @@
                     return asset('storage/' . $path);
                 })->toArray()); ?>,
                 deletedIndices: [],
-                services: <?php echo json_encode($donationItem->reparationServices->map(function($rs) {
-                    return [
-                        'service_id' => $rs->service_id ?? '',
-                        'jasa_nama_manual' => $rs->jasa_nama_manual ?? '',
-                        'jasa_harga' => $rs->jasa_harga ?? '',
-                        'jasa_estimasi_waktu' => $rs->jasa_estimasi_waktu ?? ''
-                    ];
-                })->toArray()); ?>,
+                services: <?php 
+                    $oldServices = old('services');
+                    if ($oldServices) {
+                        $servicesData = collect($oldServices)->map(function($rs) {
+                            return [
+                                'service_id' => $rs['service_id'] ?? '',
+                                'jasa_nama_manual' => $rs['jasa_nama_manual'] ?? '',
+                                'jasa_harga' => $rs['jasa_harga'] ?? '',
+                                'jasa_estimasi_waktu' => $rs['jasa_estimasi_waktu'] ?? '',
+                                'is_mandatory' => !empty($rs['is_mandatory'])
+                            ];
+                        })->values()->toArray();
+                    } else {
+                        $servicesData = $donationItem->reparationServices->map(function($rs) {
+                            return [
+                                'service_id' => (string)($rs->service_id ?? ''),
+                                'jasa_nama_manual' => $rs->jasa_nama_manual ?? '',
+                                'jasa_harga' => $rs->jasa_harga ?? '',
+                                'jasa_estimasi_waktu' => $rs->jasa_estimasi_waktu ?? '',
+                                'is_mandatory' => (bool)$rs->is_mandatory
+                            ];
+                        })->toArray();
+                    }
+                    echo json_encode($servicesData);
+                ?>,
 
                 addService() {
-                    this.services.push({ service_id: '', jasa_nama_manual: '', jasa_harga: '', jasa_estimasi_waktu: '' });
+                    this.services.push({ service_id: '', jasa_nama_manual: '', jasa_harga: '', jasa_estimasi_waktu: '', is_mandatory: true });
                 },
 
                 removeService(index) {

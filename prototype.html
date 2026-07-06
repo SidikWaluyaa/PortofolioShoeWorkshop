@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Shoe Workshop — Prototype Section Layanan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#241d17;
+    --espresso:#2b211c;
+    --parchment:#f2ead9;
+    --parchment-soft:#f8f3e7;
+    --card:#fbf8f2;
+    --brass:#a8823c;
+    --brass-soft:#cba55f;
+    --rust:#7a4b3a;
+    --line:rgba(43,33,28,0.14);
+    --shadow: 0 18px 40px -20px rgba(43,33,28,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--brass);
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  /* HERO */
+  .hero{
+    background:var(--espresso);
+    color:var(--parchment-soft);
+    padding:88px 0 72px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; right:-120px; top:-120px;
+    width:360px; height:360px;
+    border:1px solid rgba(203,165,95,0.25);
+    border-radius:50%;
+  }
+  .hero h1{
+    font-size:clamp(32px,4.2vw,52px);
+    font-weight:500;
+    line-height:1.12;
+    max-width:760px;
+  }
+  .hero p{
+    margin-top:20px;
+    max-width:620px;
+    font-size:16px;
+    line-height:1.7;
+    color:rgba(242,234,217,0.78);
+  }
+  .value-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:40px;
+    max-width:720px;
+  }
+  .value-card{
+    border:1px solid rgba(203,165,95,0.3);
+    border-radius:4px;
+    padding:18px 20px;
+    background:rgba(255,255,255,0.03);
+  }
+  .value-card .tag{color:var(--brass-soft);}
+  .value-card p{color:rgba(242,234,217,0.7); font-size:13.5px; margin-top:8px;}
+
+  /* NAV */
+  .cat-nav{
+    position:sticky; top:0; z-index:20;
+    background:var(--parchment);
+    border-bottom:1px solid var(--line);
+  }
+  .cat-nav .wrap{display:flex; gap:28px; padding:14px 24px;}
+  .cat-nav button{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    background:none; border:none; cursor:pointer;
+    color:var(--ink); opacity:0.55;
+    padding:4px 0;
+    border-bottom:2px solid transparent;
+  }
+  .cat-nav button.active{opacity:1; border-color:var(--brass); color:var(--rust);}
+
+  /* CATEGORY SECTION */
+  .category{
+    padding:72px 0;
+    border-bottom:1px solid var(--line);
+    opacity:0; transform:translateY(24px);
+    transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+  }
+  .category.in-view{opacity:1; transform:translateY(0);}
+  .cat-head{max-width:680px;}
+  .cat-head h2{font-size:30px; font-weight:500; margin-top:10px;}
+  .cat-head .subtitle{color:var(--rust); font-size:14.5px; margin-top:8px; font-style:italic;}
+  .cat-head .desc{font-size:14.5px; line-height:1.75; color:rgba(36,29,23,0.75); margin-top:16px;}
+  .cat-values{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:24px; max-width:680px;}
+  .cat-values .value-card{background:var(--card); border-color:var(--line);}
+  .cat-values .value-card p{color:rgba(36,29,23,0.65);}
+  .cat-values .value-card .tag{color:var(--rust);}
+
+  /* CARD GRID */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+    margin-top:40px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:none;
+    transition:transform .2s ease, box-shadow .2s ease;
+    opacity:0; transform:translateY(20px);
+    transition:opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1), box-shadow .2s ease;
+  }
+  .card.in-view{opacity:1; transform:translateY(0);}
+  .card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
+
+  /* BEFORE-AFTER SLIDER */
+  .ba-slider{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/5;
+    overflow:hidden;
+    cursor:ew-resize;
+    user-select:none;
+    background:#ddd;
+  }
+  .ba-slider .layer{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+  }
+  .ba-slider .before{background:linear-gradient(160deg,#c9beac,#a89b83); color:#3a3226;}
+  .ba-slider .after{
+    background:linear-gradient(160deg,#e9dfc9,#f6efdd); color:#5c4a2e;
+    clip-path: inset(0 0 0 50%);
+  }
+  .ba-handle{
+    position:absolute; top:0; bottom:0; left:50%;
+    width:2px; background:var(--brass);
+    transform:translateX(-1px);
+  }
+  .ba-handle .knob{
+    position:absolute; top:50%; left:50%;
+    width:38px; height:38px;
+    transform:translate(-50%,-50%);
+    background:var(--brass);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 16px rgba(43,33,28,0.35);
+    transition:transform .15s ease;
+  }
+  .ba-slider.dragging .ba-handle .knob{transform:translate(-50%,-50%) scale(1.12);}
+  .ba-handle .knob::before{
+    content:"";
+    width:16px; height:2px;
+    background:var(--espresso);
+    box-shadow:0 -5px 0 var(--espresso), 0 5px 0 var(--espresso);
+  }
+  .ba-label{
+    position:absolute; top:10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:0.08em;
+    background:rgba(43,33,28,0.75); color:#f2ead9;
+    padding:3px 8px; border-radius:2px;
+  }
+  .ba-label.left{left:10px;}
+  .ba-label.right{right:10px;}
+
+  .card-body{padding:18px 20px 22px;}
+  .card-body h3{font-size:17px; font-weight:500;}
+  .card-body .subtech{font-size:12px; color:rgba(36,29,23,0.5); font-style:italic; margin-top:4px;}
+  .card-body .row{margin-top:14px;}
+  .card-body .row .label{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--rust);}
+  .card-body .row p{font-size:13.5px; line-height:1.6; margin:4px 0 0; color:rgba(36,29,23,0.75);}
+
+  /* ACCORDION */
+  .more-toggle{
+    margin-top:32px;
+    display:inline-flex; align-items:center; gap:8px;
+    background:none; border:1px solid var(--line);
+    padding:10px 18px; border-radius:100px;
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.05em;
+    text-transform:uppercase; cursor:pointer; color:var(--rust);
+  }
+  .more-toggle .chev{transition:transform .3s ease; display:inline-block;}
+  .more-toggle.open .chev{transform:rotate(180deg);}
+  .accordion{
+    max-height:0; overflow:hidden;
+    transition:max-height .35s ease;
+  }
+  .accordion-inner{padding-top:20px; display:flex; flex-direction:column; gap:14px;}
+  .mini-item{
+    border:1px solid var(--line); border-radius:4px;
+    padding:14px 16px; background:var(--card);
+  }
+  .mini-item h4{font-family:'Inter',sans-serif; font-weight:600; font-size:14px; margin:0;}
+  .mini-item .subtech{font-size:11.5px; color:rgba(36,29,23,0.5); font-style:italic; margin-top:2px;}
+  .mini-item p{font-size:13px; line-height:1.55; color:rgba(36,29,23,0.7); margin:8px 0 0;}
+
+  .cta{
+    margin-top:36px;
+    display:inline-block;
+    background:var(--rust); color:#f7efe1;
+    padding:13px 26px; border-radius:100px;
+    font-size:13.5px; font-weight:600;
+    text-decoration:none;
+  }
+
+  @media (max-width:720px){
+    .grid, .cat-values, .value-row{grid-template-columns:1fr;}
+    .cat-nav .wrap{overflow-x:auto; gap:20px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .category, .card{transition:none; opacity:1; transform:none;}
+    .ba-handle .knob{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="tag">Shoe Workshop — Layanan</span>
+    <h1 style="margin-top:14px;">Sepatu bukan sekadar alas kaki. Ia bagian dari cerita.</h1>
+    <p>Reparasi sepatu bukan cuma soal memperbaiki fisik, tapi menjaga nilai dan kenangan yang menempel di dalamnya.</p>
+    <div class="value-row">
+      <div class="value-card">
+        <span class="tag">Nilai Material</span>
+        <p>Reparasi yang tepat memperpanjang usia pakai sepatu 2-3x lipat dibanding membeli baru.</p>
+      </div>
+      <div class="value-card">
+        <span class="tag">Nilai Kehidupan</span>
+        <p>Kami hadir untuk merawat jejak perjalanan pemakainya, bukan menghapusnya.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="cat-nav">
+  <div class="wrap">
+    <button class="active" data-cat="lem-jahit">Lem &amp; Jahit</button>
+    <button data-cat="sol">Sol</button>
+    <button data-cat="upper">Upper</button>
+    <button data-cat="treatment">Treatment</button>
+  </div>
+</nav>
+
+<section class="category" id="lem-jahit">
+  <div class="wrap">
+    <div class="cat-head">
+      <span class="tag">Kategori 01</span>
+      <h2>Lem &amp; Jahit</h2>
+      <p class="subtitle">Untuk sepatu yang mulai lepas, kopong, atau perlu penguatan struktur</p>
+      <p class="desc">Lem dan jahit adalah fondasi kekuatan sepatu. Ketika bagian upper mulai lepas dari sol atau jahitan mengendur, kategori ini menjaga sepatu tetap kokoh dan mencegah kerusakan kecil berkembang jadi kerusakan besar.</p>
+      <div class="cat-values">
+        <div class="value-card">
+          <span class="tag">Nilai Material</span>
+          <p>Menahan kerusakan di tahap awal jauh lebih murah daripada menunggu upper robek total.</p>
+        </div>
+        <div class="value-card">
+          <span class="tag">Nilai Kehidupan</span>
+          <p>Sepatu yang solid bikin kamu percaya diri melangkah tanpa was-was.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <div class="ba-slider">
+          <div class="layer before">Foto Before</div>
+          <div class="layer after">Foto After</div>
+          <span class="ba-label left">Before</span>
+          <span class="ba-label right">After</span>
+          <div class="ba-handle"><div class="knob"></div></div>
+        </div>
+        <div class="card-body">
+          <h3>Lem Jahit</h3>
+          <div class="subtech">Penjahitan ulang + penguatan lem pada satu titik</div>
+          <div class="row"><span class="label">Kapan butuh ini?</span><p>Jahitan pada satu sisi mulai kendur, putus sebagian, atau ada indikasi akan lepas.</p></div>
+          <div class="row"><span class="label">Apa yang kami lakukan?</span><p>Jahitan yang bermasalah dijahit ulang dan diperkuat dengan lem tambahan di titik rawan.</p></div>
+          <div class="row"><span class="label">Kenapa penting?</span><p>Jahitan adalah "tulang" yang menahan bentuk sepatu — mencegah upper lepas dari sol.</p></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="ba-slider">
+          <div class="layer before">Foto Before</div>
+          <div class="layer after">Foto After</div>
+          <span class="ba-label left">Before</span>
+          <span class="ba-label right">After</span>
+          <div class="ba-handle"><div class="knob"></div></div>
+        </div>
+        <div class="card-body">
+          <h3>Lem Press</h3>
+          <div class="subtech">Perekatan ulang bagian tepi sepatu dengan alat press</div>
+          <div class="row"><span class="label">Kapan butuh ini?</span><p>Bagian tepi sepatu mulai renggang tapi belum terbuka lebar.</p></div>
+          <div class="row"><span class="label">Apa yang kami lakukan?</span><p>Bagian renggang dilem ulang lalu di-press agar merekat sempurna, meniru proses produksi asli.</p></div>
+          <div class="row"><span class="label">Kenapa penting?</span><p>Mencegah rekatan lepas total dan menjaga tampilan sepatu tetap presisi.</p></div>
+        </div>
+      </article>
+    </div>
+
+    <button class="more-toggle" id="moreToggle">
+      Lihat 4 jasa lainnya <span class="chev">⌄</span>
+    </button>
+    <div class="accordion" id="accordion">
+      <div class="accordion-inner">
+        <div class="mini-item">
+          <h4>Lem Jahit Double</h4>
+          <div class="subtech">Penguatan jahitan dua lapis untuk pemakaian berat</div>
+          <p>Untuk kerusakan jahitan di lebih dari satu titik. Penjahitan ulang dilakukan dua lapis untuk daya tahan ekstra pada sepatu kerja/olahraga.</p>
+        </div>
+        <div class="mini-item">
+          <h4>Lem Spesial (Lapis Kulit)</h4>
+          <div class="subtech">Teknik lem khusus untuk material kulit premium</div>
+          <p>Menggunakan jenis lem dan teknik khusus yang aman untuk kulit, termasuk proses pengeringan yang lebih hati-hati.</p>
+        </div>
+        <div class="mini-item">
+          <h4>Lem Checkup</h4>
+          <div class="subtech">Pemeriksaan preventif titik rekatan sepatu</div>
+          <p>Pemeriksaan menyeluruh titik rekatan dengan penguatan preventif — mencegah lebih baik daripada mengobati.</p>
+        </div>
+        <div class="mini-item">
+          <h4>Lem Anak (SZ 25-30 / SZ 30-35)</h4>
+          <div class="subtech">Lem jahit standar disesuaikan ukuran sepatu anak</div>
+          <p>Sama seperti lem jahit standar, disesuaikan ukuran dan material sepatu anak yang lebih kecil dan tipis.</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" class="cta">Konsultasi Gratis Cek Kerusakan</a>
+  </div>
+</section>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.category, .card');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){
+        setTimeout(()=>e.target.classList.add('in-view'), i*90);
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // Before-after slider drag
+  document.querySelectorAll('.ba-slider').forEach(slider=>{
+    const after = slider.querySelector('.after');
+    const handle = slider.querySelector('.ba-handle');
+    let dragging = false;
+
+    function setPos(clientX){
+      const rect = slider.getBoundingClientRect();
+      let pct = ((clientX - rect.left) / rect.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      after.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      handle.style.left = pct + '%';
+    }
+
+    slider.addEventListener('pointerdown', e=>{
+      dragging = true;
+      slider.classList.add('dragging');
+      setPos(e.clientX);
+    });
+    window.addEventListener('pointermove', e=>{
+      if(dragging) setPos(e.clientX);
+    });
+    window.addEventListener('pointerup', ()=>{
+      dragging = false;
+      slider.classList.remove('dragging');
+    });
+
+    // Intro hint animation: nudge handle once when it enters view
+    const hintIO = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          setTimeout(()=>setPos(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width*0.28), 500);
+          setTimeout(()=>setPos(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width*0.5), 1100);
+          hintIO.unobserve(slider);
+        }
+      });
+    }, {threshold:0.5});
+    hintIO.observe(slider);
+  });
+
+  // Accordion
+  const toggle = document.getElementById('moreToggle');
+  const accordion = document.getElementById('accordion');
+  toggle.addEventListener('click', ()=>{
+    const isOpen = toggle.classList.toggle('open');
+    if(isOpen){
+      accordion.style.maxHeight = accordion.scrollHeight + 'px';
+      toggle.firstChild.textContent = 'Sembunyikan ';
+    } else {
+      accordion.style.maxHeight = '0';
+      toggle.firstChild.textContent = 'Lihat 4 jasa lainnya ';
+    }
+  });
+
+  // Category nav (just visual active state in this prototype)
+  document.querySelectorAll('.cat-nav button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.cat-nav button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

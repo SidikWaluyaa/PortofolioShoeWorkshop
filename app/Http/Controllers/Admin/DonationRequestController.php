@@ -103,7 +103,7 @@ class DonationRequestController extends Controller
         // Paginate donation items having requests
         $items = $query->with(['requests' => function ($q) {
             $q->orderBy('created_at', 'desc');
-        }])->paginate(10)->withQueryString();
+        }, 'reparationServices.service'])->paginate(10)->withQueryString();
 
         return view('admin.donation_requests.index', compact('items'));
     }

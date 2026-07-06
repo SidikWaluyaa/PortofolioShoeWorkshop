@@ -43,7 +43,7 @@ class ProfileController extends Controller
             }
             
             $avatarFile = $request->file('avatar');
-            $storedPath = \App\Helpers\ImageCompressionHelper::compressAndStore($avatarFile, 'avatars');
+            $storedPath = \App\Helpers\ImageCompressionHelper::compressAndStore($avatarFile, 'avatars', null, true);
             $user->avatar_path = $storedPath;
         }
 

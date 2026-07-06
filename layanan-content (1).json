@@ -1,0 +1,412 @@
+{
+  "intro": {
+    "headline": "Sepatu Bukan Sekadar Alas Kaki. Ia Bagian dari Cerita.",
+    "body": "Setiap sepatu punya cerita — sepatu wisuda yang dipakai jalan ke depan podium, sneakers pertama hasil nabung berbulan-bulan, atau boots kerja yang setia menemani lima tahun terakhir. Reparasi sepatu bukan cuma soal memperbaiki fisik, tapi menjaga nilai dan kenangan yang menempel di dalamnya.",
+    "values": [
+      {
+        "label": "Nilai Material",
+        "text": "Sepatu berkualitas dibuat dari material yang sebenarnya bisa diperbaiki, bukan dibuang. Reparasi yang tepat bisa memperpanjang usia pakai sepatu 2-3x lipat dibanding membeli baru, dan jauh lebih ramah di kantong maupun lingkungan."
+      },
+      {
+        "label": "Nilai Kehidupan",
+        "text": "Sepatu yang direparasi dengan baik menyimpan jejak perjalanan pemakainya. Kami hadir untuk merawat jejak itu, bukan menghapusnya."
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "lem-jahit",
+      "order": 1,
+      "name": "Lem & Jahit",
+      "subtitle": "Untuk sepatu yang mulai lepas, kopong, atau perlu penguatan struktur",
+      "description": "Lem dan jahit adalah fondasi kekuatan sepatu. Ketika bagian upper mulai lepas dari sol, jahitan mengendur, atau sepatu terasa \"kopong\" saat dipakai jalan, ini tandanya struktur perekat sepatu sudah melemah. Kategori ini menjaga agar sepatu tetap kokoh dipakai sehari-hari, mencegah kerusakan kecil berkembang jadi kerusakan besar yang lebih mahal diperbaiki.",
+      "valueMaterial": "Menahan kerusakan di tahap awal jauh lebih murah daripada menunggu sampai upper robek total atau sol lepas permanen.",
+      "valueKehidupan": "Sepatu yang solid bikin kamu percaya diri melangkah, tidak was-was sol copot di tengah acara penting.",
+      "previewServiceIds": ["lem-jahit-standard"],
+      "cta": "Konsultasi Gratis Cek Kerusakan",
+      "services": [
+        {
+          "id": "lem-press",
+          "name": "Lem Press",
+          "subtitleTeknis": "Perekatan ulang bagian tepi sepatu dengan alat press",
+          "kapan": "Bagian tepi sepatu (biasanya di sekitar sol atau upper) mulai renggang tapi belum terbuka lebar.",
+          "proses": "Bagian yang renggang dilem ulang lalu di-press dengan alat khusus agar merekat sempurna dan rapi, meniru proses produksi asli.",
+          "kenapaPenting": "Mencegah rekatan lepas total dan menjaga tampilan sepatu tetap presisi seperti baru.",
+          "images": { "before": "/assets/layanan/lem-jahit/lem-press-before.jpg", "after": "/assets/layanan/lem-jahit/lem-press-after.jpg" }
+        },
+        {
+          "id": "lem-jahit-standard",
+          "name": "Lem Jahit",
+          "subtitleTeknis": "Penjahitan ulang + penguatan lem pada satu titik",
+          "kapan": "Jahitan pada satu sisi/bagian sepatu mulai kendur, putus sebagian, atau ada indikasi akan lepas.",
+          "proses": "Bagian jahitan yang bermasalah dijahit ulang dan diperkuat dengan lem tambahan di titik rawan.",
+          "kenapaPenting": "Jahitan adalah \"tulang\" yang menahan bentuk sepatu — memperbaikinya di awal mencegah upper lepas dari sol.",
+          "images": { "before": "/assets/layanan/lem-jahit/lem-jahit-before.jpg", "after": "/assets/layanan/lem-jahit/lem-jahit-after.jpg" }
+        },
+        {
+          "id": "lem-jahit-double",
+          "name": "Lem Jahit Double",
+          "subtitleTeknis": "Penguatan jahitan dua lapis untuk pemakaian berat",
+          "kapan": "Kerusakan jahitan terjadi di lebih dari satu sisi/titik, atau jahitan sebelumnya sudah pernah diperbaiki tapi kembali kendur.",
+          "proses": "Penjahitan ulang dilakukan dua lapis/dua titik untuk daya tahan ekstra.",
+          "kenapaPenting": "Untuk sepatu yang sering dipakai berat (kerja, olahraga), penguatan ganda membuat sepatu tahan lebih lama sebelum perlu servis ulang.",
+          "images": { "before": "/assets/layanan/lem-jahit/lem-jahit-double-before.jpg", "after": "/assets/layanan/lem-jahit/lem-jahit-double-after.jpg" }
+        },
+        {
+          "id": "lem-spesial-kulit",
+          "name": "Lem Spesial (Lapis Kulit)",
+          "subtitleTeknis": "Teknik lem khusus untuk material kulit premium",
+          "kapan": "Sepatu berbahan kulit premium yang butuh penanganan lem khusus agar tidak merusak tekstur atau warna kulit asli.",
+          "proses": "Menggunakan jenis lem dan teknik khusus yang aman untuk material kulit, termasuk proses pengeringan yang lebih hati-hati.",
+          "kenapaPenting": "Kulit adalah material investasi — treatment yang salah bisa merusak permukaan secara permanen, sehingga butuh penanganan khusus.",
+          "images": { "before": "/assets/layanan/lem-jahit/lem-spesial-kulit-before.jpg", "after": "/assets/layanan/lem-jahit/lem-spesial-kulit-after.jpg" }
+        },
+        {
+          "id": "lem-checkup",
+          "name": "Lem Checkup",
+          "subtitleTeknis": "Pemeriksaan preventif titik rekatan sepatu",
+          "kapan": "Kamu belum yakin ada kerusakan, tapi ingin memastikan kondisi rekatan sepatu masih aman sebelum dipakai untuk acara penting atau perjalanan panjang.",
+          "proses": "Pemeriksaan menyeluruh titik-titik rekatan sepatu, dengan penguatan preventif di area yang mulai melemah.",
+          "kenapaPenting": "Mencegah lebih baik daripada mengobati — checkup rutin menghindarkan kejadian sol/upper lepas di saat yang tidak diinginkan.",
+          "images": { "before": "/assets/layanan/lem-jahit/lem-checkup-before.jpg", "after": "/assets/layanan/lem-jahit/lem-checkup-after.jpg" }
+        },
+        {
+          "id": "lem-anak",
+          "name": "Lem Anak (SZ 25-30 / SZ 30-35)",
+          "subtitleTeknis": "Lem jahit standar disesuaikan ukuran sepatu anak",
+          "kapan": "Sepatu anak yang aktif bergerak biasanya lebih cepat mengalami kerusakan rekatan dibanding sepatu dewasa.",
+          "proses": "Sama seperti lem jahit standar, namun disesuaikan dengan ukuran dan material sepatu anak yang lebih kecil dan seringkali lebih tipis.",
+          "kenapaPenting": "Sepatu anak cepat dibeli baru karena dianggap \"gampang rusak\" — reparasi membantu orang tua lebih hemat karena anak masih bisa tumbuh sebelum sepatu benar-benar perlu diganti.",
+          "images": { "before": "/assets/layanan/lem-jahit/lem-anak-before.jpg", "after": "/assets/layanan/lem-jahit/lem-anak-after.jpg" }
+        }
+      ]
+    },
+    {
+      "id": "sol",
+      "order": 2,
+      "name": "Sol",
+      "subtitle": "Untuk sol yang aus, rusak, atau butuh diganti total",
+      "description": "Sol adalah bagian yang paling banyak menerima beban dan gesekan setiap hari — otomatis paling cepat aus. Kategori ini mencakup segala bentuk perbaikan maupun penggantian sol, dari yang ringan (tambal alas) sampai rekonstruksi total (Goodyear Welt).",
+      "valueMaterial": "Mengganti sol jauh lebih murah daripada membeli sepatu baru, terutama untuk sepatu kulit atau leather boots yang harga uppernya jauh lebih mahal dari solnya.",
+      "valueKehidupan": "Sol yang sehat menjaga postur jalan dan kenyamanan kaki — sol yang aus/botak bisa memengaruhi cara jalan dan berdampak ke tubuh dalam jangka panjang.",
+      "previewServiceIds": ["ganti-sol-jadi-cupsole"],
+      "cta": "Konsultasi Gratis Cek Kerusakan",
+      "services": [
+        {
+          "id": "ganti-sol-potong",
+          "name": "Ganti Sol Potong",
+          "subtitleTeknis": "Penggantian sebagian sol yang aus",
+          "kapan": "Sol asli sudah botak/aus di bagian tertentu tapi bentuk sol lainnya masih bagus.",
+          "proses": "Bagian sol yang aus dipotong dan diganti dengan material sol baru yang disesuaikan bentuknya.",
+          "kenapaPenting": "Solusi presisi — hanya bagian yang rusak yang diganti, menghemat biaya dibanding ganti sol keseluruhan.",
+          "images": { "before": "/assets/layanan/sol/ganti-sol-potong-before.jpg", "after": "/assets/layanan/sol/ganti-sol-potong-after.jpg" }
+        },
+        {
+          "id": "ganti-alas-polos-berpola",
+          "name": "Ganti Alas Polos / Ganti Alas Berpola",
+          "subtitleTeknis": "Penggantian alas bawah sesuai motif asli",
+          "kapan": "Alas bawah sol (bagian yang menapak langsung ke tanah) sudah tipis atau licin.",
+          "proses": "Alas lama dilepas, diganti alas baru sesuai motif asli (polos atau bertekstur/pola sesuai desain original).",
+          "kenapaPenting": "Alas yang licin berisiko membuat pengguna tergelincir — mengganti alas menjaga keamanan sekaligus estetika asli sepatu.",
+          "images": { "before": "/assets/layanan/sol/ganti-alas-before.jpg", "after": "/assets/layanan/sol/ganti-alas-after.jpg" }
+        },
+        {
+          "id": "ganti-alas-hak",
+          "name": "Ganti Alas Hak Cewe / Ganti Alas Hak Cowo",
+          "subtitleTeknis": "Penggantian material hak formal/heels",
+          "kapan": "Bagian hak (tumit) sepatu formal/heels sudah aus, miring, atau tidak rata.",
+          "proses": "Penggantian material hak dengan tetap menjaga tinggi dan sudut asli agar postur jalan tidak berubah.",
+          "kenapaPenting": "Hak yang miring memengaruhi keseimbangan tubuh dan bisa merusak postur berjalan dalam jangka panjang.",
+          "images": { "before": "/assets/layanan/sol/ganti-alas-hak-before.jpg", "after": "/assets/layanan/sol/ganti-alas-hak-after.jpg" }
+        },
+        {
+          "id": "ganti-alas-anak",
+          "name": "Ganti Alas Anak",
+          "subtitleTeknis": "Penggantian alas disesuaikan ukuran anak",
+          "kapan": "Sol sepatu anak cepat aus karena aktivitas bermain yang tinggi.",
+          "proses": "Sama seperti alas dewasa, disesuaikan ukuran dan bentuk sepatu anak.",
+          "kenapaPenting": "Anak-anak butuh pijakan yang stabil saat masa pertumbuhan — alas yang baik mendukung aktivitas fisik mereka dengan aman.",
+          "images": { "before": "/assets/layanan/sol/ganti-alas-anak-before.jpg", "after": "/assets/layanan/sol/ganti-alas-anak-after.jpg" }
+        },
+        {
+          "id": "ganti-sol-kulit",
+          "name": "Ganti Sol Kulit / Ganti Sol Kulit + Alas",
+          "subtitleTeknis": "Penggantian sol formal dengan material kulit sejenis",
+          "kapan": "Sepatu formal/kulit premium dengan sol kulit asli yang sudah tipis atau berlubang.",
+          "proses": "Penggantian sol dengan material kulit sejenis, mempertahankan karakter premium sepatu.",
+          "kenapaPenting": "Sol kulit memberikan kualitas berjalan dan tampilan formal yang tidak bisa digantikan sol sintetis — investasi mempertahankan level sepatu tetap sama.",
+          "images": { "before": "/assets/layanan/sol/ganti-sol-kulit-before.jpg", "after": "/assets/layanan/sol/ganti-sol-kulit-after.jpg" }
+        },
+        {
+          "id": "goodyear-welt",
+          "name": "Goodyear Welt",
+          "subtitleTeknis": "Rekonstruksi sol premium untuk boots/formal tahan puluhan tahun",
+          "kapan": "Sepatu dengan konstruksi Goodyear Welt (biasanya boots/formal premium) yang membutuhkan rekonstruksi sol secara menyeluruh dan presisi tinggi.",
+          "proses": "Teknik jahit konstruksi khusus yang menyatukan upper, welt, dan sol dengan metode tradisional yang lebih tahan lama dan bisa diservis berkali-kali.",
+          "kenapaPenting": "Ini adalah \"level tertinggi\" reparasi sol — sepatu dengan konstruksi ini dirancang untuk bertahan puluhan tahun jika dirawat dengan metode yang sama.",
+          "images": { "before": "/assets/layanan/sol/goodyear-welt-before.jpg", "after": "/assets/layanan/sol/goodyear-welt-after.jpg" }
+        },
+        {
+          "id": "ganti-sol-jadi-cupsole",
+          "name": "Ganti Sol Jadi (Cupsole) / Ganti Sol Jadi Spesial",
+          "subtitleTeknis": "Penggantian sol cup total untuk sneakers",
+          "kapan": "Sepatu sneakers dengan sol cup yang sudah retak, terkelupas, atau hancur (biasanya karena hidrolisis/sol menguning dan rapuh).",
+          "proses": "Sol lama dilepas total, diganti dengan sol cup baru yang cocok dengan bentuk last sepatu.",
+          "kenapaPenting": "Masalah sol menguning/hancur sangat umum pada sneakers lama — ganti sol menyelamatkan upper yang sebenarnya masih bagus dari harus dibuang percuma.",
+          "images": { "before": "/assets/layanan/sol/ganti-sol-jadi-before.jpg", "after": "/assets/layanan/sol/ganti-sol-jadi-after.jpg" }
+        },
+        {
+          "id": "ganti-sol-foxing",
+          "name": "Ganti Sol Foxing / Ganti Sol Foxing + Alas",
+          "subtitleTeknis": "Penggantian karet pinggiran sol sneakers kanvas",
+          "kapan": "Bagian foxing (pinggiran karet yang membungkus sisi bawah sepatu, umum di sneakers kanvas) rusak atau terkelupas.",
+          "proses": "Penggantian karet foxing menyesuaikan bentuk dan warna asli.",
+          "kenapaPenting": "Foxing yang rusak membuat air/kotoran mudah masuk — reparasi ini menjaga sepatu tetap terlindungi dan awet.",
+          "images": { "before": "/assets/layanan/sol/ganti-sol-foxing-before.jpg", "after": "/assets/layanan/sol/ganti-sol-foxing-after.jpg" }
+        },
+        {
+          "id": "swapsole",
+          "name": "Swapsole (Tipe Sol Cup / Tipe Sol Potong)",
+          "subtitleTeknis": "Penggantian sol dengan tipe berbeda dari aslinya",
+          "kapan": "Kamu ingin mengganti keseluruhan sol dengan tipe/model sol yang berbeda dari aslinya (biasanya untuk kebutuhan gaya atau kenyamanan tambahan).",
+          "proses": "Sol asli dilepas total, diganti dengan tipe sol lain sesuai preferensi.",
+          "kenapaPenting": "Bagi kolektor atau pemilik sepatu langka, swapsole memberi opsi mempertahankan upper original sambil mendapat kenyamanan sol baru.",
+          "images": { "before": "/assets/layanan/sol/swapsole-before.jpg", "after": "/assets/layanan/sol/swapsole-after.jpg" }
+        },
+        {
+          "id": "midsole",
+          "name": "Midsole (Flat / Non Flat / Hard / Lapis / Lapis Kulit)",
+          "subtitleTeknis": "Penggantian lapisan peredam kejut sepatu",
+          "kapan": "Midsole (lapisan tengah antara upper dan outsole) sudah kompres, retak, atau kehilangan fungsi bantalan.",
+          "proses": "Penggantian midsole sesuai tipe kebutuhan — flat untuk kestabilan, hard untuk daya tahan, lapis untuk kenyamanan ekstra.",
+          "kenapaPenting": "Midsole adalah \"peredam kejut\" sepatu — tanpa midsole yang baik, kaki menanggung beban langsung dan lebih cepat lelah/nyeri.",
+          "images": { "before": "/assets/layanan/sol/midsole-before.jpg", "after": "/assets/layanan/sol/midsole-after.jpg" }
+        },
+        {
+          "id": "resize",
+          "name": "Resize / Upsize (Shoelast) / Downsize (Double Insole) / Shoelast",
+          "subtitleTeknis": "Penyesuaian ukuran internal sepatu",
+          "kapan": "Sepatu terasa kebesaran atau kekecilan dari ukuran kaki sebenarnya.",
+          "proses": "Penyesuaian bentuk internal sepatu menggunakan alat shoelast atau penambahan lapisan insole untuk menyesuaikan ukuran.",
+          "kenapaPenting": "Sepatu yang pas ukuran mencegah lecet, nyeri kaki, dan cedera jangka panjang akibat postur berjalan yang salah.",
+          "images": { "before": "/assets/layanan/sol/resize-before.jpg", "after": "/assets/layanan/sol/resize-after.jpg" }
+        },
+        {
+          "id": "bongkar-sole",
+          "name": "Bongkar Sole",
+          "subtitleTeknis": "Proses pelepasan sol lama sebelum penggantian besar",
+          "kapan": "Sebagai proses awal sebelum penggantian sol besar (biasanya termasuk dalam rangkaian jasa lain).",
+          "proses": "Melepas sol lama secara hati-hati agar upper tidak rusak saat proses pembongkaran.",
+          "kenapaPenting": "Proses ini menentukan apakah upper akan tetap aman untuk dipasangkan sol baru — dilakukan dengan presisi agar tidak ada kerusakan tambahan.",
+          "images": { "before": "/assets/layanan/sol/bongkar-sole-before.jpg", "after": "/assets/layanan/sol/bongkar-sole-after.jpg" }
+        }
+      ]
+    },
+    {
+      "id": "upper",
+      "order": 3,
+      "name": "Upper",
+      "subtitle": "Untuk bagian atas sepatu yang sobek, rusak, atau perlu penggantian material",
+      "description": "Upper adalah \"wajah\" sepatu — bagian yang paling terlihat dan paling personal secara gaya. Kategori ini mencakup perbaikan atau penggantian material upper yang sobek, rusak, atau butuh penguatan struktur bagian atas.",
+      "valueMaterial": "Upper berkualitas (kulit, suede, kanvas premium) jauh lebih mahal untuk diproduksi ulang dibanding diperbaiki — apalagi untuk sepatu limited/discontinued yang tidak bisa dibeli lagi.",
+      "valueKehidupan": "Upper menyimpan bentuk yang sudah menyesuaikan kaki pemakainya setelah dipakai lama — mengganti sepatu baru berarti mulai dari nol lagi proses \"break-in\".",
+      "previewServiceIds": ["ganti-upper-pola-sedang"],
+      "cta": "Konsultasi Gratis Cek Kerusakan",
+      "services": [
+        {
+          "id": "ganti-upper-pola-sedang",
+          "name": "Ganti Upper Pola Standard/Kecil/Sedang/Besar (Quarter S/M/L)",
+          "subtitleTeknis": "Penggantian bagian upper yang sobek sesuai ukuran kerusakan",
+          "kapan": "Bagian upper (biasanya di area quarter/samping-belakang sepatu) sobek atau rusak parah, dengan ukuran kerusakan yang bervariasi.",
+          "proses": "Bagian upper yang rusak dipotong dan diganti dengan material baru yang dijahit menyatu, disesuaikan ukuran area kerusakan.",
+          "kenapaPenting": "Menyelamatkan sepatu dari sobekan yang jika dibiarkan akan melebar dan membuat sepatu tidak bisa diperbaiki lagi.",
+          "images": { "before": "/assets/layanan/upper/ganti-upper-before.jpg", "after": "/assets/layanan/upper/ganti-upper-after.jpg" }
+        },
+        {
+          "id": "ganti-linning-sintetis-scuba",
+          "name": "Ganti Linning Sintetis / Ganti Linning Scuba",
+          "subtitleTeknis": "Penggantian lapisan dalam sepatu",
+          "kapan": "Lapisan dalam sepatu (lining) yang bersentuhan dengan kaki sudah mengelupas, kasar, atau menimbulkan gesekan tidak nyaman.",
+          "proses": "Lining lama dilepas, diganti material sintetis/scuba baru yang halus dan nyaman di kulit.",
+          "kenapaPenting": "Lining yang rusak bisa menyebabkan lecet dan bau tidak enak — mengganti lining langsung meningkatkan kenyamanan pemakaian harian.",
+          "images": { "before": "/assets/layanan/upper/linning-sintetis-before.jpg", "after": "/assets/layanan/upper/linning-sintetis-after.jpg" }
+        },
+        {
+          "id": "ganti-lining-kulit-mesh-besar",
+          "name": "Ganti Lining Kulit / Ganti Lining Mesh / Ganti Lining Pola Besar",
+          "subtitleTeknis": "Penggantian lining premium/pola besar",
+          "kapan": "Sama seperti lining biasa namun untuk sepatu dengan material lining premium (kulit) atau berpola/berukuran lebih besar (boots, sepatu tinggi).",
+          "proses": "Penggantian menyesuaikan material dan pola asli sepatu.",
+          "kenapaPenting": "Menjaga kualitas kenyamanan setara sepatu baru tanpa harus mengganti keseluruhan sepatu.",
+          "images": { "before": "/assets/layanan/upper/lining-kulit-before.jpg", "after": "/assets/layanan/upper/lining-kulit-after.jpg" }
+        },
+        {
+          "id": "ganti-lining-lidah",
+          "name": "Ganti Lining Lidah",
+          "subtitleTeknis": "Penggantian lapisan dalam bagian tongue",
+          "kapan": "Bagian lidah sepatu (tongue) yang sering bergesekan dengan tali/pergelangan kaki sudah rusak linernya.",
+          "proses": "Penggantian lapisan dalam bagian lidah sepatu.",
+          "kenapaPenting": "Bagian ini sering diabaikan tapi krusial untuk kenyamanan saat sepatu diikat kencang.",
+          "images": { "before": "/assets/layanan/upper/lining-lidah-before.jpg", "after": "/assets/layanan/upper/lining-lidah-after.jpg" }
+        },
+        {
+          "id": "ganti-lining-padded-collar",
+          "name": "Ganti Lining + Padded Collar",
+          "subtitleTeknis": "Penggantian lining sekaligus busa kerah sepatu",
+          "kapan": "Bagian kerah sepatu (collar) yang empuk sudah kempes atau linernya rusak, biasanya pada sneakers/boots.",
+          "proses": "Penggantian lining sekaligus busa padded collar untuk mengembalikan fungsi empuk dan support pergelangan kaki.",
+          "kenapaPenting": "Padded collar melindungi pergelangan kaki dari gesekan dan cedera — fungsi ini penting terutama untuk sepatu olahraga/basket.",
+          "images": { "before": "/assets/layanan/upper/padded-collar-before.jpg", "after": "/assets/layanan/upper/padded-collar-after.jpg" }
+        },
+        {
+          "id": "ganti-stabilizer-lem",
+          "name": "Ganti Stabilizer + Lem",
+          "subtitleTeknis": "Pemasangan ulang penopang tumit",
+          "kapan": "Stabilizer (penopang di bagian tumit/heel sepatu) sudah lepas atau kehilangan fungsi penopangnya.",
+          "proses": "Pemasangan ulang stabilizer dengan lem khusus agar kembali kokoh menopang tumit.",
+          "kenapaPenting": "Stabilizer menjaga posisi tumit tetap tegak saat berjalan/berlari — tanpa ini, risiko cedera pergelangan kaki meningkat.",
+          "images": { "before": "/assets/layanan/upper/stabilizer-before.jpg", "after": "/assets/layanan/upper/stabilizer-after.jpg" }
+        },
+        {
+          "id": "upper-treatment",
+          "name": "Upper Treatment",
+          "subtitleTeknis": "Perawatan preventif material upper",
+          "kapan": "Upper masih dalam kondisi baik secara struktur tapi butuh perawatan berkala agar material tetap lentur dan tidak getas.",
+          "proses": "Pembersihan mendalam dan pemberian treatment pelembap/pelindung khusus sesuai jenis material upper.",
+          "kenapaPenting": "Perawatan preventif ini mencegah material (terutama kulit) menjadi kaku, pecah, atau retak karena kekeringan.",
+          "images": { "before": "/assets/layanan/upper/upper-treatment-before.jpg", "after": "/assets/layanan/upper/upper-treatment-after.jpg" }
+        },
+        {
+          "id": "rapihkan-jahitan",
+          "name": "Rapihkan Jahitan",
+          "subtitleTeknis": "Penataan ulang jahitan agar rapi dan simetris",
+          "kapan": "Jahitan pada upper terlihat berantakan/tidak simetris meski belum ada yang putus.",
+          "proses": "Penataan ulang jahitan agar rapi dan presisi secara visual.",
+          "kenapaPenting": "Detail kecil seperti jahitan rapi membuat sepatu terlihat terawat dan mempertahankan nilai estetikanya.",
+          "images": { "before": "/assets/layanan/upper/rapihkan-jahitan-before.jpg", "after": "/assets/layanan/upper/rapihkan-jahitan-after.jpg" }
+        },
+        {
+          "id": "komponen-kecil-upper",
+          "name": "Pengait Lidah / Tambah Stabilizer / Ganti Paded / Toecup",
+          "subtitleTeknis": "Perbaikan komponen kecil pendukung fungsi upper",
+          "kapan": "Komponen-komponen kecil pendukung fungsi upper (pengait lidah, padding, pelindung ujung sepatu) mengalami kerusakan spesifik.",
+          "proses": "Penggantian atau penambahan komponen sesuai titik yang bermasalah.",
+          "kenapaPenting": "Komponen kecil ini seringkali menjadi penyebab ketidaknyamanan terbesar meski terlihat \"sepele\" — memperbaikinya langsung terasa dampaknya saat dipakai.",
+          "images": { "before": "/assets/layanan/upper/komponen-kecil-before.jpg", "after": "/assets/layanan/upper/komponen-kecil-after.jpg" }
+        },
+        {
+          "id": "ganti-steel-toe",
+          "name": "Ganti Steel Toe",
+          "subtitleTeknis": "Pemasangan/penggantian pelindung ujung sepatu safety",
+          "kapan": "Sepatu safety dengan pelindung ujung besi/baja yang sudah rusak atau ingin ditambahkan untuk kebutuhan kerja.",
+          "proses": "Pemasangan/penggantian komponen steel toe di bagian ujung sepatu.",
+          "kenapaPenting": "Fungsi keselamatan kerja — komponen ini krusial untuk melindungi jari kaki dari benda berat/tajam di lingkungan kerja.",
+          "images": { "before": "/assets/layanan/upper/steel-toe-before.jpg", "after": "/assets/layanan/upper/steel-toe-after.jpg" }
+        },
+        {
+          "id": "custom-upper-zipper",
+          "name": "Custom Upper / Custom Zipper",
+          "subtitleTeknis": "Modifikasi personal pada upper",
+          "kapan": "Kamu ingin modifikasi personal pada upper (material, warna, tambahan zipper) di luar bentuk standar.",
+          "proses": "Diskusi kebutuhan personalisasi lalu dieksekusi sesuai request.",
+          "kenapaPenting": "Bagi yang ingin sepatu benar-benar mencerminkan gaya personal, bukan sekadar diperbaiki tapi \"ditingkatkan\".",
+          "images": { "before": "/assets/layanan/upper/custom-upper-before.jpg", "after": "/assets/layanan/upper/custom-upper-after.jpg" }
+        }
+      ]
+    },
+    {
+      "id": "treatment",
+      "order": 4,
+      "name": "Treatment",
+      "subtitle": "Untuk penyegaran tampilan: warna pudar, menguning, atau ingin tampilan baru",
+      "description": "Treatment fokus pada penyegaran tampilan sepatu — warna pudar, menguning karena usia, atau ingin variasi warna baru. Kategori ini paling cocok untuk sepatu yang secara struktur masih sehat tapi tampilannya sudah tidak menarik lagi.",
+      "valueMaterial": "Repaint dan treatment warna jauh lebih murah dibanding membeli sepatu model sama dengan warna baru — terutama untuk sepatu yang sudah discontinued.",
+      "valueKehidupan": "Sepatu dengan tampilan segar kembali membangkitkan rasa percaya diri memakainya — seperti sepatu \"baru\" tanpa kehilangan kenangan yang sudah menempel.",
+      "previewServiceIds": ["repaint-standard"],
+      "cta": "Lihat Galeri Repaint",
+      "services": [
+        {
+          "id": "repaint-standard",
+          "name": "Repaint Standard / Repaint Standard Bahan Spesial",
+          "subtitleTeknis": "Pengecatan ulang sesuai warna original",
+          "kapan": "Warna original sepatu mulai pudar/kusam tapi kamu ingin tetap warna yang sama seperti aslinya.",
+          "proses": "Pengecatan ulang menggunakan warna dan teknik yang menyerupai warna original sepatu, disesuaikan jenis material (standar/spesial seperti suede, nubuck).",
+          "kenapaPenting": "Mengembalikan tampilan \"seperti baru\" tanpa mengubah identitas asli sepatu.",
+          "images": { "before": "/assets/layanan/treatment/repaint-standard-before.jpg", "after": "/assets/layanan/treatment/repaint-standard-after.jpg" }
+        },
+        {
+          "id": "repaint-spesial",
+          "name": "Repaint Spesial / Repaint Spesial Bahan Spesial",
+          "subtitleTeknis": "Pengecatan ulang dengan warna custom pilihan sendiri",
+          "kapan": "Kamu ingin perubahan warna dari warna asli ke warna pilihan sendiri.",
+          "proses": "Proses repaint dengan teknik khusus untuk hasil warna custom yang solid dan tahan lama.",
+          "kenapaPenting": "Kesempatan untuk mengekspresikan gaya personal sekaligus memberi \"hidup baru\" pada sepatu lama.",
+          "images": { "before": "/assets/layanan/treatment/repaint-spesial-before.jpg", "after": "/assets/layanan/treatment/repaint-spesial-after.jpg" }
+        },
+        {
+          "id": "repaint-patina",
+          "name": "Repaint Patina / Repaint Patina Bahan Spesial",
+          "subtitleTeknis": "Efek gradasi warna alami khas kulit premium",
+          "kapan": "Kamu ingin efek gradasi warna alami (patina) khas sepatu kulit premium/boots.",
+          "proses": "Teknik pewarnaan berlapis untuk menciptakan efek gradasi warna yang terlihat natural dan mewah.",
+          "kenapaPenting": "Efek patina memberikan karakter unik dan kesan \"matang\" pada sepatu kulit, meningkatkan nilai estetika secara signifikan.",
+          "images": { "before": "/assets/layanan/treatment/repaint-patina-before.jpg", "after": "/assets/layanan/treatment/repaint-patina-after.jpg" }
+        },
+        {
+          "id": "repaint-multicolor",
+          "name": "Repaint Multicolor 2 Warna / Multicolor >2 Warna",
+          "subtitleTeknis": "Pengecatan kombinasi warna majemuk",
+          "kapan": "Kamu ingin sepatu dengan kombinasi warna majemuk sesuai preferensi personal.",
+          "proses": "Proses pengecatan bertahap dan presisi tinggi untuk memisahkan tiap area warna dengan rapi.",
+          "kenapaPenting": "Personalisasi maksimal — sepatu jadi benar-benar satu-satunya dengan kombinasi warna sesuai selera kamu.",
+          "images": { "before": "/assets/layanan/treatment/repaint-multicolor-before.jpg", "after": "/assets/layanan/treatment/repaint-multicolor-after.jpg" }
+        },
+        {
+          "id": "repaint-premium",
+          "name": "Repaint Premium",
+          "subtitleTeknis": "Finishing paling halus untuk sepatu formal/kulit kelas atas",
+          "kapan": "Sepatu premium yang membutuhkan hasil finishing paling halus dan detail, biasanya untuk sepatu formal/kulit kelas atas.",
+          "proses": "Teknik pengecatan dengan standar tertinggi, termasuk proses finishing tambahan agar hasil sehalus dan seawet mungkin.",
+          "kenapaPenting": "Untuk sepatu bernilai tinggi, kualitas hasil repaint harus setara dengan nilai investasi sepatunya sendiri.",
+          "images": { "before": "/assets/layanan/treatment/repaint-premium-before.jpg", "after": "/assets/layanan/treatment/repaint-premium-after.jpg" }
+        },
+        {
+          "id": "unyellowing-sole",
+          "name": "Unyellowing Sole",
+          "subtitleTeknis": "Proses kimiawi mengembalikan warna sol yang menguning",
+          "kapan": "Sol sepatu (biasanya sneakers putih/translucent) menguning karena oksidasi/usia meski sol masih dalam kondisi bagus.",
+          "proses": "Proses kimiawi khusus untuk mengembalikan warna sol ke kondisi lebih putih/jernih tanpa merusak struktur sol.",
+          "kenapaPenting": "Sol menguning adalah masalah kosmetik yang paling sering membuat orang merasa sepatu \"sudah tidak layak\" — treatment ini menyelamatkan tampilan tanpa perlu ganti sol.",
+          "images": { "before": "/assets/layanan/treatment/unyellowing-before.jpg", "after": "/assets/layanan/treatment/unyellowing-after.jpg" }
+        },
+        {
+          "id": "laser",
+          "name": "Laser",
+          "subtitleTeknis": "Ukiran motif/logo presisi tinggi pada upper",
+          "kapan": "Kamu ingin detail custom seperti motif, logo, atau pola presisi tinggi pada upper.",
+          "proses": "Teknik laser untuk mengukir/membentuk motif detail pada permukaan material.",
+          "kenapaPenting": "Menghasilkan detail personalisasi yang tidak bisa dicapai dengan teknik manual biasa.",
+          "images": { "before": "/assets/layanan/treatment/laser-before.jpg", "after": "/assets/layanan/treatment/laser-after.jpg" }
+        },
+        {
+          "id": "dtf",
+          "name": "DTF (Direct to Film)",
+          "subtitleTeknis": "Print transfer desain/grafis ke upper",
+          "kapan": "Kamu ingin menambahkan desain/print grafis pada bagian upper sepatu.",
+          "proses": "Teknik print transfer film langsung ke material sepatu untuk hasil grafis yang tajam dan tahan lama.",
+          "kenapaPenting": "Opsi kustomisasi visual yang fleksibel untuk berbagai jenis desain, dari simpel sampai kompleks.",
+          "images": { "before": "/assets/layanan/treatment/dtf-before.jpg", "after": "/assets/layanan/treatment/dtf-after.jpg" }
+        },
+        {
+          "id": "aksesoris-finishing",
+          "name": "Aksesoris & Finishing Kecil (Sole Protector, Ganti Hook, D-Ring, Eyelet, Velcrow, Heel Patch, Swoosh, Laces Guard, Stripe, dll)",
+          "subtitleTeknis": "Perbaikan/penambahan detail kecil pendukung tampilan",
+          "kapan": "Detail-detail kecil pendukung fungsi dan tampilan sepatu (pengait tali, pelindung sol, logo/motif tambahan) rusak atau ingin diperbarui.",
+          "proses": "Penggantian atau penambahan komponen sesuai kebutuhan spesifik.",
+          "kenapaPenting": "Detail kecil sering menjadi pembeda antara sepatu yang \"terlihat terawat\" dan yang \"terlihat lelah\" — finishing touch ini menyempurnakan hasil reparasi keseluruhan.",
+          "images": { "before": "/assets/layanan/treatment/aksesoris-before.jpg", "after": "/assets/layanan/treatment/aksesoris-after.jpg" }
+        }
+      ]
+    }
+  ]
+}

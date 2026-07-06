@@ -272,6 +272,8 @@ class DonationCatalogController extends Controller
             'kontak_pemohon' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
             'alamat_pengiriman' => ['required', 'string', 'min:10'],
             'alasan' => ['required', 'string'],
+            'selected_services' => ['nullable', 'array'],
+            'selected_services.*' => ['integer', 'exists:donation_item_services,id'],
         ]);
 
         try {
@@ -294,6 +296,7 @@ class DonationCatalogController extends Controller
                     'kontak_pemohon' => $cleaned,
                     'alamat_pengiriman' => $request->alamat_pengiriman,
                     'alasan' => $request->alasan,
+                    'selected_services' => $request->selected_services ?? [],
                     'status' => 'pending',
                 ]);
 

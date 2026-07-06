@@ -7,6 +7,16 @@
     <meta name="author" content="Shoe Workshop">
     <meta name="robots" content="index, follow">
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M5QQPYH1V7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-M5QQPYH1V7');
+    </script>
+
     {{-- Primary SEO --}}
     <title>@yield('seo_title', config('app.name'))</title>
     <meta name="description" content="@yield('seo_description', 'Shoe Workshop – jasa reparasi sepatu, cuci, repaint, reglue, jahit profesional. Garansi kualitas, proses cepat.')">

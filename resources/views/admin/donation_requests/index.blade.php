@@ -365,7 +365,7 @@
                 Kode: <strong class="text-gray-700 font-mono">${item.kode_barang}</strong>
             `;
 
-            renderDrawerRequests(item.requests, item.nama);
+            renderDrawerRequests(item.requests, item);
 
             // Open Backdrop & Drawer Panel
             const backdrop = document.getElementById('drawer-backdrop');
@@ -396,7 +396,8 @@
         }
 
         // Render applicant list in drawer body dynamically
-        function renderDrawerRequests(requests, itemName) {
+        function renderDrawerRequests(requests, item) {
+            const itemName = item.nama;
             const body = document.getElementById('drawer-body');
             body.innerHTML = '';
 
@@ -432,6 +433,53 @@
                 const waApproveUrl = `https://wa.me/${req.kontak_pemohon}?text=${encodeURIComponent(approveMsg)}`;
                 const waRejectUrl = `https://wa.me/${req.kontak_pemohon}?text=${encodeURIComponent(rejectMsg)}`;
 
+                // Generate Jasa & Biaya HTML
+                let servicesHtml = '';
+                let totalBiaya = 0;
+                if (req.selected_services && req.selected_services.length > 0) {
+                    let rowsHtml = '';
+                    req.selected_services.forEach(srvId => {
+                        const srv = item.reparation_services.find(s => s.id == srvId);
+                        if (srv) {
+                            totalBiaya += parseInt(srv.jasa_harga || 0);
+                            const priceFormatted = 'Rp ' + parseInt(srv.jasa_harga || 0).toLocaleString('id-ID');
+                            rowsHtml += `
+                                <div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] text-gray-500">•</span>
+                                        <span class="text-xs text-gray-700 font-bold">${srv.jasa_nama_manual || (srv.service ? srv.service.name : 'Layanan')}</span>
+                                        ${srv.is_mandatory ? '<span class="px-1.5 py-0.5 bg-red-50 text-red-600 rounded text-[9px] font-bold uppercase">Wajib</span>' : ''}
+                                    </div>
+                                    <span class="text-xs font-bold text-[#22AF85]">${priceFormatted}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    if (rowsHtml !== '') {
+                        const grandTotalFmt = 'Rp ' + totalBiaya.toLocaleString('id-ID');
+                        servicesHtml = `
+                            <div class="text-xs text-gray-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-2">Ringkasan Jasa & Biaya</p>
+                                <div class="bg-white rounded-lg border border-gray-100 p-2.5 mb-2">
+                                    ${rowsHtml}
+                                </div>
+                                <div class="flex justify-between items-center mt-1 px-1">
+                                    <span class="text-xs font-black text-gray-800">Grand Total</span>
+                                    <span class="text-sm font-black text-[#22AF85]">${grandTotalFmt}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    servicesHtml = `
+                        <div class="text-xs text-gray-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-1">Ringkasan Jasa & Biaya</p>
+                            <p class="italic text-gray-500 font-medium text-xs">Tidak ada jasa tambahan yang dipilih.</p>
+                        </div>
+                    `;
+                }
+
                 const reqCard = document.createElement('div');
                 reqCard.id = `req-card-${req.id}`;
                 reqCard.className = `p-5 rounded-2xl bg-white border border-gray-100 shadow-sm transition hover:shadow-md flex flex-col gap-4`;
@@ -460,6 +508,8 @@
                         <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-1">Alasan Pengajuan</p>
                         <p class="italic text-gray-800 leading-relaxed font-medium">"${req.alasan || '-'}"</p>
                     </div>
+
+                    ${servicesHtml}
 
                     <div class="text-xs text-gray-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                         <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-1">Alamat Pengiriman</p>

@@ -17,9 +17,10 @@ class ImageCompressionHelper
      * @param UploadedFile $file The uploaded image file
      * @param string $directory The storage directory (relative to public disk)
      * @param string|null $filename Optional custom filename (without extension)
+     * @param bool $squareCrop If true, crop the image to a 1:1 square centered
      * @return string The stored file path relative to storage
      */
-    public static function compressAndStore(UploadedFile $file, string $directory, ?string $filename = null): string
+    public static function compressAndStore(UploadedFile $file, string $directory, ?string $filename = null, bool $squareCrop = false): string
     {
         $maxWidth = 800;
         $maxHeight = 800;
@@ -55,25 +56,49 @@ class ImageCompressionHelper
             return $file->store($directory, 'public');
         }
 
-        // Calculate new dimensions maintaining aspect ratio
-        $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight, 1);
-        $newWidth = (int) round($originalWidth * $ratio);
-        $newHeight = (int) round($originalHeight * $ratio);
+        if ($squareCrop) {
+            $minDim = min($originalWidth, $originalHeight);
+            $cropX = (int) round(($originalWidth - $minDim) / 2);
+            $cropY = (int) round(($originalHeight - $minDim) / 2);
+            
+            // Resize the squared crop to maxWidth x maxHeight (or keep it smaller if original was smaller)
+            $targetDim = min($maxWidth, $minDim);
+            $newWidth = $targetDim;
+            $newHeight = $targetDim;
+            
+            $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+            
+            $white = imagecolorallocate($resizedImage, 255, 255, 255);
+            imagefill($resizedImage, 0, 0, $white);
+            
+            imagecopyresampled(
+                $resizedImage,
+                $sourceImage,
+                0, 0, $cropX, $cropY,
+                $newWidth, $newHeight,
+                $minDim, $minDim
+            );
+        } else {
+            // Calculate new dimensions maintaining aspect ratio
+            $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight, 1);
+            $newWidth = (int) round($originalWidth * $ratio);
+            $newHeight = (int) round($originalHeight * $ratio);
 
-        // Create resized image
-        $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+            // Create resized image
+            $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
 
-        // Preserve transparency for PNG (convert to white background for JPG output)
-        $white = imagecolorallocate($resizedImage, 255, 255, 255);
-        imagefill($resizedImage, 0, 0, $white);
+            // Preserve transparency for PNG (convert to white background for JPG output)
+            $white = imagecolorallocate($resizedImage, 255, 255, 255);
+            imagefill($resizedImage, 0, 0, $white);
 
-        imagecopyresampled(
-            $resizedImage,
-            $sourceImage,
-            0, 0, 0, 0,
-            $newWidth, $newHeight,
-            $originalWidth, $originalHeight
-        );
+            imagecopyresampled(
+                $resizedImage,
+                $sourceImage,
+                0, 0, 0, 0,
+                $newWidth, $newHeight,
+                $originalWidth, $originalHeight
+            );
+        }
 
         // Save to temporary file first
         $tempPath = sys_get_temp_dir() . '/' . $filename . '.jpg';

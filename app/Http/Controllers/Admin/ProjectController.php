@@ -40,11 +40,11 @@ class ProjectController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('before_image')) {
-            $data['before_image'] = $request->file('before_image')->store('portfolio', 'public');
+            $data['before_image'] = \App\Helpers\ImageCompressionHelper::compressAndStore($request->file('before_image'), 'portfolio', null, true);
         }
 
         if ($request->hasFile('after_image')) {
-            $data['after_image'] = $request->file('after_image')->store('portfolio', 'public');
+            $data['after_image'] = \App\Helpers\ImageCompressionHelper::compressAndStore($request->file('after_image'), 'portfolio', null, true);
         }
 
         $this->portfolioService->create($data);
@@ -77,14 +77,14 @@ class ProjectController extends Controller
             if ($project->before_image) {
                 Storage::disk('public')->delete($project->before_image);
             }
-            $data['before_image'] = $request->file('before_image')->store('portfolio', 'public');
+            $data['before_image'] = \App\Helpers\ImageCompressionHelper::compressAndStore($request->file('before_image'), 'portfolio', null, true);
         }
 
         if ($request->hasFile('after_image')) {
             if ($project->after_image) {
                 Storage::disk('public')->delete($project->after_image);
             }
-            $data['after_image'] = $request->file('after_image')->store('portfolio', 'public');
+            $data['after_image'] = \App\Helpers\ImageCompressionHelper::compressAndStore($request->file('after_image'), 'portfolio', null, true);
         }
 
         $this->portfolioService->update($project, $data);

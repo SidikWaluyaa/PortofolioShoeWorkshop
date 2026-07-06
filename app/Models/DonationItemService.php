@@ -18,6 +18,7 @@ class DonationItemService extends Model
         'jasa_nama_manual',
         'jasa_harga',
         'jasa_estimasi_waktu',
+        'is_mandatory',
     ];
 
     protected $appends = [

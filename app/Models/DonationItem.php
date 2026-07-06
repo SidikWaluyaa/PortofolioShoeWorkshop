@@ -35,6 +35,7 @@ class DonationItem extends Model
         'foto_detail',
         'kondisi',
         'ukuran',
+        'warna',
         'berat',
         'score_kelayakan',
     ];
