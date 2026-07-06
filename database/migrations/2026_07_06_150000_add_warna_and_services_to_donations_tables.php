@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         Schema::table('donation_requests', function (Blueprint $table) {
-            $table->json('selected_services')->nullable()->after('alasan');
+            $table->text('selected_services')->nullable()->after('alasan');
         });
     }
 
