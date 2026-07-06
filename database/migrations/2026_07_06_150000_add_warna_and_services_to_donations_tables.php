@@ -12,15 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('donation_items', function (Blueprint $table) {
-            $table->string('warna')->nullable()->after('ukuran');
+            if (!Schema::hasColumn('donation_items', 'warna')) {
+                $table->string('warna')->nullable()->after('ukuran');
+            }
         });
 
         Schema::table('donation_item_services', function (Blueprint $table) {
-            $table->boolean('is_mandatory')->default(true)->after('jasa_estimasi_waktu');
+            if (!Schema::hasColumn('donation_item_services', 'is_mandatory')) {
+                $table->boolean('is_mandatory')->default(true)->after('jasa_estimasi_waktu');
+            }
         });
 
         Schema::table('donation_requests', function (Blueprint $table) {
-            $table->text('selected_services')->nullable()->after('alasan');
+            if (!Schema::hasColumn('donation_requests', 'selected_services')) {
+                $table->text('selected_services')->nullable()->after('alasan');
+            }
         });
     }
 
