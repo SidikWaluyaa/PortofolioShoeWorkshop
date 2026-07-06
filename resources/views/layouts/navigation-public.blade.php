@@ -14,7 +14,7 @@
         {{-- Desktop Nav --}}
         <div class="hidden lg:flex items-center gap-6 xl:gap-8">
             <a href="{{ route('home') }}" class="text-sm font-semibold {{ request()->routeIs('home') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Beranda</a>
-            <a href="{{ route('home') }}#layanan" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">Layanan</a>
+            <a href="{{ route('layanan.index') }}" class="text-sm font-semibold {{ request()->routeIs('layanan.index') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Layanan</a>
             <a href="{{ route('portfolio.index') }}" class="text-sm font-semibold {{ request()->routeIs('portfolio.index') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Portfolio</a>
             <a href="{{ route('blog.index') }}" class="text-sm font-semibold {{ request()->routeIs('blog.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Artikel</a>
             <a href="{{ route('katalog.index') }}" class="text-sm font-semibold {{ request()->routeIs('katalog.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Donasi</a>
@@ -132,7 +132,7 @@
          x-transition:enter-end="opacity-100 translate-y-0"
          class="lg:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
         <a href="{{ route('home') }}" @click="open=false" class="block px-3 py-2 text-sm font-semibold {{ request()->routeIs('home') ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:bg-gray-50' }} rounded-lg">Beranda</a>
-        <a href="{{ route('home') }}#layanan" @click="open=false" class="block px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">Layanan</a>
+        <a href="{{ route('layanan.index') }}" @click="open=false" class="block px-3 py-2 text-sm font-semibold {{ request()->routeIs('layanan.index') ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:bg-gray-50' }} rounded-lg">Layanan</a>
         <a href="{{ route('portfolio.index') }}" @click="open=false" class="block px-3 py-2 text-sm font-semibold {{ request()->routeIs('portfolio.index') ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:bg-gray-50' }} rounded-lg">Portfolio</a>
         <a href="{{ route('blog.index') }}" @click="open=false" class="block px-3 py-2 text-sm font-semibold {{ request()->routeIs('blog.*') ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:bg-gray-50' }} rounded-lg">Artikel</a>
         <a href="{{ route('katalog.index') }}" @click="open=false" class="block px-3 py-2 text-sm font-semibold {{ request()->routeIs('katalog.*') ? 'text-[#22AF85] bg-green-50' : 'text-gray-600 hover:bg-gray-50' }} rounded-lg">Donasi</a>

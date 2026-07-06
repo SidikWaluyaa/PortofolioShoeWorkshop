@@ -19,7 +19,12 @@ class DonationRequest extends Model
         'kontak_pemohon',
         'alamat_pengiriman',
         'alasan',
+        'selected_services',
         'status',
+    ];
+
+    protected $casts = [
+        'selected_services' => 'array',
     ];
 
     /**

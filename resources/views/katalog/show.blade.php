@@ -38,6 +38,9 @@
             break;
         }
     }
+    
+    // Gunakan warna dari DB jika ada, jika tidak fallback ke hasil ekstraksi
+    $finalColor = $item->warna ?: $color;
 @endphp
 
 <div x-data="detailApp()" x-init="initApp()" class="bg-[#f8f9fa] text-[#1c1c17] min-h-screen flex flex-col justify-between">
@@ -201,7 +204,7 @@
                             </div>
                             <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Warna / Colorway</p>
-                                <p class="text-sm font-bold text-[#1c1c17] mt-1">{{ $color }}</p>
+                                <p class="text-sm font-bold text-[#1c1c17] mt-1">{{ $finalColor }}</p>
                             </div>
                             <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Berat Barang</p>

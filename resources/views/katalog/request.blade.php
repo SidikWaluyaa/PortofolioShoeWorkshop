@@ -66,20 +66,53 @@
         <div class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6">
 
             {{-- Left Column: Item Preview — hidden on mobile (shown as strip above) --}}
-            <div class="hidden sm:flex md:col-span-5 flex-col gap-5">
+            <div class="hidden sm:flex md:col-span-5 flex-col gap-5" x-data="{ activeImage: '{{ $item->foto_utama_url }}', activeIndex: 0 }">
 
                 {{-- Item Card --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center p-8">
-                        <img src="{{ $item->foto_utama_url }}" alt="{{ $item->nama }}"
+                    <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center p-6 sm:p-8">
+                        <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}"
                              class="max-h-full max-w-full object-contain transition-transform duration-400 hover:scale-105">
-                        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                             <span class="bg-green-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
                                 <span class="material-symbols-outlined !text-[12px]">verified</span>
                                 Kualitas Terverifikasi
                             </span>
                         </div>
                     </div>
+                    
+                    {{-- Thumbnails Row --}}
+                    @if(!empty($item->foto_detail) && count($item->foto_detail) > 0)
+                    <div class="flex gap-2 sm:gap-3 overflow-x-auto p-4 border-t border-gray-100 bg-gray-50/50">
+                        <!-- Thumbnail 1 (Active) -->
+                        <button @click="activeImage = '{{ $item->foto_utama_url }}'; activeIndex = 0" 
+                                :class="activeIndex === 0 ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-white p-1.5 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
+                            <img alt="Foto Utama" class="max-w-full max-h-full object-contain" src="{{ $item->foto_utama_url }}"/>
+                        </button>
+                        
+                        @php
+                            $detailPhotos = $item->foto_detail ?? [];
+                            $detailUrl = function (string $path): string {
+                                if (str_starts_with($path, 'http') || str_starts_with($path, 'images/')) {
+                                    return asset($path);
+                                }
+                                return asset('storage/' . $path);
+                            };
+                        @endphp
+                        
+                        @foreach($detailPhotos as $i => $path)
+                            @if($i < 3)
+                                <button @click="activeImage = '{{ $detailUrl($path) }}'; activeIndex = {{ $i + 1 }}" 
+                                        :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
+                                        class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-white p-1.5 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
+                                    <img alt="Detail {{ $i + 1 }}" class="max-w-full max-h-full object-contain" src="{{ $detailUrl($path) }}"/>
+                                </button>
+                            @endif
+                        @endforeach
+                    </div>
+                    @endif
+                    
                     <div class="p-5 border-t border-gray-100">
                         @php
                             $condBadgeClasses = [
@@ -130,7 +163,7 @@
             </div>
 
             {{-- Right Column: Form --}}
-            <div class="md:col-span-7">
+            <div class="md:col-span-7" x-data="requestApp()">
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-8">
 
                     {{-- Form Header --}}
@@ -243,6 +276,52 @@
                             @enderror
                         </div>
 
+                        {{-- Ringkasan Jasa & Biaya --}}
+                        @if($item->reparationServices->isNotEmpty())
+                        <div class="mt-6 border border-gray-200 rounded-xl overflow-hidden">
+                            <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                                <h3 class="text-sm font-extrabold text-[#1c1c17]">Ringkasan Jasa & Biaya</h3>
+                                <p class="text-xs text-gray-500">Pilih opsi jasa yang diinginkan (jasa wajib tidak dapat diubah).</p>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                @foreach($item->reparationServices as $index => $rs)
+                                    <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                                        <div class="pt-0.5">
+                                            <input type="checkbox" name="selected_services[]" value="{{ $rs->id }}" 
+                                                class="w-5 h-5 rounded border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"
+                                                @change="calculateTotal"
+                                                x-model="checkedServices"
+                                                @if($rs->is_mandatory) checked disabled @endif>
+                                            
+                                            {{-- Jika disabled (mandatory), kita butuh hidden input untuk submit value-nya --}}
+                                            @if($rs->is_mandatory)
+                                                <input type="hidden" name="selected_services[]" value="{{ $rs->id }}">
+                                            @endif
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <p class="text-sm font-bold text-[#1c1c17]">
+                                                        @if($rs->service) {{ $rs->service->icon }} @endif {{ $rs->jasa_nama }}
+                                                    </p>
+                                                    <p class="text-[10px] font-semibold text-gray-500 uppercase">{{ $rs->jasa_estimasi_waktu }} Hari Pengerjaan</p>
+                                                </div>
+                                                <p class="text-sm font-bold text-[#22AF85]">{{ $rs->jasa_harga_formatted }}</p>
+                                            </div>
+                                            @if($rs->is_mandatory)
+                                                <span class="inline-block mt-1 px-2 py-0.5 bg-red-50 text-red-600 rounded text-[9px] font-bold uppercase">Wajib</span>
+                                            @endif
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <div class="bg-[#1c1c17] text-white px-4 py-3 flex justify-between items-center">
+                                <span class="text-sm font-bold uppercase tracking-wider">Total Biaya (Estimasi)</span>
+                                <span class="text-lg font-black text-[#22AF85]" x-text="formattedTotal"></span>
+                            </div>
+                        </div>
+                        @endif
+
                         {{-- Action Buttons --}}
                         <div class="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <button type="submit" id="submitBtn"
@@ -286,6 +365,58 @@
 </div>
 
 <script>
+function requestApp() {
+    return {
+        // Init with mandatory items
+        checkedServices: [
+            @foreach($item->reparationServices as $rs)
+                @if($rs->is_mandatory)
+                    '{{ $rs->id }}',
+                @endif
+            @endforeach
+        ],
+        servicesData: {
+            @foreach($item->reparationServices as $rs)
+                '{{ $rs->id }}': {{ $rs->jasa_harga }},
+            @endforeach
+        },
+        total: 0,
+        formattedTotal: 'Rp 0',
+        
+        init() {
+            this.calculateTotal();
+        },
+        
+        calculateTotal() {
+            let sum = 0;
+            // Force include mandatory services in case they are not in checkedServices array (disabled checkbox might not trigger model properly on init)
+            @foreach($item->reparationServices as $rs)
+                @if($rs->is_mandatory)
+                    sum += this.servicesData['{{ $rs->id }}'];
+                @endif
+            @endforeach
+            
+            // Add optional checked services
+            this.checkedServices.forEach(id => {
+                // To avoid double adding mandatory services if they are in the array
+                let isMandatory = false;
+                @foreach($item->reparationServices as $rs)
+                    if('{{ $rs->id }}' == id && {{ $rs->is_mandatory ? 'true' : 'false' }}) {
+                        isMandatory = true;
+                    }
+                @endforeach
+                
+                if(!isMandatory && this.servicesData[id]) {
+                    sum += this.servicesData[id];
+                }
+            });
+            
+            this.total = sum;
+            this.formattedTotal = 'Rp ' + this.total.toLocaleString('id-ID');
+        }
+    }
+}
+
 document.getElementById('requestForm').addEventListener('submit', function () {
     const btn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btnText');

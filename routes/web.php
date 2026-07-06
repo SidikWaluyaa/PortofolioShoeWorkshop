@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/layanan', [\App\Http\Controllers\LayananController::class, 'index'])->name('layanan.index');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
 Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
@@ -73,7 +74,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('hero', \App\Http\Controllers\Admin\HeroController::class);
-    Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
+    Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class); // OLD SERVICES
+    
+    // NEW LAYANAN ROUTES
+    Route::resource('layanan-categories', \App\Http\Controllers\Admin\LayananCategoryController::class)->except(['show']);
+    Route::resource('layanan-categories.services', \App\Http\Controllers\Admin\LayananServiceController::class)->except(['show']);
+
     Route::resource('projects', \App\Http\Controllers\Admin\ProjectController::class);
     Route::resource('trust', \App\Http\Controllers\Admin\TrustController::class);
     Route::resource('workflow', \App\Http\Controllers\Admin\WorkflowController::class);
