@@ -11,23 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('donation_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('donation_items', 'warna')) {
+        try {
+            Schema::table('donation_items', function (Blueprint $table) {
                 $table->string('warna')->nullable()->after('ukuran');
-            }
-        });
+            });
+        } catch (\Exception $e) {
+            // ignore if column already exists
+        }
 
-        Schema::table('donation_item_services', function (Blueprint $table) {
-            if (!Schema::hasColumn('donation_item_services', 'is_mandatory')) {
+        try {
+            Schema::table('donation_item_services', function (Blueprint $table) {
                 $table->boolean('is_mandatory')->default(true)->after('jasa_estimasi_waktu');
-            }
-        });
+            });
+        } catch (\Exception $e) {
+            // ignore if column already exists
+        }
 
-        Schema::table('donation_requests', function (Blueprint $table) {
-            if (!Schema::hasColumn('donation_requests', 'selected_services')) {
+        try {
+            Schema::table('donation_requests', function (Blueprint $table) {
                 $table->text('selected_services')->nullable()->after('alasan');
-            }
-        });
+            });
+        } catch (\Exception $e) {
+            // ignore if column already exists
+        }
     }
 
     /**
