@@ -18,7 +18,7 @@ class LayananSeeder extends Seeder
         LayananCategory::truncate();
         Schema::enableForeignKeyConstraints();
 
-        $path = storage_path('app/json/layanan.json');
+        $path = base_path('layanan-content (1).json');
         
         if (!File::exists($path)) {
             $this->command->warn("JSON file not found at {$path}");
