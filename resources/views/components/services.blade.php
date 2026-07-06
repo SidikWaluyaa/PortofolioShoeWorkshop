@@ -2,7 +2,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative z-10">
     @foreach($services as $catIndex => $cat)
     @php
-        $featuredService = $cat->services->first();
+        $featuredService = $cat->services->where('is_preview', true)->first() ?? $cat->services->first();
     @endphp
     <div class="relative bg-white/80 backdrop-blur-sm p-4 sm:p-5 rounded-2xl sm:rounded-[1.25rem] border border-gray-100/80 flex flex-col gap-3 sm:gap-4 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(34,175,133,0.12)] hover:border-[#22AF85]/40 transition-all duration-500 group overflow-hidden break-words">
         {{-- Hover glowing orb effect --}}
@@ -10,7 +10,7 @@
         <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-[#FFC232]/20 to-[#22AF85]/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none delay-75"></div>
         
         <!-- BA Slider Cover -->
-        <div class="w-full aspect-square rounded-xl overflow-hidden shadow-sm relative border border-gray-100/50 group-hover:shadow-md transition-shadow shrink-0 pointer-events-none">
+        <div class="w-full aspect-square rounded-xl overflow-hidden shadow-sm relative border border-gray-100/50 group-hover:shadow-md transition-shadow shrink-0">
             @if($featuredService)
                 <x-ba-slider :service="$featuredService" :catIndex="$catIndex" class="w-full h-full" />
             @else
@@ -19,7 +19,7 @@
                 </div>
             @endif
             <!-- Glass Overlay on Cover -->
-            <div class="absolute inset-0 z-40 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute inset-0 z-40 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
         </div>
         
         <div class="flex flex-col gap-1 sm:gap-1.5 relative z-10">
