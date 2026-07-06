@@ -241,4 +241,71 @@
         </style>
     @endguest
 
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Before-after slider drag (Phase 2 & 5)
+      document.querySelectorAll('.ba-slider').forEach(slider=>{
+        const after = slider.querySelector('.after-layer');
+        const handle = slider.querySelector('.ba-handle');
+        const knob = slider.querySelector('.knob');
+        let dragging = false;
+
+        function setPos(clientX){
+          const rect = slider.getBoundingClientRect();
+          let pct = ((clientX - rect.left) / rect.width) * 100;
+          pct = Math.max(0, Math.min(100, pct));
+          if(after) after.style.clipPath = `inset(0 0 0 ${pct}%)`;
+          if(handle) handle.style.left = pct + '%';
+        }
+
+        // Touch & Mouse events
+        const startDrag = (e) => {
+          dragging = true;
+          if(knob) knob.classList.add('scale-110', 'shadow-xl');
+          setPos(e.touches ? e.touches[0].clientX : e.clientX);
+        };
+
+        const moveDrag = (e) => {
+          if(!dragging) return;
+          setPos(e.touches ? e.touches[0].clientX : e.clientX);
+        };
+
+        const endDrag = () => {
+          dragging = false;
+          if(knob) knob.classList.remove('scale-110', 'shadow-xl');
+        };
+
+        slider.addEventListener('mousedown', startDrag);
+        slider.addEventListener('touchstart', startDrag, {passive: true});
+        
+        window.addEventListener('mousemove', moveDrag);
+        window.addEventListener('touchmove', (e) => {
+          if (dragging) {
+            // Prevent vertical scroll while horizontal dragging
+            if(e.cancelable) e.preventDefault(); 
+            moveDrag(e);
+          }
+        }, {passive: false});
+
+        window.addEventListener('mouseup', endDrag);
+        window.addEventListener('touchend', endDrag);
+
+        // Intro hint animation (only if not reduced motion)
+        if (!prefersReducedMotion) {
+          const hintIO = new IntersectionObserver((entries)=>{
+            entries.forEach(entry=>{
+              if(entry.isIntersecting){
+                setTimeout(()=> { if(!dragging) setPos(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width*0.28); }, 500);
+                setTimeout(()=> { if(!dragging) setPos(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width*0.5); }, 1100);
+                hintIO.unobserve(slider);
+              }
+            });
+          }, {threshold:0.5});
+          hintIO.observe(slider);
+        }
+      });
+    });
+    </script>
 @endsection
