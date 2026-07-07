@@ -8,13 +8,13 @@
     <meta name="robots" content="index, follow">
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HJZN98MXV9"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SSD46ZTTY4"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-HJZN98MXV9');
+      gtag('config', 'G-SSD46ZTTY4');
     </script>
 
     {{-- Primary SEO --}}
