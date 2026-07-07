@@ -2,7 +2,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative z-10">
     @foreach($services as $catIndex => $cat)
     @php
-        $featuredService = $cat->services->where('is_preview', true)->first() ?? $cat->services->first();
+        $featuredService = $cat->services->first(fn($s) => $s->is_preview) ?? $cat->services->first();
     @endphp
     <div class="relative bg-white/80 backdrop-blur-sm p-4 sm:p-5 rounded-2xl sm:rounded-[1.25rem] border border-gray-100/80 flex flex-col gap-3 sm:gap-4 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(34,175,133,0.12)] hover:border-[#22AF85]/40 transition-all duration-500 group overflow-hidden break-words">
         {{-- Hover glowing orb effect --}}

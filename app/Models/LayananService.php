@@ -23,6 +23,10 @@ class LayananService extends Model
         'order'
     ];
 
+    protected $casts = [
+        'is_preview' => 'boolean',
+    ];
+
     public function category()
     {
         return $this->belongsTo(LayananCategory::class, 'layanan_category_id');
