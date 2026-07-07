@@ -327,8 +327,8 @@
         </div>
 
         @if(isset($settings['looker_studio_url']) && $settings['looker_studio_url'])
-            <div class="relative w-full rounded-xl overflow-hidden border border-gray-100 bg-gray-50 h-[400px] md:h-[600px]">
-                <iframe src="{{ $settings['looker_studio_url'] }}" frameborder="0" style="border:0" class="absolute inset-0 w-full h-full" allowfullscreen></iframe>
+            <div class="relative w-full rounded-xl overflow-hidden border border-gray-100 bg-gray-50" style="height: 600px;">
+                <iframe src="{{ $settings['looker_studio_url'] }}" frameborder="0" style="border:0; width:100%; height:100%;" class="absolute inset-0 w-full h-full" allowfullscreen></iframe>
             </div>
         @else
             <div class="p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
