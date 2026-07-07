@@ -41,7 +41,7 @@
     
     <!-- CATEGORY HEADER 50:50 -->
     @php
-        $featuredService = $cat->services->first();
+        $featuredService = $cat->services->first(fn($s) => $s->is_preview) ?? $cat->services->first();
     @endphp
     <div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-center mb-12">
       <!-- Left: Featured Image (Slider) -->
