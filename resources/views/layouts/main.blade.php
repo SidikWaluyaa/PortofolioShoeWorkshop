@@ -8,13 +8,13 @@
     <meta name="robots" content="index, follow">
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M5QQPYH1V7"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HJZN98MXV9"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-M5QQPYH1V7');
+      gtag('config', 'G-HJZN98MXV9');
     </script>
 
     {{-- Primary SEO --}}
