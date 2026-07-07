@@ -310,6 +310,42 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════════════════════
+         SECTION 3.5 — Google Analytics & Search Console (Looker Studio)
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <div class="h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse"></div>
+                <h3 class="font-bold text-gray-900">Laporan Web Analytics</h3>
+            </div>
+            @if(isset($settings['looker_studio_url']) && $settings['looker_studio_url'])
+                <a href="{{ $settings['looker_studio_url'] }}" target="_blank" class="text-xs font-semibold text-blue-500 hover:underline flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[14px]">open_in_new</span>
+                    Buka Laporan Penuh
+                </a>
+            @endif
+        </div>
+
+        @if(isset($settings['looker_studio_url']) && $settings['looker_studio_url'])
+            <div class="relative w-full rounded-xl overflow-hidden border border-gray-100 bg-gray-50 h-[400px] md:h-[600px]">
+                <iframe src="{{ $settings['looker_studio_url'] }}" frameborder="0" style="border:0" class="absolute inset-0 w-full h-full" allowfullscreen></iframe>
+            </div>
+        @else
+            <div class="p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                <svg class="h-12 w-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <h4 class="font-bold text-gray-800 text-sm mb-1">Laporan Web Analytics Belum Dikonfigurasi</h4>
+                <p class="text-xs text-gray-500 max-w-md mx-auto mb-4">Integrasikan Google Analytics & Search Console Anda menggunakan Google Looker Studio, lalu masukkan link sematan (embed) di menu pengaturan.</p>
+                <a href="{{ route('admin.settings.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-colors">
+                    <span class="material-symbols-outlined !text-[14px]">settings</span>
+                    Konfigurasi Sekarang
+                </a>
+            </div>
+        @endif
+    </div>
+
+    {{-- ═══════════════════════════════════════════════════════════════
          SECTION 4 — Quick Links
     ═══════════════════════════════════════════════════════════════ --}}
     <div class="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">

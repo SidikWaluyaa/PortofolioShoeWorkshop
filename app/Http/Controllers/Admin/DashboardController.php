@@ -20,6 +20,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+
         // ── Actionable KPIs ──────────────────────────────────────────
         $stats = [
             'donations_pending'         => Donation::where('status', 'pending')->count(),
@@ -102,6 +104,7 @@ class DashboardController extends Controller
             ->values();
 
         return view('dashboard', compact(
+            'settings',
             'stats',
             'pendingDonations',
             'pendingRequests',

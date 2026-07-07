@@ -74,6 +74,15 @@
                                     <x-text-input id="workshop_api_key" name="workshop_api_key" type="password" class="mt-1 block w-full" :value="$settings['workshop_api_key'] ?? ''" />
                                 </div>
                             </div>
+
+                            <div>
+                                <h3 class="text-lg font-bold mb-4">Marketing & Analytics</h3>
+                                <div class="mb-4">
+                                    <x-input-label for="looker_studio_url" :value="__('Google Looker Studio Embed URL')" />
+                                    <x-text-input id="looker_studio_url" name="looker_studio_url" type="url" class="mt-1 block w-full" :value="$settings['looker_studio_url'] ?? ''" placeholder="https://lookerstudio.google.com/embed/reporting/..." />
+                                    <p class="text-xs text-gray-400 mt-1">Tempel link "Embed Report" (hanya URL di dalam atribut src) dari Google Looker Studio untuk menampilkan grafik Google Analytics & Search Console di dashboard admin.</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mt-6">
