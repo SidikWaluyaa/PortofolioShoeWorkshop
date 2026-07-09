@@ -123,7 +123,7 @@
                         </p>
                         <div class="border-t border-gray-100 pt-2.5 space-y-1.5">
                             {{-- Detail Barang --}}
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">📦 Detail Barang</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Detail Barang</p>
                             <div class="space-y-1 pl-1">
                                 <div class="flex gap-2 text-xs">
                                     <span class="text-gray-400 font-semibold w-16 shrink-0">Nama</span>
@@ -205,7 +205,7 @@
 function copyMessage() {
     const text = `Halo Admin Shoe Workshop, saya ingin mengonfirmasi pengajuan donasi saya dengan ID {{ $reqCode }}.
 
-📦 Detail Barang:
+Detail Barang:
 - Nama      : {{ $itemNama }}
 - Kategori  : {{ ucfirst($item->kategori) }}
 - Link Katalog : {{ $itemUrl }}

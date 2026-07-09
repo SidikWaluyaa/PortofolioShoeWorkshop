@@ -145,8 +145,9 @@ class DonationCatalogController extends Controller
                 ->with('error', 'Kuota pengajuan untuk barang ini sudah penuh.');
         }
 
+        $selectedServiceIds = request()->input('services', []);
         $settings = Setting::pluck('value', 'key')->all();
-        return view('katalog.request', compact('item', 'settings'));
+        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds'));
     }
 
     /**

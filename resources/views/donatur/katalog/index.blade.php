@@ -132,17 +132,17 @@
                     <button @click="toggleCategory('sepatu')"
                             :class="categories.includes('sepatu') ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-650 border-gray-200'"
                             class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
-                        👞 Sepatu
+                        Sepatu
                     </button>
                     <button @click="toggleCategory('tas')"
                             :class="categories.includes('tas') ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-650 border-gray-200'"
                             class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
-                        🎒 Tas
+                        Tas
                     </button>
                     <button @click="toggleCategory('topi')"
                             :class="categories.includes('topi') ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-650 border-gray-200'"
                             class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
-                        🧢 Topi
+                        Topi
                     </button>
 
                     <span class="text-gray-300">|</span>
@@ -151,17 +151,17 @@
                     <button @click="setCondition(condition === 'baru' ? '' : 'baru')"
                             :class="condition === 'baru' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-655 border-gray-200'"
                             class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
-                        🆕 Baru
+                        Baru
                     </button>
                     <button @click="setCondition(condition === 'seperti_baru' ? '' : 'seperti_baru')"
                             :class="condition === 'seperti_baru' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-655 border-gray-200'"
                             class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
-                        ✨ Like New
+                        Like New
                     </button>
                     <button @click="setCondition(condition === 'sudah_diperbaiki' ? '' : 'sudah_diperbaiki')"
                             :class="condition === 'sudah_diperbaiki' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-655 border-gray-200'"
                             class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
-                        🔧 Refurbished
+                        Refurbished
                     </button>
 
                     <span class="text-gray-300">|</span>
@@ -230,15 +230,15 @@
                         <div class="flex flex-wrap gap-2">
                             <label class="cursor-pointer">
                                 <input type="checkbox" value="sepatu" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
-                                <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 bg-gray-50 border-gray-200 text-gray-650 transition-all">👞 Sepatu</span>
+                                <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 bg-gray-50 border-gray-200 text-gray-650 transition-all">Sepatu</span>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="checkbox" value="tas" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
-                                <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 bg-gray-50 border-gray-200 text-gray-655 transition-all">🎒 Tas</span>
+                                <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 bg-gray-50 border-gray-200 text-gray-655 transition-all">Tas</span>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="checkbox" value="topi" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
-                                <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 bg-gray-50 border-gray-200 text-gray-655 transition-all">🧢 Topi</span>
+                                <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 bg-gray-50 border-gray-200 text-gray-655 transition-all">Topi</span>
                             </label>
                         </div>
                     </div>
@@ -801,9 +801,9 @@
 
             formatCondition(cond) {
                 const map = {
-                    'baru': '🆕 Baru',
-                    'seperti_baru': '✨ Seperti Baru',
-                    'sudah_diperbaiki': '🔧 Refurbished'
+                    'baru': 'Baru',
+                    'seperti_baru': 'Seperti Baru',
+                    'sudah_diperbaiki': 'Refurbished'
                 };
                 return map[cond] || cond;
             },

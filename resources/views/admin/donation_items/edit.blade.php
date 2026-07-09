@@ -146,7 +146,7 @@
                                         class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-[#22AF85]">
                                     <option value="">-- Pilih Layanan --</option>
                                     @foreach($services as $service)
-                                        <option value="{{ $service->id }}">{{ $service->icon }} {{ $service->name }}</option>
+                                        <option value="{{ $service->id }}">{{ $service->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -154,7 +154,15 @@
                             {{-- Jasa Kustom / Manual --}}
                             <div class="flex-1">
                                 <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-1.5">Jasa Kustom (Manual)</label>
-                                <input type="text" :name="`services[${index}][jasa_nama_manual]`" x-model="srv.jasa_nama_manual" placeholder="Isi jika kustom"
+                                <input type="text" :name="`services[${index}][jasa_nama_manual]`" 
+                                       x-model="srv.jasa_nama_manual" 
+                                       @input="
+                                           const found = masterJasa.find(j => j.nama === srv.jasa_nama_manual);
+                                           if (found) srv.jasa_harga = found.harga;
+                                       "
+                                       list="jasa-list-options"
+                                       placeholder="Ketik atau pilih jasa..."
+                                       autocomplete="off"
                                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:border-[#22AF85]" />
                             </div>
 
@@ -198,7 +206,12 @@
 
             {{-- Deskripsi --}}
             <div>
-                <label for="deskripsi" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Deskripsi Barang & Hasil Reparasi</label>
+                <div class="flex items-center justify-between mb-2">
+                    <label for="deskripsi" class="block text-xs font-black text-gray-700 uppercase tracking-wider">Deskripsi Barang & Hasil Reparasi</label>
+                    <button type="button" @click="showAiModal = true" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-[10px] font-bold rounded-lg shadow-sm transition transform hover:-translate-y-0.5">
+                        <span class="text-sm">✨</span> Generate dengan AI
+                    </button>
+                </div>
                 <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Jelaskan kondisi barang dan reparasi apa saja yang sudah dilakukan (misal: deep cleaning, reglue outsole, repaint upper)..."
                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition">{{ old('deskripsi', $donationItem->deskripsi) }}</textarea>
                 @error('deskripsi')
@@ -333,7 +346,17 @@
                 </button>
                 <a href="{{ route('admin.donation-items.index') }}" class="text-sm text-gray-500 hover:text-gray-900 font-bold transition">Batal</a>
             </div>
+
+            <!-- AI Modal Component -->
+            <x-ai-description-modal />
+
         </form>
+
+        <datalist id="jasa-list-options">
+            <template x-for="jasa in masterJasa" :key="jasa.nama">
+                <option :value="jasa.nama"></option>
+            </template>
+        </datalist>
     </div>
 
     {{-- Material Icons Font --}}
@@ -377,6 +400,101 @@
                     }
                     echo json_encode($servicesData);
                 ?>,
+
+                masterJasa: [
+                    {"nama": "Lem Press", "harga": 210000},
+                    {"nama": "Lem Jahit", "harga": 210000},
+                    {"nama": "Lem Jahit Double", "harga": 230000},
+                    {"nama": "Lem Spesial (Lapis Kulit)", "harga": 275000},
+                    {"nama": "Lem Checkup", "harga": 125000},
+                    {"nama": "Lem Anak (SZ 25-30)", "harga": 80000},
+                    {"nama": "Lem Anak (SZ 30-35)", "harga": 110000},
+                    {"nama": "Ganti Sol Potong", "harga": 300000},
+                    {"nama": "Ganti Alas Polos", "harga": 225000},
+                    {"nama": "Ganti Alas Berpola", "harga": 275000},
+                    {"nama": "Ganti Alas Hak Cewe", "harga": 75000},
+                    {"nama": "Ganti Alas Hak Cowo", "harga": 175000},
+                    {"nama": "Ganti Alas Anak", "harga": 125000},
+                    {"nama": "Ganti Alas Polos + Lem Sole", "harga": 275000},
+                    {"nama": "Ganti Alas Pola + Lem Sole", "harga": 325000},
+                    {"nama": "Ganti Sol Crepe", "harga": 325000},
+                    {"nama": "Sepatu Premium", "harga": 725000},
+                    {"nama": "Resize", "harga": 225000},
+                    {"nama": "Upsize (Shoelast)", "harga": 125000},
+                    {"nama": "Downsize (Double Insole)", "harga": 175000},
+                    {"nama": "Shoelast", "harga": 50000},
+                    {"nama": "Bongkar Sole", "harga": 125000},
+                    {"nama": "Midsole Flat", "harga": 305000},
+                    {"nama": "Midsole Non Flat", "harga": 355000},
+                    {"nama": "Midsole Hard", "harga": 480000},
+                    {"nama": "Midsole Lapis", "harga": 125000},
+                    {"nama": "Midsole Lapis Kulit", "harga": 175000},
+                    {"nama": "Ganti Sol Kulit", "harga": 525000},
+                    {"nama": "Ganti Sol Kulit + Alas", "harga": 675000},
+                    {"nama": "Goodyear Welt", "harga": 1000000},
+                    {"nama": "Goodyear Welt + Vibram", "harga": 1900000},
+                    {"nama": "Ganti Sol Jadi (Cupsole)", "harga": 250000},
+                    {"nama": "Ganti Sol Jadi Spesial", "harga": 275000},
+                    {"nama": "Ganti Sol Foxing", "harga": 225000},
+                    {"nama": "Ganti Sol Foxing + Alas", "harga": 275000},
+                    {"nama": "Swapsole Type Sol Cup", "harga": 190000},
+                    {"nama": "Swapsole Type Sol Potong", "harga": 225000},
+                    {"nama": "Alas Komponen + Lem", "harga": 180000},
+                    {"nama": "Repaint Standard", "harga": 170000},
+                    {"nama": "Repaint Standard Bahan Spesial", "harga": 195000},
+                    {"nama": "Repaint Spesial", "harga": 195000},
+                    {"nama": "Repaint Spesial Bahan Spesial", "harga": 245000},
+                    {"nama": "Repaint Patina", "harga": 245000},
+                    {"nama": "Repaint Patina Bahan Spesial", "harga": 295000},
+                    {"nama": "Repaint Multicolor 2 Warna", "harga": 245000},
+                    {"nama": "Repaint Multicolor >3 Warna", "harga": 295000},
+                    {"nama": "Repaint Premium", "harga": 375000},
+                    {"nama": "Upper Treatment", "harga": 90000},
+                    {"nama": "Unyellowing Sole", "harga": 125000},
+                    {"nama": "Ganti Upper Pola Standard (Quarter-S)", "harga": 175000},
+                    {"nama": "Ganti Upper Pola Kecil", "harga": 75000},
+                    {"nama": "Ganti Upper Pola Sedang (Quarter-M)", "harga": 225000},
+                    {"nama": "Ganti Upper Pola Besar (Quarter-L)", "harga": 325000},
+                    {"nama": "Ganti Lining Kulit", "harga": 225000},
+                    {"nama": "Ganti Lining Mesh", "harga": 175000},
+                    {"nama": "Ganti Lining Pola Besar", "harga": 325000},
+                    {"nama": "Ganti Lining + Padded Collar", "harga": 275000},
+                    {"nama": "Ganti Stabilizer + Lem", "harga": 225000},
+                    {"nama": "Lapis Kulit Keliling", "harga": 125000},
+                    {"nama": "Lapis Kanvas Keliling", "harga": 125000},
+                    {"nama": "Lapis Kulit 1 Pola", "harga": 175000},
+                    {"nama": "Lapis Kulit Depan/Belakang", "harga": 75000},
+                    {"nama": "Lapis Kulit Recon", "harga": 275000},
+                    {"nama": "Laser", "harga": 95000},
+                    {"nama": "DTF", "harga": 75000},
+                    {"nama": "Ganti Velcrow", "harga": 175000},
+                    {"nama": "Ganti Karet Elastis Kecil", "harga": 125000},
+                    {"nama": "Ganti Karet Elastis 1 Pola", "harga": 175000},
+                    {"nama": "Ganti Zipper", "harga": 175000},
+                    {"nama": "Custom Zipper", "harga": 225000},
+                    {"nama": "Insole Kulit", "harga": 125000},
+                    {"nama": "Insole Mesh", "harga": 75000},
+                    {"nama": "Tambah Busa Insole (Upsize)", "harga": 175000},
+                    {"nama": "Ganti Boa Lacing", "harga": 700000},
+                    {"nama": "Service Boa Lacing", "harga": 275000},
+                    {"nama": "Ganti Eyelet <10 Lubang (Reparasi)", "harga": 125000},
+                    {"nama": "Ganti Eyelet >10 Lubang (Reparasi)", "harga": 175000},
+                    {"nama": "Ganti Tambah TA", "harga": 125000},
+                    {"nama": "Toecup", "harga": 75000},
+                    {"nama": "Custom Upper", "harga": 275000},
+                    {"nama": "Ganti Steel Toe", "harga": 175000},
+                    {"nama": "Pengait Lidah", "harga": 125000},
+                    {"nama": "Tambah Stabilizer", "harga": 75000},
+                    {"nama": "Ganti Paded", "harga": 175000},
+                    {"nama": "Rapihkan Jahitan", "harga": 125000},
+                    {"nama": "Sole Protector >Size 42", "harga": 250000},
+                    {"nama": "Sole Protector <Size 42", "harga": 225000},
+                    {"nama": "Ganti Hook 1 pc", "harga": 15000},
+                    {"nama": "Ganti D-Ring 1 pcs", "harga": 20000},
+                    {"nama": "Ganti Eyelet <10 Lubang (Aksesoris)", "harga": 65000},
+                    {"nama": "Ganti Eyelet >10 Lubang (Aksesoris)", "harga": 115000},
+                    {"nama": "Heel Patch", "harga": 35000}
+                ],
 
                 addService() {
                     this.services.push({ service_id: '', jasa_nama_manual: '', jasa_harga: '', jasa_estimasi_waktu: '', is_mandatory: true });
@@ -425,6 +543,73 @@
                     const dataTransfer = new DataTransfer();
                     this.detailFiles.forEach(file => dataTransfer.items.add(file));
                     document.getElementById('foto_detail').files = dataTransfer.files;
+                },
+
+                // --- AI Generator Logic ---
+                showAiModal: false,
+                isGeneratingAi: false,
+                aiError: '',
+                aiForm: {
+                    tipe: '',
+                    bahan_upper: '',
+                    gender: '',
+                    sol: '',
+                    upper: '',
+                    jahitan: '',
+                    insole: '',
+                    tali: '',
+                    kelengkapan: [],
+                    catatan: ''
+                },
+
+                async generateAi() {
+                    this.isGeneratingAi = true;
+                    this.aiError = '';
+                    
+                    const payload = {
+                        ...this.aiForm,
+                        nama_barang: document.getElementById('nama')?.value || '',
+                        merek: document.getElementById('brand')?.value || '',
+                        ukuran: document.getElementById('ukuran')?.value || '',
+                        warna: document.getElementById('warna')?.value || '',
+                        kategori: document.getElementById('kategori_id')?.options[document.getElementById('kategori_id').selectedIndex]?.text || '',
+                        kondisi_umum: document.getElementById('kondisi')?.options[document.getElementById('kondisi').selectedIndex]?.text || '',
+                        services: this.services.map((srv, idx) => {
+                            const selectEl = document.querySelector(`select[name="services[${idx}][service_id]"]`);
+                            return {
+                                layanan: selectEl && selectEl.selectedIndex > 0 ? selectEl.options[selectEl.selectedIndex].text : '',
+                                kustom: srv.jasa_nama_manual,
+                                biaya: srv.jasa_harga,
+                                wajib: srv.is_mandatory ? 'Ya' : 'Tidak'
+                            };
+                        })
+                    };
+
+                    try {
+                        const response = await fetch('{{ route("admin.ai.generate-description") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(data.error || 'Terjadi kesalahan saat memanggil AI.');
+                        }
+
+                        if (data.description) {
+                            document.getElementById('deskripsi').value = data.description;
+                            this.showAiModal = false;
+                        }
+                    } catch (error) {
+                        this.aiError = error.message;
+                    } finally {
+                        this.isGeneratingAi = false;
+                    }
                 }
             }
         }

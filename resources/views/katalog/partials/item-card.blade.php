@@ -12,9 +12,9 @@
         <!-- Kondisi Badge -->
         @php
             $condLabels = [
-                'baru' => '🆕 Baru',
-                'seperti_baru' => '✨ Seperti Baru',
-                'sudah_diperbaiki' => '🔧 Refurbished'
+                'baru' => 'Baru',
+                'seperti_baru' => 'Seperti Baru',
+                'sudah_diperbaiki' => 'Refurbished'
             ];
         @endphp
         <span class="absolute bottom-2 right-2 px-1.5 sm:px-2 py-0.5 bg-black/60 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded">
@@ -55,11 +55,11 @@
                 <!-- Kategori -->
                 <span class="text-[9px] sm:text-[10px] font-bold text-[#6d7a77] uppercase tracking-wider shrink-0">
                     @if($item->kategori === 'sepatu')
-                        👞 Sepatu
+                        Sepatu
                     @elseif($item->kategori === 'tas')
-                        🎒 Tas
+                        Tas
                     @elseif($item->kategori === 'topi')
-                        🧢 Topi
+                        Topi
                     @else
                         {{ $item->kategori }}
                     @endif

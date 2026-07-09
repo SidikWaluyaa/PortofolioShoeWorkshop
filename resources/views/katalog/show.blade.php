@@ -15,9 +15,9 @@
 @php
     $isQuotaFull = $item->status === 'tersedia' && $item->isQuotaFull();
     $condLabels = [
-        'baru' => '🆕 Baru',
-        'seperti_baru' => '✨ Seperti Baru',
-        'sudah_diperbaiki' => '🔧 Refurbished'
+        'baru' => 'Baru',
+        'seperti_baru' => 'Seperti Baru',
+        'sudah_diperbaiki' => 'Refurbished'
     ];
 
     // Dynamic colorway extractor
@@ -249,39 +249,53 @@
                         <!-- Restoration/Service details if applicable -->
                         @if($item->reparationServices->isNotEmpty())
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
-                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">🛠️ Rincian Layanan Restorasi Workshop</h3>
+                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">Rincian Layanan Restorasi Workshop</h3>
+                            <p class="text-[11px] text-gray-500 mb-4">Centang atau hilangkan centang pada jasa opsional (jasa wajib tidak dapat diubah).</p>
                             <div class="divide-y divide-slate-200">
-                                @foreach($item->reparationServices as $rs)
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 py-3 first:pt-0">
-                                        <div>
-                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Jasa Pengerjaan</p>
-                                            <p class="text-sm font-bold text-slate-800 mt-0.5">
-                                                @if($rs->service)
-                                                    <span class="inline-block mr-1">{{ $rs->service->icon }}</span>
-                                                @endif
-                                                {{ $rs->jasa_nama }}
-                                            </p>
+                                @foreach($item->reparationServices as $index => $rs)
+                                    <label class="flex items-start gap-3 py-3 first:pt-0 cursor-pointer select-none">
+                                        <div class="pt-0.5">
+                                            <input type="checkbox" value="{{ $rs->id }}" 
+                                                class="w-5 h-5 rounded border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"
+                                                @change="calculateTotals()"
+                                                x-model="checkedServices"
+                                                @if($rs->is_mandatory) disabled @endif>
                                         </div>
-                                        <div>
-                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Estimasi Waktu</p>
-                                            <p class="text-sm font-semibold text-slate-700 mt-0.5">{{ $rs->jasa_estimasi_waktu_formatted }}</p>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                                <div>
+                                                    <p class="text-[10px] text-gray-400 font-bold uppercase">Jasa Pengerjaan</p>
+                                                    <p class="text-sm font-bold text-slate-800 mt-0.5">
+                                                        {{ $rs->jasa_nama }}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] text-gray-400 font-bold uppercase">Estimasi Waktu</p>
+                                                    <p class="text-sm font-semibold text-slate-700 mt-0.5">{{ $rs->jasa_estimasi_waktu_formatted }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] text-gray-400 font-bold uppercase">Nilai/Harga Jasa</p>
+                                                    <p class="text-sm font-bold text-slate-850 mt-0.5">{{ $rs->jasa_harga_formatted }}</p>
+                                                </div>
+                                            </div>
+                                            @if($rs->is_mandatory)
+                                                <span class="inline-block mt-1 px-2 py-0.5 bg-red-50 text-red-650 rounded text-[9px] font-bold uppercase">Wajib</span>
+                                            @else
+                                                <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[9px] font-bold uppercase">Opsional</span>
+                                            @endif
                                         </div>
-                                        <div>
-                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Nilai/Harga Jasa</p>
-                                            <p class="text-sm font-bold text-slate-850 mt-0.5">{{ $rs->jasa_harga_formatted }}</p>
-                                        </div>
-                                    </div>
+                                    </label>
                                 @endforeach
                             </div>
                             <!-- Total Row -->
                             <div class="border-t border-slate-200 pt-3 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                 <div>
                                     <p class="text-[10px] text-slate-400 font-black uppercase">Total Estimasi Durasi (Max)</p>
-                                    <p class="text-sm font-black text-[#22AF85]">{{ $item->jasa_estimasi_waktu_formatted }}</p>
+                                    <p class="text-sm font-black text-[#22AF85]" x-text="formattedTotalDuration"></p>
                                 </div>
                                 <div class="sm:text-right">
                                     <p class="text-[10px] text-slate-400 font-black uppercase">Total Nilai Restorasi</p>
-                                    <p class="text-base font-black text-[#22AF85]">{{ $item->jasa_harga_formatted }}</p>
+                                    <p class="text-base font-black text-[#22AF85]" x-text="formattedTotalPrice"></p>
                                 </div>
                             </div>
                         </div>
@@ -348,10 +362,10 @@
                                         Dalam Proses Pengajuan
                                     </button>
                                 @else
-                                    <a href="{{ route('katalog.request.form', $item) }}" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                    <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined !text-[18px]">send</span>
                                         Ajukan Permohonan
-                                    </a>
+                                    </button>
                                 @endif
                             @else
                                 <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
@@ -382,10 +396,10 @@
                             Dalam Proses Pengajuan
                         </button>
                     @else
-                        <a href="{{ route('katalog.request.form', $item) }}" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined !text-[18px]">send</span>
                             Ajukan Permohonan
-                        </a>
+                        </button>
                     @endif
                 @else
                     <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
@@ -421,9 +435,9 @@
                                         {{ $other->nama }}
                                     </h4>
                                     <p class="text-[10px] text-gray-500 mt-1">
-                                        @if($other->kategori === 'sepatu') 👞 Sepatu
-                                        @elseif($other->kategori === 'tas') 🎒 Tas
-                                        @else 🧢 Topi
+                                        @if($other->kategori === 'sepatu') Sepatu
+                                        @elseif($other->kategori === 'tas') Tas
+                                        @else Topi
                                         @endif
                                     </p>
                                 </a>
@@ -443,8 +457,67 @@
         return {
             activeImage: '{{ $item->foto_utama_url }}',
             activeIndex: 0,
+            checkedServices: [
+                @foreach($item->reparationServices as $rs)
+                    '{{ $rs->id }}',
+                @endforeach
+            ],
+            servicesData: {
+                @foreach($item->reparationServices as $rs)
+                    '{{ $rs->id }}': {
+                        price: {{ $rs->jasa_harga }},
+                        duration: {{ $rs->jasa_estimasi_waktu }},
+                        is_mandatory: {{ $rs->is_mandatory ? 'true' : 'false' }}
+                    },
+                @endforeach
+            },
+            totalPrice: 0,
+            totalDuration: 0,
+            formattedTotalPrice: 'Rp 0',
+            formattedTotalDuration: '0 Hari',
 
-            initApp() {},
+            initApp() {
+                this.calculateTotals();
+            },
+
+            calculateTotals() {
+                let priceSum = 0;
+                let maxDuration = 0;
+
+                // Force include mandatory services
+                @foreach($item->reparationServices as $rs)
+                    if ({{ $rs->is_mandatory ? 'true' : 'false' }}) {
+                        priceSum += this.servicesData['{{ $rs->id }}'].price;
+                        maxDuration = Math.max(maxDuration, this.servicesData['{{ $rs->id }}'].duration);
+                        if (!this.checkedServices.includes('{{ $rs->id }}')) {
+                            this.checkedServices.push('{{ $rs->id }}');
+                        }
+                    }
+                @endforeach
+
+                // Add checked optional services
+                this.checkedServices.forEach(id => {
+                    const s = this.servicesData[id];
+                    if (s && !s.is_mandatory) {
+                        priceSum += s.price;
+                        maxDuration = Math.max(maxDuration, s.duration);
+                    }
+                });
+
+                this.totalPrice = priceSum;
+                this.totalDuration = maxDuration;
+                this.formattedTotalPrice = this.totalPrice === 0 ? 'Gratis / N/A' : 'Rp ' + this.totalPrice.toLocaleString('id-ID');
+                this.formattedTotalDuration = this.totalDuration === 0 ? '0 Hari' : this.totalDuration + ' Hari';
+            },
+
+            goToRequestForm() {
+                const baseUrl = '{{ route("katalog.request.form", $item) }}';
+                const params = new URLSearchParams();
+                this.checkedServices.forEach(id => {
+                    params.append('services[]', id);
+                });
+                window.location.href = baseUrl + '?' + params.toString();
+            },
 
             shareItem() {
                 const shareData = {
