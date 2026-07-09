@@ -302,7 +302,7 @@
                                             <div class="flex justify-between items-start">
                                                 <div>
                                                     <p class="text-sm font-bold text-[#1c1c17]">
-                                                        @if($rs->service) {{ $rs->service->icon }} @endif {{ $rs->jasa_nama }}
+                                                        {{ $rs->jasa_nama }}
                                                     </p>
                                                     <p class="text-[10px] font-semibold text-gray-500 uppercase">{{ $rs->jasa_estimasi_waktu }} Hari Pengerjaan</p>
                                                 </div>
@@ -369,11 +369,21 @@ function requestApp() {
     return {
         // Init with mandatory items
         checkedServices: [
-            @foreach($item->reparationServices as $rs)
-                @if($rs->is_mandatory)
+            @if(isset($selectedServiceIds) && is_array($selectedServiceIds))
+                @foreach($selectedServiceIds as $id)
+                    '{{ $id }}',
+                @endforeach
+                {{-- Selalu sertakan yang wajib agar tidak terlewat --}}
+                @foreach($item->reparationServices as $rs)
+                    @if($rs->is_mandatory && !in_array($rs->id, $selectedServiceIds))
+                        '{{ $rs->id }}',
+                    @endif
+                @endforeach
+            @else
+                @foreach($item->reparationServices as $rs)
                     '{{ $rs->id }}',
-                @endif
-            @endforeach
+                @endforeach
+            @endif
         ],
         servicesData: {
             @foreach($item->reparationServices as $rs)

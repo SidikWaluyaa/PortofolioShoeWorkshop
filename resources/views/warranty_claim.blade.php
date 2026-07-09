@@ -252,7 +252,7 @@
                 {{-- Upload Bukti Google Review --}}
                 <div class="border-t border-surface-container pt-6">
                     <div class="bg-primary-container/10 border border-primary-container/20 rounded-2xl p-5 mb-6 flex gap-3 text-sm text-on-primary-container">
-                        <span class="text-2xl shrink-0">🌟</span>
+                        <span class="material-symbols-outlined text-amber-500 text-2xl shrink-0">star</span>
                         <div>
                             <h4 class="text-xs font-black uppercase tracking-wider mb-1">Dapatkan Claim Priority:</h4>
                             <p class="text-xs text-on-primary-container/90 leading-relaxed font-semibold">

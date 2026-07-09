@@ -16,7 +16,6 @@
 
       gtag('config', 'G-SSD46ZTTY4');
     </script>
-
     {{-- Primary SEO --}}
     <title>@yield('seo_title', config('app.name'))</title>
     <meta name="description" content="@yield('seo_description', 'Shoe Workshop – jasa reparasi sepatu, cuci, repaint, reglue, jahit profesional. Garansi kualitas, proses cepat.')">

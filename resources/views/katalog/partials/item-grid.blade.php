@@ -21,9 +21,9 @@
                     <!-- Kondisi Badge -->
                     @php
                         $condLabels = [
-                            'baru' => '🆕 Baru',
-                            'seperti_baru' => '✨ Seperti Baru',
-                            'sudah_diperbaiki' => '🔧 Refurbished'
+                            'baru' => 'Baru',
+                            'seperti_baru' => 'Seperti Baru',
+                            'sudah_diperbaiki' => 'Refurbished'
                         ];
                     @endphp
                     <span class="absolute bottom-2 right-2 px-1.5 sm:px-2 py-0.5 bg-black/60 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold rounded">
@@ -65,11 +65,11 @@
                             <!-- Kategori -->
                             <span class="text-[9px] sm:text-[10px] font-bold text-[#6d7a77] uppercase tracking-wider shrink-0">
                                 @if($item->kategori === 'sepatu')
-                                    👞 Sepatu
+                                    Sepatu
                                 @elseif($item->kategori === 'tas')
-                                    🎒 Tas
+                                    Tas
                                 @elseif($item->kategori === 'topi')
-                                    🧢 Topi
+                                    Topi
                                 @else
                                     {{ $item->kategori }}
                                 @endif
@@ -103,12 +103,12 @@
                         <div class="flex flex-wrap gap-1 mb-3">
                             @if($item->jasa_nama)
                                 <span class="px-1.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded text-[9px] sm:text-[10px] font-bold truncate max-w-[120px]" title="{{ $item->jasa_nama }}">
-                                    🔧 {{ $item->jasa_nama }}
+                                    {{ $item->jasa_nama }}
                                 </span>
                             @endif
                             @if($item->berat)
                                 <span class="px-1.5 py-0.5 bg-blue-50 text-blue-800 border border-blue-100 rounded text-[9px] sm:text-[10px] font-bold shrink-0" title="Berat">
-                                    ⚖️ {{ $item->berat_formatted }}
+                                    {{ $item->berat_formatted }}
                                 </span>
                             @endif
                         </div>

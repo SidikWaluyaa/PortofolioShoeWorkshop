@@ -101,6 +101,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('donations/{donation}', [\App\Http\Controllers\Admin\DonationController::class, 'show'])->name('donations.show');
     Route::post('donations/{donation}/approve', [\App\Http\Controllers\Admin\DonationController::class, 'approve'])->name('donations.approve');
     Route::post('donations/{donation}/reject', [\App\Http\Controllers\Admin\DonationController::class, 'reject'])->name('donations.reject');
+    
+    // AI Description Generator
+    Route::post('ai/generate-description', [\App\Http\Controllers\Admin\AiDescriptionController::class, 'generate'])->name('ai.generate-description');
     Route::post('donations/{donation}/distribute', [\App\Http\Controllers\Admin\DonationController::class, 'distribute'])->name('donations.distribute');
 
     // Check-In Verification

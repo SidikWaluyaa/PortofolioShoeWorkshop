@@ -155,8 +155,8 @@
                                 <div class="p-4 rounded-xl border-2 transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50"
                                      :class="metode === 'antar_langsung' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300'">
                                     <div class="text-center">
-                                        <span class="text-2xl">🏠</span>
-                                        <p class="text-sm font-bold text-gray-900 mt-1">Antar Langsung</p>
+                                        <span class="material-symbols-outlined text-3xl text-emerald-600 block mx-auto">home</span>
+                                        <p class="text-sm font-bold text-gray-900 mt-2">Antar Langsung</p>
                                         <p class="text-xs text-gray-500">Diantar ke gudang donasi</p>
                                     </div>
                                 </div>
@@ -166,8 +166,8 @@
                                 <div class="p-4 rounded-xl border-2 transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50"
                                      :class="metode === 'ekspedisi' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300'">
                                     <div class="text-center">
-                                        <span class="text-2xl">📦</span>
-                                        <p class="text-sm font-bold text-gray-900 mt-1">Ekspedisi</p>
+                                        <span class="material-symbols-outlined text-3xl text-emerald-600 block mx-auto">local_shipping</span>
+                                        <p class="text-sm font-bold text-gray-900 mt-2">Ekspedisi</p>
                                         <p class="text-xs text-gray-500">Menggunakan jasa kurir</p>
                                     </div>
                                 </div>
