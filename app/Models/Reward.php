@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reward extends Model
 {
     protected $fillable = [
+        'kategori_reward',
         'nama_reward',
         'jenis',
         'deskripsi',

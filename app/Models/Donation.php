@@ -23,6 +23,7 @@ class Donation extends Model
         'catatan_admin',
         'verified_by',
         'verified_at',
+        'is_reward_claimed',
     ];
 
     protected static function booted()
@@ -51,6 +52,7 @@ class Donation extends Model
             'kondisi' => 'integer',
             'harga' => 'integer',
             'verified_at' => 'datetime',
+            'is_reward_claimed' => 'boolean',
         ];
     }
 

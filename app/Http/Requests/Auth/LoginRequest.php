@@ -49,6 +49,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if user is suspended
+        if (! Auth::user()->is_active) {
+            Auth::logout();
+            
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda telah dinonaktifkan (suspended). Silakan hubungi Administrator.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

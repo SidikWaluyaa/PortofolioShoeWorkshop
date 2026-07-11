@@ -362,10 +362,17 @@
                                         Dalam Proses Pengajuan
                                     </button>
                                 @else
-                                    <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                                        <span class="material-symbols-outlined !text-[18px]">send</span>
-                                        Ajukan Permohonan
-                                    </button>
+                                    @auth
+                                        <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                            <span class="material-symbols-outlined !text-[18px]">send</span>
+                                            Ajukan Permohonan
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}" class="flex-grow py-3.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold text-sm shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                            <span class="material-symbols-outlined !text-[18px]">login</span>
+                                            Login untuk Mengajukan
+                                        </a>
+                                    @endauth
                                 @endif
                             @else
                                 <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
@@ -396,10 +403,17 @@
                             Dalam Proses Pengajuan
                         </button>
                     @else
-                        <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined !text-[18px]">send</span>
-                            Ajukan Permohonan
-                        </button>
+                        @auth
+                            <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined !text-[18px]">send</span>
+                                Ajukan Permohonan
+                            </button>
+                        @else
+                            <a href="{{ route('login') }}" class="flex-grow py-3.5 bg-gray-800 text-white rounded-xl font-bold text-sm shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined !text-[18px]">login</span>
+                                Login untuk Mengajukan
+                            </a>
+                        @endauth
                     @endif
                 @else
                     <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>

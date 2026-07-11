@@ -23,7 +23,7 @@ class DonationService
             $fotoPaths[] = ImageCompressionHelper::compressAndStore($foto, 'donations/sepatu');
         }
 
-        return Donation::create([
+        $donation = Donation::create([
             'user_id' => Auth::id(),
             'nama_sepatu' => $data['nama_sepatu'],
             'ukuran' => $data['ukuran'],
@@ -31,11 +31,15 @@ class DonationService
             'harga' => $data['harga'] ?? 0,
             'deskripsi' => $data['deskripsi'] ?? null,
             'foto_path' => $fotoPaths,
-            'metode_pengiriman' => $data['metode_pengiriman'],
-            'nama_ekspedisi' => $data['nama_ekspedisi'] ?? null,
-            'no_resi' => $data['no_resi'] ?? null,
+            'metode_pengiriman' => 'ekspedisi', // Placeholder until user inputs it later
+            'nama_ekspedisi' => null,
+            'no_resi' => null,
             'status' => 'pending',
         ]);
+        
+        // Note: Email notification moved to approve method
+        
+        return $donation;
     }
 
     /**
@@ -63,9 +67,45 @@ class DonationService
     }
 
     /**
-     * Approve a donation (admin action). Requires uploading proof photo and catalog inspection data.
+     * Approve a donation submission online (admin action).
      */
-    public function approve(Donation $donation, UploadedFile $fotoBukti, array $inspectionData, ?string $catatan = null): Donation
+    public function approveSubmission(Donation $donation, ?string $catatan = null): Donation
+    {
+        $donation->update([
+            'status' => 'disetujui',
+            'catatan_admin' => $catatan,
+            'verified_by' => Auth::id(),
+            'verified_at' => now(),
+        ]);
+
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\SystemNotification(
+                'Donasi Disetujui!',
+                "Terima kasih! Pengajuan donasi sepatu {$donation->nama_sepatu} Anda telah kami setujui. Silakan cek email Anda untuk instruksi pengiriman.",
+                route('member.donations.index'),
+                'volunteer_activism',
+                'success'
+            ));
+            
+            // Auto-send email instructions to the user
+            if ($donation->user->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($donation->user->email)->send(
+                        new \App\Mail\DonationApprovedMail($donation)
+                    );
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send donation instruction email: ' . $e->getMessage());
+                }
+            }
+        }
+
+        return $donation;
+    }
+
+    /**
+     * Confirm physical receipt of a donation (admin action). Requires uploading proof photo.
+     */
+    public function confirmReceipt(Donation $donation, UploadedFile $fotoBukti, ?string $catatan = null): Donation
     {
         $fotoBuktiPath = ImageCompressionHelper::compressAndStore($fotoBukti, 'donations/bukti');
 
@@ -73,22 +113,17 @@ class DonationService
             'status' => 'diterima',
             'foto_bukti_path' => $fotoBuktiPath,
             'catatan_admin' => $catatan,
-            'verified_by' => Auth::id(),
-            'verified_at' => now(),
         ]);
 
-        \App\Models\DonationItem::create([
-            'donation_id' => $donation->id,
-            'nama' => $inspectionData['nama'],
-            'brand' => $inspectionData['brand'] ?? null,
-            'kategori' => $inspectionData['kategori'],
-            'kondisi' => $inspectionData['kondisi'],
-            'status' => 'tersedia',
-            'deskripsi' => $inspectionData['deskripsi'] ?? null,
-            'foto_utama_path' => $donation->foto_path[0] ?? '',
-            'foto_detail' => $donation->foto_path,
-            'ukuran' => $inspectionData['ukuran'] ?? null,
-        ]);
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\SystemNotification(
+                'Sepatu Diterima!',
+                "Terima kasih! Sepatu {$donation->nama_sepatu} Anda telah kami terima di workshop dan masuk antrean restorasi.",
+                route('member.donations.index'),
+                'volunteer_activism',
+                'success'
+            ));
+        }
 
         return $donation;
     }
@@ -104,6 +139,16 @@ class DonationService
             'verified_by' => Auth::id(),
             'verified_at' => now(),
         ]);
+        
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\SystemNotification(
+                'Donasi Ditolak',
+                "Mohon maaf, donasi {$donation->nama_sepatu} Anda belum dapat kami terima. Cek catatan admin.",
+                route('member.donations.index'),
+                'cancel',
+                'error'
+            ));
+        }
 
         return $donation;
     }
@@ -120,19 +165,53 @@ class DonationService
 
         return $donation;
     }
+    /**
+     * Mark a donation as finished in restoration and ready for catalog.
+     */
+    public function markRestorationReady(Donation $donation): Donation
+    {
+        $donation->update([
+            'status' => 'siap_rilis',
+        ]);
+
+        return $donation;
+    }
+
+    /**
+     * Mark a donation as archived/entered into catalog.
+     */
+    public function markAsCataloged(Donation $donation): Donation
+    {
+        $donation->update([
+            'status' => 'masuk_katalog',
+        ]);
+        
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\SystemNotification(
+                'Sepatu Masuk Katalog!',
+                "Sepatu donasi Anda {$donation->nama_sepatu} telah direstorasi dan kini terpajang di Katalog!",
+                route('member.donations.index'),
+                'storefront',
+                'success'
+            ));
+        }
+
+        return $donation;
+    }
 
     /**
      * Update shipping receipt (resi) for a donation.
      */
-    public function updateResi(Donation $donation, string $namaEkspedisi, string $noResi): Donation
+    public function updateResi(Donation $donation, string $metode, ?string $namaEkspedisi, ?string $noResi): Donation
     {
-        if ($donation->status !== 'pending') {
-            throw new \Exception('Resi hanya dapat diubah ketika status donasi masih pending.');
+        if ($donation->status !== 'disetujui') {
+            throw new \Exception('Resi hanya dapat diubah ketika status donasi disetujui (menunggu pengiriman).');
         }
 
         $donation->update([
-            'nama_ekspedisi' => $namaEkspedisi,
-            'no_resi' => $noResi,
+            'metode_pengiriman' => $metode,
+            'nama_ekspedisi' => $metode === 'ekspedisi' ? $namaEkspedisi : null,
+            'no_resi' => $metode === 'ekspedisi' ? $noResi : null,
         ]);
 
         return $donation;
@@ -153,9 +232,6 @@ class DonationService
             'kondisi' => $data['kondisi'],
             'harga' => $data['harga'] ?? 0,
             'deskripsi' => $data['deskripsi'] ?? null,
-            'metode_pengiriman' => $data['metode_pengiriman'],
-            'nama_ekspedisi' => $data['nama_ekspedisi'] ?? null,
-            'no_resi' => $data['no_resi'] ?? null,
         ];
 
         // Compress and store new photos

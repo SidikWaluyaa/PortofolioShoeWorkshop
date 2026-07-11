@@ -9,10 +9,20 @@
     @error('nama_reward') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
 </div>
 
-<div class="grid grid-cols-2 gap-6 mb-6">
+<div class="grid grid-cols-3 gap-6 mb-6">
+    {{-- Kategori --}}
+    <div>
+        <label for="kategori_reward" class="block text-sm font-bold text-gray-700 mb-2">Kategori <span class="text-red-500">*</span></label>
+        <select name="kategori_reward" id="kategori_reward" required onchange="toggleMingguKe()" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] transition">
+            <option value="daily_checkin" {{ old('kategori_reward', $r?->kategori_reward) === 'daily_checkin' ? 'selected' : '' }}>Daily Check-in</option>
+            <option value="donasi" {{ old('kategori_reward', $r?->kategori_reward) === 'donasi' ? 'selected' : '' }}>Donasi Sepatu</option>
+        </select>
+        @error('kategori_reward') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+    </div>
+
     {{-- Jenis --}}
     <div>
-        <label for="jenis" class="block text-sm font-bold text-gray-700 mb-2">Jenis <span class="text-red-500">*</span></label>
+        <label for="jenis" class="block text-sm font-bold text-gray-700 mb-2">Jenis Benefit <span class="text-red-500">*</span></label>
         <select name="jenis" id="jenis" required class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] transition">
             @foreach(['voucher', 'diskon', 'konsultasi', 'lainnya'] as $j)
             <option value="{{ $j }}" {{ old('jenis', $r?->jenis) === $j ? 'selected' : '' }}>{{ ucfirst($j) }}</option>
@@ -22,7 +32,7 @@
     </div>
 
     {{-- Minggu Ke --}}
-    <div>
+    <div id="minggu_ke_container">
         <label for="minggu_ke" class="block text-sm font-bold text-gray-700 mb-2">Target Minggu Streak <span class="text-red-500">*</span></label>
         <input type="number" name="minggu_ke" id="minggu_ke" value="{{ old('minggu_ke', $r?->minggu_ke) }}" min="1" required
                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] transition"
@@ -98,3 +108,21 @@
         </label>
     </div>
 </div>
+
+<script>
+    function toggleMingguKe() {
+        const kategori = document.getElementById('kategori_reward').value;
+        const mingguKeDiv = document.getElementById('minggu_ke_container');
+        const mingguKeInput = document.getElementById('minggu_ke');
+        
+        if (kategori === 'donasi') {
+            mingguKeDiv.style.display = 'none';
+            mingguKeInput.removeAttribute('required');
+        } else {
+            mingguKeDiv.style.display = 'block';
+            mingguKeInput.setAttribute('required', 'required');
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', toggleMingguKe);
+</script>

@@ -33,8 +33,8 @@
                     @endif
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Tanggal Pengajuan</span><span class="text-gray-700">{{ $donation->created_at->format('d M Y, H:i') }} WIB</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Status</span>
-                        @php $sc = ['pending'=>'bg-amber-100 text-amber-700','diterima'=>'bg-emerald-100 text-emerald-700','disalurkan'=>'bg-blue-100 text-blue-700','ditolak'=>'bg-red-100 text-red-700']; @endphp
-                        <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $sc[$donation->status] }}">{{ ucfirst($donation->status) }}</span>
+                        @php $sc = ['pending'=>'bg-amber-100 text-amber-700','disetujui'=>'bg-cyan-100 text-cyan-700','diterima'=>'bg-emerald-100 text-emerald-700','siap_rilis'=>'bg-purple-100 text-purple-700','disalurkan'=>'bg-blue-100 text-blue-700','ditolak'=>'bg-red-100 text-red-700']; @endphp
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $sc[$donation->status] ?? 'bg-gray-100 text-gray-700' }}">{{ $donation->status === 'disetujui' ? 'Menunggu Pengiriman' : ucfirst($donation->status) }}</span>
                     </div>
                 </div>
                 @if($donation->deskripsi)
@@ -79,10 +79,29 @@
         {{-- Right: Action Panel --}}
         <div class="space-y-6">
             @if($donation->status === 'pending')
-            {{-- Approve Form --}}
+            {{-- Approve Submission Form --}}
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h3 class="text-base font-bold text-emerald-700 mb-4">✅ Setujui Donasi</h3>
-                <form action="{{ route('admin.donations.approve', $donation) }}" method="POST" enctype="multipart/form-data">
+                <h3 class="text-base font-bold text-emerald-700 mb-4">✅ Setujui Pengajuan Online</h3>
+                <form action="{{ route('admin.donations.approve-submission', $donation) }}" method="POST">
+                    @csrf
+                    
+                    <div class="mb-4">
+                        <p class="text-xs text-gray-500 mb-2">Member akan menerima email persetujuan dan diinstruksikan untuk mengirimkan sepatu ke bengkel.</p>
+                        <label for="catatan_admin" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Catatan Verifikasi (Opsional)</label>
+                        <textarea name="catatan_admin" id="catatan_admin" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs resize-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition" placeholder="Catatan internal verifikasi..."></textarea>
+                        @error('catatan_admin') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/25">Setujui Pengajuan</button>
+                </form>
+            </div>
+            @endif
+
+            @if($donation->status === 'disetujui')
+            {{-- Confirm Receipt Form --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="text-base font-bold text-emerald-700 mb-4">✅ Konfirmasi Penerimaan Fisik</h3>
+                <form action="{{ route('admin.donations.confirm-receipt', $donation) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
                     {{-- Foto Bukti Penerimaan --}}
@@ -92,77 +111,6 @@
                         @error('foto_bukti') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="border-t border-gray-100 my-5 pt-4">
-                        <p class="text-xs font-black text-emerald-800 uppercase tracking-wider mb-3 flex items-center gap-1">
-                            <span>🛠️</span> Inspeksi Katalog (Koreksi Data)
-                        </p>
-                        
-                        {{-- Nama Sepatu & Brand --}}
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="nama" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Barang <span class="text-red-500">*</span></label>
-                                <input type="text" name="nama" id="nama" value="{{ old('nama', $donation->nama_sepatu) }}" required
-                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
-                                @error('nama') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="brand" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Brand</label>
-                                <input type="text" name="brand" id="brand" value="{{ old('brand') }}"
-                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-                                       placeholder="Misal: Nike">
-                                @error('brand') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
-
-                        {{-- Ukuran & Kategori --}}
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="ukuran" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Ukuran</label>
-                                <input type="text" name="ukuran" id="ukuran" value="{{ old('ukuran', $donation->ukuran) }}"
-                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
-                                @error('ukuran') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="kategori" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kategori <span class="text-red-500">*</span></label>
-                                <select name="kategori" id="kategori" required
-                                        class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
-                                    <option value="sepatu" {{ old('kategori') === 'sepatu' ? 'selected' : '' }}>Sepatu</option>
-                                    <option value="tas" {{ old('kategori') === 'tas' ? 'selected' : '' }}>Tas</option>
-                                    <option value="topi" {{ old('kategori') === 'topi' ? 'selected' : '' }}>Topi</option>
-                                </select>
-                                @error('kategori') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
-
-                        {{-- Kondisi Katalog --}}
-                        <div class="mb-4">
-                            <label for="kondisi" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kondisi Katalog <span class="text-[9px] text-gray-400 font-normal normal-case">(Donatur: {{ $donation->kondisi }}%)</span> <span class="text-red-500">*</span></label>
-                            <select name="kondisi" id="kondisi" required
-                                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
-                                @php
-                                    $defaultKondisi = 'sudah_diperbaiki';
-                                    if ($donation->kondisi >= 90) {
-                                        $defaultKondisi = 'baru';
-                                    } elseif ($donation->kondisi >= 70) {
-                                        $defaultKondisi = 'seperti_baru';
-                                    }
-                                @endphp
-                                <option value="baru" {{ old('kondisi', $defaultKondisi) === 'baru' ? 'selected' : '' }}>Baru</option>
-                                <option value="seperti_baru" {{ old('kondisi', $defaultKondisi) === 'seperti_baru' ? 'selected' : '' }}>Seperti Baru</option>
-                                <option value="sudah_diperbaiki" {{ old('kondisi', $defaultKondisi) === 'sudah_diperbaiki' ? 'selected' : '' }}>Sudah Diperbaiki</option>
-                            </select>
-                            @error('kondisi') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        {{-- Deskripsi Katalog --}}
-                        <div class="mb-4">
-                            <label for="deskripsi" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Deskripsi Katalog</label>
-                            <textarea name="deskripsi" id="deskripsi" rows="2"
-                                      class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs resize-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-                                      placeholder="Jelaskan kondisi detail barang untuk katalog...">{{ old('deskripsi', $donation->deskripsi) }}</textarea>
-                            @error('deskripsi') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
 
                     <div class="border-t border-gray-100 my-4 pt-4 mb-4">
                         <label for="catatan_admin" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Catatan Verifikasi (Opsional)</label>
@@ -170,10 +118,12 @@
                         @error('catatan_admin') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/25">Setujui & Rilis ke Katalog</button>
+                    <button type="submit" class="w-full py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/25">Konfirmasi Terima & Masukkan ke Restorasi</button>
                 </form>
             </div>
+            @endif
 
+            @if($donation->status === 'pending')
             {{-- Reject Form --}}
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                 <h3 class="text-base font-bold text-red-600 mb-4">❌ Tolak Donasi</h3>
@@ -190,17 +140,11 @@
             @endif
 
             @if($donation->status === 'diterima')
-            {{-- Distribute --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h3 class="text-base font-bold text-blue-600 mb-4">📦 Tandai Disalurkan</h3>
-                <form action="{{ route('admin.donations.distribute', $donation) }}" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Catatan (Opsional)</label>
-                        <textarea name="catatan_admin" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm resize-none" placeholder="Catatan penyaluran..."></textarea>
-                    </div>
-                    <button type="submit" class="w-full py-2.5 bg-blue-500 text-white text-sm font-bold rounded-xl hover:bg-blue-600 transition">Tandai Disalurkan</button>
-                </form>
+            <div class="bg-gray-50 rounded-2xl border border-gray-100 p-6 text-center shadow-sm">
+                <span class="material-symbols-outlined text-4xl text-gray-300 mb-2 block">build</span>
+                <h3 class="text-sm font-bold text-gray-700 mb-1">Sedang Direstorasi</h3>
+                <p class="text-xs text-gray-500">Sepatu ini sedang berada di antrean Dapur Restorasi. Silakan proses lebih lanjut melalui menu Dapur Restorasi.</p>
+                <a href="{{ route('admin.restorations.index') }}" class="mt-4 inline-block px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition">Pergi ke Dapur Restorasi</a>
             </div>
             @endif
 

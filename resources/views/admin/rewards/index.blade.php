@@ -18,10 +18,10 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50">
-                        <th class="px-6 py-4">Nama Reward</th>
+                        <th class="px-6 py-4">Reward</th>
                         <th class="px-6 py-4">Jenis</th>
                         <th class="px-6 py-4">Nilai</th>
-                        <th class="px-6 py-4">Minggu</th>
+                        <th class="px-6 py-4">Syarat</th>
                         <th class="px-6 py-4">Stok</th>
                         <th class="px-6 py-4">Klaim</th>
                         <th class="px-6 py-4">Status</th>
@@ -31,17 +31,30 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($rewards as $reward)
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 font-medium text-gray-900">{{ $reward->nama_reward }}</td>
                         <td class="px-6 py-4">
-                            @php $jc = ['voucher'=>'bg-violet-100 text-violet-700','diskon'=>'bg-blue-100 text-blue-700','konsultasi'=>'bg-amber-100 text-amber-700','lainnya'=>'bg-pink-100 text-pink-700']; @endphp
-                            <span class="px-2 py-0.5 rounded-full text-xs font-bold {{ $jc[$reward->jenis] }}">{{ ucfirst($reward->jenis) }}</span>
+                            <h4 class="font-bold text-gray-900">{{ $reward->nama_reward }}</h4>
+                            @if($reward->kategori_reward === 'donasi')
+                                <span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 mt-1 border border-amber-100"><span class="material-symbols-outlined text-[12px] mr-1">volunteer_activism</span> Khusus Donasi</span>
+                            @else
+                                <span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 mt-1 border border-blue-100"><span class="material-symbols-outlined text-[12px] mr-1">today</span> Daily Check-in</span>
+                            @endif
                         </td>
-                        <td class="px-6 py-4 text-gray-600">{{ $reward->nilai ?? '-' }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-center">{{ $reward->minggu_ke }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-center">{{ $reward->stok ?? '∞' }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-center font-bold">{{ $reward->user_rewards_count }}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $reward->status_aktif ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500' }}">
+                        <td class="px-6 py-4 align-top">
+                            @php $jc = ['voucher'=>'bg-violet-100 text-violet-700','diskon'=>'bg-blue-100 text-blue-700','konsultasi'=>'bg-amber-100 text-amber-700','lainnya'=>'bg-pink-100 text-pink-700']; @endphp
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $jc[$reward->jenis] }}">{{ ucfirst($reward->jenis) }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600 font-bold align-top">{{ $reward->nilai ?? '-' }}</td>
+                        <td class="px-6 py-4 text-gray-600 text-center align-top">
+                            @if($reward->kategori_reward === 'donasi')
+                                <span class="text-xs">1 Sepatu</span>
+                            @else
+                                <span class="text-xs">Minggu {{ $reward->minggu_ke }}</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-gray-600 text-center align-top">{{ $reward->stok ?? '∞' }}</td>
+                        <td class="px-6 py-4 text-gray-600 text-center font-bold align-top">{{ $reward->user_rewards_count }}</td>
+                        <td class="px-6 py-4 align-top">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $reward->status_aktif ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500' }}">
                                 {{ $reward->status_aktif ? 'Aktif' : 'Nonaktif' }}
                             </span>
                         </td>

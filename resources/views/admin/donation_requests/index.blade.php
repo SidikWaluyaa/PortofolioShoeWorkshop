@@ -51,8 +51,9 @@
                     <select name="status" id="status" class="w-full text-xs border-gray-200 rounded-xl focus:border-[#22AF85] focus:ring-1 focus:ring-[#22AF85] bg-gray-50/50 py-2.5">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>⏳ Menunggu</option>
-                        <option value="disetujui" {{ request('status') === 'disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
+                        <option value="disetujui" {{ request('status') === 'disetujui' ? 'selected' : '' }}>✅ Disetujui / Diproses</option>
                         <option value="ditolak" {{ request('status') === 'ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
+                        <option value="dibatalkan" {{ request('status') === 'dibatalkan' ? 'selected' : '' }}>🚫 Dibatalkan</option>
                     </select>
                 </div>
 
@@ -138,7 +139,7 @@
 
                     @if(request()->filled('status'))
                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-gray-100 text-xs font-bold text-gray-700">
-                            Status: {{ request('status') === 'pending' ? 'Menunggu' : (request('status') === 'disetujui' ? 'Disetujui' : 'Ditolak') }}
+                            Status: {{ request('status') === 'pending' ? 'Menunggu' : (request('status') === 'disetujui' ? 'Disetujui/Diproses' : (request('status') === 'dibatalkan' ? 'Dibatalkan' : 'Ditolak')) }}
                             <button type="button" onclick="removeFilter('status')" class="text-gray-400 hover:text-gray-600">&times;</button>
                         </span>
                     @endif
@@ -233,7 +234,7 @@
                                 $approvedCount = $item->requests->where('status', 'disetujui')->count();
                                 $rejectedCount = $item->requests->where('status', 'ditolak')->count();
                             @endphp
-                            <div class="flex items-center justify-center gap-1.5" id="summary-badges-{{ $item->id }}">
+                            <div class="flex items-center justify-center gap-1.5 flex-wrap" id="summary-badges-{{ $item->id }}">
                                 <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
                                     {{ $item->requests->count() }} Pengaju
                                 </span>
@@ -242,9 +243,13 @@
                                         {{ $pendingCount }} Menunggu
                                     </span>
                                 @endif
-                                @if($approvedCount > 0)
+                                @if($item->requests->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi'])->count() > 0)
+                                    <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-700 border border-purple-100">
+                                        Menunggu Bayar/Validasi
+                                    </span>
+                                @elseif($item->requests->whereIn('status', ['diproses', 'dikirim', 'selesai'])->count() > 0)
                                     <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                        {{ $approvedCount }} Disetujui
+                                        Lunas & Diproses
                                     </span>
                                 @endif
                             </div>
@@ -414,11 +419,25 @@
             requests.forEach(req => {
                 // Color mapping for request statuses
                 const colors = {
-                    pending: 'bg-amber-50 text-amber-700 border-amber-100',
-                    disetujui: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                    ditolak: 'bg-red-50 text-red-700 border-red-100'
+                    pending: 'bg-gray-100 text-gray-700 border-gray-200',
+                    menunggu_pembayaran: 'bg-amber-100 text-amber-700 border-amber-200',
+                    menunggu_verifikasi: 'bg-purple-100 text-purple-700 border-purple-200',
+                    diproses: 'bg-blue-100 text-blue-700 border-blue-200',
+                    dikirim: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                    ditolak: 'bg-red-50 text-red-500 border-red-100',
+                    dibatalkan: 'bg-red-100 text-red-700 border-red-200',
+                    selesai: 'bg-blue-100 text-blue-700 border-blue-200'
                 };
-                const labels = { pending: 'Menunggu', disetujui: 'Disetujui', ditolak: 'Ditolak' };
+                const labels = { 
+                    pending: 'Menunggu', 
+                    menunggu_pembayaran: 'Tagihan Dikirim', 
+                    menunggu_verifikasi: 'Cek Pembayaran',
+                    diproses: 'Diproses',
+                    dikirim: 'Dikirim',
+                    ditolak: 'Ditolak',
+                    dibatalkan: 'Dibatalkan',
+                    selesai: 'Selesai'
+                };
                 const badgeColor = colors[req.status] || 'bg-gray-50 text-gray-500';
                 const labelText = labels[req.status] || req.status;
 
@@ -518,14 +537,39 @@
 
                     {{-- Actions and Links --}}
                     <div class="pt-3 border-t border-gray-100 flex flex-col gap-2.5">
-                        <div class="flex items-center gap-2" id="controls-${req.id}">
-                            ${req.status === 'pending' ? `
-                                <button onclick="ajaxUpdateStatus(${req.id}, 'disetujui', this)" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold transition">Setujui</button>
-                                <button onclick="ajaxUpdateStatus(${req.id}, 'ditolak', this)" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg text-xs font-bold transition">Tolak</button>
-                            ` : `
-                                <button onclick="if(confirm('Ubah kembali status ke Menunggu?')) ajaxUpdateStatus(${req.id}, 'pending', this)" class="px-2 py-0.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded text-[11px] font-bold border border-gray-200 transition">Reset ke Menunggu</button>
-                            `}
-                            <button onclick="if(confirm('Apakah Anda yakin ingin menghapus permohonan ini secara permanen?')) ajaxDelete(${req.id}, this)" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Hapus</button>
+                        
+                        ${req.bukti_pembayaran ? `
+                            <div class="flex items-center gap-2 bg-purple-50 p-2.5 rounded-xl border border-purple-100 mb-1">
+                                <a href="/storage/${req.bukti_pembayaran}" target="_blank" class="text-xs font-bold text-purple-700 hover:underline flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">receipt_long</span> Lihat Bukti Transfer Member
+                                </a>
+                            </div>
+                        ` : ''}
+                        
+                        ${req.resi_pengiriman ? `
+                            <div class="flex items-center gap-2 bg-emerald-50 p-2.5 rounded-xl border border-emerald-100 mb-1">
+                                <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">local_shipping</span> Resi: <span class="font-mono bg-white px-2 py-0.5 rounded border border-emerald-200 ml-1">${req.resi_pengiriman}</span>
+                                </span>
+                            </div>
+                        ` : ''}
+
+                        <div class="flex flex-wrap items-center gap-2" id="controls-${req.id}">
+                            ${req.status === 'menunggu_verifikasi' ? `
+                                <button onclick="ajaxUpdateStatus(${req.id}, 'diproses', this)" class="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition shadow-sm shadow-purple-200">Validasi Struk (Valid)</button>
+                                <button onclick="if(confirm('Tolak struk ini? Sepatu akan dikembalikan ke Katalog.')) ajaxUpdateStatus(${req.id}, 'ditolak', this)" class="px-2.5 py-1.5 bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 rounded-lg text-xs font-bold transition">Tolak Struk (Palsu)</button>
+                            ` : ''}
+
+                            ${['menunggu_pembayaran', 'menunggu_verifikasi'].includes(req.status) ? `
+                                <button onclick="if(confirm('Apakah Anda yakin membatalkan permohonan ini? Sepatu akan kembali ke Katalog.')) ajaxUpdateStatus(${req.id}, 'dibatalkan', this)" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Batalkan Pesanan</button>
+                            ` : ''}
+
+                            ${['diproses', 'dikirim', 'selesai'].includes(req.status) ? `
+                                <div class="w-full bg-blue-50 text-blue-700 px-3 py-2 rounded-lg text-[11px] font-bold border border-blue-100 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-[14px]">info</span>
+                                    Kelola pesanan ini (input resi & penyelesaian) di menu <strong>Pesanan & Pengiriman</strong>.
+                                </div>
+                            ` : ''}
                         </div>
 
                         <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-1.5">
@@ -620,14 +664,14 @@
             if (summaryCell) {
                 const total = item.requests.length;
                 const pending = item.requests.filter(r => r.status === 'pending').length;
-                const approved = item.requests.filter(r => r.status === 'disetujui').length;
+                const active = item.requests.filter(r => ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'].includes(r.status)).length;
 
                 let badgesHtml = `<span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">${total} Pengaju</span>`;
                 if (pending > 0) {
                     badgesHtml += ` <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">${pending} Menunggu</span>`;
                 }
-                if (approved > 0) {
-                    badgesHtml += ` <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">${approved} Disetujui</span>`;
+                if (active > 0) {
+                    badgesHtml += ` <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Ada Terpilih</span>`;
                 }
                 summaryCell.innerHTML = badgesHtml;
             }
@@ -640,6 +684,12 @@
             btn.textContent = '⏳';
 
             try {
+                const payload = { status: newStatus };
+                if (newStatus === 'dikirim' && window.tempResiValue) {
+                    payload.resi_pengiriman = window.tempResiValue;
+                    window.tempResiValue = null;
+                }
+
                 const res = await fetch(`/admin/donation-requests/${id}`, {
                     method: 'PATCH',
                     headers: {
@@ -648,7 +698,7 @@
                         'Accept': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: JSON.stringify({ status: newStatus })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await res.json();
@@ -665,16 +715,16 @@
                         if (req) req.status = newStatus;
 
                         // If approved, update item status to disalurkan
-                        if (newStatus === 'disetujui') {
+                        if (newStatus === 'menunggu_pembayaran') {
                             item.status = 'disalurkan';
-                        } else if (newStatus === 'pending') {
+                        } else if (newStatus === 'dibatalkan') {
                             // Revert item status to tersedia if no approved requests exist
-                            const hasApproved = item.requests.some(r => r.status === 'disetujui');
-                            if (!hasApproved) item.status = 'tersedia';
+                            const hasActive = item.requests.some(r => ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'].includes(r.status));
+                            if (!hasActive) item.status = 'tersedia';
                         }
 
                         // Auto-rejections implementation: If current was approved, update other pending requests to 'ditolak'
-                        if (newStatus === 'disetujui' && data.auto_rejected_ids && data.auto_rejected_ids.length > 0) {
+                        if (newStatus === 'menunggu_pembayaran' && data.auto_rejected_ids && data.auto_rejected_ids.length > 0) {
                             item.requests.forEach(r => {
                                 if (data.auto_rejected_ids.includes(r.id)) {
                                     r.status = 'ditolak';
@@ -683,7 +733,7 @@
                         }
 
                         // Re-render drawer and sync main list row
-                        renderDrawerRequests(item.requests, item.nama);
+                        renderDrawerRequests(item.requests, item);
                         syncItemRow(currentItemIndex);
                     }
                 } else {
@@ -696,6 +746,16 @@
                 btn.disabled = false;
                 btn.textContent = originalText;
             }
+        }
+
+        async function promptInputResi(id) {
+            const resi = prompt('Masukkan Nomor Resi Ekspedisi (JNE/JNT/dll):');
+            if (!resi) return;
+            
+            // Cari element tombol yang di-click
+            const btn = event.currentTarget;
+            window.tempResiValue = resi;
+            await ajaxUpdateStatus(id, 'dikirim', btn);
         }
 
         // ─── AJAX: Send Email ─────────────────────────────────────────

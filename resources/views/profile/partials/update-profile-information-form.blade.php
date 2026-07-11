@@ -72,21 +72,7 @@
             <x-input-error class="mt-2" :messages="$errors->get('phone')" />
         </div>
 
-        <div>
-            <x-input-label for="role" :value="__('Role')" />
-            @if(auth()->user()->isAdmin())
-                <select id="role" name="role" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                    <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>User (Donatur)</option>
-                    <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
-                </select>
-            @else
-                <select id="role" name="role" disabled class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm cursor-not-allowed text-gray-500">
-                    <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User (Donatur)</option>
-                    <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-                </select>
-            @endif
-            <x-input-error class="mt-2" :messages="$errors->get('role')" />
-        </div>
+
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>

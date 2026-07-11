@@ -19,35 +19,51 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin Shoe Workshop',
-            'email' => 'admin@shoeworkshop.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@shoeworkshop.com'],
+            [
+                'name' => 'Admin Shoe Workshop',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'shoe.analist4@gmail.com'],
+            [
+                'name' => 'Admin Analist 4',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]
+        );
 
         $this->call(PostSeeder::class);
         $this->call(DonationItemSeeder::class);
 
-        HeroSection::create([
-            'title' => 'Reparasi & Perawatan Sepatu Profesional',
-            'subtitle' => 'Kembalikan sepatu kesayangan Anda seperti baru. Dikerjakan oleh tenaga berpengalaman dengan material berkualitas dan hasil rapi.',
-            'primary_cta_text' => 'Konsultasi via WhatsApp',
-            'primary_cta_link' => 'https://wa.me/628123456789',
-            'secondary_cta_text' => 'Lihat Hasil Before–After',
-            'secondary_cta_link' => '#portfolio',
-            'is_active' => true,
-        ]);
+        HeroSection::firstOrCreate(
+            ['title' => 'Reparasi & Perawatan Sepatu Profesional'],
+            [
+                'subtitle' => 'Kembalikan sepatu kesayangan Anda seperti baru. Dikerjakan oleh tenaga berpengalaman dengan material berkualitas dan hasil rapi.',
+                'primary_cta_text' => 'Konsultasi via WhatsApp',
+                'primary_cta_link' => 'https://wa.me/628123456789',
+                'secondary_cta_text' => 'Lihat Hasil Before–After',
+                'secondary_cta_link' => '#portfolio',
+                'is_active' => true,
+            ]
+        );
 
-        HeroSection::create([
-            'title' => 'Salurkan Sepatu Layak Pakai Anda',
-            'subtitle' => 'Bantu sesama dengan mendonasikan sepatu bekas layak pakai Anda. Kami akan merestorasi sepatu tersebut agar kembali bersih, kokoh, dan siap disalurkan kepada mereka yang membutuhkan.',
-            'primary_cta_text' => 'Mulai Donasi Sepatu',
-            'primary_cta_link' => '/donatur/donations/create',
-            'secondary_cta_text' => 'Lihat Katalog Donasi',
-            'secondary_cta_link' => '/donasi-katalog',
-            'image' => 'hero/open_donasi_hero.png',
-            'is_active' => true,
+        HeroSection::firstOrCreate(
+            ['title' => 'Salurkan Sepatu Layak Pakai Anda'],
+            [
+                'subtitle' => 'Bantu sesama dengan mendonasikan sepatu bekas layak pakai Anda. Kami akan merestorasi sepatu tersebut agar kembali bersih, kokoh, dan siap disalurkan kepada mereka yang membutuhkan.',
+                'primary_cta_text' => 'Mulai Donasi Sepatu',
+                'primary_cta_link' => '/member/donations/create',
+                'secondary_cta_text' => 'Lihat Katalog Donasi',
+                'secondary_cta_link' => '/donasi-katalog',
+                'image' => 'hero/open_donasi_hero.png',
+                'is_active' => true,
         ]);
 
         $trustItems = [

@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectTo(
             guests: '/login',
-            users: '/donatur/dashboard'
+            users: '/member/dashboard'
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {

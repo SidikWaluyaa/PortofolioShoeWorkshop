@@ -16,7 +16,7 @@ return new class extends Migration
             'title' => 'Salurkan Sepatu Layak Pakai Anda',
             'subtitle' => 'Bantu sesama dengan mendonasikan sepatu bekas layak pakai Anda. Kami akan merestorasi sepatu tersebut agar kembali bersih, kokoh, dan siap disalurkan kepada mereka yang membutuhkan.',
             'primary_cta_text' => 'Mulai Donasi Sepatu',
-            'primary_cta_link' => '/donatur/donations/create',
+            'primary_cta_link' => '/member/donations/create',
             'secondary_cta_text' => 'Lihat Katalog Donasi',
             'secondary_cta_link' => '/donasi-katalog',
             'image' => 'hero/open_donasi_hero.png',

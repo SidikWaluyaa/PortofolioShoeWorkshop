@@ -21,6 +21,8 @@ class DonationRequest extends Model
         'alasan',
         'selected_services',
         'status',
+        'bukti_pembayaran',
+        'resi_pengiriman',
     ];
 
     protected $casts = [
