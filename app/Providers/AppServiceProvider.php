@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        if (env('APP_ENV') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Share setting variables globally to all views
         view()->composer('*', function ($view) {
             if (Schema::hasTable('settings')) {
