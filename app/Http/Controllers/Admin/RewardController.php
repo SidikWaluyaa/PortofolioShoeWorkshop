@@ -27,13 +27,14 @@ class RewardController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'kategori_reward' => 'required|in:daily_checkin,donasi',
             'nama_reward' => 'required|string|max:150',
             'jenis' => 'required|in:voucher,diskon,konsultasi,lainnya',
             'deskripsi' => 'required|string|max:2000',
             'kode_kupon' => 'nullable|string|max:50',
             'nilai' => 'nullable|string|max:50',
             'status_aktif' => 'boolean',
-            'minggu_ke' => 'required|integer|min:1',
+            'minggu_ke' => 'required_if:kategori_reward,daily_checkin|nullable|integer|min:1',
             'berlaku_dari' => 'nullable|date',
             'berlaku_sampai' => 'nullable|date|after_or_equal:berlaku_dari',
             'stok' => 'nullable|integer|min:0',
@@ -55,13 +56,14 @@ class RewardController extends Controller
     public function update(Request $request, Reward $reward)
     {
         $validated = $request->validate([
+            'kategori_reward' => 'required|in:daily_checkin,donasi',
             'nama_reward' => 'required|string|max:150',
             'jenis' => 'required|in:voucher,diskon,konsultasi,lainnya',
             'deskripsi' => 'required|string|max:2000',
             'kode_kupon' => 'nullable|string|max:50',
             'nilai' => 'nullable|string|max:50',
             'status_aktif' => 'boolean',
-            'minggu_ke' => 'required|integer|min:1',
+            'minggu_ke' => 'required_if:kategori_reward,daily_checkin|nullable|integer|min:1',
             'berlaku_dari' => 'nullable|date',
             'berlaku_sampai' => 'nullable|date|after_or_equal:berlaku_dari',
             'stok' => 'nullable|integer|min:0',

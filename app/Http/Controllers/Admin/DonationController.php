@@ -27,42 +27,46 @@ class DonationController extends Controller
         return view('admin.donations.show', compact('donation'));
     }
 
-    public function approve(Request $request, Donation $donation)
+    public function approveSubmission(Request $request, Donation $donation)
     {
         $validated = $request->validate([
-            'foto_bukti' => 'required|image',
             'catatan_admin' => 'nullable|string|max:2000',
-            'nama' => 'required|string|max:150',
-            'brand' => 'nullable|string|max:100',
-            'ukuran' => 'nullable|string|max:50',
-            'kategori' => 'required|in:sepatu,tas,topi',
-            'kondisi' => 'required|in:baru,seperti_baru,sudah_diperbaiki',
-            'deskripsi' => 'nullable|string',
         ]);
 
-        $inspectionData = [
-            'nama' => $validated['nama'],
-            'brand' => $validated['brand'],
-            'ukuran' => $validated['ukuran'],
-            'kategori' => $validated['kategori'],
-            'kondisi' => $validated['kondisi'],
-            'deskripsi' => $validated['deskripsi'] ?? null,
-        ];
-
-        $this->donationService->approve(
+        $this->donationService->approveSubmission(
             $donation,
-            $request->file('foto_bukti'),
-            $inspectionData,
             $validated['catatan_admin'] ?? null
         );
 
         $referer = $request->header('referer');
         if ($referer && str_contains($referer, '/admin/donations') && !preg_match('/\/admin\/donations\/\d+/', $referer)) {
-            return redirect()->back()->with('success', 'Donasi berhasil disetujui.');
+            return redirect()->back()->with('success', 'Pengajuan donasi disetujui. Member akan diminta mengirimkan sepatu.');
         }
 
         return redirect()->route('admin.donations.show', $donation)
-            ->with('success', 'Donasi berhasil disetujui.');
+            ->with('success', 'Pengajuan donasi disetujui. Member akan diminta mengirimkan sepatu.');
+    }
+
+    public function confirmReceipt(Request $request, Donation $donation)
+    {
+        $validated = $request->validate([
+            'foto_bukti' => 'required|image',
+            'catatan_admin' => 'nullable|string|max:2000',
+        ]);
+
+        $this->donationService->confirmReceipt(
+            $donation,
+            $request->file('foto_bukti'),
+            $validated['catatan_admin'] ?? null
+        );
+
+        $referer = $request->header('referer');
+        if ($referer && str_contains($referer, '/admin/donations') && !preg_match('/\/admin\/donations\/\d+/', $referer)) {
+            return redirect()->back()->with('success', 'Penerimaan fisik dikonfirmasi. Sepatu masuk antrean restorasi.');
+        }
+
+        return redirect()->route('admin.donations.show', $donation)
+            ->with('success', 'Penerimaan fisik dikonfirmasi. Sepatu masuk antrean restorasi.');
     }
 
     public function reject(Request $request, Donation $donation)

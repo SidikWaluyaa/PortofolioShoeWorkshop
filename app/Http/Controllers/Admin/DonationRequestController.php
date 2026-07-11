@@ -39,7 +39,11 @@ class DonationRequestController extends Controller
         if ($request->filled('status')) {
             $status = $request->input('status');
             $query->whereHas('requests', function ($rq) use ($status) {
-                $rq->where('status', '=', $status);
+                if ($status === 'disetujui') {
+                    $rq->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim', 'selesai']);
+                } else {
+                    $rq->where('status', '=', $status);
+                }
             });
         }
 
@@ -114,7 +118,7 @@ class DonationRequestController extends Controller
     public function update(Request $request, DonationRequest $donationRequest)
     {
         $request->validate([
-            'status' => ['required', 'string', 'in:pending,disetujui,ditolak'],
+            'status' => ['required', 'string', 'in:pending,menunggu_pembayaran,menunggu_verifikasi,diproses,dikirim,ditolak,dibatalkan,selesai'],
         ]);
 
         try {
@@ -126,45 +130,111 @@ class DonationRequestController extends Controller
 
                 $donationRequest->update(['status' => $newStatus]);
 
-                // If approved, mark the item as 'disalurkan' (distributed) and auto-reject other pending requests
-                if ($newStatus === 'disetujui') {
-                    $donationRequest->donationItem->update(['status' => 'disalurkan']);
-                    if ($donationRequest->donationItem->donation) {
-                        $donationRequest->donationItem->donation->update(['status' => 'disalurkan']);
-                    }
-
-                    // Find other pending requests for the same item
-                    $otherRequests = DonationRequest::where('donation_item_id', $donationRequest->donation_item_id)
-                        ->where('id', '!=', $donationRequest->id)
-                        ->where('status', 'pending')
-                        ->get();
-
-                    // Update their status to 'ditolak'
-                    foreach ($otherRequests as $otherReq) {
-                        $otherReq->update(['status' => 'ditolak']);
+                if ($newStatus === 'dikirim' && $request->has('resi_pengiriman')) {
+                    $donationRequest->update(['resi_pengiriman' => $request->resi_pengiriman]);
+                }
+                
+                // If approved (menunggu_pembayaran), lock the item and reject others
+                if ($newStatus === 'menunggu_pembayaran') {
+                    if ($donationRequest->donationItem) {
+                        $donationRequest->donationItem->update(['status' => 'disalurkan']);
+                        
+                        // Find other pending requests for this item
+                        $otherRequests = DonationRequest::where('donation_item_id', $donationRequest->donation_item_id)
+                            ->where('id', '!=', $donationRequest->id)
+                            ->where('status', 'pending')
+                            ->get();
+                            
+                        // Reject them all
+                        foreach ($otherRequests as $otherReq) {
+                            $otherReq->update(['status' => 'ditolak']);
+                        }
                     }
                 }
-                // If changed back from approved, restore the item to 'tersedia' (available)
-                elseif ($oldStatus === 'disetujui' && $newStatus !== 'disetujui') {
-                    $donationRequest->donationItem->update(['status' => 'tersedia']);
-                    if ($donationRequest->donationItem->donation) {
-                        $donationRequest->donationItem->donation->update(['status' => 'diterima']);
+
+                // If cancelled or rejected (dibatalkan / ditolak), restore the item to 'tersedia' (available)
+                if (in_array($newStatus, ['dibatalkan', 'ditolak'])) {
+                    if ($donationRequest->donationItem) {
+                        $donationRequest->donationItem->update(['status' => 'tersedia']);
+                        if ($donationRequest->donationItem->donation) {
+                            $donationRequest->donationItem->donation->update(['status' => 'diterima']);
+                        }
                     }
                 }
             });
 
+            // Dispatch System Notification to Member
+            if ($donationRequest->user) {
+                $notifTitle = '';
+                $notifMessage = '';
+                $notifIcon = 'info';
+                $notifType = 'info';
+
+                switch ($request->status) {
+                    case 'menunggu_pembayaran':
+                        $notifTitle = 'Permohonan Disetujui!';
+                        $notifMessage = "Permohonan Anda untuk {$donationRequest->donationItem?->nama} disetujui! Silakan segera selesaikan tagihan/ongkir.";
+                        $notifIcon = 'task_alt';
+                        $notifType = 'success';
+                        break;
+                    case 'diproses':
+                        $notifTitle = 'Pembayaran Divalidasi';
+                        $notifMessage = "Pembayaran Anda untuk {$donationRequest->donationItem?->nama} divalidasi. Sepatu sedang disiapkan.";
+                        $notifIcon = 'inventory_2';
+                        $notifType = 'info';
+                        break;
+                    case 'dikirim':
+                        $notifTitle = 'Pesanan Dikirim';
+                        $notifMessage = "Hore! {$donationRequest->donationItem?->nama} Anda telah dikirim. Lacak sekarang!";
+                        $notifIcon = 'local_shipping';
+                        $notifType = 'success';
+                        break;
+                    case 'ditolak':
+                    case 'dibatalkan':
+                        $notifTitle = 'Permohonan Dibatalkan/Ditolak';
+                        $notifMessage = "Maaf, permohonan/tagihan Anda untuk {$donationRequest->donationItem?->nama} telah dibatalkan atau ditolak.";
+                        $notifIcon = 'cancel';
+                        $notifType = 'error';
+                        break;
+                }
+
+                if ($notifTitle) {
+                    $donationRequest->user->notify(new \App\Notifications\SystemNotification(
+                        $notifTitle,
+                        $notifMessage,
+                        route('member.adoption-requests.index'),
+                        $notifIcon,
+                        $notifType
+                    ));
+                }
+            }
+
             $emailMsg = '';
 
-            // Auto-send email notification on approval
-            if ($request->status === 'disetujui' && !empty($donationRequest->email)) {
+            // Auto-send email notification on approved/invoiced (menunggu_pembayaran)
+            if ($request->status === 'menunggu_pembayaran' && !empty($donationRequest->email)) {
                 try {
                     Mail::to($donationRequest->email)->send(
-                        new \App\Mail\DonationRequestApprovedMail($donationRequest)
+                        new \App\Mail\AdoptionApprovedInvoiceMail($donationRequest)
                     );
-                    $emailMsg = ' Email notifikasi persetujuan terkirim ke ' . $donationRequest->email . '.';
+                    $emailMsg = ' Email tagihan terkirim ke ' . $donationRequest->email . '.';
                 } catch (\Exception $mailEx) {
-                    Log::error('Failed to send approval email: ' . $mailEx->getMessage());
-                    $emailMsg = ' ⚠️ Gagal mengirim email persetujuan ke ' . $donationRequest->email . '.';
+                    Log::error('Failed to send invoice email: ' . $mailEx->getMessage());
+                    $emailMsg = ' ⚠️ Gagal mengirim email tagihan ke ' . $donationRequest->email . '.';
+                }
+            }
+
+            // Auto-send email notification on shipped (dikirim)
+            if ($request->status === 'dikirim' && !empty($donationRequest->email)) {
+                try {
+                    // Send shipped mail
+                    Mail::to($donationRequest->email)->send(
+                        new \App\Mail\DonationShippedMail($donationRequest)
+                    );
+                    $emailMsg = ' Email resi pengiriman terkirim ke ' . $donationRequest->email . '.';
+                } catch (\Exception $mailEx) {
+                    Log::error('Failed to send shipped email: ' . $mailEx->getMessage());
+                    $emailMsg = ' ⚠️ Gagal mengirim email resi ke ' . $donationRequest->email . '.';
                 }
             }
 
@@ -181,12 +251,23 @@ class DonationRequestController extends Controller
                 }
             }
 
-            // Auto-send rejection email notifications for automatically rejected requests (Opsi A)
+            // Auto-send rejection email notifications for automatically rejected requests
             $autoRejectedIds = [];
-            if ($request->status === 'disetujui' && $otherRequests->isNotEmpty()) {
+            if ($request->status === 'menunggu_pembayaran' && $otherRequests->isNotEmpty()) {
                 $successMailCount = 0;
                 foreach ($otherRequests as $otherReq) {
                     $autoRejectedIds[] = $otherReq->id;
+                    
+                    if ($otherReq->user) {
+                        $otherReq->user->notify(new \App\Notifications\SystemNotification(
+                            'Permohonan Ditolak',
+                            "Maaf, permohonan Anda untuk {$otherReq->donationItem?->nama} tidak terpilih karena barang telah diberikan kepada pemohon lain.",
+                            route('member.adoption-requests.index'),
+                            'cancel',
+                            'error'
+                        ));
+                    }
+
                     if (!empty($otherReq->email)) {
                         try {
                             Mail::to($otherReq->email)->send(

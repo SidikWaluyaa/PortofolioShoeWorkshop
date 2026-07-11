@@ -23,8 +23,8 @@ class CheckinService
         $user = Auth::user();
         $today = Carbon::today();
 
-        // Check if already checked in today
-        $existingCheckin = DailyLogin::where((string) 'user_id', $user->id)
+        // 1. Prevent if already checked in today
+        $existingCheckin = DailyLogin::where('user_id', $user->id)
             ->whereDate('tanggal_checkin', $today)
             ->first();
 
@@ -32,9 +32,19 @@ class CheckinService
             throw new \Exception('Anda sudah melakukan check-in hari ini.');
         }
 
-        // Get the last check-in for this user (that hasn't been part of a completed+claimed cycle)
-        $lastCheckin = DailyLogin::where((string) 'user_id', $user->id)
-            ->orderByDesc((string) 'tanggal_checkin')
+        // 2. Prevent if there is a pending checkin
+        $pendingCheckin = DailyLogin::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($pendingCheckin) {
+            throw new \Exception('Harap tunggu admin memverifikasi check-in Hari ke-7 Anda sebelum melanjutkan.');
+        }
+
+        // 3. Determine minggu_ke and hari_ke
+        $lastCheckin = DailyLogin::where('user_id', $user->id)
+            ->where('status', '!=', 'failed')
+            ->orderByDesc('tanggal_checkin')
             ->first();
 
         $mingguKe = 1;
@@ -44,34 +54,36 @@ class CheckinService
             $lastDate = Carbon::parse($lastCheckin->tanggal_checkin);
             $daysDiff = $lastDate->diffInDays($today);
 
-            if ((int)$daysDiff === 1) {
-                // Consecutive day — continue the streak
-                if ($lastCheckin->hari_ke >= 7) {
-                    // Previous streak was complete, start a new cycle
-                    $mingguKe = $lastCheckin->minggu_ke + 1;
-                    $hariKe = 1;
-                } else {
-                    // Continue current streak
-                    $mingguKe = $lastCheckin->minggu_ke;
-                    $hariKe = $lastCheckin->hari_ke + 1;
-                }
-            } else {
-                // Streak broken (missed a day or more) — reset
-                // If previous cycle was completed and claimed, start new minggu_ke
-                if ($lastCheckin->hari_ke >= 7 && $lastCheckin->reward_claimed) {
-                    $mingguKe = $lastCheckin->minggu_ke + 1;
-                } else {
-                    // Restart same minggu_ke since it wasn't completed
-                    $mingguKe = $lastCheckin->minggu_ke;
-                }
+            $isCompletedWeek = ($lastCheckin->hari_ke >= 7 && $lastCheckin->status === 'approved');
+
+            if ($lastCheckin->status === 'rejected') {
+                // Streak was broken by admin rejection. Restart same week.
+                $mingguKe = $lastCheckin->minggu_ke;
                 $hariKe = 1;
+                $this->markAsFailed($user->id, $mingguKe);
+                
+            } elseif ($isCompletedWeek) {
+                // Previous week was successfully completed. Start next week.
+                $mingguKe = $lastCheckin->minggu_ke + 1;
+                $hariKe = 1;
+                
+            } elseif ((int)$daysDiff === 1) {
+                // Still in an active streak (consecutive day)
+                $mingguKe = $lastCheckin->minggu_ke;
+                $hariKe = $lastCheckin->hari_ke + 1;
+                
+            } else {
+                // Streak broken due to missed days. Restart same week.
+                $mingguKe = $lastCheckin->minggu_ke;
+                $hariKe = 1;
+                $this->markAsFailed($user->id, $mingguKe);
             }
         }
 
         // Compress and store photo
         $fotoPath = ImageCompressionHelper::compressAndStore($foto, 'checkins');
 
-        return DailyLogin::create([
+        $dailyLogin = DailyLogin::create([
             'user_id' => $user->id,
             'tanggal_checkin' => $today->toDateString(),
             'foto_sepatu_path' => $fotoPath,
@@ -80,6 +92,29 @@ class CheckinService
             'status' => $hariKe === 7 ? 'pending' : 'approved',
             'reward_claimed' => false,
         ]);
+        
+        if ($hariKe === 7) {
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            if ($admins->isNotEmpty()) {
+                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
+                    'Verifikasi Check-in',
+                    $user->name . ' telah menyelesaikan check-in hari ke-7 (Minggu ke-' . $mingguKe . '). Segera verifikasi!',
+                    route('admin.checkins.index'),
+                    'fact_check',
+                    'info'
+                ));
+            }
+        } else {
+            $user->notify(new \App\Notifications\SystemNotification(
+                'Check-in Berhasil',
+                "Anda telah check-in untuk hari ke-{$hariKe} di minggu ini. Semangat!",
+                route('member.checkin.index'),
+                'today',
+                'success'
+            ));
+        }
+
+        return $dailyLogin;
     }
 
     /**
@@ -116,20 +151,28 @@ class CheckinService
         }
 
         // Get all check-ins for the current minggu_ke
-        $checkins = DailyLogin::where((string) 'user_id', $userId)
-            ->where((string) 'minggu_ke', $currentMingguKe)
-            ->orderBy((string) 'hari_ke')
-            ->get();
+        // Deduplicate any old bad data by taking the last checkin for each hari_ke
+        $checkins = DailyLogin::where('user_id', $userId)
+            ->where('minggu_ke', $currentMingguKe)
+            ->where('status', '!=', 'failed')
+            ->orderBy('id', 'asc')
+            ->get()
+            ->groupBy('hari_ke')
+            ->map(function ($group) {
+                return $group->last();
+            })
+            ->values();
 
         // Streak is complete if there are 7 approved check-ins
-        $approvedCount = $checkins->where((string) 'status', 'approved')->count();
+        $approvedCount = $checkins->where('status', 'approved')->count();
         $streakComplete = $approvedCount >= 7;
 
         // Can claim if streak complete and not yet claimed
-        $canClaim = $streakComplete && !$checkins->contains((string) 'reward_claimed', true);
+        $canClaim = $streakComplete && !$checkins->contains('reward_claimed', true);
 
-        $alreadyCheckedInToday = DailyLogin::where((string) 'user_id', $userId)
+        $alreadyCheckedInToday = DailyLogin::where('user_id', $userId)
             ->whereDate('tanggal_checkin', Carbon::today())
+            ->where('status', '!=', 'failed')
             ->exists();
 
         return [
@@ -141,6 +184,36 @@ class CheckinService
             'already_checked_in_today' => $alreadyCheckedInToday,
         ];
     }
+    
+    /**
+     * Get array of dates (Y-m-d) where the user checked in this month.
+     * Includes all checkins (approved, pending, failed, rejected) because it serves as an attendance record.
+     */
+    public function getMonthlyCalendarData(int $userId): array
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        return DailyLogin::where('user_id', $userId)
+            ->whereBetween('tanggal_checkin', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->pluck('tanggal_checkin')
+            ->map(function ($date) {
+                return Carbon::parse($date)->toDateString();
+            })
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Mark all previous check-ins for a week as failed when streak is broken.
+     */
+    private function markAsFailed(int $userId, int $mingguKe): void
+    {
+        DailyLogin::where('user_id', $userId)
+            ->where('minggu_ke', $mingguKe)
+            ->update(['status' => 'failed']);
+    }
 
     /**
      * Admin: approve a check-in entry.
@@ -148,6 +221,17 @@ class CheckinService
     public function approve(DailyLogin $checkin): DailyLogin
     {
         $checkin->update(['status' => 'approved']);
+        
+        if ($checkin->user) {
+            $checkin->user->notify(new \App\Notifications\SystemNotification(
+                'Check-in Terverifikasi!',
+                "Selamat! Check-in hari ke-7 Anda telah diverifikasi. Anda sekarang dapat mengklaim poin Anda.",
+                route('member.checkin.index'),
+                'verified',
+                'success'
+            ));
+        }
+
         return $checkin;
     }
 
@@ -156,9 +240,19 @@ class CheckinService
         $checkin->update(['status' => 'rejected']);
 
         // Also reject all other check-ins in the same cycle
-        DailyLogin::where((string) 'user_id', $checkin->user_id)
-            ->where((string) 'minggu_ke', $checkin->minggu_ke)
+        DailyLogin::where('user_id', $checkin->user_id)
+            ->where('minggu_ke', $checkin->minggu_ke)
             ->update(['status' => 'rejected']);
+            
+        if ($checkin->user) {
+            $checkin->user->notify(new \App\Notifications\SystemNotification(
+                'Check-in Ditolak',
+                "Maaf, verifikasi foto sepatu check-in Anda ditolak oleh admin.",
+                route('member.checkin.index'),
+                'cancel',
+                'error'
+            ));
+        }
 
         return $checkin;
     }

@@ -118,23 +118,31 @@
                     <div class="bg-white border border-dashed border-gray-200 rounded-lg p-3 space-y-2.5">
                         {{-- Header line --}}
                         <p class="text-xs text-gray-600 italic leading-relaxed">
-                            "Halo Admin Shoe Workshop, saya ingin mengonfirmasi pengajuan donasi saya dengan ID
+                            "Halo Admin Shoe Workshop, saya <span class="font-bold not-italic">{{ $pemohonNama }}</span> ingin mengonfirmasi pengajuan donasi saya dengan ID
                             <span class="font-bold not-italic text-[#22AF85]">{{ $reqCode }}</span>."
                         </p>
                         <div class="border-t border-gray-100 pt-2.5 space-y-1.5">
                             {{-- Detail Barang --}}
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Detail Barang</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Detail Barang & Pengajuan</p>
                             <div class="space-y-1 pl-1">
                                 <div class="flex gap-2 text-xs">
-                                    <span class="text-gray-400 font-semibold w-16 shrink-0">Nama</span>
+                                    <span class="text-gray-400 font-semibold w-[90px] shrink-0">Nama Barang</span>
                                     <span class="text-gray-700 font-semibold">{{ $itemNama }}</span>
                                 </div>
                                 <div class="flex gap-2 text-xs">
-                                    <span class="text-gray-400 font-semibold w-16 shrink-0">Kategori</span>
-                                    <span class="text-gray-700 font-semibold">{{ ucfirst($item->kategori) }}</span>
+                                    <span class="text-gray-400 font-semibold w-[90px] shrink-0">Biaya Restorasi</span>
+                                    <span class="text-amber-600 font-bold">{{ $biayaFormatted }}</span>
                                 </div>
-                                <div class="flex gap-2 text-xs items-start">
-                                    <span class="text-gray-400 font-semibold w-16 shrink-0">Link</span>
+                                <div class="flex gap-2 text-xs">
+                                    <span class="text-gray-400 font-semibold w-[90px] shrink-0">Lokasi Tujuan</span>
+                                    <span class="text-gray-700 font-semibold">{{ Str::limit($pemohonAlamat, 40) }}</span>
+                                </div>
+                                <div class="flex gap-2 text-xs">
+                                    <span class="text-gray-400 font-semibold w-[90px] shrink-0">Alasan</span>
+                                    <span class="text-gray-700 italic">"{{ Str::limit($pemohonAlasan, 50) }}"</span>
+                                </div>
+                                <div class="flex gap-2 text-xs items-start pt-1">
+                                    <span class="text-gray-400 font-semibold w-[90px] shrink-0">Link</span>
                                     <a href="{{ $itemUrl }}" target="_blank"
                                        class="text-[#22AF85] font-semibold hover:underline break-all leading-snug">
                                         {{ $itemUrl }}

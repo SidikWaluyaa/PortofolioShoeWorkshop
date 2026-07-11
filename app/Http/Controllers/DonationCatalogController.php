@@ -74,7 +74,7 @@ class DonationCatalogController extends Controller
         }
 
         // Prioritize status 'tersedia' first, then sort selection
-        $query->orderBy((string) 'status', 'desc');
+        $query->orderByRaw("CASE WHEN status = 'tersedia' THEN 1 ELSE 2 END ASC");
 
         if ($request->filled('sort')) {
             $sort = $request->input('sort');
@@ -144,10 +144,17 @@ class DonationCatalogController extends Controller
             return redirect()->route('katalog.show', $item)
                 ->with('error', 'Kuota pengajuan untuk barang ini sudah penuh.');
         }
+        
+        $hasActiveRequest = false;
+        if (Auth::check()) {
+            $hasActiveRequest = \App\Models\DonationRequest::where('user_id', Auth::id())
+                ->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi'])
+                ->exists();
+        }
 
         $selectedServiceIds = request()->input('services', []);
         $settings = Setting::pluck('value', 'key')->all();
-        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds'));
+        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds', 'hasActiveRequest'));
     }
 
     /**
@@ -160,9 +167,13 @@ class DonationCatalogController extends Controller
         $reqCode    = session('req_code', '#DRQ-' . $requestId);
         $itemNama   = session('item_nama', $item->nama);
         $itemUrl    = session('item_url', route('katalog.show', $item->id));
+        $biayaFormatted = session('biaya_formatted', 'Gratis');
+        $pemohonNama    = session('pemohon_nama', 'Pemohon');
+        $pemohonAlamat  = session('pemohon_alamat', '-');
+        $pemohonAlasan  = session('pemohon_alasan', '-');
         $settings   = Setting::pluck('value', 'key')->all();
 
-        return view('katalog.success', compact('item', 'waUrl', 'reqCode', 'itemNama', 'itemUrl', 'settings'));
+        return view('katalog.success', compact('item', 'waUrl', 'reqCode', 'itemNama', 'itemUrl', 'biayaFormatted', 'pemohonNama', 'pemohonAlamat', 'pemohonAlasan', 'settings'));
     }
 
     /**
@@ -277,6 +288,15 @@ class DonationCatalogController extends Controller
             'selected_services.*' => ['integer', 'exists:donation_item_services,id'],
         ]);
 
+        // Check if user has an active request (limit 1 active request rule)
+        $activeRequestExists = DonationRequest::where('user_id', Auth::id())
+            ->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi'])
+            ->exists();
+
+        if ($activeRequestExists) {
+            return redirect()->back()->withInput()->with('error', 'Anda masih memiliki permohonan aktif yang belum diselesaikan (menunggu pembayaran / verifikasi). Harap selesaikan terlebih dahulu sebelum mengambil sepatu lain.');
+        }
+
         try {
             $donationRequest = DB::transaction(function () use ($request, $item) {
                 // Normalize phone number prefix to starts with '62'
@@ -288,7 +308,7 @@ class DonationCatalogController extends Controller
                     $cleaned = '62' . $cleaned;
                 }
 
-                // Create request record
+                // Create request record - Langsung terbit tagihan
                 $donationRequest = DonationRequest::create([
                     'donation_item_id' => $item->id,
                     'user_id' => Auth::id(),
@@ -298,45 +318,41 @@ class DonationCatalogController extends Controller
                     'alamat_pengiriman' => $request->alamat_pengiriman,
                     'alasan' => $request->alasan,
                     'selected_services' => $request->selected_services ?? [],
-                    'status' => 'pending',
+                    'status' => 'menunggu_pembayaran',
                 ]);
 
                 return $donationRequest;
             });
 
-            // Get admin WhatsApp setting
-            $adminPhoneSetting = Setting::where('key', 'whatsapp_number')->first()?->value ?? '628123456789';
-            $adminPhone = preg_replace('/[^0-9]/', '', $adminPhoneSetting);
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            if ($admins->isNotEmpty()) {
+                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
+                    'Pengajuan Adopsi Baru!',
+                    Auth::user()->name . ' baru saja mengajukan adopsi untuk barang kode: ' . $item->kode_barang . '.',
+                    route('admin.donation-requests.index'),
+                    'shopping_bag',
+                    'info'
+                ));
+            }
 
-            // Construct template message for WhatsApp
-            $reqCode    = 'DRQ-' . str_pad($donationRequest->id, 4, '0', STR_PAD_LEFT);
-            $itemUrl    = route('katalog.show', $item->id);
-            $message = "Halo Admin Shoe Workshop,\n\n"
-                     . "Saya ingin mengonfirmasi pengajuan donasi saya dengan ID #{$reqCode}.\n\n"
-                     . "📦 *Detail Barang:*\n"
-                     . "- Nama  : " . $item->nama . "\n"
-                     . "- Kategori : " . ucfirst($item->kategori) . "\n"
-                     . "- Link Katalog : " . $itemUrl . "\n\n"
-                     . "👤 *Data Pengaju:*\n"
-                     . "- Nama     : " . $donationRequest->nama_pemohon . "\n"
-                     . "- WhatsApp : +". $donationRequest->kontak_pemohon . "\n"
-                     . "- Alamat   : " . $donationRequest->alamat_pengiriman . "\n\n"
-                     . "Saya telah melengkapi data di platform. Mohon panduan untuk tahap selanjutnya. Terima kasih! 🙏";
+            // Send Invoice Email to Member
+            if (!empty($request->email)) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($request->email)->send(
+                        new \App\Mail\AdoptionApprovedInvoiceMail($donationRequest)
+                    );
+                } catch (\Exception $mailEx) {
+                    Log::error('Failed to send invoice email during adoption checkout: ' . $mailEx->getMessage());
+                }
+            }
 
-            $waUrl = "https://wa.me/" . $adminPhone . "?text=" . urlencode($message);
-
-            return redirect()
-                ->route('katalog.success', ['item' => $item->id, 'requestId' => $donationRequest->id])
-                ->with('wa_url', $waUrl)
-                ->with('req_code', '#' . $reqCode)
-                ->with('item_nama', $item->nama)
-                ->with('item_url', $itemUrl);
+            // Redirect to Member's Adopsi Saya page to upload receipt immediately
+            return redirect()->route('member.adoption-requests.index')
+                ->with('success', 'Tagihan berhasil dibuat! Silakan cek email Anda untuk detail pembayaran atau langsung upload bukti pembayaran di sini.');
 
         } catch (\Exception $e) {
-            Log::error('Donation request submission failed: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['general' => 'Terjadi kesalahan sistem saat memproses permohonan Anda. Silakan coba kembali.']);
+            Log::error('Failed to submit donation request: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memproses permohonan. Silakan coba lagi.');
         }
     }
 }

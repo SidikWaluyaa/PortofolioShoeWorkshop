@@ -35,8 +35,8 @@
         {{-- Status Filter --}}
         <div class="flex items-center gap-2 mb-6 flex-wrap">
             <a href="{{ route('admin.donations.index') }}" class="px-4 py-2 rounded-xl text-sm font-bold transition {{ !$statusFilter ? 'bg-[#22AF85] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }}">Semua</a>
-            @foreach(['pending', 'diterima', 'disalurkan', 'ditolak'] as $s)
-            <a href="{{ route('admin.donations.index', ['status' => $s]) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition {{ $statusFilter === $s ? 'bg-[#22AF85] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }}">{{ ucfirst($s) }}</a>
+            @foreach(['pending', 'disetujui', 'diterima', 'disalurkan', 'ditolak'] as $s)
+            <a href="{{ route('admin.donations.index', ['status' => $s]) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition {{ $statusFilter === $s ? 'bg-[#22AF85] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }}">{{ $s === 'disetujui' ? 'Menunggu Pengiriman' : ucfirst($s) }}</a>
             @endforeach
         </div>
 
@@ -105,16 +105,16 @@
                             <td class="px-6 py-4 text-gray-600 capitalize text-xs">{{ str_replace('_', ' ', $donation->metode_pengiriman) }}</td>
                             <td class="px-6 py-4">
                                 @php
-                                    $sc = ['pending'=>'bg-amber-100 text-amber-700','diterima'=>'bg-emerald-100 text-emerald-700','disalurkan'=>'bg-blue-100 text-blue-700','ditolak'=>'bg-red-100 text-red-700'];
+                                    $sc = ['pending'=>'bg-amber-100 text-amber-700','disetujui'=>'bg-cyan-100 text-cyan-700','diterima'=>'bg-emerald-100 text-emerald-700','disalurkan'=>'bg-blue-100 text-blue-700','ditolak'=>'bg-red-100 text-red-700','siap_rilis'=>'bg-indigo-100 text-indigo-700','masuk_katalog'=>'bg-purple-100 text-purple-700'];
                                 @endphp
-                                <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $sc[$donation->status] }}">{{ ucfirst($donation->status) }}</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $sc[$donation->status] }}">{{ $donation->status === 'disetujui' ? 'Menunggu Pengiriman' : ucfirst($donation->status) }}</span>
                             </td>
                             <td class="px-6 py-4 text-gray-500 text-xs">{{ $donation->created_at->format('d M Y') }}</td>
                             <td class="px-6 py-4">
-                                <button @click="openModal({{ json_encode($donationData) }}, '{{ route('admin.donations.approve', $donation) }}', '{{ route('admin.donations.reject', $donation) }}', '{{ route('admin.donations.distribute', $donation) }}')"
+                                <a href="{{ route('admin.donations.show', $donation) }}"
                                         class="text-[#22AF85] hover:underline font-bold text-xs">
                                     Detail &rarr;
-                                </button>
+                                </a>
                             </td>
                         </tr>
                         @empty
@@ -316,63 +316,7 @@
                                                            @change="buktiPreview = URL.createObjectURL($event.target.files[0])">
                                                 </div>
 
-                                                <div class="border-t border-gray-100 pt-3">
-                                                    <p class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1">
-                                                        <span>🛠️</span> Inspeksi Katalog (Koreksi Data)
-                                                    </p>
 
-                                                    {{-- Nama Sepatu & Brand --}}
-                                                    <div class="grid grid-cols-2 gap-3 mb-3">
-                                                        <div>
-                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Barang <span class="text-red-500">*</span></label>
-                                                            <input type="text" name="nama" x-model="activeDonation.nama_sepatu" required
-                                                                   class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
-                                                        </div>
-                                                        <div>
-                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Brand</label>
-                                                            <input type="text" name="brand" x-model="activeDonation.brand"
-                                                                   class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                                                                   placeholder="Misal: Nike">
-                                                        </div>
-                                                    </div>
-
-                                                    {{-- Ukuran & Kategori --}}
-                                                    <div class="grid grid-cols-2 gap-3 mb-3">
-                                                        <div>
-                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Ukuran</label>
-                                                            <input type="text" name="ukuran" x-model="activeDonation.ukuran"
-                                                                   class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
-                                                        </div>
-                                                        <div>
-                                                            <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kategori <span class="text-red-500">*</span></label>
-                                                            <select name="kategori" x-model="activeDonation.kategori" required
-                                                                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
-                                                                <option value="sepatu">Sepatu</option>
-                                                                <option value="tas">Tas</option>
-                                                                <option value="topi">Topi</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    {{-- Kondisi Katalog --}}
-                                                    <div class="mb-3">
-                                                        <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kondisi Katalog <span class="text-[9px] text-gray-400 font-normal normal-case" x-text="'(Donatur: ' + activeDonation.kondisi + '%)'"></span> <span class="text-red-500">*</span></label>
-                                                        <select name="kondisi" x-model="activeDonation.kondisi_katalog" required
-                                                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
-                                                            <option value="baru">Baru</option>
-                                                            <option value="seperti_baru">Like New</option>
-                                                            <option value="sudah_diperbaiki">Sudah Diperbaiki</option>
-                                                        </select>
-                                                    </div>
-
-                                                    {{-- Deskripsi Katalog --}}
-                                                    <div class="mb-3">
-                                                        <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Deskripsi Katalog</label>
-                                                        <textarea name="deskripsi" x-model="activeDonation.deskripsi" rows="2"
-                                                                  class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs resize-none focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                                                                  placeholder="Kondisi detail untuk katalog..."></textarea>
-                                                    </div>
-                                                </div>
                                                 
                                                 <div class="border-t border-gray-100 pt-3">
                                                     <label for="modal_catatan_admin_approve" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Catatan Verifikasi (Opsional)</label>
@@ -380,7 +324,7 @@
                                                 </div>
                                                 
                                                 <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-emerald-500/25">
-                                                    Setujui Donasi & Rilis
+                                                    Setujui Donasi & Masukkan ke Restorasi
                                                 </button>
                                             </form>
                                         </div>
@@ -444,11 +388,12 @@
                                 <span class="text-xs font-black px-2.5 py-0.5 rounded-full"
                                       :class="{
                                           'bg-amber-100 text-amber-700': activeDonation.status === 'pending',
+                                          'bg-cyan-100 text-cyan-700': activeDonation.status === 'disetujui',
                                           'bg-emerald-100 text-emerald-700': activeDonation.status === 'diterima',
                                           'bg-blue-100 text-blue-700': activeDonation.status === 'disalurkan',
                                           'bg-red-100 text-red-700': activeDonation.status === 'ditolak'
                                       }"
-                                      x-text="activeDonation.status.toUpperCase()">
+                                      x-text="activeDonation.status === 'disetujui' ? 'MENUNGGU PENGIRIMAN' : activeDonation.status.toUpperCase()">
                                 </span>
                             </template>
                         </div>

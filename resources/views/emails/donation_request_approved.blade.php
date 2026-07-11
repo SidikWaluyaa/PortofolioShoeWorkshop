@@ -24,12 +24,11 @@
 
                     <!-- Body Content -->
                     <tr>
-                        <td style="padding: 40px 30px;">
                             <p style="font-size: 15px; line-height: 1.6; color: #334155; margin-top: 0; margin-bottom: 20px;">
                                 Halo <strong>{{ $donationRequest->nama_pemohon }}</strong>,
                             </p>
                             <p style="font-size: 15px; line-height: 1.6; color: #334155; margin-bottom: 25px;">
-                                Kabar baik! Tim kami telah meninjau alasan pengajuan Anda dan dengan senang hati mengabarkan bahwa permohonan Anda untuk mendapatkan barang donasi di bawah ini telah <strong>disetujui</strong>.
+                                Kabar baik! Tim kami telah meninjau pengajuan Anda dan dengan senang hati mengabarkan bahwa Anda terpilih untuk mengadopsi barang donasi di bawah ini!
                             </p>
 
                             <!-- Item Card Details -->
@@ -37,25 +36,12 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
                                 <tr>
                                     <td style="padding: 20px;">
-                                        <h3 style="font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 12px;">Detail Barang Katalog</h3>
+                                        <h3 style="font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 12px;">Sepatu Adopsi</h3>
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
                                                 <td style="vertical-align: top;">
                                                     <p style="font-size: 16px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0;">{{ $donationRequest->donationItem->nama }}</p>
-                                                    <p style="font-size: 12px; color: #64748b; margin: 0 0 8px 0;">Brand: {{ $donationRequest->donationItem->brand ?? '-' }} | Kategori: {{ ucfirst($donationRequest->donationItem->kategori) }}</p>
-                                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                                                        <tr>
-                                                            <td style="background-color: #e2e8f0; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: bold; color: #334155; font-family: monospace;">
-                                                                Kode: {{ $donationRequest->donationItem->kode_barang ?? '-' }}
-                                                            </td>
-                                                            @if($donationRequest->donationItem->ukuran)
-                                                            <td style="width: 8px;"></td>
-                                                            <td style="background-color: #f1f5f9; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: bold; color: #475569;">
-                                                                Ukuran: {{ $donationRequest->donationItem->ukuran }}
-                                                            </td>
-                                                            @endif
-                                                        </tr>
-                                                    </table>
+                                                    <p style="font-size: 12px; color: #64748b; margin: 0 0 8px 0;">Brand: {{ $donationRequest->donationItem->brand ?? '-' }}</p>
                                                 </td>
                                             </tr>
                                         </table>
@@ -63,29 +49,49 @@
                                 </tr>
                             </table>
                             @endif
+                            
+                            @php
+                                $totalBiaya = 0;
+                                if ($donationRequest->selected_services && $donationRequest->donationItem) {
+                                    foreach ($donationRequest->selected_services as $srvId) {
+                                        $srv = $donationRequest->donationItem->reparationServices->where('id', $srvId)->first();
+                                        if ($srv) {
+                                            $totalBiaya += $srv->jasa_harga;
+                                        }
+                                    }
+                                }
+                            @endphp
 
-                            <!-- Shipping Details -->
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px solid #f1f5f9; padding-top: 25px; margin-bottom: 30px;">
-                                <tr>
-                                    <td>
-                                        <h3 style="font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 8px;">Alamat Pengiriman</h3>
-                                        <p style="font-size: 14px; line-height: 1.5; color: #0f172a; font-weight: 500; margin: 0;">
-                                            {{ $donationRequest->alamat_pengiriman }}
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
+                            <!-- Tagihan & Instruksi Pembayaran -->
+                            <div style="background-color: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+                                <h2 style="margin-top:0; color:#92400e; font-size:18px;">Tagihan: Rp {{ number_format($totalBiaya, 0, ',', '.') }}</h2>
+                                <p style="font-size:14px; color:#92400e; margin-bottom:15px; line-height:1.5;">
+                                    Silakan lakukan transfer ke salah satu rekening resmi kami di bawah ini:
+                                </p>
+                                
+                                <div style="background-color:#ffffff; padding:15px; border-radius:8px; border:1px solid #fde68a; margin-bottom:10px;">
+                                    <p style="margin:0; font-size:11px; color:#78350f; font-weight:bold; text-transform:uppercase;">Bank BCA</p>
+                                    <p style="margin:4px 0; font-size:18px; font-family:monospace; font-weight:bold; color:#1e3a8a;">8100978521</p>
+                                    <p style="margin:0; font-size:12px; color:#451a03;">a.n PT TERANG GARAM SOLUSINDO</p>
+                                </div>
 
-                            <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 30px;">
-                                Paket Anda saat ini sedang disiapkan oleh tim logistik kami untuk dikirim ke alamat tujuan. Nomor resi pengiriman akan kami informasikan segera melalui WhatsApp setelah paket diserahkan ke ekspedisi.
+                                <div style="background-color:#ffffff; padding:15px; border-radius:8px; border:1px solid #fde68a;">
+                                    <p style="margin:0; font-size:11px; color:#78350f; font-weight:bold; text-transform:uppercase;">Bank Mandiri</p>
+                                    <p style="margin:4px 0; font-size:18px; font-family:monospace; font-weight:bold; color:#1e3a8a;">1300030119047</p>
+                                    <p style="margin:0; font-size:12px; color:#451a03;">a.n PT TERANG GARAM SOLUSINDO</p>
+                                </div>
+                            </div>
+
+                            <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 30px; background-color:#f1f5f9; padding: 15px; border-radius:8px;">
+                                Setelah melakukan transfer, harap segera mengunggah bukti pembayaran di Dashboard Member pada menu <strong>"Adopsi Saya"</strong> agar sepatu segera kami proses dan kirimkan.
                             </p>
 
                             <!-- Call To Action -->
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="text-align: center;">
                                 <tr>
                                     <td>
-                                        <a href="https://wa.me/{{ \App\Models\Setting::where('key', 'whatsapp_number')->first()?->value ?? '628123456789' }}" target="_blank" style="background-color: #22AF85; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 14px; font-weight: bold; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(34, 175, 133, 0.2);">
-                                            Hubungi WhatsApp Support
+                                        <a href="{{ route('member.dashboard') }}" target="_blank" style="background-color: #22AF85; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 14px; font-weight: bold; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(34, 175, 133, 0.2);">
+                                            Upload Bukti Pembayaran Sekarang
                                         </a>
                                     </td>
                                 </tr>

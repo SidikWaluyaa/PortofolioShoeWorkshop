@@ -47,7 +47,11 @@ class DonationItemController extends Controller
     {
         $brandCol = 'donation_items.brand';
         $sortOrder = $request->input('sort', 'desc') === 'asc' ? 'asc' : 'desc';
-        $items = $this->getFilteredQuery($request)->orderBy('id', $sortOrder)->paginate(10)->withQueryString();
+        $items = $this->getFilteredQuery($request)
+            ->orderByRaw("CASE WHEN donation_items.status = 'tersedia' THEN 1 ELSE 2 END")
+            ->orderBy('donation_items.id', $sortOrder)
+            ->paginate(10)
+            ->withQueryString();
 
         $brands = DonationItem::whereNotNull($brandCol)
             ->where($brandCol, '!=', '')

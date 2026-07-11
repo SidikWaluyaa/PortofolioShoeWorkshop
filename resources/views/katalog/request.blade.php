@@ -183,6 +183,21 @@
                         </div>
                     </div>
 
+                    @if($hasActiveRequest)
+                    <div class="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-2xl flex items-start gap-3">
+                        <div class="bg-orange-100 p-2 rounded-xl text-orange-600 flex-shrink-0 mt-0.5">
+                            <span class="material-symbols-outlined !text-[20px]">warning</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-extrabold text-orange-800 mb-1">Anda Memiliki Permohonan Aktif</h4>
+                            <p class="text-xs text-orange-700 leading-relaxed mb-3">Sistem kami memberlakukan aturan 1 permohonan aktif per member. Anda tidak dapat mengajukan adopsi baru karena masih memiliki tagihan yang belum diselesaikan pada permohonan sebelumnya.</p>
+                            <a href="{{ route('member.adoption-requests.index') }}" class="inline-flex items-center gap-1 text-[11px] font-bold bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-colors">
+                                Selesaikan Tagihan Sebelumnya <span class="material-symbols-outlined !text-[14px]">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+                    @endif
+
                     {{-- General Error --}}
                     @if ($errors->has('general'))
                         <div class="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold flex items-center gap-2">
@@ -324,14 +339,18 @@
 
                         {{-- Action Buttons --}}
                         <div class="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                            <button type="submit" id="submitBtn"
-                                    class="w-full py-4 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                                <span id="btnText">Kirim Pengajuan</span>
-                                <span class="material-symbols-outlined !text-[18px]" id="btnIcon">send</span>
-                                <svg id="btnSpinner" class="hidden animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
+                            <button type="submit" id="submitBtn" {{ $hasActiveRequest ? 'disabled' : '' }}
+                                    class="w-full py-4 {{ $hasActiveRequest ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#22AF85] hover:opacity-90 text-white active:scale-[0.98]' }} rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 transition-all flex items-center justify-center gap-2">
+                                <span id="btnText">{{ $hasActiveRequest ? 'Pengajuan Terkunci' : 'Kirim Pengajuan' }}</span>
+                                @if(!$hasActiveRequest)
+                                    <span class="material-symbols-outlined !text-[18px]" id="btnIcon">send</span>
+                                    <svg id="btnSpinner" class="hidden animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                @else
+                                    <span class="material-symbols-outlined !text-[18px]">lock</span>
+                                @endif
                             </button>
                             <a href="{{ route('katalog.show', $item) }}"
                                class="text-center sm:text-left text-sm text-gray-500 hover:text-[#22AF85] transition-colors font-semibold underline underline-offset-4">
