@@ -257,7 +257,16 @@
 
                         {{-- Status --}}
                         <td class="px-6 py-4 text-center" id="item-status-{{ $item->id }}">
-                            @if($item->status === 'disalurkan')
+                            @php
+                                $hasActiveBooking = $item->requests->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'])->count() > 0;
+                                $isFinished = $item->requests->where('status', 'selesai')->count() > 0;
+                            @endphp
+                            
+                            @if($isFinished)
+                                <span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>
+                            @elseif($hasActiveBooking)
+                                <span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Di-booking</span>
+                            @elseif($item->status === 'disalurkan')
                                 <span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>
                             @else
                                 <span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">Tersedia</span>
@@ -652,7 +661,14 @@
             // Update status badge
             const statusCell = document.getElementById(`item-status-${item.id}`);
             if (statusCell) {
-                if (item.status === 'disalurkan') {
+                const isFinished = item.requests.some(r => r.status === 'selesai');
+                const hasActiveBooking = item.requests.some(r => ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'].includes(r.status));
+                
+                if (isFinished) {
+                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>`;
+                } else if (hasActiveBooking) {
+                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Di-booking</span>`;
+                } else if (item.status === 'disalurkan') {
                     statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>`;
                 } else {
                     statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">Tersedia</span>`;

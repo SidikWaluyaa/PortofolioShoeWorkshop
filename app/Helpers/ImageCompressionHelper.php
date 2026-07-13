@@ -20,10 +20,8 @@ class ImageCompressionHelper
      * @param bool $squareCrop If true, crop the image to a 1:1 square centered
      * @return string The stored file path relative to storage
      */
-    public static function compressAndStore(UploadedFile $file, string $directory, ?string $filename = null, bool $squareCrop = false): string
+    public static function compressAndStore(UploadedFile $file, string $directory, ?string $filename = null, bool $squareCrop = false, int $maxWidth = 800, int $maxHeight = 800): string
     {
-        $maxWidth = 800;
-        $maxHeight = 800;
         $quality = 60;
 
         // Generate filename

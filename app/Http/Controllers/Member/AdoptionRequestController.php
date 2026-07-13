@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DonationRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageCompressionHelper;
 
 class AdoptionRequestController extends Controller
 {
@@ -43,7 +44,7 @@ class AdoptionRequestController extends Controller
             if ($adoptionRequest->bukti_pembayaran) {
                 Storage::disk('public')->delete($adoptionRequest->bukti_pembayaran);
             }
-            $path = $request->file('bukti_pembayaran')->store('payments', 'public');
+            $path = ImageCompressionHelper::compressAndStore($request->file('bukti_pembayaran'), 'payments', null, false, 800, 800);
             \Illuminate\Support\Facades\DB::transaction(function () use ($adoptionRequest, $request, $path) {
                 // Update current request
                 $adoptionRequest->update([
