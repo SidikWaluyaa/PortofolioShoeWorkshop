@@ -26,6 +26,8 @@
             active: 0,
             total: {{ $heroCount }},
             timer: null,
+            touchStartX: 0,
+            touchEndX: 0,
             init() {
                 this.startTimer();
             },
@@ -48,9 +50,27 @@
             next() {
                 this.active = (this.active + 1) % this.total;
                 this.startTimer();
+            },
+            handleTouchStart(e) {
+                this.touchStartX = e.changedTouches[0].screenX;
+            },
+            handleTouchEnd(e) {
+                this.touchEndX = e.changedTouches[0].screenX;
+                this.handleSwipe();
+            },
+            handleSwipe() {
+                const swipeThreshold = 50;
+                if (this.touchEndX < this.touchStartX - swipeThreshold) {
+                    this.next(); // Swiped left -> next slide
+                }
+                if (this.touchEndX > this.touchStartX + swipeThreshold) {
+                    this.prev(); // Swiped right -> prev slide
+                }
             }
         }"
         x-init="init()"
+        @touchstart="handleTouchStart($event)"
+        @touchend="handleTouchEnd($event)"
         x-cloak>
 
         <div class="relative min-h-[780px] sm:min-h-[820px] lg:min-h-[560px] xl:min-h-[640px] group">
