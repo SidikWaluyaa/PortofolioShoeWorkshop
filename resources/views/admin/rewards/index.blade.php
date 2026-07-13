@@ -9,10 +9,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-    <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium">{{ session('success') }}</div>
-    @endif
-
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -61,7 +57,7 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('admin.rewards.edit', $reward) }}" class="text-[#22AF85] hover:underline font-bold text-xs">Edit</a>
-                                <form action="{{ route('admin.rewards.destroy', $reward) }}" method="POST" onsubmit="return confirm('Hapus reward ini?')">
+                                <form action="{{ route('admin.rewards.destroy', $reward) }}" method="POST" onsubmit="confirmAction(event, this, 'Hapus reward ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:underline font-bold text-xs">Hapus</button>
                                 </form>

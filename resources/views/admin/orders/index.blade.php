@@ -133,7 +133,7 @@
                                     @endif
 
                                     @if($order->status === 'dikirim')
-                                        <button onclick="if(confirm('Tandai pesanan ini selesai secara manual? Pastikan barang sudah diterima.')) ajaxUpdateStatus({{ $order->id }}, 'selesai', this)" class="px-2.5 py-1.5 bg-[#22AF85] hover:bg-[#1a936f] text-white rounded-lg text-xs font-bold transition shadow-sm w-full">Selesaikan</button>
+                                        <button onclick="confirmAjax('Tandai pesanan ini selesai secara manual? Pastikan barang sudah diterima.', () => ajaxUpdateStatus({{ $order->id }}, 'selesai', this))" class="px-2.5 py-1.5 bg-[#22AF85] hover:bg-[#1a936f] text-white rounded-lg text-xs font-bold transition shadow-sm w-full">Selesaikan</button>
                                     @endif
                                 </div>
                             </td>
@@ -217,16 +217,23 @@
             })
             .then(response => response.json())
             .then(data => {
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    overlay.classList.remove('flex');
+                }
+
                 if (data.success) {
-                    // Success, page will reload anyway
-                    alert(data.message);
-                    window.location.reload();
+                    // Success, show SweetAlert then reload
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonColor: '#22AF85'
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 } else {
-                    if (overlay) {
-                        overlay.classList.add('hidden');
-                        overlay.classList.remove('flex');
-                    }
-                    alert(data.message || 'Terjadi kesalahan sistem.');
+                    Swal.fire('Gagal!', data.message || 'Terjadi kesalahan sistem.', 'error');
                     if (btnElement) {
                         btnElement.innerText = originalText;
                         btnElement.disabled = false;
@@ -239,7 +246,7 @@
                     overlay.classList.add('hidden');
                     overlay.classList.remove('flex');
                 }
-                alert('Terjadi kesalahan koneksi.');
+                Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
                 if (btnElement) {
                     btnElement.innerText = originalText;
                     btnElement.disabled = false;
@@ -271,7 +278,7 @@
             const resi = document.getElementById('resi-input').value;
             
             if (resi.trim() === '') {
-                alert("Nomor resi tidak boleh kosong!");
+                Swal.fire('Perhatian', 'Nomor resi tidak boleh kosong!', 'warning');
                 return;
             }
 

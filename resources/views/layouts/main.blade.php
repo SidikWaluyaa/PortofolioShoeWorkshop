@@ -295,5 +295,60 @@
             }
         </script>
     @endguest
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.confirmAction = function(event, formElement, message) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#22AF85',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                formElement.submit();
+            }
+        });
+    };
+
+    window.confirmAjax = function(message, callback) {
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#22AF85',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                callback();
+            }
+        });
+    };
+</script>
+    @auth
+        @if(!auth()->user()->hasVerifiedEmail())
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        title: 'Verifikasi Email Anda!',
+                        text: 'Silakan cek kotak masuk email Anda dan klik tautan verifikasi agar dapat mengakses Dashboard Member.',
+                        icon: 'info',
+                        showCloseButton: true,
+                        confirmButtonColor: '#22AF85',
+                        confirmButtonText: 'Baik, Saya Mengerti'
+                    });
+                });
+            </script>
+        @endif
+    @endauth
 </body>
 </html>

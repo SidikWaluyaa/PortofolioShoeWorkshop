@@ -293,5 +293,45 @@
         }
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.confirmAction = function(event, formElement, message) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#22AF85',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                formElement.submit();
+            }
+        });
+    };
+
+    window.confirmAjax = function(message, callback) {
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#22AF85',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                callback();
+            }
+        });
+    };
+</script>
+    <x-flash-messages />
 </body>
 </html>

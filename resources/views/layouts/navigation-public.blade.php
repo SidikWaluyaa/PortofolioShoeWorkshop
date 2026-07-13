@@ -24,16 +24,29 @@
 
         {{-- CTA & Account Buttons --}}
         <div class="hidden md:flex items-center gap-4">
+            @auth
+                <x-notification-dropdown align="right" />
+            @endauth
+
             <div class="relative" x-data="{ openAccount: false }">
                 <button @click="openAccount = !openAccount" @click.outside="openAccount = false"
-                        class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#22AF85] text-white text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#22AF85]/20 whitespace-nowrap">
-                    <span class="material-symbols-outlined !text-[20px]">account_circle</span>
+                        class="flex items-center gap-1.5 focus:outline-none group">
                     @auth
-                        <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
+                        <div class="relative flex items-center justify-center w-10 h-10 bg-[#22AF85]/10 rounded-full group-hover:bg-[#22AF85]/20 group-active:scale-95 transition-all overflow-hidden border border-[#22AF85]/20 shrink-0 shadow-sm">
+                            @if (Auth::user()->avatar_path)
+                                <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-[#22AF85] font-black text-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                            @endif
+                        </div>
+                        <span class="material-symbols-outlined text-[18px] text-gray-400 group-hover:text-[#22AF85] transition-transform duration-200" :class="openAccount ? 'rotate-180' : ''">keyboard_arrow_down</span>
                     @else
-                        Akun
+                        <div class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#22AF85] text-white text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#22AF85]/20 whitespace-nowrap">
+                            <span class="material-symbols-outlined !text-[20px]">account_circle</span>
+                            Akun
+                            <span class="material-symbols-outlined !text-[16px] transition-transform duration-200" :class="openAccount ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                        </div>
                     @endauth
-                    <span class="material-symbols-outlined !text-[16px] transition-transform duration-200" :class="openAccount ? 'rotate-180' : ''">keyboard_arrow_down</span>
                 </button>
                 
                 <div x-show="openAccount"
@@ -188,16 +201,16 @@
                     </button>
                 </form>
             @else
-                <a href="{{ route('login') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <span class="material-symbols-outlined !text-[20px]">login</span>
-                    Masuk (Login)
-                </a>
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
-                        <span class="material-symbols-outlined !text-[20px]">person_add</span>
-                        Daftar (Register)
+                <div class="px-3 py-2 space-y-3">
+                    <a href="{{ route('login') }}" @click="open=false" class="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-sm font-bold text-[#22AF85] bg-[#22AF85]/10 hover:bg-[#22AF85]/20 rounded-xl transition-all">
+                        Masuk
                     </a>
-                @endif
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" @click="open=false" class="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-sm font-bold text-white bg-[#22AF85] hover:bg-[#1e9a75] rounded-xl transition-all shadow-md shadow-[#22AF85]/20">
+                            Daftar
+                        </a>
+                    @endif
+                </div>
             @endauth
         </div>
     </div>

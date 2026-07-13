@@ -217,7 +217,7 @@
                     <!-- Floating Cards + Illustration -->
                     <div style="position:relative;flex:1;display:flex;align-items:center;justify-content:center;">
                         <!-- Card Top-Left -->
-                        <div class="float-card" style="position:absolute;top:10%;left:0;max-width:240px;">
+                        <div class="float-card" style="position:absolute;top:2%;left:-5%;max-width:240px;">
                             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                                 <span style="font-size:12px;font-weight:700;color:#6ee7b7;">#DN-842</span>
                                 <span class="tag tag-green">Donasi</span>
@@ -236,7 +236,7 @@
                         </div>
 
                         <!-- Card Top-Right -->
-                        <div class="float-card" style="position:absolute;top:5%;right:0;max-width:220px;">
+                        <div class="float-card" style="position:absolute;top:-4%;right:-5%;max-width:220px;">
                             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                                 <span style="font-size:12px;font-weight:700;color:#6ee7b7;">#DA-118</span>
                                 <span class="tag tag-blue">Reparasi</span>
@@ -249,7 +249,7 @@
                         </div>
 
                         <!-- Card Bottom-Left -->
-                        <div class="float-card" style="position:absolute;bottom:12%;left:5%;max-width:230px;">
+                        <div class="float-card" style="position:absolute;bottom:5%;left:-2%;max-width:230px;">
                             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                                 <span style="font-size:12px;font-weight:700;color:#6ee7b7;">#RD-031</span>
                                 <span class="tag tag-green">Donasi</span>

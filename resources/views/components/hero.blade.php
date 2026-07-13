@@ -70,9 +70,7 @@
         }"
         x-init="init()"
         @touchstart="handleTouchStart($event)"
-        @touchend="handleTouchEnd($event)"
-        x-cloak>
-
+        @touchend="handleTouchEnd($event)">
         <div class="relative min-h-[780px] sm:min-h-[820px] lg:min-h-[560px] xl:min-h-[640px] group">
             @foreach($heroes as $index => $hero)
                 @php
@@ -89,7 +87,8 @@
                     x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
                     class="absolute inset-0 h-full w-full"
-                    aria-label="Hero slide {{ $loop->index + 1 }}">
+                    aria-label="Hero slide {{ $loop->index + 1 }}"
+                    @if($loop->index > 0) x-cloak @endif>
 
                     {{-- Desktop layout --}}
                     <div class="hidden lg:flex h-full relative bg-gradient-to-br from-[#188060] via-[#22AF85] to-[#20a37b] overflow-hidden">

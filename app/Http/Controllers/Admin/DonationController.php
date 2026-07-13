@@ -79,11 +79,11 @@ class DonationController extends Controller
 
         $referer = $request->header('referer');
         if ($referer && str_contains($referer, '/admin/donations') && !preg_match('/\/admin\/donations\/\d+/', $referer)) {
-            return redirect()->back()->with('success', 'Donasi telah ditolak.');
+            return redirect()->back()->with('error', 'Donasi telah ditolak.');
         }
 
         return redirect()->route('admin.donations.show', $donation)
-            ->with('success', 'Donasi telah ditolak.');
+            ->with('error', 'Donasi telah ditolak.');
     }
 
     public function distribute(Request $request, Donation $donation)

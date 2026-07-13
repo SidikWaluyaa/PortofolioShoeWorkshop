@@ -158,11 +158,15 @@ class DonationItemController extends Controller
     /**
      * Show the form for creating a new donation item.
      */
-    public function create()
+    public function create(Request $request)
     {
         $orderCol = 'services.order';
         $services = \App\Models\Service::orderBy($orderCol)->get();
-        return view('admin.donation_items.create', compact('services'));
+        $donation = null;
+        if ($request->has('donation_id')) {
+            $donation = \App\Models\Donation::find($request->donation_id);
+        }
+        return view('admin.donation_items.create', compact('services', 'donation'));
     }
 
     /**
@@ -190,6 +194,7 @@ class DonationItemController extends Controller
             'services.*.jasa_harga' => ['nullable', 'integer', 'min:0'],
             'services.*.jasa_estimasi_waktu' => ['nullable', 'integer', 'min:0'],
             'services.*.is_mandatory' => ['nullable', 'boolean'],
+            'donation_id' => ['nullable', 'exists:donations,id'],
         ]);
 
         // Store primary photo with compression
@@ -219,7 +224,16 @@ class DonationItemController extends Controller
             'foto_detail' => $fotoDetailPaths,
             'berat' => $request->berat,
             'score_kelayakan' => $request->score_kelayakan,
+            'donation_id' => $request->donation_id,
         ]);
+
+        // Auto archive the donation if coming from Dapur Restorasi
+        if ($request->donation_id) {
+            $donation = \App\Models\Donation::find($request->donation_id);
+            if ($donation && $donation->status === 'siap_rilis') {
+                app(\App\Services\DonationService::class)->markAsCataloged($donation);
+            }
+        }
 
         // Save multiple services
         if ($request->filled('services')) {

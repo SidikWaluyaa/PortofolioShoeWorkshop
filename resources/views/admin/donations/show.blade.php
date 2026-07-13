@@ -1,10 +1,6 @@
 <x-app-layout>
     <x-slot name="header">Detail Donasi #{{ $donation->id }}</x-slot>
 
-    @if(session('success'))
-    <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium">{{ session('success') }}</div>
-    @endif
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {{-- Left: Donation Details --}}
         <div class="lg:col-span-2 space-y-6">
@@ -134,7 +130,7 @@
                         <textarea name="catatan_admin" rows="3" required class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm resize-none" placeholder="Berikan alasan penolakan..."></textarea>
                         @error('catatan_admin') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition" onclick="return confirm('Yakin ingin menolak donasi ini?')">Tolak</button>
+                    <button type="submit" class="w-full py-2.5 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition" onclick="confirmAction(event, this.closest('form'), 'Yakin ingin menolak donasi ini?')">Tolak</button>
                 </form>
             </div>
             @endif

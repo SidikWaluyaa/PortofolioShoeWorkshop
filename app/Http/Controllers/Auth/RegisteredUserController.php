@@ -31,9 +31,17 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
+            'email' => ['required', 'string', 'lowercase', 'email:dns', 'max:255', 'unique:'.User::class],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+                'regex:/^(?!(.)\1+$).+$/',
+            ],
+            'phone' => ['required', 'numeric', 'digits_between:11,13', 'unique:users,phone'],
         ]);
 
         $user = User::create([
@@ -47,10 +55,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        $user = Auth::user();
-        if ($user instanceof \App\Models\User && $user->isAdmin()) {
-            return redirect(route('admin.dashboard'));
-        }
         return redirect(route('home'));
     }
 }

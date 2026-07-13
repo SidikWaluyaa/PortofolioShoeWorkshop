@@ -26,7 +26,6 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'phone' => ['nullable', 'string', 'max:20'],
-            'role' => [$this->user()->isAdmin() ? 'required' : 'nullable', 'string', 'in:admin,user'],
             'avatar' => ['nullable', 'image', 'max:20480'],
         ];
     }

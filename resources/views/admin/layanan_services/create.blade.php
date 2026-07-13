@@ -15,16 +15,6 @@
         <p class="text-sm text-gray-500 mt-1">Kategori: <span class="font-bold text-emerald-600">{{ $layanan_category->name }}</span></p>
     </div>
 
-    @if($errors->any())
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6">
-            <ul class="list-disc pl-5 text-sm font-medium space-y-1">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <form action="{{ route('admin.layanan-categories.services.store', $layanan_category->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
             @csrf
