@@ -9,12 +9,6 @@
         </div>
     </x-slot>
 
-    @if(session('success'))
-    <div class="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl">
-        {{ session('success') }}
-    </div>
-    @endif
-
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-gray-50 border-b border-gray-100">
@@ -52,7 +46,7 @@
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <a href="{{ route('admin.reviews.edit', $review) }}" class="text-xs font-bold text-blue-600 hover:text-blue-800">Edit</a>
-                            <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" onsubmit="return confirm('Hapus review ini?')">
+                            <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" onsubmit="confirmAction(event, this, 'Hapus review ini?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-xs font-bold text-red-500 hover:text-red-700">Hapus</button>
                             </form>

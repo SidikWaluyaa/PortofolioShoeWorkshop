@@ -41,10 +41,6 @@
             </div>
         </div>
 
-        @if(session('success'))
-        <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium shadow-sm transition duration-150">{{ session('success') }}</div>
-        @endif
-
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -261,7 +257,7 @@
                             
                             <template x-if="activeStatus === 'pending'">
                                 <div class="flex items-center gap-2">
-                                    <form :action="rejectUrl" method="POST" class="inline" onsubmit="return confirm('Tolak check-in ini? Seluruh streak di minggu ini akan ditolak.')">
+                                    <form :action="rejectUrl" method="POST" class="inline" onsubmit="confirmAction(event, this, 'Tolak check-in ini? Seluruh streak di minggu ini akan ditolak.')">
                                         @csrf
                                         <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition duration-150 shadow-sm hover:shadow-md flex items-center gap-1.5">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>

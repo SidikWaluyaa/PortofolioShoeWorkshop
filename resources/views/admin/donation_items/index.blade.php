@@ -23,10 +23,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-    <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium">{{ session('success') }}</div>
-    @endif
-
     <!-- Filter Bar -->
     <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6 shadow-sm">
         <form action="{{ route('admin.donation-items.index') }}" method="GET" class="space-y-4">
@@ -212,7 +208,7 @@
                         </svg>
                         Edit
                     </a>
-                    <form action="{{ route('admin.donation-items.destroy', $item) }}" method="POST" onsubmit="return confirm('Hapus barang katalog ini? Semua data permohonan terkait barang ini juga akan ikut terhapus.')" class="inline">
+                    <form action="{{ route('admin.donation-items.destroy', $item) }}" method="POST" onsubmit="confirmAction(event, this, 'Hapus barang katalog ini? Semua data permohonan terkait barang ini juga akan ikut terhapus.')" class="inline">
                         @csrf @method('DELETE')
                         <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-xs flex items-center gap-1 transition">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -1,22 +1,9 @@
 <x-member-layout>
-    <div class="py-8 pt-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-12 h-12 bg-[#22AF85]/10 rounded-2xl flex items-center justify-center flex-shrink-0 border border-[#22AF85]/20">
-                    <span class="material-symbols-outlined text-[#22AF85] text-2xl">shopping_bag</span>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-black text-[#1c1c17] tracking-tight">Adopsi Saya</h1>
-                    <p class="text-sm text-gray-500 font-medium mt-1">Pantau status permohonan donasi sepatu Anda di sini.</p>
-                </div>
-            </div>
+    <x-slot name="header">Adopsi Saya</x-slot>
 
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-xl font-medium text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    {{ session('success') }}
-                </div>
-            @endif
+    <div class="mb-6">
+        <p class="text-sm text-gray-500">Pantau status permohonan donasi sepatu Anda di sini.</p>
+    </div>
 
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl font-medium text-sm">
@@ -144,6 +131,4 @@
                     </div>
                 @endforelse
             </div>
-        </div>
-    </div>
 </x-member-layout>

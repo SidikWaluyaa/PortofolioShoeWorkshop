@@ -114,7 +114,7 @@
                                     </a>
 
                                     @if(auth()->id() !== $user->id)
-                                        <form action="{{ route('admin.users.toggle-status', $user) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin {{ $user->is_active ? 'menonaktifkan (suspend)' : 'mengaktifkan' }} pengguna ini?')">
+                                        <form action="{{ route('admin.users.toggle-status', $user) }}" method="POST" class="inline" onsubmit="confirmAction(event, this, 'Apakah Anda yakin ingin {{ $user->is_active ? 'menonaktifkan (suspend)' : 'mengaktifkan' }} pengguna ini?')">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" 

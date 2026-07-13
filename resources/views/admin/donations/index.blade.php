@@ -40,10 +40,6 @@
             @endforeach
         </div>
 
-        @if(session('success'))
-        <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium shadow-sm transition duration-150">{{ session('success') }}</div>
-        @endif
-
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -335,7 +331,7 @@
                                                 <svg class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                                 Tolak Donasi
                                             </h4>
-                                            <form :action="rejectUrl" method="POST" class="space-y-4" onsubmit="return confirm('Yakin ingin menolak donasi ini?')">
+                                            <form :action="rejectUrl" method="POST" class="space-y-4" onsubmit="confirmAction(event, this, 'Yakin ingin menolak donasi ini?')">
                                                 @csrf
                                                 <div>
                                                     <label for="modal_catatan_admin_reject" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alasan Penolakan <span class="text-red-500">*</span></label>

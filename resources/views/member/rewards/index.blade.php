@@ -68,7 +68,7 @@
                     </div>
 
                     @if($canClaimThis)
-                        <form action="{{ route('member.rewards.claim-donation') }}" method="POST" onsubmit="return confirm('Yakin ingin menukarkan 1 kesempatan donasimu dengan reward ini?')">
+                        <form action="{{ route('member.rewards.claim-donation') }}" method="POST" onsubmit="confirmAction(event, this, 'Yakin ingin menukarkan 1 kesempatan donasimu dengan reward ini?')">
                             @csrf
                             <input type="hidden" name="reward_id" value="{{ $reward->id }}">
                             <button type="submit" class="w-full py-2.5 bg-amber-500 text-white text-xs font-bold rounded-xl hover:bg-amber-600 transition shadow-lg shadow-amber-500/25">
@@ -131,7 +131,7 @@
                     @if($alreadyClaimed)
                         <div class="w-full py-2.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-xl text-center">✅ Sudah Diklaim</div>
                     @elseif($canClaimThis)
-                        <form action="{{ route('member.rewards.claim') }}" method="POST" onsubmit="return confirm('Yakin ingin mengklaim reward ini?')">
+                        <form action="{{ route('member.rewards.claim') }}" method="POST" onsubmit="confirmAction(event, this, 'Yakin ingin mengklaim reward ini?')">
                             @csrf
                             <input type="hidden" name="reward_id" value="{{ $reward->id }}">
                             <input type="hidden" name="minggu_ke" value="{{ $reward->minggu_ke }}">

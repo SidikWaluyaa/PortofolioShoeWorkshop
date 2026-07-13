@@ -25,13 +25,6 @@
             </a>
         </div>
 
-        @if(session('success'))
-            <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium shadow-sm transition duration-150">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium shadow-sm transition duration-150">{{ session('error') }}</div>
-        @endif
-
         @if($donations->isEmpty())
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
                 <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-emerald-50 flex items-center justify-center">

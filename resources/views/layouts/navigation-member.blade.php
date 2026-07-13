@@ -29,10 +29,15 @@
 
             <div class="relative" x-data="{ openAccount: false }">
                 <button @click="openAccount = !openAccount" @click.outside="openAccount = false"
-                        class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#22AF85] text-white text-sm font-semibold rounded-lg hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#22AF85]/20 whitespace-nowrap">
-                    <span class="material-symbols-outlined !text-[20px]">account_circle</span>
-                    <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
-                    <span class="material-symbols-outlined !text-[16px] transition-transform duration-200" :class="openAccount ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                        class="flex items-center gap-1.5 focus:outline-none group">
+                    <div class="relative flex items-center justify-center w-10 h-10 bg-[#22AF85]/10 rounded-full group-hover:bg-[#22AF85]/20 group-active:scale-95 transition-all overflow-hidden border border-[#22AF85]/20 shrink-0 shadow-sm">
+                        @if (Auth::user()->avatar_path)
+                            <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                        @else
+                            <span class="text-[#22AF85] font-black text-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                        @endif
+                    </div>
+                    <span class="material-symbols-outlined text-[18px] text-gray-400 group-hover:text-[#22AF85] transition-transform duration-200" :class="openAccount ? 'rotate-180' : ''">keyboard_arrow_down</span>
                 </button>
                 
                 <div x-show="openAccount"

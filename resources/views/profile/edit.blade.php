@@ -6,15 +6,15 @@
                 <p class="text-sm text-gray-500 mt-1">Kelola informasi akun dan kata sandi Anda.</p>
             </div>
 
-            <div class="max-w-4xl space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="max-w-xl">
+                    <div class="w-full">
                         @include('profile.partials.update-profile-information-form')
                     </div>
                 </div>
 
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="max-w-xl">
+                    <div class="w-full">
                         @include('profile.partials.update-password-form')
                     </div>
                 </div>
@@ -29,15 +29,15 @@
                 <p class="text-sm text-gray-500 mt-1">Kelola informasi akun dan kata sandi Anda.</p>
             </div>
 
-            <div class="max-w-4xl space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="max-w-xl">
+                    <div class="w-full">
                         @include('profile.partials.update-profile-information-form')
                     </div>
                 </div>
 
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="max-w-xl">
+                    <div class="w-full">
                         @include('profile.partials.update-password-form')
                     </div>
                 </div>

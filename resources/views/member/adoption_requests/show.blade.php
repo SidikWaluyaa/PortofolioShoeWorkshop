@@ -41,13 +41,6 @@
                 </span>
             </div>
 
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-xl font-medium text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    {{ session('success') }}
-                </div>
-            @endif
-
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl font-medium text-sm">
                     <ul class="list-disc pl-5">
@@ -179,7 +172,7 @@
                                     </div>
                                 </div>
                                 <div class="w-full md:w-auto shrink-0 mt-2 md:mt-0">
-                                    <form action="{{ route('member.adoption-requests.complete', $adoptionRequest->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin sudah menerima sepatu ini dalam kondisi baik?');">
+                                    <form action="{{ route('member.adoption-requests.complete', $adoptionRequest->id) }}" method="POST" onsubmit="confirmAction(event, this, 'Apakah Anda yakin sudah menerima sepatu ini dalam kondisi baik?')">
                                         @csrf
                                         <button type="submit" class="w-full px-5 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition shadow-md shadow-[#22AF85]/20 flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined text-[18px]">done_all</span> Pesanan Diterima

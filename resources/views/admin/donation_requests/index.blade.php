@@ -180,13 +180,6 @@
         </form>
     </div>
 
-    @if(session('success'))
-    <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-    <div class="mb-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">{{ session('error') }}</div>
-    @endif
-
     <!-- Main List (Donation Items) -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
@@ -565,12 +558,12 @@
 
                         <div class="flex flex-wrap items-center gap-2" id="controls-${req.id}">
                             ${req.status === 'menunggu_verifikasi' ? `
-                                <button onclick="ajaxUpdateStatus(${req.id}, 'diproses', this)" class="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition shadow-sm shadow-purple-200">Validasi Struk (Valid)</button>
-                                <button onclick="if(confirm('Tolak struk ini? Sepatu akan dikembalikan ke Katalog.')) ajaxUpdateStatus(${req.id}, 'ditolak', this)" class="px-2.5 py-1.5 bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 rounded-lg text-xs font-bold transition">Tolak Struk (Palsu)</button>
+                                <button onclick="confirmAjax('Apakah Anda yakin struk pembayaran valid? Pesanan akan diproses.', () => ajaxUpdateStatus(${req.id}, 'diproses', this))" class="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition shadow-sm shadow-purple-200">Validasi Struk (Valid)</button>
+                                <button onclick="confirmAjax('Tolak struk ini? Sepatu akan dikembalikan ke Katalog.', () => ajaxUpdateStatus(${req.id}, 'ditolak', this))" class="px-2.5 py-1.5 bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 rounded-lg text-xs font-bold transition">Tolak Struk (Palsu)</button>
                             ` : ''}
 
                             ${['menunggu_pembayaran', 'menunggu_verifikasi'].includes(req.status) ? `
-                                <button onclick="if(confirm('Apakah Anda yakin membatalkan permohonan ini? Sepatu akan kembali ke Katalog.')) ajaxUpdateStatus(${req.id}, 'dibatalkan', this)" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Batalkan Pesanan</button>
+                                <button onclick="confirmAjax('Apakah Anda yakin membatalkan permohonan ini? Sepatu akan kembali ke Katalog.', () => ajaxUpdateStatus(${req.id}, 'dibatalkan', this))" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Batalkan Pesanan</button>
                             ` : ''}
 
                             ${['diproses', 'dikirim', 'selesai'].includes(req.status) ? `
@@ -601,10 +594,10 @@
                                 <div class="flex items-center gap-1.5" id="email-btns-${req.id}">
                                     <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                                     ${req.status === 'disetujui' ? `
-                                        <button onclick="if(confirm('Kirim email notifikasi persetujuan ke ${req.email}?')) ajaxSendEmail(${req.id}, 'approval', this)" class="text-[11px] font-extrabold text-emerald-600 hover:underline hover:text-emerald-800 transition">Kirim Email Setuju</button>
+                                        <button onclick="confirmAjax('Kirim email notifikasi persetujuan ke ${req.email}?', () => ajaxSendEmail(${req.id}, 'approval', this))" class="text-[11px] font-extrabold text-emerald-600 hover:underline hover:text-emerald-800 transition">Kirim Email Setuju</button>
                                     ` : ''}
                                     ${req.status === 'ditolak' ? `
-                                        <button onclick="if(confirm('Kirim email notifikasi penolakan ke ${req.email}?')) ajaxSendEmail(${req.id}, 'rejection', this)" class="text-[11px] font-extrabold text-red-500 hover:underline hover:text-red-700 transition">Kirim Email Tolak</button>
+                                        <button onclick="confirmAjax('Kirim email notifikasi penolakan ke ${req.email}?', () => ajaxSendEmail(${req.id}, 'rejection', this))" class="text-[11px] font-extrabold text-red-500 hover:underline hover:text-red-700 transition">Kirim Email Tolak</button>
                                     ` : ''}
                                 </div>
                             ` : ''}

@@ -69,7 +69,7 @@
                                     <span class="text-xs font-black text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">{{ $donation->kondisi }}%</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <form action="{{ route('admin.restorations.mark-ready', $donation) }}" method="POST" onsubmit="return confirm('Tandai sepatu ini sudah selesai direstorasi?');">
+                                    <form action="{{ route('admin.restorations.mark-ready', $donation) }}" method="POST" onsubmit="confirmAction(event, this, 'Tandai sepatu ini sudah selesai direstorasi?')">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white rounded-lg text-xs font-bold transition">
@@ -135,13 +135,10 @@
                                     <span class="text-xs font-black text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">{{ $donation->kondisi }}%</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <form action="{{ route('admin.restorations.mark-cataloged', $donation) }}" method="POST" onsubmit="return confirm('Yakin sudah meng-input sepatu ini ke Katalog? Data ini akan diarsipkan.');">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg text-xs font-bold transition">
-                                            Arsip / Sudah Rilis
-                                        </button>
-                                    </form>
+                                        <a href="{{ route('admin.donation-items.create', ['donation_id' => $donation->id]) }}" 
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#22AF85] text-white hover:bg-[#1a936f] rounded-lg text-xs font-bold transition shadow-lg shadow-[#22AF85]/30">
+                                            <span class="material-symbols-outlined text-[14px]">storefront</span> Rilis ke Katalog
+                                        </a>
                                 </td>
                             </tr>
                             @empty

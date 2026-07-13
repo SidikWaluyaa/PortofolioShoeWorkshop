@@ -21,13 +21,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
-            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-100">
             <thead class="bg-gray-50/50">
@@ -77,7 +70,7 @@
                         <a href="{{ route('admin.layanan-categories.services.edit', [$layanan_category->id, $service->id]) }}" class="inline-block text-gray-400 hover:text-indigo-600 mr-3 transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </a>
-                        <form action="{{ route('admin.layanan-categories.services.destroy', [$layanan_category->id, $service->id]) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus sub-jasa ini?');">
+                        <form action="{{ route('admin.layanan-categories.services.destroy', [$layanan_category->id, $service->id]) }}" method="POST" class="inline" onsubmit="confirmAction(event, this, 'Yakin ingin menghapus sub-jasa ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="inline-block text-gray-400 hover:text-red-600 transition-colors">

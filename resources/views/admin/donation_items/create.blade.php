@@ -13,12 +13,25 @@
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 max-w-4xl" x-data="formApp()">
         <form action="{{ route('admin.donation-items.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
+            
+            @if(isset($donation))
+                <input type="hidden" name="donation_id" value="{{ $donation->id }}">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl mb-6">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-blue-500">info</span>
+                        <div>
+                            <h3 class="text-sm font-bold text-blue-900">Merilis Sepatu dari Dapur Restorasi</h3>
+                            <p class="text-xs text-blue-700 mt-1">Sistem telah memuat data awal dari donasi <strong>{{ $donation->nama_sepatu }}</strong>. Setelah disimpan, sepatu ini akan otomatis diarsipkan dari antrean Dapur Restorasi.</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Nama Barang --}}
                 <div>
                     <label for="nama" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Nama Barang <span class="text-red-500">*</span></label>
-                    <input type="text" id="nama" name="nama" value="{{ old('nama') }}" required placeholder="Contoh: Nike Air Max 90"
+                    <input type="text" id="nama" name="nama" value="{{ old('nama', isset($donation) ? $donation->nama_sepatu : '') }}" required placeholder="Contoh: Nike Air Max 90"
                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition" />
                     @error('nama')
                         <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
@@ -42,8 +55,8 @@
                     <label for="kategori" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Kategori <span class="text-red-500">*</span></label>
                     <select id="kategori" name="kategori" required
                             class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-semibold transition">
-                        <option value="" disabled {{ old('kategori') ? '' : 'selected' }}>Pilih Kategori</option>
-                        <option value="sepatu" {{ old('kategori') === 'sepatu' ? 'selected' : '' }}>👞 Sepatu</option>
+                        <option value="" disabled {{ old('kategori', isset($donation) ? 'sepatu' : '') ? '' : 'selected' }}>Pilih Kategori</option>
+                        <option value="sepatu" {{ old('kategori', isset($donation) ? 'sepatu' : '') === 'sepatu' ? 'selected' : '' }}>👞 Sepatu</option>
                         <option value="tas" {{ old('kategori') === 'tas' ? 'selected' : '' }}>🎒 Tas</option>
                         <option value="topi" {{ old('kategori') === 'topi' ? 'selected' : '' }}>🧢 Topi</option>
                     </select>
@@ -60,7 +73,7 @@
                         <option value="" disabled {{ old('kondisi') ? '' : 'selected' }}>Pilih Kondisi</option>
                         <option value="baru" {{ old('kondisi') === 'baru' ? 'selected' : '' }}>Baru</option>
                         <option value="seperti_baru" {{ old('kondisi') === 'seperti_baru' ? 'selected' : '' }}>Like New</option>
-                        <option value="sudah_diperbaiki" {{ old('kondisi', 'sudah_diperbaiki') === 'sudah_diperbaiki' ? 'selected' : '' }}>Refurbished</option>
+                        <option value="sudah_diperbaiki" {{ old('kondisi', isset($donation) ? 'sudah_diperbaiki' : 'sudah_diperbaiki') === 'sudah_diperbaiki' ? 'selected' : '' }}>Refurbished</option>
                     </select>
                     @error('kondisi')
                         <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
@@ -70,7 +83,7 @@
                 {{-- Ukuran --}}
                 <div>
                     <label for="ukuran" class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Ukuran</label>
-                    <input type="text" id="ukuran" name="ukuran" value="{{ old('ukuran') }}" placeholder="Contoh: US 10.5, Medium, All Size"
+                    <input type="text" id="ukuran" name="ukuran" value="{{ old('ukuran', isset($donation) ? $donation->ukuran : '') }}" placeholder="Contoh: US 10.5, Medium, All Size"
                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition" />
                     @error('ukuran')
                         <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
