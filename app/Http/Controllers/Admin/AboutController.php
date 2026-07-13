@@ -7,6 +7,7 @@ use App\Models\AboutSection;
 use App\Services\AboutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageCompressionHelper;
 
 class AboutController extends Controller
 {
@@ -33,7 +34,7 @@ class AboutController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('about', 'public');
+            $data['image'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'about', null, false, 1200, 800);
         }
 
         $this->aboutService->create($data);
@@ -59,7 +60,7 @@ class AboutController extends Controller
             if ($about->image) {
                 Storage::disk('public')->delete($about->image);
             }
-            $data['image'] = $request->file('image')->store('about', 'public');
+            $data['image'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'about', null, false, 1200, 800);
         }
 
         $this->aboutService->update($about, $data);

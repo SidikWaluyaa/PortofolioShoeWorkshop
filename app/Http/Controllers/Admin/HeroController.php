@@ -7,6 +7,7 @@ use App\Models\HeroSection;
 use App\Services\HeroService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageCompressionHelper;
 
 class HeroController extends Controller
 {
@@ -37,7 +38,7 @@ class HeroController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('hero', 'public');
+            $data['image'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'hero', null, false, 1920, 1080);
         }
 
         $this->heroService->create($data);
@@ -67,7 +68,7 @@ class HeroController extends Controller
             if ($hero->image) {
                 Storage::disk('public')->delete($hero->image);
             }
-            $data['image'] = $request->file('image')->store('hero', 'public');
+            $data['image'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'hero', null, false, 1920, 1080);
         }
 
         $this->heroService->update($hero, $data);

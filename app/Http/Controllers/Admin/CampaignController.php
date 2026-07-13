@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageCompressionHelper;
 
 class CampaignController extends Controller
 {
@@ -48,7 +49,7 @@ class CampaignController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('image') && $request->type === 'image_upload') {
-            $data['image_path'] = $request->file('image')->store('campaigns', 'public');
+            $data['image_path'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'campaigns', null, false, 1200, 800);
         }
 
         Campaign::create($data);
@@ -89,7 +90,7 @@ class CampaignController extends Controller
             if ($campaign->image_path) {
                 Storage::disk('public')->delete($campaign->image_path);
             }
-            $data['image_path'] = $request->file('image')->store('campaigns', 'public');
+            $data['image_path'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'campaigns', null, false, 1200, 800);
         }
 
         $campaign->update($data);
