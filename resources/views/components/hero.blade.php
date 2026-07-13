@@ -40,12 +40,20 @@
             goTo(index) {
                 this.active = index;
                 this.startTimer();
+            },
+            prev() {
+                this.active = (this.active - 1 + this.total) % this.total;
+                this.startTimer();
+            },
+            next() {
+                this.active = (this.active + 1) % this.total;
+                this.startTimer();
             }
         }"
         x-init="init()"
         x-cloak>
 
-        <div class="relative min-h-[780px] sm:min-h-[820px] lg:min-h-[560px] xl:min-h-[640px]">
+        <div class="relative min-h-[780px] sm:min-h-[820px] lg:min-h-[560px] xl:min-h-[640px] group">
             @foreach($heroes as $index => $hero)
                 @php
                     $isDonation = Str::contains($hero->primary_cta_link, 'donations') || Str::contains($hero->title, 'Donasi');
@@ -346,6 +354,20 @@
                         </div>
                     </div>                </section>
             @endforeach
+
+            {{-- Desktop Navigation Arrows (Visible on Hover) --}}
+            @if($heroCount > 1)
+                <button @click="prev()"
+                    class="hidden lg:flex absolute left-4 xl:left-6 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-white/50 -translate-x-4 group-hover:translate-x-0"
+                    aria-label="Previous slide">
+                    <span class="material-symbols-outlined !text-4xl ml-[-2px]">chevron_left</span>
+                </button>
+                <button @click="next()"
+                    class="hidden lg:flex absolute right-4 xl:right-6 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-white/50 translate-x-4 group-hover:translate-x-0"
+                    aria-label="Next slide">
+                    <span class="material-symbols-outlined !text-4xl mr-[-2px]">chevron_right</span>
+                </button>
+            @endif
         </div>
     </section>
 @endif
