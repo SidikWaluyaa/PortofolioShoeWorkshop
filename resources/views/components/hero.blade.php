@@ -378,12 +378,12 @@
             {{-- Desktop Navigation Arrows (Visible on Hover) --}}
             @if($heroCount > 1)
                 <button @click="prev()"
-                    class="hidden lg:flex absolute left-4 xl:left-6 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-white/50 -translate-x-4 group-hover:translate-x-0"
+                    class="hidden lg:flex absolute left-8 xl:left-12 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-white/50 -translate-x-4 group-hover:translate-x-0"
                     aria-label="Previous slide">
                     <span class="material-symbols-outlined !text-4xl ml-[-2px]">chevron_left</span>
                 </button>
                 <button @click="next()"
-                    class="hidden lg:flex absolute right-4 xl:right-6 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-white/50 translate-x-4 group-hover:translate-x-0"
+                    class="hidden lg:flex absolute right-8 xl:right-12 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] focus:outline-none focus:ring-2 focus:ring-white/50 translate-x-4 group-hover:translate-x-0"
                     aria-label="Next slide">
                     <span class="material-symbols-outlined !text-4xl mr-[-2px]">chevron_right</span>
                 </button>
