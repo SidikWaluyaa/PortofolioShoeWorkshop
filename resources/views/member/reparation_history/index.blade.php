@@ -381,7 +381,7 @@
                     </div>
 
                     {{-- Detail Modal Dialog (Z-Index 40) --}}
-                    <div x-show="detailModalOpen" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" x-transition x-cloak style="display: none;">
+                    <div x-show="detailModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" x-transition x-cloak style="display: none;">
                         <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-gray-100" @click.away="detailModalOpen = false">
                             
                             {{-- Modal Header --}}
@@ -483,7 +483,7 @@
                                             <div @click="openLightbox(photo.photo_url, photo.caption)" class="block relative rounded-xl overflow-hidden border border-gray-150 h-16 bg-gray-50 group shadow-xs cursor-pointer">
                                                 <img :src="photo.photo_url" :alt="photo.caption" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
                                                 <div class="absolute inset-0 bg-black/15 group-hover:bg-black/0 transition duration-300"></div>
-                                                <span class="absolute top-1 left-1 bg-black/60 text-white text-[7px] font-black px-1 py-0.5 rounded uppercase tracking-wider" x-text="photo.step"></span>
+                                                <span class="absolute top-1 left-1 bg-black/60 text-white text-[7px] font-black px-1 py-0.5 rounded uppercase tracking-wider" x-text="photo.step === 'WAREHOUSE_BEFORE' ? 'Before' : (photo.step === 'FINISH' ? 'After' : photo.step)"></span>
                                             </div>
                                         </template>
                                     </div>
@@ -495,8 +495,8 @@
                                 <button @click="detailModalOpen = false" class="px-3.5 py-2 bg-white border border-gray-200 text-gray-700 font-bold text-xs rounded-xl hover:bg-gray-100 transition shadow-xs">
                                     Tutup Rincian
                                 </button>
-                                <a :href="'https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}?text=Halo%20Admin%20ShoeWorkshop,%20saya%20ingin%20tanya%20mengenai%20progress%20sepatu%20SPK%20' + (selectedOrder ? selectedOrder.spk_number : '')" target="_blank" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20 transition flex items-center gap-1.5">
-                                    <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                <a :href="'https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}?text=Halo%20Admin%20ShoeWorkshop,%20saya%20ingin%20tanya%20mengenai%20progress%20sepatu%20SPK%20' + (selectedOrder ? selectedOrder.spk_number : '')" target="_blank" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-sm shadow-emerald-500/20 transition flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-[16px]">chat</span>
                                     Tanya Admin WA
                                 </a>
                             </div>
@@ -504,7 +504,7 @@
                     </div>
 
                     {{-- Image Lightbox Modal (Z-Index 50 - floats on top of Detail Modal) --}}
-                    <div x-show="lightboxOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs" x-transition x-cloak style="display: none;">
+                    <div x-show="lightboxOpen" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs" x-transition x-cloak style="display: none;">
                         <div class="relative max-w-4xl max-h-[85vh] overflow-hidden bg-white rounded-2xl p-2 shadow-2xl" @click.away="lightboxOpen = false">
                             <button @click="lightboxOpen = false" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition shadow-md">
                                 <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>

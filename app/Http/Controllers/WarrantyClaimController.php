@@ -36,8 +36,12 @@ class WarrantyClaimController extends Controller
                 'spk_number' => $request->input('spk_number'),
                 'customer_phone' => $request->input('customer_phone')
             ]);
+            $data = $response->json();
+            if (isset($data['data']['days_left'])) {
+                $data['data']['days_left'] = ceil((float)$data['data']['days_left']);
+            }
 
-            return response()->json($response->json(), $response->status());
+            return response()->json($data, $response->status());
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

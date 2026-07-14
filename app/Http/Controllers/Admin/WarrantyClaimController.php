@@ -35,6 +35,9 @@ class WarrantyClaimController extends Controller
                     $data = $response->json();
                     if ($data['success'] ?? false) {
                         $result = $data['data'];
+                        if (isset($result['days_left'])) {
+                            $result['days_left'] = ceil((float)$result['days_left']);
+                        }
                     } else {
                         $error = $this->getFriendlyErrorMessage($response->status(), $data['message'] ?? null);
                     }
