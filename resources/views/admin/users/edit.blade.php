@@ -82,7 +82,7 @@
                             <p class="text-xs text-gray-500 mt-1">Anda tidak dapat mengubah role Anda sendiri.</p>
                         @else
                             <select name="role" id="role" required class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors">
-                                <option value="member" {{ old('role', $user->role) === 'member' ? 'selected' : '' }}>Member</option>
+                                <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Member</option>
                                 <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
                             </select>
                         @endif
