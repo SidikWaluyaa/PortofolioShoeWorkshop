@@ -66,7 +66,7 @@ class UserController extends Controller
         ];
 
         if (!$isSelf) {
-            $rules['role'] = 'required|in:admin,member';
+            $rules['role'] = 'required|in:admin,user';
         }
 
         if ($request->filled('password')) {
