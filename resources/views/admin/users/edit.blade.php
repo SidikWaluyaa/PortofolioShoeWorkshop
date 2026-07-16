@@ -84,7 +84,9 @@
                             <select name="role" id="role" required class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors">
                                 <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Member</option>
                                 <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="super_admin" {{ old('role', $user->role) === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                                @if(auth()->user()->role === 'super_admin')
+                                    <option value="super_admin" {{ old('role', $user->role) === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                                @endif
                             </select>
                         @endif
                     </div>
