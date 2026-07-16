@@ -362,6 +362,11 @@
                                         Dalam Proses Pengajuan
                                     </button>
                                 @else
+                                    <button class="flex-grow py-3.5 bg-gray-400 text-white rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled title="Fitur ini sedang dalam perbaikan sementara">
+                                        <span class="material-symbols-outlined !text-[18px]">build</span>
+                                        Sedang Maintenance
+                                    </button>
+                                    {{-- 
                                     @auth
                                         <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined !text-[18px]">send</span>
@@ -373,6 +378,7 @@
                                             Login untuk Mengajukan
                                         </a>
                                     @endauth
+                                    --}}
                                 @endif
                             @else
                                 <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
@@ -403,6 +409,11 @@
                             Dalam Proses Pengajuan
                         </button>
                     @else
+                        <button class="flex-grow py-3.5 bg-gray-400 text-white rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled title="Fitur ini sedang dalam perbaikan sementara">
+                            <span class="material-symbols-outlined !text-[18px]">build</span>
+                            Sedang Maintenance
+                        </button>
+                        {{--
                         @auth
                             <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined !text-[18px]">send</span>
@@ -414,6 +425,7 @@
                                 Login untuk Mengajukan
                             </a>
                         @endauth
+                        --}}
                     @endif
                 @else
                     <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
