@@ -42,7 +42,7 @@
                 </div>
                 
                 <div class="flex-1">
-                    <input type="file" id="avatar" name="avatar" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#22AF85]/10 file:text-[#22AF85] hover:file:bg-[#22AF85]/20 file:transition file:cursor-pointer cursor-pointer" />
+                    <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/jpg, image/gif" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#22AF85]/10 file:text-[#22AF85] hover:file:bg-[#22AF85]/20 file:transition file:cursor-pointer cursor-pointer" />
                     <p class="text-[10px] text-gray-400 font-medium mt-1">Format JPG, PNG, atau GIF (Maks. 2MB)</p>
                 </div>
             </div>
@@ -107,3 +107,124 @@
         </div>
     </form>
 </section>
+
+{{-- Cropper Modal & Logic --}}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<!-- Modal Pop-up untuk Crop -->
+<div id="cropModal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h3 class="text-base font-black text-gray-800">Atur Posisi Foto</h3>
+            <button type="button" id="closeCrop" class="text-gray-400 hover:text-red-500 transition">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-4 bg-gray-900 flex justify-center items-center" style="max-height: 60vh;">
+            <img id="imageToCrop" src="" alt="To Crop" class="max-w-full max-h-full block">
+        </div>
+        <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+            <button type="button" id="cancelCrop" class="px-5 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition">Batal</button>
+            <button type="button" id="saveCrop" class="px-5 py-2 text-sm font-bold text-white bg-[#22AF85] rounded-xl hover:bg-[#1a936f] shadow-lg shadow-[#22AF85]/30 transition">Simpan Potongan</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const avatarInput = document.getElementById('avatar');
+        const cropModal = document.getElementById('cropModal');
+        const imageToCrop = document.getElementById('imageToCrop');
+        const closeCropBtn = document.getElementById('closeCrop');
+        const cancelCropBtn = document.getElementById('cancelCrop');
+        const saveCropBtn = document.getElementById('saveCrop');
+        
+        let cropper = null;
+        let originalFileName = '';
+        let originalFileType = '';
+
+        avatarInput.addEventListener('change', function (e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                originalFileName = file.name;
+                originalFileType = file.type;
+
+                // Load image to cropper
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    imageToCrop.src = event.target.result;
+                    cropModal.classList.remove('hidden');
+                    
+                    // Initialize Cropper JS
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 1, // 1:1 kotak
+                        viewMode: 1,
+                        autoCropArea: 1,
+                        background: false,
+                        zoomable: true,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function closeAndReset() {
+            cropModal.classList.add('hidden');
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            // If canceled and no previous crop exists, reset input so user can re-select same file
+            avatarInput.value = '';
+        }
+
+        closeCropBtn.addEventListener('click', closeAndReset);
+        cancelCropBtn.addEventListener('click', closeAndReset);
+
+        saveCropBtn.addEventListener('click', function () {
+            if (!cropper) return;
+
+            // Dapatkan hasil crop berupa canvas
+            const canvas = cropper.getCroppedCanvas({
+                width: 400,
+                height: 400,
+            });
+
+            // Ubah canvas menjadi file blob
+            canvas.toBlob(function (blob) {
+                // Bungkus blob ke dalam File object
+                const croppedFile = new File([blob], originalFileName, {
+                    type: originalFileType,
+                    lastModified: new Date().getTime()
+                });
+
+                // Gunakan DataTransfer untuk menginjeksi file ke input asli
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(croppedFile);
+                avatarInput.files = dataTransfer.files;
+
+                // Update gambar preview di halaman
+                const previewImg = document.getElementById('avatar-preview');
+                const placeholder = document.getElementById('avatar-preview-placeholder');
+                
+                const url = URL.createObjectURL(blob);
+                if (previewImg) {
+                    previewImg.src = url;
+                } else if (placeholder) {
+                    placeholder.outerHTML = `<img id="avatar-preview" src="${url}" class="w-20 h-20 rounded-2xl object-cover border-2 border-gray-100 shadow-sm transition group-hover:border-[#22AF85]/50">`;
+                }
+
+                // Tutup modal
+                cropModal.classList.add('hidden');
+                cropper.destroy();
+                cropper = null;
+
+            }, originalFileType);
+        });
+    });
+</script>

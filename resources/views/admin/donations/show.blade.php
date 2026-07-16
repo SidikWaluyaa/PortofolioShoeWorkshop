@@ -58,14 +58,18 @@
                         <p class="text-xs font-medium text-gray-500 mb-2">Foto Sepatu (Donatur)</p>
                         <div class="grid grid-cols-2 gap-2">
                             @foreach($donation->foto_path as $path)
-                                <img src="{{ asset('storage/' . $path) }}" alt="Foto Sepatu" class="w-full h-32 object-cover rounded-xl bg-gray-100 border border-gray-150">
+                                <a href="{{ asset('storage/' . $path) }}" target="_blank" class="block">
+                                    <img src="{{ asset('storage/' . $path) }}" alt="Foto Sepatu" class="w-full h-32 object-cover rounded-xl bg-gray-100 border border-gray-150 hover:opacity-80 transition cursor-pointer" title="Klik untuk memperbesar">
+                                </a>
                             @endforeach
                         </div>
                     </div>
                     @if($donation->foto_bukti_path)
                     <div>
                         <p class="text-xs font-medium text-gray-500 mb-2">Bukti Penerimaan (Admin)</p>
-                        <img src="{{ asset('storage/' . $donation->foto_bukti_path) }}" alt="Bukti Penerimaan" class="w-full h-48 object-cover rounded-xl bg-gray-100 border border-gray-150">
+                        <a href="{{ asset('storage/' . $donation->foto_bukti_path) }}" target="_blank" class="block">
+                            <img src="{{ asset('storage/' . $donation->foto_bukti_path) }}" alt="Bukti Penerimaan" class="w-full h-48 object-cover rounded-xl bg-gray-100 border border-gray-150 hover:opacity-80 transition cursor-pointer" title="Klik untuk memperbesar">
+                        </a>
                     </div>
                     @endif
                 </div>
