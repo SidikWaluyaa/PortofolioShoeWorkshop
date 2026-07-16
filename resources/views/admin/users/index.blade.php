@@ -82,7 +82,11 @@
                                 <div class="text-sm text-gray-500">{{ $user->phone ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($user->role === 'admin')
+                                @if($user->role === 'super_admin')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                                        Super Admin
+                                    </span>
+                                @elseif($user->role === 'admin')
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
                                         Admin
                                     </span>

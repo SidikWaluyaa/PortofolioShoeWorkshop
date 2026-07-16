@@ -48,6 +48,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return redirect()->route('admin.users.index')->with('error', 'Anda tidak memiliki akses untuk mengubah data Super Admin.');
+        }
+
         return view('admin.users.edit', compact('user'));
     }
 
@@ -56,6 +60,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return redirect()->route('admin.users.index')->with('error', 'Anda tidak memiliki akses untuk mengubah data Super Admin.');
+        }
+
         // Don't allow changing your own role or deactivating yourself to prevent lockout
         $isSelf = auth()->id() === $user->id;
 
@@ -66,7 +74,8 @@ class UserController extends Controller
         ];
 
         if (!$isSelf) {
-            $rules['role'] = 'required|in:admin,user';
+            $allowedRoles = auth()->user()->role === 'super_admin' ? 'admin,user,super_admin' : 'admin,user';
+            $rules['role'] = 'required|in:' . $allowedRoles;
         }
 
         if ($request->filled('password')) {
@@ -102,6 +111,10 @@ class UserController extends Controller
         // Prevent deactivating oneself
         if (auth()->id() === $user->id) {
             return redirect()->back()->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
+        }
+
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menonaktifkan Super Admin.');
         }
 
         $user->update([
