@@ -135,6 +135,15 @@
                                     @if($order->status === 'dikirim')
                                         <button onclick="confirmAjax('Tandai pesanan ini selesai secara manual? Pastikan barang sudah diterima.', () => ajaxUpdateStatus({{ $order->id }}, 'selesai', this))" class="px-2.5 py-1.5 bg-[#22AF85] hover:bg-[#1a936f] text-white rounded-lg text-xs font-bold transition shadow-sm w-full">Selesaikan</button>
                                     @endif
+
+                                    @if(auth()->user()->role === 'super_admin' && in_array($order->status, ['diproses', 'dikirim', 'selesai']))
+                                        <form action="{{ route('orders.rollback', $order->id) }}" method="POST" class="w-full mt-2" onsubmit="return confirm('Peringatan: Yakin ingin rollback/membatalkan pesanan ini? Barang akan kembali Tersedia di Katalog.');">
+                                            @csrf
+                                            <button type="submit" class="px-2.5 py-1.5 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs font-bold transition shadow-sm w-full flex items-center justify-center gap-1">
+                                                <span class="material-symbols-outlined text-[14px]">undo</span> Batal Penyaluran
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

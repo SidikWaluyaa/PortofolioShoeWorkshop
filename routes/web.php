@@ -174,6 +174,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // Orders & Shipping (After Verification)
     Route::get('orders', [\App\Http\Controllers\Admin\OrderShippingController::class, 'index'])->name('orders.index');
+    Route::post('orders/{order}/rollback', [\App\Http\Controllers\Admin\OrderShippingController::class, 'rollback'])->name('orders.rollback');
     
     // User Management
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'store', 'show', 'destroy']);
