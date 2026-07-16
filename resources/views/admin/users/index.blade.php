@@ -17,6 +17,7 @@
             <div class="w-full sm:w-48">
                 <select name="role" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" onchange="this.form.submit()">
                     <option value="">Semua Role</option>
+                    <option value="super_admin" {{ request('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                     <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                     <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>Member</option>
                 </select>
