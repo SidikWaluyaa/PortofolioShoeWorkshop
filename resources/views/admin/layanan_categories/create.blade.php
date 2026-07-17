@@ -12,7 +12,7 @@
 
     <div class="mb-6">
         <h2 class="text-2xl font-black text-gray-900">Tambah Kategori Baru</h2>
-        <p class="text-sm text-gray-500 mt-1">Buat kategori utama (misal: "Lem & Jahit", "Treatment").</p>
+        <p class="text-sm text-gray-500 mt-1">Buat kategori utama (misal: "Reparasi Sol", "Treatment").</p>
     </div>
 
     <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
@@ -27,7 +27,7 @@
                     <div class="grid grid-cols-3 gap-4">
                         <div class="col-span-2">
                             <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Kategori *</label>
-                            <input type="text" name="name" value="{{ old('name') }}" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm" placeholder="Contoh: Lem & Jahit">
+                            <input type="text" name="name" value="{{ old('name') }}" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm" placeholder="Contoh: Reparasi Sol">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1.5">Urutan (Order) *</label>
