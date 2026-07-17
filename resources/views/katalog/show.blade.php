@@ -106,9 +106,11 @@
                 <!-- Left Column: Image Gallery (5/12 cols) -->
                 <div class="lg:col-span-5 bg-gray-50 p-6 flex flex-col gap-6 border-b lg:border-b-0 lg:border-r border-gray-200">
                     <!-- Large Primary View -->
-                    <div class="relative group aspect-square max-h-[360px] sm:max-h-[450px] w-full rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center p-4 sm:p-8 {{ $isQuotaFull ? 'filter grayscale contrast-75 brightness-95 opacity-90' : '' }}">
-                        <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"/>
-                        <div class="absolute top-3 left-3 bg-green-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm flex items-center gap-1 z-10">
+                    <div class="relative group aspect-square max-h-[360px] sm:max-h-[450px] w-full rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center {{ $isQuotaFull ? 'filter grayscale contrast-75 brightness-95 opacity-90' : '' }}">
+                        <a :href="activeImage || '{{ $item->foto_utama_url }}'" target="_blank" class="w-full h-full block">
+                            <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" title="Klik untuk memperbesar"/>
+                        </a>
+                        <div class="absolute top-3 left-3 bg-green-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm flex items-center gap-1 z-10 pointer-events-none">
                             <span class="material-symbols-outlined !text-[12px]">verified</span>
                             Kualitas Terverifikasi
                         </div>
@@ -119,8 +121,8 @@
                         <!-- Thumbnail 1 (Active) -->
                         <button @click="activeImage = '{{ $item->foto_utama_url }}'; activeIndex = 0" 
                                 :class="activeIndex === 0 ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
-                                class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white p-1.5 sm:p-2 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
-                            <img alt="Foto Utama" class="max-w-full max-h-full object-contain" src="{{ $item->foto_utama_url }}"/>
+                                class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
+                            <img alt="Foto Utama" class="w-full h-full object-cover" src="{{ $item->foto_utama_url }}"/>
                         </button>
                         
                         <!-- Other photo details if present -->
@@ -141,8 +143,8 @@
                             @if(isset($detailPhotos[$i]))
                                 <button @click="activeImage = '{{ $detailUrl($detailPhotos[$i]) }}'; activeIndex = {{ $i + 1 }}" 
                                         :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
-                                        class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white p-1.5 sm:p-2 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
-                                    <img alt="Detail {{ $i + 1 }}" class="max-w-full max-h-full object-contain" src="{{ $detailUrl($detailPhotos[$i]) }}"/>
+                                        class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
+                                    <img alt="Detail {{ $i + 1 }}" class="w-full h-full object-cover" src="{{ $detailUrl($detailPhotos[$i]) }}"/>
                                 </button>
                             @else
                                 <!-- Placeholder thumbnails -->
