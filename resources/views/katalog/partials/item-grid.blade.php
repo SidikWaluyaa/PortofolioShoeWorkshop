@@ -87,10 +87,10 @@
                             @endif
                         </h4>
 
-                        <!-- Brand & Price -->
+                        <!-- Brand, Size & Price -->
                         <div class="flex justify-between items-center gap-2 mb-2">
                             <p class="text-[#22AF85] font-bold text-[10px] sm:text-xs truncate">
-                                Brand: {{ $item->brand ?? 'Generic' }}
+                                Brand: {{ $item->brand ?? 'Generic' }} <span class="text-gray-300 font-normal mx-1">|</span> Size: {{ $item->ukuran ?? '-' }}
                             </p>
                             @if($item->jasa_harga_total > 0)
                                 <span class="text-[9px] sm:text-xs font-black text-[#191c1d] px-1.5 sm:px-2 py-0.5 bg-gray-100 rounded-lg shrink-0">
