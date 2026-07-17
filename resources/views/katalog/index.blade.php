@@ -306,6 +306,43 @@
                             </div>
                         </div>
 
+                        <!-- Kelayakan -->
+                        <div>
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Tingkat Kelayakan</h4>
+                            <div class="relative min-h-[40px] mt-2 px-1">
+                                <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
+                                <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                                     :style="`left: ${minKelayakan}%; right: ${100 - maxKelayakan}%`"></div>
+                                
+                                <input type="range" min="0" max="100" step="5" x-model.number="minKelayakan"
+                                       @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                
+                                <input type="range" min="0" max="100" step="5" x-model.number="maxKelayakan"
+                                       @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                            </div>
+                            <div class="flex items-center justify-between gap-3 mt-4">
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                    <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
+                                    <div class="flex items-center gap-1 mt-0.5">
+                                        <input type="number" x-model.number="minKelayakan" @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
+                                               class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                        <span class="text-xs font-bold text-gray-400">%</span>
+                                    </div>
+                                </div>
+                                <span class="text-gray-400 text-xs font-medium select-none">—</span>
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                    <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
+                                    <div class="flex items-center gap-1 mt-0.5">
+                                        <input type="number" x-model.number="maxKelayakan" @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
+                                               class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                        <span class="text-xs font-bold text-gray-400">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Condition -->
                         <div>
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Kondisi</h4>
@@ -437,6 +474,45 @@
                                     <span class="text-xs font-bold text-gray-400">Rp</span>
                                     <input type="number" x-model.number="maxPrice" @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
                                            class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Kelayakan Filter --}}
+                    <div>
+                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Tingkat Kelayakan</h3>
+                        <div class="relative min-h-[40px] mt-2 px-1">
+                            <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
+                            <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                                 :style="`left: ${minKelayakan}%; right: ${100 - maxKelayakan}%`"></div>
+                            
+                            <input type="range" min="0" max="100" step="5" x-model.number="minKelayakan"
+                                   @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
+                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                            
+                            <input type="range" min="0" max="100" step="5" x-model.number="maxKelayakan"
+                                   @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
+                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                        </div>
+                        <div class="flex items-center justify-between gap-3 mt-4">
+                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
+                                <div class="flex items-center gap-1 mt-0.5">
+                                    <input type="number" x-model.number="minKelayakan" @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
+                                           class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                    <span class="text-xs font-bold text-gray-400">%</span>
+                                </div>
+                            </div>
+
+                            <span class="text-gray-400 text-xs font-medium select-none">—</span>
+
+                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
+                                <div class="flex items-center gap-1 mt-0.5">
+                                    <input type="number" x-model.number="maxKelayakan" @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
+                                           class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-extrabold text-gray-700 outline-none" />
+                                    <span class="text-xs font-bold text-gray-400">%</span>
                                 </div>
                             </div>
                         </div>
@@ -697,6 +773,8 @@
             minPrice: 0,
             maxPrice: {{ $maxPriceLimit }},
             maxPriceLimit: {{ $maxPriceLimit }},
+            minKelayakan: 0,
+            maxKelayakan: 100,
             sort: '',
             page: 1,
             mobileFilterOpen: false,
@@ -749,6 +827,8 @@
                 this.status = urlParams.get('status') || '';
                 this.minPrice = urlParams.get('min_price') ? parseInt(urlParams.get('min_price')) : 0;
                 this.maxPrice = urlParams.get('max_price') ? parseInt(urlParams.get('max_price')) : this.maxPriceLimit;
+                this.minKelayakan = urlParams.get('min_kelayakan') ? parseInt(urlParams.get('min_kelayakan')) : 0;
+                this.maxKelayakan = urlParams.get('max_kelayakan') ? parseInt(urlParams.get('max_kelayakan')) : 100;
                 this.sort = urlParams.get('sort') || '';
                 this.page = urlParams.get('page') ? parseInt(urlParams.get('page')) : 1;
                 
@@ -779,6 +859,8 @@
                     this.status = params.get('status') || '';
                     this.minPrice = params.get('min_price') ? parseInt(params.get('min_price')) : 0;
                     this.maxPrice = params.get('max_price') ? parseInt(params.get('max_price')) : this.maxPriceLimit;
+                    this.minKelayakan = params.get('min_kelayakan') ? parseInt(params.get('min_kelayakan')) : 0;
+                    this.maxKelayakan = params.get('max_kelayakan') ? parseInt(params.get('max_kelayakan')) : 100;
                     this.sort = params.get('sort') || '';
                     this.page = params.get('page') ? parseInt(params.get('page')) : 1;
                     this.fetchFilter();
@@ -822,6 +904,12 @@
                     
                     const maxVal = parseInt(this.maxPrice);
                     if (!isNaN(maxVal) && maxVal < this.maxPriceLimit) url.searchParams.set('max_price', maxVal);
+                    
+                    const minKel = parseInt(this.minKelayakan);
+                    if (!isNaN(minKel) && minKel > 0) url.searchParams.set('min_kelayakan', minKel);
+                    
+                    const maxKel = parseInt(this.maxKelayakan);
+                    if (!isNaN(maxKel) && maxKel < 100) url.searchParams.set('max_kelayakan', maxKel);
                     
                     if (this.sort) url.searchParams.set('sort', this.sort);
                     if (this.page && this.page > 1) url.searchParams.set('page', this.page);
@@ -904,6 +992,20 @@
                     url.searchParams.delete('max_price');
                 }
                 
+                const minKel = parseInt(this.minKelayakan);
+                if (!isNaN(minKel) && minKel > 0) {
+                    url.searchParams.set('min_kelayakan', minKel);
+                } else {
+                    url.searchParams.delete('min_kelayakan');
+                }
+                
+                const maxKel = parseInt(this.maxKelayakan);
+                if (!isNaN(maxKel) && maxKel < 100) {
+                    url.searchParams.set('max_kelayakan', maxKel);
+                } else {
+                    url.searchParams.delete('max_kelayakan');
+                }
+                
                 if (this.sort) {
                     url.searchParams.set('sort', this.sort);
                 } else {
@@ -963,6 +1065,8 @@
                 this.status = '';
                 this.minPrice = 0;
                 this.maxPrice = this.maxPriceLimit;
+                this.minKelayakan = 0;
+                this.maxKelayakan = 100;
                 this.sort = '';
                 this.page = 1;
                 this.mobileFilterOpen = false;

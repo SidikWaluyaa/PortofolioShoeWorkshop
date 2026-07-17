@@ -73,6 +73,16 @@ class DonationCatalogController extends Controller
             }, '<=', $maxPrice);
         }
 
+        if ($request->filled('min_kelayakan')) {
+            $minKelayakan = (int) $request->input('min_kelayakan');
+            $query->where('score_kelayakan', '>=', $minKelayakan);
+        }
+
+        if ($request->filled('max_kelayakan')) {
+            $maxKelayakan = (int) $request->input('max_kelayakan');
+            $query->where('score_kelayakan', '<=', $maxKelayakan);
+        }
+
         // Prioritize status 'tersedia' first, then sort selection
         $query->orderByRaw("CASE WHEN status = 'tersedia' THEN 1 ELSE 2 END ASC");
 
@@ -232,6 +242,16 @@ class DonationCatalogController extends Controller
                     ->from('donation_item_services')
                     ->whereColumn('donation_item_id', 'donation_items.id');
             }, '<=', $maxPrice);
+        }
+
+        if ($request->filled('min_kelayakan')) {
+            $minKelayakan = (int) $request->input('min_kelayakan');
+            $query->where('score_kelayakan', '>=', $minKelayakan);
+        }
+
+        if ($request->filled('max_kelayakan')) {
+            $maxKelayakan = (int) $request->input('max_kelayakan');
+            $query->where('score_kelayakan', '<=', $maxKelayakan);
         }
 
         // Prioritize status 'tersedia' first, then sort selection
