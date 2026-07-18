@@ -40,10 +40,15 @@ class DonationItemService extends Model
      */
     public function getJasaNamaAttribute(): ?string
     {
+        if (!empty($this->jasa_nama_manual)) {
+            return $this->jasa_nama_manual;
+        }
+
         if ($this->service_id && $this->service) {
             return $this->service->name;
         }
-        return $this->jasa_nama_manual;
+
+        return null;
     }
 
     /**
