@@ -1,45 +1,46 @@
 <x-member-layout>
-    <div class="py-8 pt-24">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {{-- Header --}}
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('member.adoption-requests.index') }}" class="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-[#22AF85] hover:border-[#22AF85] transition shadow-sm flex-shrink-0">
-                        <span class="material-symbols-outlined">arrow_back</span>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl font-black text-[#1c1c17] tracking-tight">Detail Adopsi</h1>
-                        <p class="text-sm text-gray-500 font-medium mt-1">ID Permohonan: <strong class="text-gray-700">#ADPS-{{ str_pad($adoptionRequest->id, 5, '0', STR_PAD_LEFT) }}</strong></p>
-                    </div>
+    <x-slot name="header">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('member.adoption-requests.index') }}" class="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-[#22AF85] hover:border-[#22AF85] transition shadow-sm flex-shrink-0">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <div class="flex flex-col">
+                    <span class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Detail Adopsi</span>
+                    <span class="text-sm text-gray-500 font-medium">ID Permohonan: <strong class="text-gray-700">#ADPS-{{ str_pad($adoptionRequest->id, 5, '0', STR_PAD_LEFT) }}</strong></span>
                 </div>
-                @php
-                    $statusColors = [
-                        'pending' => 'bg-gray-100 text-gray-700 border-gray-200',
-                        'menunggu_pembayaran' => 'bg-amber-100 text-amber-700 border-amber-200',
-                        'menunggu_verifikasi' => 'bg-purple-100 text-purple-700 border-purple-200',
-                        'diproses' => 'bg-blue-100 text-blue-700 border-blue-200',
-                        'dikirim' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
-                        'ditolak' => 'bg-red-50 text-red-500 border-red-100',
-                        'dibatalkan' => 'bg-red-100 text-red-700 border-red-200',
-                        'selesai' => 'bg-blue-100 text-blue-700 border-blue-200',
-                    ];
-                    $statusLabels = [
-                        'pending' => 'Menunggu Seleksi',
-                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
-                        'menunggu_verifikasi' => 'Menunggu Verifikasi',
-                        'diproses' => 'Sedang Diproses',
-                        'dikirim' => 'Telah Dikirim',
-                        'ditolak' => 'Ditolak',
-                        'dibatalkan' => 'Dibatalkan',
-                        'selesai' => 'Selesai',
-                    ];
-                    $colorClass = $statusColors[$adoptionRequest->status] ?? 'bg-gray-100 text-gray-700';
-                    $labelText = $statusLabels[$adoptionRequest->status] ?? $adoptionRequest->status;
-                @endphp
-                <span class="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-sm font-black border {{ $colorClass }}">
-                    {{ $labelText }}
-                </span>
             </div>
+            @php
+                $statusColors = [
+                    'pending' => 'bg-gray-100 text-gray-700 border-gray-200',
+                    'menunggu_pembayaran' => 'bg-amber-100 text-amber-700 border-amber-200',
+                    'menunggu_verifikasi' => 'bg-purple-100 text-purple-700 border-purple-200',
+                    'diproses' => 'bg-blue-100 text-blue-700 border-blue-200',
+                    'dikirim' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                    'ditolak' => 'bg-red-50 text-red-500 border-red-100',
+                    'dibatalkan' => 'bg-red-100 text-red-700 border-red-200',
+                    'selesai' => 'bg-blue-100 text-blue-700 border-blue-200',
+                ];
+                $statusLabels = [
+                    'pending' => 'Menunggu Seleksi',
+                    'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                    'menunggu_verifikasi' => 'Menunggu Verifikasi',
+                    'diproses' => 'Sedang Diproses',
+                    'dikirim' => 'Telah Dikirim',
+                    'ditolak' => 'Ditolak',
+                    'dibatalkan' => 'Dibatalkan',
+                    'selesai' => 'Selesai',
+                ];
+                $colorClass = $statusColors[$adoptionRequest->status] ?? 'bg-gray-100 text-gray-700';
+                $labelText = $statusLabels[$adoptionRequest->status] ?? $adoptionRequest->status;
+            @endphp
+            <span class="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-sm font-black border {{ $colorClass }}">
+                {{ $labelText }}
+            </span>
+        </div>
+    </x-slot>
+
+    <div class="w-full">
 
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl font-medium text-sm">
@@ -300,6 +301,5 @@
             <div class="text-center pb-8">
                 <p class="text-xs text-gray-400 font-medium">Ada masalah dengan pesanan ini? <a href="#" class="text-[#22AF85] hover:underline">Hubungi Admin</a></p>
             </div>
-        </div>
     </div>
 </x-member-layout>
