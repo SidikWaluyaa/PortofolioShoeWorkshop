@@ -32,7 +32,7 @@ class WarrantyClaimController extends Controller
         $apiUrl = $this->getApiUrl();
 
         try {
-            $response = Http::post($apiUrl . '/check', [
+            $response = Http::acceptJson()->post($apiUrl . '/check', [
                 'spk_number' => $request->input('spk_number'),
                 'customer_phone' => $request->input('customer_phone')
             ]);
@@ -59,7 +59,7 @@ class WarrantyClaimController extends Controller
 
         try {
             // Forward the multipart form-data request to the backend API
-            $httpRequest = Http::asMultipart();
+            $httpRequest = Http::acceptJson()->asMultipart();
 
             // Forward text fields
             if ($request->has('spk_number')) {

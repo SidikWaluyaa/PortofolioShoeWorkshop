@@ -554,7 +554,7 @@
             }
 
             // 2. Not Found / Invalid SPK
-            if (msg.includes('tidak ditemukan') || msg.includes('not found') || msg.includes('tidak cocok') || status === 404) {
+            if (msg.includes('tidak ditemukan') || msg.includes('not found') || msg.includes('tidak cocok') || msg.includes('invalid') || status === 404 || status === 422) {
                 return {
                     title: 'Data Garansi Tidak Ditemukan',
                     message: 'Kombinasi Nomor SPK dan Nomor WhatsApp tidak cocok atau tidak terdaftar di sistem. Mohon periksa kembali kesesuaian data pada nota fisik Anda.'
