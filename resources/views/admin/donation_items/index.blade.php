@@ -66,6 +66,7 @@
                     <select name="status" id="status" class="w-full text-xs border-gray-200 rounded-xl focus:border-[#22AF85] focus:ring-1 focus:ring-[#22AF85] bg-gray-50/50 py-2.5">
                         <option value="">Semua Status</option>
                         <option value="tersedia" {{ request('status') === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
+                        <option value="arsip" {{ request('status') === 'arsip' ? 'selected' : '' }}>Arsip</option>
                         <option value="disalurkan" {{ request('status') === 'disalurkan' ? 'selected' : '' }}>Sudah Disalurkan</option>
                     </select>
                 </div>
@@ -124,14 +125,33 @@
                         'topi' => '🧢 Topi'
                     ];
                 @endphp
-                <div class="absolute top-3 right-3">
+                <div class="absolute top-3 right-3 z-30">
                     <span class="px-2.5 py-1 rounded-xl text-[10px] font-extrabold bg-white/90 backdrop-blur-sm text-gray-800 border border-gray-150/50 shadow-sm">
                         {{ $catLabels[$item->kategori] ?? ucfirst($item->kategori) }}
                     </span>
                 </div>
 
+                @if($item->status === 'tersedia')
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-gray-100/50 shadow-sm flex items-center gap-1.5 z-10">
+                        <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-[9px] font-black tracking-widest uppercase text-green-700">Tersedia</span>
+                    </div>
+                @elseif($item->status === 'arsip')
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-gray-100/50 shadow-sm flex items-center gap-1.5 z-10">
+                        <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
+                        <span class="text-[9px] font-black tracking-widest uppercase text-yellow-700">Arsip</span>
+                    </div>
+                @else
+                    <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center">
+                        <div class="bg-white/95 px-4 py-2 rounded-xl shadow-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined !text-[18px] text-gray-800">local_shipping</span>
+                            <span class="text-xs font-black tracking-widest uppercase text-gray-800">Disalurkan</span>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Code Tag Overlay (Bottom Left) --}}
-                <div class="absolute bottom-3 left-3">
+                <div class="absolute bottom-3 left-3 z-10">
                     <span class="px-2.5 py-1 rounded-xl text-[9px] font-mono font-bold bg-slate-900/75 backdrop-blur-sm text-white tracking-wider shadow-sm border border-white/10">
                         {{ $item->kode_barang ?? '-' }}
                     </span>
@@ -200,26 +220,22 @@
             </div>
 
             {{-- Card Footer Actions --}}
-            <div class="px-5 py-3.5 bg-gray-50/40 border-t border-gray-50 flex items-center justify-between">
-                @if($item->status === 'tersedia')
-                    <a href="{{ route('admin.donation-items.edit', $item) }}" class="text-[#22AF85] hover:text-[#1d9a75] font-bold text-xs flex items-center gap-1 transition">
+            <div class="px-5 py-3.5 bg-gray-50/40 border-t border-gray-50 flex items-center justify-between relative z-30">
+                <a href="{{ route('admin.donation-items.edit', $item) }}" class="text-[#22AF85] hover:text-[#1d9a75] font-bold text-xs flex items-center gap-1 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Edit
+                </a>
+                <form action="{{ route('admin.donation-items.destroy', $item) }}" method="POST" onsubmit="confirmAction(event, this, 'Hapus barang katalog ini? Semua data permohonan terkait barang ini juga akan ikut terhapus.')" class="inline">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-xs flex items-center gap-1 transition">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
-                        Edit
-                    </a>
-                    <form action="{{ route('admin.donation-items.destroy', $item) }}" method="POST" onsubmit="confirmAction(event, this, 'Hapus barang katalog ini? Semua data permohonan terkait barang ini juga akan ikut terhapus.')" class="inline">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-xs flex items-center gap-1 transition">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Hapus
-                        </button>
-                    </form>
-                @else
-                    <span class="text-xs font-bold text-gray-400 italic">Data telah disalurkan dan dikunci</span>
-                @endif
+                        Hapus
+                    </button>
+                </form>
             </div>
         </div>
         @endforeach
