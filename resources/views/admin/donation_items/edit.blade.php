@@ -92,7 +92,10 @@
                     <select id="status" name="status" required
                             class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-semibold transition">
                         <option value="tersedia" {{ old('status', $donationItem->status) === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                        <option value="disalurkan" {{ old('status', $donationItem->status) === 'disalurkan' ? 'selected' : '' }}>Sudah Disalurkan</option>
+                        <option value="arsip" {{ old('status', $donationItem->status) === 'arsip' ? 'selected' : '' }}>Arsip</option>
+                        @if($donationItem->status === 'disalurkan')
+                            <option value="disalurkan" selected>Sudah Disalurkan</option>
+                        @endif
                     </select>
                     @error('status')
                         <p class="text-xs text-red-500 font-semibold mt-1">{{ $message }}</p>
