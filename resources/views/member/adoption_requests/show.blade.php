@@ -194,35 +194,75 @@
                         @endif
 
                         @if($adoptionRequest->status === 'menunggu_pembayaran')
-                            <div class="bg-amber-50 border border-amber-100 p-5 rounded-2xl mb-6">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="material-symbols-outlined text-amber-600">account_balance</span>
-                                    <h4 class="font-black text-amber-900">Tagihan Pembayaran</h4>
+                            {{-- Warning Banner --}}
+                            <div class="bg-amber-50 border border-amber-200/60 p-4 rounded-2xl mb-6 flex items-start gap-4">
+                                <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-[16px] font-bold">priority_high</span>
                                 </div>
-                                <p class="text-xs text-amber-800 mb-4 font-medium leading-relaxed">Segera lakukan pembayaran biaya reparasi/ongkir sebesar <strong class="text-lg">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong> agar sepatu ini menjadi milik Anda! <br><strong>PENTING:</strong> Sistem berlaku Siapa Cepat Dia Dapat. Sepatu akan dikunci <u>HANYA SETELAH</u> Anda mengunggah bukti transfer.</p>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
-                                    <div class="bg-white p-4 rounded-xl border border-amber-200/60 shadow-sm">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase">Bank BCA</p>
-                                        <p class="font-mono text-lg font-black text-gray-900 my-0.5">8100978521</p>
-                                        <p class="text-[11px] font-bold text-gray-500">a.n PT TERANG GARAM SOLUSINDO</p>
+                                <p class="text-[13px] text-amber-900 leading-relaxed font-medium">
+                                    <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu akan dikunci hanya setelah bukti transfer diunggah dan terverifikasi. Segera lakukan pembayaran untuk mengamankan barang ini.
+                                </p>
+                            </div>
+
+                            {{-- Tagihan Card --}}
+                            <div class="bg-white border border-gray-100 p-6 md:p-8 rounded-2xl mb-6 shadow-sm">
+                                <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-gray-400">account_balance</span>
+                                        <h4 class="font-black text-gray-900 text-lg">Tagihan Pembayaran</h4>
                                     </div>
-                                    <div class="bg-white p-4 rounded-xl border border-amber-200/60 shadow-sm">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase">Bank Mandiri</p>
-                                        <p class="font-mono text-lg font-black text-gray-900 my-0.5">1300030119047</p>
-                                        <p class="text-[11px] font-bold text-gray-500">a.n PT TERANG GARAM SOLUSINDO</p>
+                                    <div class="text-gray-500 font-medium text-sm">
+                                        Rp {{ number_format($totalBiaya, 0, ',', '.') }}
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="bg-white p-5 rounded-xl border border-gray-200">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bank BCA</p>
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-mono text-xl font-black text-gray-900">8100978521</p>
+                                            <button type="button" x-data="{ copied: false }" @click="navigator.clipboard.writeText('8100978521'); copied = true; setTimeout(() => copied = false, 2000)" class="text-xs font-bold text-gray-500 border border-gray-200 rounded px-2 py-1 flex items-center gap-1 hover:bg-gray-50 transition">
+                                                <span class="material-symbols-outlined text-[12px]" x-text="copied ? 'check' : 'content_copy'"></span> 
+                                                <span x-text="copied ? 'Tersalin!' : 'Copy'"></span>
+                                            </button>
+                                        </div>
+                                        <p class="text-[11px] font-bold text-gray-500 mt-2">a.n PT TERANG GARAM SOLUSINDO</p>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-xl border border-gray-200">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bank Mandiri</p>
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-mono text-xl font-black text-gray-900">1300030119047</p>
+                                            <button type="button" x-data="{ copied: false }" @click="navigator.clipboard.writeText('1300030119047'); copied = true; setTimeout(() => copied = false, 2000)" class="text-xs font-bold text-gray-500 border border-gray-200 rounded px-2 py-1 flex items-center gap-1 hover:bg-gray-50 transition">
+                                                <span class="material-symbols-outlined text-[12px]" x-text="copied ? 'check' : 'content_copy'"></span> 
+                                                <span x-text="copied ? 'Tersalin!' : 'Copy'"></span>
+                                            </button>
+                                        </div>
+                                        <p class="text-[11px] font-bold text-gray-500 mt-2">a.n PT TERANG GARAM SOLUSINDO</p>
                                     </div>
                                 </div>
 
-                                <form action="{{ route('member.adoption-requests.upload-payment', $adoptionRequest->id) }}" method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded-xl border border-amber-100">
+                                <form action="{{ route('member.adoption-requests.upload-payment', $adoptionRequest->id) }}" method="POST" enctype="multipart/form-data" x-data="{ fileName: null }">
                                     @csrf
-                                    <label class="block text-xs font-bold text-gray-700 mb-2">Upload Bukti Transfer</label>
-                                    <div class="flex flex-col md:flex-row items-start md:items-center gap-3">
-                                        <input type="file" name="bukti_pembayaran" accept="image/jpeg,image/png,image/jpg" required class="block w-full text-xs text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer border border-gray-200 rounded-lg p-1">
-                                        <button type="submit" class="w-full md:w-auto shrink-0 px-6 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-lg transition shadow-sm whitespace-nowrap flex items-center justify-center gap-2">
-                                            <span class="material-symbols-outlined text-[18px]">upload</span> Kirim Bukti
-                                        </button>
+                                    <div class="relative border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl p-8 text-center transition cursor-pointer mb-4" onclick="document.getElementById('bukti_pembayaran').click()">
+                                        <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" accept="image/jpeg,image/png,image/jpg,application/pdf" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
+                                        
+                                        <div class="w-10 h-10 bg-white shadow-sm border border-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-600">
+                                            <span class="material-symbols-outlined text-[20px]">upload</span>
+                                        </div>
+                                        <p class="text-sm font-bold text-gray-700 mb-1" x-show="!fileName">Seret bukti transfer ke sini, atau <span class="text-[#22AF85] underline">pilih file</span></p>
+                                        <p class="text-[11px] text-gray-500" x-show="!fileName">Format JPG, PNG, atau PDF, maks 5MB</p>
+                                        
+                                        <div x-show="fileName" class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200" style="display: none;">
+                                            <span class="material-symbols-outlined text-[14px] text-gray-400">attach_file</span>
+                                            <span class="text-xs font-bold text-gray-700" x-text="fileName"></span>
+                                            <button type="button" @click.stop="fileName = null; document.getElementById('bukti_pembayaran').value = ''" class="text-gray-400 hover:text-red-500 ml-1">
+                                                <span class="material-symbols-outlined text-[14px]">close</span>
+                                            </button>
+                                        </div>
                                     </div>
+                                    <button type="submit" class="w-full py-3.5 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition shadow-md shadow-[#22AF85]/20 flex items-center justify-center gap-2">
+                                        Kirim Bukti Transfer &rarr;
+                                    </button>
                                 </form>
                             </div>
                         @endif
@@ -255,13 +295,17 @@
                                             @if($srv)
                                                 <div class="flex justify-between items-center py-3 px-3">
                                                     <span class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                        <span class="material-symbols-outlined text-[16px] text-gray-400">check_circle</span>
+                                                        <span class="material-symbols-outlined text-[16px] text-[#22AF85]">check_circle</span>
                                                         {{ $srv->jasa_nama_manual ?: ($srv->service ? $srv->service->name : 'Layanan') }}
                                                     </span>
                                                     <span class="text-sm font-bold text-gray-900">Rp {{ number_format($srv->jasa_harga, 0, ',', '.') }}</span>
                                                 </div>
                                             @endif
                                         @endforeach
+                                        <div class="flex justify-between items-center py-3 px-3 border-t border-dashed border-gray-200 mt-2">
+                                            <span class="text-[11px] font-bold text-gray-500">Subtotal</span>
+                                            <span class="text-[11px] font-bold text-gray-500">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
+                                        </div>
                                     </div>
                                 @else
                                     <div class="p-5 text-center text-sm text-gray-500 font-medium flex flex-col items-center justify-center gap-2">
@@ -269,8 +313,8 @@
                                         Tidak ada jasa berbayar yang dipilih. (Gratis)
                                     </div>
                                 @endif
-                                <div class="bg-[#22AF85]/10 px-5 py-4 border-t border-[#22AF85]/20 flex justify-between items-center">
-                                    <span class="font-black text-gray-800 text-sm">Total Pembayaran</span>
+                                <div class="bg-gray-900 px-5 py-4 flex justify-between items-center">
+                                    <span class="font-bold text-gray-400 text-[10px] uppercase tracking-wider">Total Pembayaran</span>
                                     <span class="text-xl font-black text-[#22AF85]">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
                                 </div>
                             </div>
