@@ -49,10 +49,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Shoe Workshop">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-
-    {{-- Favicon --}}
+    {{-- Favicon Standar --}}
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 
     {{-- Preconnect to external origins --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
