@@ -85,12 +85,39 @@
             {{-- ── PROGRESS STEPPER ── --}}
             @php
                 $timelineArray = (array) $result['timeline'];
+                $isOnHold = $result['is_on_hold'] ?? false;
+
+                // Ketika CX_FOLLOWUP, API tidak set is_completed/is_current dengan benar.
+                // Kita deteksi sendiri: stage terakhir yang punya waktu = stage aktif CX.
+                if ($isOnHold) {
+                    $keys = array_keys($timelineArray);
+                    $lastWithTime = -1;
+                    foreach ($keys as $pos => $idx) {
+                        if (!empty($timelineArray[$idx]['waktu'])) {
+                            $lastWithTime = $pos;
+                        }
+                    }
+                    foreach ($keys as $pos => $idx) {
+                        if ($lastWithTime >= 0 && $pos < $lastWithTime) {
+                            $timelineArray[$idx]['is_completed'] = true;
+                            $timelineArray[$idx]['is_current']   = false;
+                        } elseif ($pos === $lastWithTime) {
+                            $timelineArray[$idx]['is_completed'] = false;
+                            $timelineArray[$idx]['is_current']   = true; // CX_FOLLOWUP stage
+                        } else {
+                            $timelineArray[$idx]['is_completed'] = false;
+                            $timelineArray[$idx]['is_current']   = false;
+                        }
+                    }
+                }
+
                 $totalStages = count($timelineArray);
                 $completedCount = 0;
                 foreach ($timelineArray as $stage) {
                     if ($stage['is_completed'] ?? false) $completedCount++;
                 }
-                $percent = $totalStages > 1 ? (($completedCount - 1) / ($totalStages - 1)) * 100 : 0;
+                // Hitung progres: termasuk stage CX_FOLLOWUP agar garis maju ke step aktif
+                $percent = $totalStages > 1 ? ($completedCount / ($totalStages - 1)) * 100 : 0;
                 $percent = max(0, min(100, $percent));
             @endphp
 
@@ -112,6 +139,7 @@
                             @php
                                 $done = $stage['is_completed'] ?? false;
                                 $curr = $stage['is_current'] ?? false;
+                                $isCxStep = $curr && $isOnHold;
                                 $lbl = strtolower($stage['label'] ?? '');
                                 if (str_contains($lbl,'terima') || str_contains($lbl,'diterima')) $ico='check_circle';
                                 elseif (str_contains($lbl,'cuci')) $ico='cleaning_services';
@@ -123,10 +151,10 @@
                             @endphp
                             <div class="flex flex-col items-center gap-2 relative z-10 min-w-[70px]">
                                 <div class="w-9 h-9 rounded-full flex items-center justify-center border-2 border-white shadow-sm text-white transition-all
-                                    {{ $done || $curr ? 'bg-[#22AF85]' : 'bg-gray-200 text-gray-400' }}">
-                                    <span class="material-symbols-outlined !text-[16px]" @if($done || $curr) style="font-variation-settings:'FILL' 1" @endif>{{ $ico }}</span>
+                                    {{ $isCxStep ? 'bg-orange-500' : ($done || $curr ? 'bg-[#22AF85]' : 'bg-gray-200 text-gray-400') }}">
+                                    <span class="material-symbols-outlined !text-[16px]" @if($done || $curr) style="font-variation-settings:'FILL' 1" @endif>{{ $isCxStep ? 'report_problem' : $ico }}</span>
                                 </div>
-                                <span class="text-[9px] font-bold text-center uppercase leading-tight {{ $done || $curr ? 'text-[#22AF85]' : 'text-gray-400' }}">{{ $stage['label'] ?? '' }}</span>
+                                <span class="text-[9px] font-bold text-center uppercase leading-tight {{ $isCxStep ? 'text-orange-500' : ($done || $curr ? 'text-[#22AF85]' : 'text-gray-400') }}">{{ $stage['label'] ?? '' }}</span>
                             </div>
                         @endforeach
                     </div>
