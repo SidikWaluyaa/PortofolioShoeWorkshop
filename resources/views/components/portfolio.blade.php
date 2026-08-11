@@ -19,13 +19,11 @@
              draggable="false">
 
         {{-- BEFORE (clipped left) --}}
-        <div class="absolute inset-0 overflow-hidden pointer-events-none"
-             :style="'width:' + position + '%'">
+        <div class="absolute inset-0 pointer-events-none"
+             :style="'clip-path: inset(0 ' + (100 - position) + '% 0 0)'">
             <img src="{{ $featured->before_image_url }}"
                  alt="Sebelum"
                  class="absolute inset-0 w-full h-full object-cover"
-                 style="min-width: 100vw; max-width: none;"
-                 :style="'width:' + (10000/position) + '%; max-width: none'"
                  draggable="false">
         </div>
 
