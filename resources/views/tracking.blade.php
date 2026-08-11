@@ -68,7 +68,14 @@
                 <p class="text-xs font-bold text-[#22AF85] tracking-widest uppercase mb-1">Tracking Order</p>
                 <div class="flex flex-wrap items-center gap-3">
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-[#1c1c17] tracking-tight font-mono">{{ $result['spk_number'] ?? '-' }}</h1>
-                    <span class="bg-[#22AF85] text-white text-xs font-bold px-3 py-1 rounded-full">{{ strtoupper($result['current_status']['label'] ?? '-') }}</span>
+                    @if(($result['is_on_hold'] ?? false))
+                        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                            <span class="material-symbols-outlined !text-[14px]">warning</span>
+                            {{ $result['status_label'] ?? 'CX Follow Up' }}
+                        </span>
+                    @else
+                        <span class="bg-[#22AF85] text-white text-xs font-bold px-3 py-1 rounded-full">{{ strtoupper($result['current_status']['label'] ?? '-') }}</span>
+                    @endif
                     @if(isset($result['estimated_finish_date']))
                         <span class="text-gray-400 text-xs">Est. Selesai: {{ \Carbon\Carbon::parse($result['estimated_finish_date'])->format('d M Y') }}</span>
                     @endif
@@ -126,6 +133,26 @@
                 </div>
             </div>
 
+            {{-- ── BANNER CX FOLLOW UP ── --}}
+            @if(($result['is_on_hold'] ?? false))
+            <div class="mb-6 fade-in-up bg-orange-50 border border-orange-200 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start" style="animation-delay:.07s">
+                <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined !text-[22px]">report_problem</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-extrabold text-orange-700 mb-1">{{ $result['hold_title'] ?? 'Konfirmasi Diperlukan' }}</p>
+                    <p class="text-xs text-orange-600 leading-relaxed">{{ $result['hold_message'] ?? '' }}</p>
+                    @if(($result['report_issue_url'] ?? null))
+                    <a href="{{ $result['report_issue_url'] }}" target="_blank"
+                       class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-orange-700 bg-orange-100 hover:bg-orange-200 px-3 py-1.5 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined !text-[14px]">open_in_new</span>
+                        Lihat Laporan Kendala (CX Report)
+                    </a>
+                    @endif
+                </div>
+            </div>
+            @endif
+
             {{-- ── MAIN GRID ── --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start">
 
@@ -179,29 +206,47 @@
                     @endif
 
                     {{-- Footer Actions --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 fade-in-up" style="animation-delay:.25s">
-                        <a href="{{ route('warranty.index') }}?spk_number={{ $result['spk_number'] ?? '' }}"
-                            class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex items-center gap-3 hover:border-[#22AF85] hover:shadow-md transition-all group">
-                            <div class="w-10 h-10 bg-red-50 text-red-500 rounded-lg flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined !text-[20px]">verified_user</span>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-bold text-[#1c1c17] group-hover:text-[#22AF85] transition-colors leading-snug">Ajukan Klaim Garansi</p>
-                                <p class="text-[11px] text-gray-400 mt-0.5 leading-snug">Garansi 100 hari kerja</p>
-                            </div>
-                            <span class="material-symbols-outlined text-gray-300 !text-[18px] shrink-0">arrow_forward_ios</span>
-                        </a>
-                        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank"
-                            class="bg-[#22AF85] rounded-xl border border-[#22AF85] shadow-sm p-4 flex items-center gap-3 hover:bg-[#1d9974] transition-all group">
+                    <div class="flex flex-col gap-3 fade-in-up" style="animation-delay:.25s">
+
+                        {{-- Tombol CX Report (hanya muncul jika on hold) --}}
+                        @if(($result['is_on_hold'] ?? false) && ($result['report_issue_url'] ?? null))
+                        <a href="{{ $result['report_issue_url'] }}" target="_blank"
+                            class="bg-orange-500 rounded-xl border border-orange-500 shadow-sm p-4 flex items-center gap-3 hover:bg-orange-600 transition-all group">
                             <div class="w-10 h-10 bg-white/20 text-white rounded-lg flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined !text-[20px]">support_agent</span>
+                                <span class="material-symbols-outlined !text-[20px]">report_problem</span>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-bold text-white leading-snug">Chat Konsultan</p>
-                                <p class="text-[11px] text-white/70 mt-0.5 leading-snug">Tanya soal progres sepatu</p>
+                                <p class="text-sm font-bold text-white leading-snug">Lihat Laporan Kendala</p>
+                                <p class="text-[11px] text-white/80 mt-0.5 leading-snug">Cek detail CX Report sepatu Anda</p>
                             </div>
-                            <span class="material-symbols-outlined text-white/50 !text-[18px] shrink-0">arrow_forward_ios</span>
+                            <span class="material-symbols-outlined text-white/60 !text-[18px] shrink-0">open_in_new</span>
                         </a>
+                        @endif
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <a href="{{ route('warranty.index') }}?spk_number={{ $result['spk_number'] ?? '' }}"
+                                class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex items-center gap-3 hover:border-[#22AF85] hover:shadow-md transition-all group">
+                                <div class="w-10 h-10 bg-red-50 text-red-500 rounded-lg flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined !text-[20px]">verified_user</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-[#1c1c17] group-hover:text-[#22AF85] transition-colors leading-snug">Ajukan Klaim Garansi</p>
+                                    <p class="text-[11px] text-gray-400 mt-0.5 leading-snug">Garansi 100 hari kerja</p>
+                                </div>
+                                <span class="material-symbols-outlined text-gray-300 !text-[18px] shrink-0">arrow_forward_ios</span>
+                            </a>
+                            <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank"
+                                class="bg-[#22AF85] rounded-xl border border-[#22AF85] shadow-sm p-4 flex items-center gap-3 hover:bg-[#1d9974] transition-all group">
+                                <div class="w-10 h-10 bg-white/20 text-white rounded-lg flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined !text-[20px]">support_agent</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-white leading-snug">Chat Konsultan</p>
+                                    <p class="text-[11px] text-white/70 mt-0.5 leading-snug">Tanya soal progres sepatu</p>
+                                </div>
+                                <span class="material-symbols-outlined text-white/50 !text-[18px] shrink-0">arrow_forward_ios</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -214,14 +259,17 @@
                             <div class="space-y-5">
                                 @foreach($timelineArray as $stageKey => $stage)
                                     @php
-                                        $isCompleted = $stage['is_completed'] ?? false;
-                                        $isCurrent   = $stage['is_current'] ?? false;
-                                        $timestamp   = $stage['waktu'] ?? null;
+                                        $isCompleted  = $stage['is_completed'] ?? false;
+                                        $isCurrent    = $stage['is_current'] ?? false;
+                                        $isCxFollowup = $isCurrent && ($result['is_on_hold'] ?? false);
+                                        $timestamp    = $stage['waktu'] ?? null;
                                     @endphp
                                     <div class="flex gap-3 relative z-10 {{ (!$isCompleted && !$isCurrent) ? 'opacity-50' : '' }}">
                                         <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center shrink-0 shadow-sm
-                                            {{ $isCurrent ? 'bg-[#FFC232] text-white' : ($isCompleted ? 'bg-[#22AF85] text-white' : 'bg-gray-100 text-gray-400') }}">
-                                            @if($isCurrent)
+                                            {{ $isCxFollowup ? 'bg-orange-500 text-white' : ($isCurrent ? 'bg-[#FFC232] text-white' : ($isCompleted ? 'bg-[#22AF85] text-white' : 'bg-gray-100 text-gray-400')) }}">
+                                            @if($isCxFollowup)
+                                                <span class="material-symbols-outlined !text-[16px]">report_problem</span>
+                                            @elseif($isCurrent)
                                                 <span class="material-symbols-outlined !text-[16px]">autorenew</span>
                                             @elseif($isCompleted)
                                                 <span class="material-symbols-outlined !text-[16px]">check</span>
@@ -232,7 +280,9 @@
                                         <div class="flex-1 pt-1.5">
                                             <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
                                                 <span class="text-sm font-bold text-[#1c1c17]">{{ $stage['label'] ?? '-' }}</span>
-                                                @if($isCurrent)
+                                                @if($isCxFollowup)
+                                                    <span class="bg-orange-100 text-orange-600 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">CX Follow Up</span>
+                                                @elseif($isCurrent)
                                                     <span class="bg-[#FFC232]/20 text-[#b38a00] text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Sedang Berjalan</span>
                                                 @elseif($isCompleted)
                                                     <span class="bg-[#22AF85]/10 text-[#22AF85] text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Selesai</span>
@@ -243,7 +293,15 @@
                                             @if($timestamp)
                                                 <p class="text-[11px] text-gray-400">{{ \Carbon\Carbon::parse($timestamp)->format('d M Y, H:i') }} WIB</p>
                                             @endif
-                                            @if($isCurrent && isset($result['current_status']['description']))
+                                            @if($isCxFollowup)
+                                                <p class="text-xs text-orange-500 mt-1.5 leading-relaxed">{{ $result['hold_message'] ?? '' }}</p>
+                                                @if($result['report_issue_url'] ?? null)
+                                                <a href="{{ $result['report_issue_url'] }}" target="_blank" class="inline-flex items-center gap-1 mt-1.5 text-[10px] font-bold text-orange-600 underline underline-offset-2">
+                                                    <span class="material-symbols-outlined !text-[12px]">open_in_new</span>
+                                                    Lihat Laporan Kendala
+                                                </a>
+                                                @endif
+                                            @elseif($isCurrent && isset($result['current_status']['description']))
                                                 <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">{{ $result['current_status']['description'] }}</p>
                                             @endif
                                         </div>
