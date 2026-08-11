@@ -330,6 +330,11 @@
                                                     Lihat Laporan Kendala
                                                 </a>
                                                 @endif
+                                            @elseif($isCurrent && ($result['is_revising'] ?? false))
+                                                <div class="mt-2 bg-blue-50 border border-blue-100 rounded-lg p-3">
+                                                    <p class="text-xs font-bold text-blue-700 mb-1">{{ $result['revision_title'] ?? 'Pengerjaan Ulang (Revisi)' }}</p>
+                                                    <p class="text-[11px] text-blue-600 leading-relaxed">{{ $result['revision_message'] ?? ($result['current_status']['description'] ?? '') }}</p>
+                                                </div>
                                             @elseif($isCurrent && isset($result['current_status']['description']))
                                                 <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">{{ $result['current_status']['description'] }}</p>
                                             @endif
