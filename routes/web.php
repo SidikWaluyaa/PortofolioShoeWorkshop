@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::view('/privacy-policy', 'pages.privacy-policy')->name('privacy-policy');
+Route::view('/terms-of-service', 'pages.terms-of-service')->name('terms-of-service');
 Route::get('/api/debug-rewards', function() {
     $rewards = \App\Models\Reward::all();
     $data = [];
