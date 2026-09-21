@@ -146,8 +146,18 @@ class CheckinService
         $daysSinceLast = $lastDate->diffInDays(Carbon::today());
 
         if ($daysSinceLast > 1) {
-            // Streak is broken — but show where they were
-            $currentMingguKe = $lastCheckin->minggu_ke;
+            // Streak is broken. The user will start a new streak when they check in next.
+            $isCompletedWeek = ($lastCheckin->hari_ke >= 7 && $lastCheckin->status === 'approved');
+            $currentMingguKe = $isCompletedWeek ? $lastCheckin->minggu_ke + 1 : $lastCheckin->minggu_ke;
+            
+            return [
+                'minggu_ke' => $currentMingguKe,
+                'hari_ke' => 0,
+                'streak_complete' => false,
+                'can_claim' => false,
+                'checkins' => collect(),
+                'already_checked_in_today' => false,
+            ];
         }
 
         // Get all check-ins for the current minggu_ke

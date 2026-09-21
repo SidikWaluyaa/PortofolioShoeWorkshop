@@ -172,13 +172,80 @@
                                         <p class="font-mono text-emerald-900 font-black text-xl">{{ $adoptionRequest->resi_pengiriman }}</p>
                                     </div>
                                 </div>
-                                <div class="w-full md:w-auto shrink-0 mt-2 md:mt-0">
-                                    <form action="{{ route('member.adoption-requests.complete', $adoptionRequest->id) }}" method="POST" onsubmit="confirmAction(event, this, 'Apakah Anda yakin sudah menerima sepatu ini dalam kondisi baik?')">
-                                        @csrf
-                                        <button type="submit" class="w-full px-5 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition shadow-md shadow-[#22AF85]/20 flex items-center justify-center gap-2">
-                                            <span class="material-symbols-outlined text-[18px]">done_all</span> Pesanan Diterima
-                                        </button>
-                                    </form>
+                                <div class="w-full md:w-auto shrink-0 mt-2 md:mt-0" x-data="{ showModal: false }">
+                                    <button @click="showModal = true" type="button" class="w-full px-5 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition shadow-md shadow-[#22AF85]/20 flex items-center justify-center gap-2">
+                                        <span class="material-symbols-outlined text-[18px]">done_all</span> Pesanan Diterima
+                                    </button>
+
+                                    <!-- Modal Upload Bukti Penerimaan -->
+                                    <div x-show="showModal" class="fixed inset-0 z-[999] overflow-y-auto" style="display: none;">
+                                        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                            <div x-show="showModal" x-transition.opacity class="fixed inset-0 transition-opacity" aria-hidden="true">
+                                                <div class="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"></div>
+                                            </div>
+
+                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                                            <div x-show="showModal" 
+                                                 x-transition:enter="ease-out duration-300" 
+                                                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                                                 x-transition:leave="ease-in duration-200" 
+                                                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                                                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                                 class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                                                
+                                                <form action="{{ route('member.adoption-requests.complete', $adoptionRequest->id) }}" method="POST" enctype="multipart/form-data" 
+                                                      x-data="{ fileName: null }"
+                                                      @submit="
+                                                          let fileInput = $refs.fileUpload;
+                                                          if (fileInput.files.length > 0 && fileInput.files[0].size > 5 * 1024 * 1024) {
+                                                              $event.preventDefault();
+                                                              Swal.fire({
+                                                                  title: 'File Terlalu Besar!',
+                                                                  text: 'Ukuran foto maksimal adalah 5MB. Silakan kompres foto Anda terlebih dahulu.',
+                                                                  icon: 'error',
+                                                                  confirmButtonColor: '#22AF85'
+                                                              });
+                                                          }
+                                                      ">
+                                                    @csrf
+                                                    <div class="bg-white px-6 pt-6 pb-6">
+                                                        <div class="flex justify-between items-center mb-5">
+                                                            <h3 class="text-lg leading-6 font-black text-gray-900 flex items-center gap-2">
+                                                                <span class="material-symbols-outlined text-[#22AF85]">inventory_2</span> Bukti Penerimaan
+                                                            </h3>
+                                                            <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-500">
+                                                                <span class="material-symbols-outlined">close</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="mt-2">
+                                                            <p class="text-sm text-gray-500 mb-4">Mohon unggah foto paket yang telah Anda terima sebagai bukti bahwa pesanan telah sampai dengan selamat.</p>
+                                                            
+                                                            <div class="relative border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl p-8 text-center transition cursor-pointer mb-4" onclick="document.getElementById('bukti_penerimaan').click()">
+                                                                <input type="file" x-ref="fileUpload" id="bukti_penerimaan" name="bukti_penerimaan" accept="image/jpeg,image/png,image/jpg,application/pdf" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
+                                                                
+                                                                <div class="w-10 h-10 bg-white shadow-sm border border-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-600">
+                                                                    <span class="material-symbols-outlined text-[20px]">add_a_photo</span>
+                                                                </div>
+                                                                
+                                                                <p class="text-sm text-gray-800 font-bold mb-1" x-text="fileName ? fileName : 'Ketuk untuk foto / pilih file'"></p>
+                                                                <p class="text-xs text-gray-400 font-medium" x-show="!fileName">Format JPG, PNG, max 5MB</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="bg-gray-50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                                                        <button type="button" @click="showModal = false" class="w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-6 py-2.5 bg-white text-base font-bold text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm transition">
+                                                            Batal
+                                                        </button>
+                                                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-[#22AF85] text-base font-bold text-white hover:bg-[#1a936f] sm:w-auto sm:text-sm transition">
+                                                            Kirim & Selesaikan
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @elseif($adoptionRequest->status === 'selesai' && $adoptionRequest->resi_pengiriman)
@@ -221,7 +288,7 @@
                                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bank BCA</p>
                                         <div class="flex justify-between items-center">
                                             <p class="font-mono text-xl font-black text-gray-900">8100978521</p>
-                                            <button type="button" x-data="{ copied: false }" @click="navigator.clipboard.writeText('8100978521'); copied = true; setTimeout(() => copied = false, 2000)" class="text-xs font-bold text-gray-500 border border-gray-200 rounded px-2 py-1 flex items-center gap-1 hover:bg-gray-50 transition">
+                                            <button type="button" x-data="{ copied: false }" @click="window.copyToClipboard('8100978521', 'BCA'); copied = true; setTimeout(() => copied = false, 2000)" class="text-xs font-bold text-gray-500 border border-gray-200 rounded px-2 py-1 flex items-center gap-1 hover:bg-gray-50 transition">
                                                 <span class="material-symbols-outlined text-[12px]" x-text="copied ? 'check' : 'content_copy'"></span> 
                                                 <span x-text="copied ? 'Tersalin!' : 'Copy'"></span>
                                             </button>
@@ -232,7 +299,7 @@
                                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bank Mandiri</p>
                                         <div class="flex justify-between items-center">
                                             <p class="font-mono text-xl font-black text-gray-900">1300030119047</p>
-                                            <button type="button" x-data="{ copied: false }" @click="navigator.clipboard.writeText('1300030119047'); copied = true; setTimeout(() => copied = false, 2000)" class="text-xs font-bold text-gray-500 border border-gray-200 rounded px-2 py-1 flex items-center gap-1 hover:bg-gray-50 transition">
+                                            <button type="button" x-data="{ copied: false }" @click="window.copyToClipboard('1300030119047', 'Mandiri'); copied = true; setTimeout(() => copied = false, 2000)" class="text-xs font-bold text-gray-500 border border-gray-200 rounded px-2 py-1 flex items-center gap-1 hover:bg-gray-50 transition">
                                                 <span class="material-symbols-outlined text-[12px]" x-text="copied ? 'check' : 'content_copy'"></span> 
                                                 <span x-text="copied ? 'Tersalin!' : 'Copy'"></span>
                                             </button>
@@ -337,6 +404,24 @@
                                 </div>
                             </div>
                         @endif
+
+                        @if($adoptionRequest->bukti_penerimaan)
+                            <div class="mt-4 border-t border-gray-100 pt-6">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Bukti Penerimaan Paket</p>
+                                <div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-xl">
+                                    <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden">
+                                        <img src="/storage/{{ $adoptionRequest->bukti_penerimaan }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-bold text-gray-900">foto_paket.jpg</p>
+                                        <p class="text-xs text-gray-500">Telah diterima</p>
+                                    </div>
+                                    <a href="/storage/{{ $adoptionRequest->bukti_penerimaan }}" target="_blank" class="px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-lg transition shadow-sm">
+                                        Lihat Gambar
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -346,4 +431,53 @@
                 <p class="text-xs text-gray-400 font-medium">Ada masalah dengan pesanan ini? <a href="#" class="text-[#22AF85] hover:underline">Hubungi Admin</a></p>
             </div>
     </div>
+
+    <script>
+        window.copyToClipboard = function(text, bank) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    window.showToast('Nomor Rekening ' + bank + ' berhasil disalin!');
+                }).catch(err => {
+                    fallbackCopy(text, bank);
+                });
+            } else {
+                fallbackCopy(text, bank);
+            }
+        };
+
+        function fallbackCopy(text, bank) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                window.showToast('Nomor Rekening ' + bank + ' berhasil disalin!');
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                alert("Gagal menyalin text");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        window.showToast = function(message) {
+            const existing = document.getElementById('copy-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'copy-toast';
+            toast.className = 'fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl z-[100] transform transition-all translate-y-20 flex items-center gap-3 text-sm font-semibold border border-gray-800';
+            toast.innerHTML = `<span class="material-symbols-outlined text-[#22AF85]">check_circle</span> ` + message;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.remove('translate-y-20'));
+            setTimeout(() => {
+                toast.classList.add('translate-y-20');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+    </script>
 </x-member-layout>

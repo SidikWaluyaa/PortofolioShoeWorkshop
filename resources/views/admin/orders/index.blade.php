@@ -104,16 +104,26 @@
                                 </div>
                                 
                                 @if($order->bukti_pembayaran)
-                                    <div class="mt-2 inline-flex">
-                                        <a href="{{ asset('storage/' . $order->bukti_pembayaran) }}" target="_blank" class="px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg text-[10px] font-bold hover:bg-purple-100 transition flex items-center gap-1">
-                                            <span class="material-symbols-outlined text-[14px]">receipt_long</span> Lihat Struk
-                                        </a>
+                                    <div class="mt-3">
+                                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bukti Transfer Member</p>
+                                        <div class="w-full sm:w-48 h-24 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden cursor-pointer shadow-sm hover:shadow transition" onclick="openImageModal('{{ asset('storage/' . $order->bukti_pembayaran) }}')">
+                                            <img src="{{ asset('storage/' . $order->bukti_pembayaran) }}" alt="Bukti Transfer" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                                        </div>
                                     </div>
                                 @endif
                                 
                                 @if($order->resi_pengiriman)
                                     <div class="mt-2 text-xs font-bold text-emerald-700 flex items-center gap-1">
                                         <span class="material-symbols-outlined text-[14px]">local_shipping</span> Resi: <span class="font-mono bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 ml-1">{{ $order->resi_pengiriman }}</span>
+                                    </div>
+                                @endif
+
+                                @if($order->bukti_penerimaan)
+                                    <div class="mt-3">
+                                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bukti Penerimaan Paket</p>
+                                        <div class="w-full sm:w-48 h-24 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden cursor-pointer shadow-sm hover:shadow transition" onclick="openImageModal('{{ asset('storage/' . $order->bukti_penerimaan) }}')">
+                                            <img src="{{ asset('storage/' . $order->bukti_penerimaan) }}" alt="Bukti Penerimaan" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                                        </div>
                                     </div>
                                 @endif
                             </td>
@@ -136,8 +146,8 @@
                                         <button onclick="confirmAjax('Tandai pesanan ini selesai secara manual? Pastikan barang sudah diterima.', () => ajaxUpdateStatus({{ $order->id }}, 'selesai', this))" class="px-2.5 py-1.5 bg-[#22AF85] hover:bg-[#1a936f] text-white rounded-lg text-xs font-bold transition shadow-sm w-full">Selesaikan</button>
                                     @endif
 
-                                    @if(auth()->user()->role === 'super_admin' && in_array($order->status, ['diproses', 'dikirim', 'selesai']))
-                                        <form action="{{ route('admin.orders.rollback', $order->id) }}" method="POST" class="w-full mt-2" onsubmit="return confirm('Peringatan: Yakin ingin rollback/membatalkan pesanan ini? Barang akan kembali Tersedia di Katalog.');">
+                                    @if(auth()->user()->role === 'super_admin' && in_array($order->status, ['diproses', 'dikirim']))
+                                        <form action="{{ route('admin.orders.rollback', $order->id) }}" method="POST" class="w-full mt-2" onsubmit="confirmBatal(event, this);">
                                             @csrf
                                             <button type="submit" class="px-2.5 py-1.5 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs font-bold transition shadow-sm w-full flex items-center justify-center gap-1">
                                                 <span class="material-symbols-outlined text-[14px]">undo</span> Batal Penyaluran
@@ -263,6 +273,24 @@
             });
         }
 
+        function confirmBatal(event, formElement) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Peringatan!',
+                text: 'Yakin ingin rollback/membatalkan pesanan ini? Barang akan kembali Tersedia di Katalog.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Kembali'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    formElement.submit();
+                }
+            });
+        }
+
         function promptInputResi(reqId) {
             document.getElementById('resi-req-id').value = reqId;
             document.getElementById('resi-input').value = '';
@@ -293,6 +321,34 @@
 
             closeResiModal();
             ajaxUpdateStatus(reqId, 'dikirim', null, { resi_pengiriman: resi.trim() });
+        }
+    </script>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black bg-opacity-80 backdrop-blur-sm" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-[90vh] w-full p-4 flex flex-col items-center justify-center">
+            <button onclick="closeImageModal()" class="absolute -top-4 -right-4 md:top-2 md:right-2 text-white bg-black bg-opacity-50 hover:bg-opacity-80 rounded-full w-10 h-10 flex items-center justify-center transition focus:outline-none">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="imageModalImg" src="" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain pointer-events-auto" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <script>
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('imageModalImg');
+            img.src = src;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = ''; // Restore background scrolling
         }
     </script>
 </x-app-layout>

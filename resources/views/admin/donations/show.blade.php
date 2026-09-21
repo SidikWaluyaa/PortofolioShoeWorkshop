@@ -1,5 +1,12 @@
 <x-app-layout>
-    <x-slot name="header">Detail Donasi #{{ $donation->id }}</x-slot>
+    <x-slot name="header">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.donations.index') }}" class="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            </a>
+            <span class="text-xl font-bold text-gray-900">Kembali ke Daftar</span>
+        </div>
+    </x-slot>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {{-- Left: Donation Details --}}
@@ -58,18 +65,18 @@
                         <p class="text-xs font-medium text-gray-500 mb-2">Foto Sepatu (Donatur)</p>
                         <div class="grid grid-cols-2 gap-2">
                             @foreach($donation->foto_path as $path)
-                                <a href="{{ asset('storage/' . $path) }}" target="_blank" class="block">
-                                    <img src="{{ asset('storage/' . $path) }}" alt="Foto Sepatu" class="w-full h-32 object-cover rounded-xl bg-gray-100 border border-gray-150 hover:opacity-80 transition cursor-pointer" title="Klik untuk memperbesar">
-                                </a>
+                                <div onclick="openImageModal('{{ asset('storage/' . $path) }}')" class="block">
+                                    <img src="{{ asset('storage/' . $path) }}" alt="Foto Sepatu" class="w-full aspect-square object-cover rounded-xl bg-gray-100 border border-gray-150 hover:opacity-80 transition cursor-pointer" title="Klik untuk memperbesar">
+                                </div>
                             @endforeach
                         </div>
                     </div>
                     @if($donation->foto_bukti_path)
                     <div>
                         <p class="text-xs font-medium text-gray-500 mb-2">Bukti Penerimaan (Admin)</p>
-                        <a href="{{ asset('storage/' . $donation->foto_bukti_path) }}" target="_blank" class="block">
-                            <img src="{{ asset('storage/' . $donation->foto_bukti_path) }}" alt="Bukti Penerimaan" class="w-full h-48 object-cover rounded-xl bg-gray-100 border border-gray-150 hover:opacity-80 transition cursor-pointer" title="Klik untuk memperbesar">
-                        </a>
+                        <div onclick="openImageModal('{{ asset('storage/' . $donation->foto_bukti_path) }}')" class="block">
+                            <img src="{{ asset('storage/' . $donation->foto_bukti_path) }}" alt="Bukti Penerimaan" class="w-full aspect-square object-cover rounded-xl bg-gray-100 border border-gray-150 hover:opacity-80 transition cursor-pointer" title="Klik untuk memperbesar">
+                        </div>
                     </div>
                     @endif
                 </div>
@@ -148,7 +155,41 @@
             </div>
             @endif
 
-            <a href="{{ route('admin.donations.index') }}" class="block text-center text-sm font-bold text-gray-500 hover:text-gray-700 transition">← Kembali ke Daftar</a>
+
         </div>
     </div>
+
+    <!-- Image Modal (Global) -->
+    <div id="imageModal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-screen p-4 flex justify-center items-center">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/40 backdrop-blur rounded-full flex items-center justify-center text-white transition">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="modalImage" src="" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl object-contain border-4 border-white/10" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <script>
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = src;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
 </x-app-layout>

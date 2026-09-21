@@ -95,8 +95,8 @@
                             <td class="px-6 py-4 text-center font-bold text-gray-700">Minggu {{ $checkin->minggu_ke }}</td>
                             <td class="px-6 py-4 text-gray-600 font-medium">{{ $checkin->tanggal_checkin->format('d M Y') }}</td>
                             <td class="px-6 py-4 text-center">
-                                @php $scStatus = ['pending'=>'bg-amber-100 text-amber-700','approved'=>'bg-emerald-100 text-emerald-700','rejected'=>'bg-red-100 text-red-700']; @endphp
-                                <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $scStatus[$checkin->status] }}">{{ ucfirst($checkin->status) }}</span>
+                                @php $scStatus = ['pending'=>'bg-amber-100 text-amber-700','approved'=>'bg-emerald-100 text-emerald-700','rejected'=>'bg-red-100 text-red-700', 'failed' => 'bg-gray-100 text-gray-700']; @endphp
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $scStatus[$checkin->status] ?? 'bg-gray-100 text-gray-700' }}">{{ ucfirst($checkin->status) }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <button @click="openModal({{ json_encode($userData) }}, {{ json_encode($streakData) }}, {{ $checkin->minggu_ke }}, '{{ $checkin->status }}', '{{ route('admin.checkins.approve', $checkin) }}', '{{ route('admin.checkins.reject', $checkin) }}')" class="px-3.5 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 active:bg-indigo-800 transition duration-150 shadow-sm shadow-indigo-100 hover:shadow-md flex items-center gap-1">
