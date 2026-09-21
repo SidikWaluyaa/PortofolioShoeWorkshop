@@ -202,7 +202,10 @@
                           class="space-y-0.5 mt-1.5">
                           
                           @foreach($sec['links'] as $link)
-                              @php $isActive = request()->routeIs($link['route'] . '*'); @endphp
+                              @php 
+                                  $baseRoute = preg_replace('/\.index$/', '', $link['route']);
+                                  $isActive = request()->routeIs($link['route']) || request()->routeIs($baseRoute . '.*'); 
+                              @endphp
                               <a href="{{ route($link['route']) }}"
                                  data-label="{{ strtolower($link['label']) }}"
                                  x-show="!searchQuery || $el.dataset.label.includes(searchQuery.toLowerCase())"

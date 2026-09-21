@@ -23,6 +23,7 @@ class DonationRequest extends Model
         'status',
         'bukti_pembayaran',
         'resi_pengiriman',
+        'bukti_penerimaan',
     ];
 
     protected $casts = [

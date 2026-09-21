@@ -541,10 +541,11 @@
                     <div class="pt-3 border-t border-gray-100 flex flex-col gap-2.5">
                         
                         ${req.bukti_pembayaran ? `
-                            <div class="flex items-center gap-2 bg-purple-50 p-2.5 rounded-xl border border-purple-100 mb-1">
-                                <a href="/storage/${req.bukti_pembayaran}" target="_blank" class="text-xs font-bold text-purple-700 hover:underline flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[16px]">receipt_long</span> Lihat Bukti Transfer Member
-                                </a>
+                            <div class="mb-2">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Bukti Transfer Member</p>
+                                <div class="w-full sm:w-64 h-32 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden cursor-pointer shadow-sm hover:shadow transition" onclick="openImageModal('/storage/${req.bukti_pembayaran}')">
+                                    <img src="/storage/${req.bukti_pembayaran}" alt="Bukti Transfer" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                                </div>
                             </div>
                         ` : ''}
                         
@@ -567,10 +568,11 @@
                             ` : ''}
 
                             ${['diproses', 'dikirim', 'selesai'].includes(req.status) ? `
-                                <div class="w-full bg-blue-50 text-blue-700 px-3 py-2 rounded-lg text-[11px] font-bold border border-blue-100 flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[14px]">info</span>
-                                    Kelola pesanan ini (input resi & penyelesaian) di menu <strong>Pesanan & Pengiriman</strong>.
-                                </div>
+                                <a href="{{ route('admin.orders.index') }}" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2.5 rounded-lg text-[11px] font-bold border border-blue-200 hover:border-blue-300 flex items-center gap-2 transition duration-200 shadow-sm group cursor-pointer">
+                                    <span class="material-symbols-outlined text-[16px] text-blue-500 group-hover:text-blue-700 transition">info</span>
+                                    <span class="flex-1">Kelola pesanan ini (input resi & penyelesaian) di menu <strong class="underline decoration-blue-300 underline-offset-2">Pesanan & Pengiriman</strong>.</span>
+                                    <span class="material-symbols-outlined text-[14px] text-blue-400 group-hover:text-blue-700 transition group-hover:translate-x-0.5">arrow_forward</span>
+                                </a>
                             ` : ''}
                         </div>
 
@@ -929,6 +931,34 @@
             }
             
             form.submit();
+        }
+    </script>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black bg-opacity-80 backdrop-blur-sm" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-[90vh] w-full p-4 flex flex-col items-center justify-center">
+            <button onclick="closeImageModal()" class="absolute -top-4 -right-4 md:top-2 md:right-2 text-white bg-black bg-opacity-50 hover:bg-opacity-80 rounded-full w-10 h-10 flex items-center justify-center transition focus:outline-none">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="imageModalImg" src="" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain pointer-events-auto" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <script>
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('imageModalImg');
+            img.src = src;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = ''; // Restore background scrolling
         }
     </script>
 </x-app-layout>

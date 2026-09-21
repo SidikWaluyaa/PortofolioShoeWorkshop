@@ -78,7 +78,7 @@ class AdoptionRequestController extends Controller
         return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi admin.');
     }
 
-    public function complete(DonationRequest $adoptionRequest)
+    public function complete(\Illuminate\Http\Request $request, DonationRequest $adoptionRequest)
     {
         if ($adoptionRequest->user_id !== auth()->id()) {
             abort(403);
@@ -88,7 +88,40 @@ class AdoptionRequestController extends Controller
             return redirect()->back()->with('error', 'Permohonan belum bisa diselesaikan. Status saat ini: ' . $adoptionRequest->status);
         }
 
-        $adoptionRequest->update(['status' => 'selesai']);
+        $request->validate([
+            'bukti_penerimaan' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+        ]);
+
+        $path = null;
+        if ($request->hasFile('bukti_penerimaan')) {
+            $path = $request->file('bukti_penerimaan')->store('receipts', 'public');
+        }
+
+        $adoptionRequest->update([
+            'status' => 'selesai',
+            'bukti_penerimaan' => $path
+        ]);
+
+        // Send Notification to Member
+        auth()->user()->notify(new \App\Notifications\SystemNotification(
+            'Pesanan Diterima!',
+            'Terima kasih telah mengonfirmasi penerimaan paket. Sepatu adopsi kini resmi menjadi milik Anda.',
+            route('member.adoption-requests.show', $adoptionRequest->id),
+            'check_circle',
+            'success'
+        ));
+
+        // Send Notification to Admin
+        $admins = \App\Models\User::whereIn('role', ['admin', 'super_admin'])->get();
+        if ($admins->isNotEmpty()) {
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
+                'Paket Telah Diterima Member',
+                auth()->user()->name . ' telah menerima paket dan pesanan otomatis diselesaikan.',
+                route('admin.orders.index'),
+                'inventory_2',
+                'success'
+            ));
+        }
 
         return redirect()->back()->with('success', 'Terima kasih! Pesanan telah diselesaikan. Sepatu kini resmi menjadi milik Anda.');
     }
