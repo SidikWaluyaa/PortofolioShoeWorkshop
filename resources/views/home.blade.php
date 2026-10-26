@@ -63,7 +63,7 @@
     @include('layouts.navigation-public')
 
     <main class="pt-20">
-        <div class="relative overflow-hidden bg-home-grid w-full">
+        <div class="relative overflow-x-clip bg-home-grid w-full">
             <!-- Glowing background blobs (Aurora style) -->
             <div
                 class="absolute top-0 right-[-10%] w-[550px] h-[550px] rounded-full bg-[#22AF85]/15 blur-[110px] pointer-events-none z-0">
@@ -106,10 +106,7 @@
                 </div>
             </section>
 
-            {{-- 5. CARA KERJA --}}
-            <section id="workflow" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
-                @include('components.workflow', ['workflow' => $workflow])
-            </section>
+            {{-- Cara kerja is now part of "Alur Kerja Kami" inside the about section --}}
 
             {{-- 6. REVIEW --}}
             <section id="review"
