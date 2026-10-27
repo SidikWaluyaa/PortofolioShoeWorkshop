@@ -214,6 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Open the tab named in the URL, e.g. /layanan#sol from the footer
+  const openCategoryFromHash = () => {
+    const slug = decodeURIComponent(location.hash.slice(1));
+    const btn = slug && document.querySelector('.cat-nav button[data-cat="' + CSS.escape(slug) + '"]');
+    if (!btn) return;
+    btn.click();
+    btn.closest('.cat-nav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  openCategoryFromHash();
+  window.addEventListener('hashchange', openCategoryFromHash);
 });
 
 // Real-time DOM Search

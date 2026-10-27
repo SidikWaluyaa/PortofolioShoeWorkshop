@@ -24,6 +24,8 @@
                             <x-input-error class="mt-2" :messages="$errors->get('category')" />
                         </div>
 
+                        @include('admin.projects._ticket-fields')
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                             <div>
                                 <x-input-label for="before_image" :value="__('Before Image')" />

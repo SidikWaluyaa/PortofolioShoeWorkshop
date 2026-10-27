@@ -152,7 +152,7 @@
                                             <span class="material-symbols-outlined !text-xl text-[#1c1c17] fill-1">star</span>
                                         </div>
                                         <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">4.9/5 Rating</span>
+                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">{{ $globalSettings['google_rating'] ?? '4,4' }}/5 di Google</span>
                                             <span class="text-[10px] font-semibold text-white/90 xl:text-xs drop-shadow-sm">84K+ Pelanggan</span>
                                         </div>
                                     </div>
@@ -277,7 +277,7 @@
                                                 <span class="material-symbols-outlined !text-base text-[#1c1c17] fill-1">star</span>
                                             </div>
                                             <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">4.9/5 Rating</span>
+                                                <span class="text-[11px] font-black text-white drop-shadow-md">{{ $globalSettings['google_rating'] ?? '4,4' }}/5 di Google</span>
                                                 <span class="text-[9px] font-semibold text-white/90 drop-shadow-sm">84K+ Pelanggan</span>
                                             </div>
                                         </div>

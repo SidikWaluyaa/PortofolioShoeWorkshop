@@ -32,7 +32,7 @@ class HomeController extends Controller
             'heroes'           => $this->heroService->getActiveHeroes(),
             'trustItems'       => $this->trustService->getActive(),
             'services'         => \App\Models\LayananCategory::with('services')->orderBy('order')->take(4)->get(),
-            'portfolio'        => $this->portfolioService->getActive(),
+            'portfolio'        => $this->portfolioService->forHome(),
             'featuredPortfolio'=> $this->portfolioService->featured(),
             'about'            => $this->aboutService->getActive(),
             'cta'              => $this->ctaService->getActive(),

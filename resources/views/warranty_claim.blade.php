@@ -398,7 +398,7 @@
 
         {{-- Footer --}}
         <div class="px-6 py-4 bg-surface-container-low border-t border-on-surface/10 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
-            <div class="text-[10px] text-on-surface-variant hidden sm:block font-bold">Jam Operasional: Senin - Minggu (09.00 - 17.00)</div>
+            <div class="text-[10px] text-on-surface-variant hidden sm:block font-bold">Jam Operasional: Senin - Sabtu (09.00 - 17.00), Minggu tutup</div>
             <button type="button" id="btn-agree-modal" class="w-full sm:w-auto px-5 py-2.5 bg-primary hover:brightness-110 text-white font-bold rounded-xl text-xs transition-colors shadow-sm">
                 Saya Setuju & Lanjutkan
             </button>

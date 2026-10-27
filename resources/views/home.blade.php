@@ -21,7 +21,7 @@
         'paymentAccepted' => 'Cash, Transfer Bank',
         'openingHoursSpecification' => [[
             '@type' => 'OpeningHoursSpecification',
-            'dayOfWeek' => ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+            'dayOfWeek' => ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
             'opens' => '09:00',
             'closes' => '17:00',
         ]],
@@ -101,6 +101,7 @@
                     <div class="text-center mb-14 space-y-4">
                         <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase">Portfolio</p>
                         <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17]">Hasil Restorasi Kami</h2>
+                        <p class="text-gray-500 max-w-xl mx-auto">Setiap sepatu yang masuk punya kartu kerjanya sendiri. Ini beberapa di antaranya, lengkap dengan keluhan, tindakan, dan hasil QC-nya.</p>
                     </div>
                     @include('components.portfolio', ['portfolio' => $portfolio])
                 </div>
@@ -110,26 +111,32 @@
 
             {{-- 6. REVIEW --}}
             <section id="review"
-                class="py-20 sm:py-24 bg-[#188060] border-y border-[#188060] scroll-mt-20 relative z-10 text-white"
-                x-data="reviewCarousel()">
+                class="pt-20 sm:pt-24 pb-10 bg-[#188060] border-y border-[#188060] scroll-mt-20 relative z-10 text-white overflow-hidden">
                 <div class="px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto">
-                    <div class="flex flex-col items-center text-center gap-6 mb-16">
-                        <div class="max-w-[600px] space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 text-center md:text-left">
+                        <div class="max-w-[560px] space-y-4 mx-auto md:mx-0">
                             <p class="text-sm font-semibold text-[#FFC232] tracking-widest uppercase">Testimoni</p>
-                            <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">Apa Kata Mereka
-                                Tentang Kami?</h2>
+                            <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">Kata mereka setelah sepatunya kembali</h2>
                         </div>
-                        <div class="flex gap-4">
-                            <button @click="prev()" aria-label="Testimoni sebelumnya"
-                                class="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-white hover:text-[#188060] active:scale-95 transition-all text-white">
-                                <span class="material-symbols-outlined">chevron_left</span>
-                            </button>
-                            <button @click="next()" aria-label="Testimoni berikutnya"
-                                class="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-white hover:text-[#188060] active:scale-95 transition-all text-white">
-                                <span class="material-symbols-outlined">chevron_right</span>
-                            </button>
-                        </div>
+                        @if(!empty($globalSettings['google_rating']))
+                            <a href="{{ $globalSettings['google_maps_url'] ?? '#' }}" target="_blank" rel="noopener"
+                               class="group mx-auto md:mx-0 inline-flex items-center gap-3 text-left">
+                                <span class="text-4xl font-extrabold leading-none">{{ $globalSettings['google_rating'] }}</span>
+                                <span class="text-sm leading-snug">
+                                    @php $ratingPct = min(100, max(0, (float) str_replace(',', '.', $globalSettings['google_rating']) / 5 * 100)); @endphp
+                                    <span class="relative block w-max tracking-[0.15em]" aria-hidden="true">
+                                        <span class="text-white/25">★★★★★</span>
+                                        <span class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-[#FFC232]" style="width: {{ $ratingPct }}%">★★★★★</span>
+                                    </span>
+                                    <span class="text-white/80 group-hover:text-white underline decoration-white/30 underline-offset-4 group-hover:decoration-white">
+                                        {{ $globalSettings['google_review_count'] ?? '' }} ulasan di Google Maps
+                                    </span>
+                                </span>
+                            </a>
+                        @endif
                     </div>
+                </div>
+                <div class="px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto">
                     @include('components.reviews', ['reviews' => $reviews])
                 </div>
             </section>

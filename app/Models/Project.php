@@ -9,7 +9,22 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'category', 'description', 'service_id', 'before_image', 'after_image', 'is_featured', 'is_active'];
+    protected $fillable = [
+        'title', 'category', 'spk_number', 'description', 'keluhan', 'tindakan', 'durasi_hari',
+        'service_id', 'before_image', 'after_image', 'is_featured', 'is_active',
+    ];
+
+    /**
+     * Actions done on the shoe, one per line in the `tindakan` column.
+     */
+    public function getTindakanListAttribute(): array
+    {
+        return collect(preg_split('/\r\n|\r|\n/', (string) $this->tindakan))
+            ->map(fn ($line) => trim($line, " \t-•*"))
+            ->filter()
+            ->values()
+            ->all();
+    }
 
     public function service()
     {

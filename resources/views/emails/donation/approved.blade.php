@@ -37,7 +37,7 @@
                 <p><strong>Alamat Tujuan:</strong></p>
                 <p style="font-size: 16px; font-weight: bold; color: #047857; line-height: 1.4;">Shoe Workshop Indonesia<br>Jl. Kembar I No.41, Cigereleng,<br>Kec. Regol, Kota Bandung,<br>Jawa Barat 40253</p>
                 <p><strong>Kontak (WhatsApp):</strong> {{ '0' . substr($globalSettings['whatsapp_number'] ?? '62895339939800', 2) }}</p>
-                <p><strong>Jam Operasional:</strong> Senin - Minggu (09.00 - 17.00 WIB)</p>
+                <p><strong>Jam Operasional:</strong> Senin - Sabtu (09.00 - 17.00 WIB), Minggu tutup</p>
             </div>
 
             <div class="info-box">

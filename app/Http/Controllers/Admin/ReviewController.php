@@ -28,6 +28,9 @@ class ReviewController extends Controller
         $data = $request->validate([
             'name'      => 'required|string|max:255',
             'location'  => 'nullable|string|max:255',
+            'service'   => 'nullable|string|max:100',
+            'source'    => 'required|in:manual,google',
+            'reviewed_at' => 'nullable|date',
             'rating'    => 'required|integer|min:1|max:5',
             'content'   => 'required|string',
             'is_active' => 'nullable|boolean',
@@ -52,6 +55,9 @@ class ReviewController extends Controller
         $data = $request->validate([
             'name'      => 'required|string|max:255',
             'location'  => 'nullable|string|max:255',
+            'service'   => 'nullable|string|max:100',
+            'source'    => 'required|in:manual,google',
+            'reviewed_at' => 'nullable|date',
             'rating'    => 'required|integer|min:1|max:5',
             'content'   => 'required|string',
             'is_active' => 'nullable|boolean',

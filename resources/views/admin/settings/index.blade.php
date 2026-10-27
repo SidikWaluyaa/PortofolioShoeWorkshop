@@ -80,6 +80,25 @@
                             </div>
                         </div>
 
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <h3 class="text-lg font-bold mb-1">Rating Google</h3>
+                            <p class="text-xs text-gray-400 mb-4">Ditampilkan di section Testimoni & hero beranda. Samakan dengan angka di Google Maps secara berkala.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <x-input-label for="google_rating" value="Rating (mis. 4,4)" />
+                                    <x-text-input id="google_rating" name="google_rating" type="text" class="mt-1 block w-full" :value="$settings['google_rating'] ?? ''" />
+                                </div>
+                                <div>
+                                    <x-input-label for="google_review_count" value="Jumlah Ulasan (mis. 2.315)" />
+                                    <x-text-input id="google_review_count" name="google_review_count" type="text" class="mt-1 block w-full" :value="$settings['google_review_count'] ?? ''" />
+                                </div>
+                                <div>
+                                    <x-input-label for="google_maps_url" value="Link Google Maps" />
+                                    <x-text-input id="google_maps_url" name="google_maps_url" type="url" class="mt-1 block w-full" :value="$settings['google_maps_url'] ?? ''" />
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mt-6">
                             <x-primary-button>{{ __('Save All Settings') }}</x-primary-button>
                         </div>

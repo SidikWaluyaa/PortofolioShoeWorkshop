@@ -81,32 +81,31 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
             const rememberCheckbox = document.getElementById('remember_me');
             const form = rememberCheckbox ? rememberCheckbox.closest('form') : null;
 
-            if (emailInput && passwordInput && rememberCheckbox && form) {
-                // Load credentials if they exist in localStorage
-                const savedEmail = localStorage.getItem('remembered_email');
-                const savedPassword = localStorage.getItem('remembered_password');
+            // Passwords used to be kept here in plain text; wipe any copy left in the browser.
+            // Saving passwords is left to the browser's own password manager.
+            try { localStorage.removeItem('remembered_password'); } catch (e) {}
 
-                if (savedEmail) {
+            if (emailInput && rememberCheckbox && form) {
+                // Only the email is remembered
+                let savedEmail = null;
+                try { savedEmail = localStorage.getItem('remembered_email'); } catch (e) {}
+
+                if (savedEmail && !emailInput.value) {
                     emailInput.value = savedEmail;
                     rememberCheckbox.checked = true;
-                    if (savedPassword) {
-                        passwordInput.value = savedPassword;
-                    }
                 }
 
-                // Listen for form submit to store or clear credentials
                 form.addEventListener('submit', function() {
-                    if (rememberCheckbox.checked) {
-                        localStorage.setItem('remembered_email', emailInput.value);
-                        localStorage.setItem('remembered_password', passwordInput.value);
-                    } else {
-                        localStorage.removeItem('remembered_email');
-                        localStorage.removeItem('remembered_password');
-                    }
+                    try {
+                        if (rememberCheckbox.checked) {
+                            localStorage.setItem('remembered_email', emailInput.value);
+                        } else {
+                            localStorage.removeItem('remembered_email');
+                        }
+                    } catch (e) {}
                 });
             }
         });
