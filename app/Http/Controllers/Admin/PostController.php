@@ -30,6 +30,7 @@ class PostController extends Controller
             'thumbnail' => 'nullable|string',
             'content' => 'required|string',
             'category' => 'required|string',
+            'keluhan' => 'nullable|in:' . implode(',', array_keys(\App\Models\Post::KELUHAN)),
             'status' => 'required|in:draft,published',
             'published_at' => 'nullable|date',
         ]);
@@ -52,6 +53,7 @@ class PostController extends Controller
             'thumbnail' => 'nullable|string',
             'content' => 'required|string',
             'category' => 'required|string',
+            'keluhan' => 'nullable|in:' . implode(',', array_keys(\App\Models\Post::KELUHAN)),
             'status' => 'required|in:draft,published',
             'published_at' => 'nullable|date',
         ]);

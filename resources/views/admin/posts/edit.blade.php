@@ -32,6 +32,7 @@
                                     <x-input-label for="content" :value="__('Konten Artikel')" />
                                     <textarea id="content" name="content" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="15" required>{{ old('content', $post->content) }}</textarea>
                                     <x-input-error class="mt-2" :messages="$errors->get('content')" />
+                                    <p class="text-xs text-gray-400 mt-1">Format: baris kosong untuk paragraf baru, <code>## Judul bagian</code> untuk subjudul, <code>- poin</code> untuk daftar, <code>**tebal**</code> untuk huruf tebal.</p>
                                 </div>
                             </div>
 
@@ -52,6 +53,18 @@
                                     </div>
 
                                     <div class="mb-4">
+                                        <x-input-label for="keluhan" value="Keluhan Terkait (Klinik Sepatu)" />
+                                        <select id="keluhan" name="keluhan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                                            <option value="">Tidak terkait keluhan</option>
+                                            @foreach(\App\Models\Post::KELUHAN as $key => $item)
+                                                <option value="{{ $key }}" @selected(old('keluhan', $post->keluhan) === $key)>{{ $item['label'] }}</option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-xs text-gray-400 mt-1">Artikel muncul di beranda saat pengunjung memilih keluhan ini.</p>
+                                        <x-input-error class="mt-2" :messages="$errors->get('keluhan')" />
+                                    </div>
+
+                                    <div class="mb-4">
                                         <x-input-label for="status" :value="__('Status')" />
                                         <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
                                             <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>Draft</option>
@@ -63,7 +76,7 @@
                                     <div class="mb-4">
                                         <x-input-label for="thumbnail" :value="__('URL Thumbnail')" />
                                         @if($post->thumbnail)
-                                            <img src="{{ $post->thumbnail }}" alt="Preview" class="mb-2 h-32 w-full object-cover rounded-md border">
+                                            <img src="{{ $post->thumbnail_url }}" alt="Preview" class="mb-2 h-32 w-full object-cover rounded-md border">
                                         @endif
                                         <x-text-input id="thumbnail" name="thumbnail" type="text" class="mt-1 block w-full text-sm" :value="old('thumbnail', $post->thumbnail)" />
                                         <x-input-error class="mt-2" :messages="$errors->get('thumbnail')" />

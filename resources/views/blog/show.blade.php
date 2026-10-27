@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
 @section('seo_title', $post->title . ' | Shoe Workshop')
-@section('seo_description', Str::limit(strip_tags($post->content), 155))
+@section('seo_description', Str::limit($post->plain_text, 155))
 @section('og_title', $post->title)
-@section('og_description', Str::limit(strip_tags($post->content), 155))
+@section('og_description', Str::limit($post->plain_text, 155))
 
 @section('content')
 
@@ -25,7 +25,7 @@
             <div class="flex items-center justify-center gap-4 text-sm text-gray-500">
                 <span>{{ ($post->published_at ?? $post->created_at)->format('d M Y') }}</span>
                 <span class="w-1 h-1 rounded-full bg-gray-400"></span>
-                <span>{{ ceil(str_word_count(strip_tags($post->content)) / 200) }} menit baca</span>
+                <span>{{ $post->reading_minutes }} menit baca</span>
             </div>
         </div>
     </div>
@@ -34,15 +34,27 @@
     @if($post->thumbnail)
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-1 py-8">
         <div class="aspect-[21/9] rounded-2xl overflow-hidden shadow-xl">
-            <img src="{{ $post->thumbnail }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+            <img src="{{ $post->thumbnail_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
         </div>
     </div>
     @endif
 
     {{-- Content --}}
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="prose prose-lg prose-green max-w-none text-gray-600 leading-relaxed">
-            {!! nl2br(e($post->content)) !!}
+        <style>
+            .article-body { color: #4b5563; font-size: 1.0625rem; line-height: 1.8; }
+            .article-body > * + * { margin-top: 1.1em; }
+            .article-body h2 { margin-top: 2em; font-size: 1.375rem; line-height: 1.3; font-weight: 800; color: #1c1c17; }
+            .article-body h3 { margin-top: 1.6em; font-size: 1.125rem; font-weight: 700; color: #1c1c17; }
+            .article-body ul { list-style: disc; padding-left: 1.25em; }
+            .article-body ol { list-style: decimal; padding-left: 1.25em; }
+            .article-body li + li { margin-top: .4em; }
+            .article-body li::marker { color: #22AF85; }
+            .article-body strong { color: #1c1c17; font-weight: 700; }
+            .article-body a { color: #188060; text-decoration: underline; text-underline-offset: 3px; }
+        </style>
+        <div class="article-body">
+            {!! $post->body_html !!}
         </div>
 
         {{-- CTA --}}
@@ -76,7 +88,7 @@
             <article class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all flex flex-col">
                 <div class="relative aspect-video overflow-hidden bg-gray-50">
                     @if($related->thumbnail)
-                    <img src="{{ $related->thumbnail }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <img src="{{ $related->thumbnail_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     @endif
                 </div>
                 <div class="p-5 flex-grow">

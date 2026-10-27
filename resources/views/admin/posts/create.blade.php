@@ -25,6 +25,7 @@
                                     <x-input-label for="content" :value="__('Konten Artikel')" />
                                     <textarea id="content" name="content" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="15" required placeholder="Tuliskan isi artikel di sini...">{{ old('content') }}</textarea>
                                     <x-input-error class="mt-2" :messages="$errors->get('content')" />
+                                    <p class="text-xs text-gray-400 mt-1">Format: baris kosong untuk paragraf baru, <code>## Judul bagian</code> untuk subjudul, <code>- poin</code> untuk daftar, <code>**tebal**</code> untuk huruf tebal.</p>
                                 </div>
                             </div>
 
@@ -42,6 +43,18 @@
                                             <option value="General" {{ old('category') == 'General' ? 'selected' : '' }}>General</option>
                                         </select>
                                         <x-input-error class="mt-2" :messages="$errors->get('category')" />
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <x-input-label for="keluhan" value="Keluhan Terkait (Klinik Sepatu)" />
+                                        <select id="keluhan" name="keluhan" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                                            <option value="">Tidak terkait keluhan</option>
+                                            @foreach(\App\Models\Post::KELUHAN as $key => $item)
+                                                <option value="{{ $key }}" @selected(old('keluhan') === $key)>{{ $item['label'] }}</option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-xs text-gray-400 mt-1">Artikel muncul di beranda saat pengunjung memilih keluhan ini.</p>
+                                        <x-input-error class="mt-2" :messages="$errors->get('keluhan')" />
                                     </div>
 
                                     <div class="mb-4">
