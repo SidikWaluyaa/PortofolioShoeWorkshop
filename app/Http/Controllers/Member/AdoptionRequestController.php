@@ -14,7 +14,7 @@ class AdoptionRequestController extends Controller
 {
     public function index()
     {
-        $requests = DonationRequest::with(['donationItem.donation'])
+        $requests = DonationRequest::with(['donationItem.donation', 'donationItem.reparationServices'])
             ->where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();

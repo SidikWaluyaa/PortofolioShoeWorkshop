@@ -1,7 +1,7 @@
 @extends('layouts.main')
-@section('seo_title', 'Detail Donasi ' . $item->nama . ' - Shoe Workshop')
-@section('seo_description', 'Detail barang donasi gratis berkualitas: ' . $item->nama . '. Hasil restorasi profesional tim Shoe Workshop.')
-@section('seo_keywords', 'katalog donasi, detail barang donasi, gratis, shoe workshop, reparasi sepatu')
+@section('seo_title', 'Adopsi ' . $item->nama . ' - Shoe Workshop')
+@section('seo_description', 'Adopsi ' . $item->nama . ': sepatu layak pakai hasil restorasi profesional tim Shoe Workshop.')
+@section('seo_keywords', 'adopsi sepatu, katalog donasi, sepatu restorasi, shoe workshop, reparasi sepatu')
 
 @section('head')
 <style>
@@ -13,7 +13,6 @@
 
 @section('content')
 @php
-    $isQuotaFull = $item->status === 'tersedia' && $item->isQuotaFull();
     $condLabels = [
         'baru' => 'Baru',
         'seperti_baru' => 'Seperti Baru',
@@ -106,7 +105,7 @@
                 <!-- Left Column: Image Gallery (5/12 cols) -->
                 <div class="lg:col-span-5 bg-gray-50 p-6 flex flex-col gap-6 border-b lg:border-b-0 lg:border-r border-gray-200">
                     <!-- Large Primary View -->
-                    <div class="relative group aspect-square max-h-[360px] sm:max-h-[450px] w-full rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center {{ $isQuotaFull ? 'filter grayscale contrast-75 brightness-95 opacity-90' : '' }}">
+                    <div class="relative group aspect-square max-h-[360px] sm:max-h-[450px] w-full rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
                         <a :href="activeImage || '{{ $item->foto_utama_url }}'" target="_blank" class="w-full h-full block">
                             <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" title="Klik untuk memperbesar"/>
                         </a>
@@ -212,12 +211,6 @@
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Berat Barang</p>
                                 <p class="text-sm font-bold text-[#1c1c17] mt-1">{{ $item->berat_formatted }}</p>
                             </div>
-                            <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100">
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">Kuota Pengajuan</p>
-                                <p class="text-sm font-bold mt-1 {{ $isQuotaFull ? 'text-red-650' : 'text-emerald-600' }}">
-                                    {{ $item->pending_requests_count }} / 5 Pemohon
-                                </p>
-                            </div>
                             @if($item->score_kelayakan)
                             <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 col-span-2 sm:col-span-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase mb-1.5">Skor Kelayakan Barang</p>
@@ -244,7 +237,7 @@
                         <div class="mb-6">
                             <h3 class="text-sm font-bold text-[#1c1c17] mb-2">Catatan Kurator</h3>
                             <p class="text-sm text-gray-600 leading-relaxed font-normal">
-                                {{ $item->deskripsi ?? 'Barang ini telah melalui proses kurasi dan perbaikan detail oleh tim Shoe Workshop untuk menjamin kelayakan pakai bagi penerima donasi.' }}
+                                {{ $item->deskripsi ?? 'Barang ini telah dicek dan diperbaiki secara detail oleh tim Shoe Workshop untuk menjamin kelayakan pakainya.' }}
                             </p>
                         </div>
 
@@ -330,13 +323,8 @@
                             <p class="text-[10px] font-bold text-gray-400 uppercase">Status Ketersediaan</p>
                             <div class="flex items-center gap-2 mt-1">
                                 @if($item->status === 'tersedia')
-                                    @if($isQuotaFull)
-                                        <div class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></div>
-                                        <span class="text-sm font-bold text-amber-700">Dalam Proses Pengajuan</span>
-                                    @else
-                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
-                                        <span class="text-sm font-bold text-green-700">Tersedia untuk Pengajuan</span>
-                                    @endif
+                                    <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+                                    <span class="text-sm font-bold text-green-700">Tersedia untuk Pengajuan</span>
                                 @else
                                     <div class="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
                                     <span class="text-sm font-bold text-gray-600">Sudah Disalurkan</span>
@@ -344,33 +332,13 @@
                             </div>
                         </div>
 
-                        {{-- Quota Alert --}}
-                        @if($isQuotaFull)
-                            <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3 mb-4">
-                                <span class="material-symbols-outlined text-amber-600 shrink-0">info</span>
-                                <div>
-                                    <p class="text-xs font-bold text-amber-850">Proses Pengajuan Sedang Berjalan</p>
-                                    <p class="text-[11px] text-amber-700 mt-0.5 font-normal">Item donasi ini dalam proses pengajuan. Saat ini kuota pengajuan baru telah ditutup sementara (maksimal 5 pengajuan).</p>
-                                </div>
-                            </div>
-                        @endif
-                        
                         {{-- Desktop action buttons (hidden on mobile, shown via sticky bar below) --}}
                         <div class="hidden sm:flex gap-3">
                             @if($item->status === 'tersedia')
-                                @if($isQuotaFull)
-                                    <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
-                                        <span class="material-symbols-outlined !text-[18px]">block</span>
-                                        Dalam Proses Pengajuan
-                                    </button>
-                                @else
-
-                                   
-
                                     @auth
                                         <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined !text-[18px]">send</span>
-                                            Ajukan Permohonan
+                                            Ajukan Adopsi
                                         </button>
                                     @else
                                         <a href="{{ route('login') }}" class="flex-grow py-3.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold text-sm shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
@@ -378,8 +346,6 @@
                                             Login untuk Mengajukan
                                         </a>
                                     @endauth
-                                 
-                                @endif
                             @else
                                 <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
                                     Sudah Disalurkan
@@ -390,11 +356,7 @@
                             </button>
                         </div>
                         <p class="hidden sm:block text-center text-[11px] text-gray-400 mt-3 font-semibold">
-                            @if($isQuotaFull)
-                                Kuota permohonan untuk barang donasi ini sudah penuh (maksimal 5 pemohon).
-                            @else
-                                Klik tombol "Ajukan Permohonan" untuk melakukan pengajuan barang donasi.
-                            @endif
+                            Klik tombol "Ajukan Adopsi" untuk mengajukan permohonan. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang membayar.
                         </p>
                     </div>
                 </div>
@@ -403,16 +365,10 @@
             {{-- ✅ Sticky bottom action bar — mobile only --}}
             <div class="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white border-t border-gray-200 px-4 py-3 flex gap-2 shadow-lg">
                 @if($item->status === 'tersedia')
-                    @if($isQuotaFull)
-                        <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
-                            <span class="material-symbols-outlined !text-[18px]">block</span>
-                            Dalam Proses Pengajuan
-                        </button>
-                    @else
                         @auth
                             <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined !text-[18px]">send</span>
-                                Ajukan Permohonan
+                                Ajukan Adopsi
                             </button>
                         @else
                             <a href="{{ route('login') }}" class="flex-grow py-3.5 bg-gray-800 text-white rounded-xl font-bold text-sm shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
@@ -420,7 +376,6 @@
                                 Login untuk Mengajukan
                             </a>
                         @endauth
-                    @endif
                 @else
                     <button class="flex-grow py-3.5 bg-[#e1e3e4] text-[#3d4947] rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" disabled>
                         Sudah Disalurkan
@@ -435,7 +390,7 @@
             @if(!$otherItems->isEmpty())
                 <section class="mt-8 mb-20 sm:mb-0">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg sm:text-2xl font-bold text-[#1c1c17]">Barang Donasi Lainnya</h2>
+                        <h2 class="text-lg sm:text-2xl font-bold text-[#1c1c17]">Sepatu Lain untuk Diadopsi</h2>
                         <a href="{{ route('katalog.index') }}" class="text-[#22AF85] text-xs sm:text-sm font-bold flex items-center gap-0.5 hover:underline">
                             Lihat Semua <span class="material-symbols-outlined !text-[16px]">chevron_right</span>
                         </a>
@@ -542,7 +497,7 @@
             shareItem() {
                 const shareData = {
                     title: {!! json_encode($item->nama . ' - Shoe Workshop') !!},
-                    text: {!! json_encode('Temukan barang donasi gratis berkualitas: ' . $item->nama . ' di Shoe Workshop!') !!},
+                    text: {!! json_encode('Adopsi ' . $item->nama . ', sepatu hasil restorasi Shoe Workshop!') !!},
                     url: window.location.href
                 };
                 

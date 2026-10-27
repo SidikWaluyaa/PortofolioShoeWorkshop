@@ -1,7 +1,7 @@
 @extends('layouts.main')
-@section('seo_title', 'Katalog Donasi - Donasi Kita | Shoe Workshop')
-@section('seo_description', 'Temukan barang-barang layak pakai hasil restorasi terbaik Shoe Workshop yang siap didonasikan secara gratis.')
-@section('seo_keywords', 'katalog donasi, galeri donasi, sepatu gratis, cuci sepatu gratis, shoe workshop bandung')
+@section('seo_title', 'Adopsi Sepatu Hasil Restorasi - Program Donasi | Shoe Workshop')
+@section('seo_description', 'Adopsi sepatu layak pakai hasil restorasi Shoe Workshop. Siapa cepat dia dapat: cukup bayar biaya jasa restorasinya.')
+@section('seo_keywords', 'adopsi sepatu, sepatu bekas restorasi, katalog donasi, sepatu layak pakai, shoe workshop bandung')
 
 @section('head')
 <style>
@@ -30,9 +30,9 @@
         {{-- Hero header --}}
         <div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100 w-full">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Katalog Donasi</span>
-                <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Katalog Donasi Barang</h1>
-                <p class="text-gray-500 max-w-xl mx-auto text-base">Temukan barang berkualitas hasil perbaikan workshop kami yang siap disalurkan kepada yang membutuhkan.</p>
+                <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Program Donasi</span>
+                <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Adopsi Sepatu Hasil Restorasi</h1>
+                <p class="text-gray-500 max-w-xl mx-auto text-base">Sepatu donasi hasil restorasi workshop kami, siap diadopsi. Siapa cepat dia dapat: cukup bayar biaya jasa restorasinya.</p>
             </div>
         </div>
 
@@ -655,14 +655,14 @@
                             <span class="material-symbols-outlined text-[#22AF85]">verified</span>
                             <div>
                                 <h5 class="text-xs font-bold text-[#191c1d]">Kondisi Terverifikasi</h5>
-                                <p class="text-xs text-[#3d4947] mt-0.5 leading-relaxed" x-text="activeItem?.deskripsi || 'Barang telah melalui proses kurasi dan perbaikan tim kami.'"></p>
+                                <p class="text-xs text-[#3d4947] mt-0.5 leading-relaxed" x-text="activeItem?.deskripsi || 'Barang telah dicek dan diperbaiki oleh tim kami.'"></p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="material-symbols-outlined text-[#22AF85]">local_shipping</span>
                             <div>
-                                <h5 class="text-xs font-bold text-[#191c1d]">Pengiriman Gratis</h5>
-                                <p class="text-xs text-[#3d4947] mt-0.5">Disediakan untuk penerima atau keluarga pra-sejahtera yang berhak.</p>
+                                <h5 class="text-xs font-bold text-[#191c1d]">Ongkir Ditanggung Pemohon</h5>
+                                <p class="text-xs text-[#3d4947] mt-0.5">Tagihan berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
                             </div>
                         </div>
                     </div>
@@ -673,7 +673,7 @@
                             :disabled="activeItem?.status !== 'tersedia'"
                             @click="openForm()">
                         <span class="material-symbols-outlined">send</span>
-                        Ajukan Permohonan
+                        Ajukan Adopsi
                     </button>
                 </div>
             </div>
@@ -687,7 +687,7 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
             <h3 class="text-xl font-bold text-[#191c1d] mb-1">Form Pengajuan</h3>
-            <p class="text-xs text-[#3d4947] mb-6">Mohon lengkapi data berikut untuk mengajukan permohonan barang.</p>
+            <p class="text-xs text-[#3d4947] mb-6">Mohon lengkapi data berikut untuk mengajukan permohonan adopsi.</p>
             
             <form class="space-y-4" @submit.prevent="submitRequest">
                 <div x-show="generalError" x-text="generalError" class="p-3 bg-red-50 text-red-600 text-xs font-semibold rounded-lg border border-red-100" style="display: none;"></div>
@@ -1125,7 +1125,7 @@
                 this.errors = { nama_pemohon: '', email: '', kontak_pemohon: '', alamat_pengiriman: '', alasan: '' };
 
                 try {
-                    const url = `/donasi-katalog/${this.activeItem.id}/request`;
+                    const url = @js(route('katalog.request', '__ITEM__')).replace('__ITEM__', this.activeItem.id);
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {

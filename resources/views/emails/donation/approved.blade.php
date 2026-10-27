@@ -36,7 +36,7 @@
             <div class="address-box">
                 <p><strong>Alamat Tujuan:</strong></p>
                 <p style="font-size: 16px; font-weight: bold; color: #047857; line-height: 1.4;">Shoe Workshop Indonesia<br>Jl. Kembar I No.41, Cigereleng,<br>Kec. Regol, Kota Bandung,<br>Jawa Barat 40253</p>
-                <p><strong>Kontak:</strong> 08123456789</p>
+                <p><strong>Kontak (WhatsApp):</strong> {{ '0' . substr($globalSettings['whatsapp_number'] ?? '62895339939800', 2) }}</p>
                 <p><strong>Jam Operasional:</strong> Senin - Minggu (09.00 - 17.00 WIB)</p>
             </div>
 
@@ -54,7 +54,7 @@
                 @endif
             </div>
 
-            <p>Terima kasih atas kebaikan hati Anda. Donasi ini akan sangat berarti bagi mereka yang membutuhkan setelah tim kami selesai membersihkan dan memperbaikinya!</p>
+            <p>Terima kasih atas kebaikan hati Anda. Setelah tim kami selesai membersihkan dan memperbaikinya, sepatu ini akan masuk katalog adopsi dan mendapatkan pemilik barunya!</p>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} Shoe Workshop. All rights reserved.</p>

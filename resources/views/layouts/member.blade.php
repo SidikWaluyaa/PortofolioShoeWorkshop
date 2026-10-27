@@ -15,7 +15,7 @@
       gtag('config', 'G-M5QQPYH1V7');
     </script>
 
-    <title>Donatur | {{ config('app.name', 'Shoe Workshop') }}</title>
+    <title>Member | {{ config('app.name', 'Shoe Workshop') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     
     <!-- PWA Settings -->
@@ -33,7 +33,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght@0..1,100..700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    @include('layouts.partials.icon-font')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         html { font-size: 14px; }

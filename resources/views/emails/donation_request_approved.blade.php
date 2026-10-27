@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permohonan Donasi Anda Disetujui! 🎉</title>
+    <title>Permohonan Adopsi Anda Disetujui! 🎉</title>
 </head>
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #1e293b;">
 
@@ -28,7 +28,7 @@
                                 Halo <strong>{{ $donationRequest->nama_pemohon }}</strong>,
                             </p>
                             <p style="font-size: 15px; line-height: 1.6; color: #334155; margin-bottom: 25px;">
-                                Kabar baik! Tim kami telah meninjau pengajuan Anda dan dengan senang hati mengabarkan bahwa Anda terpilih untuk mengadopsi barang donasi di bawah ini!
+                                Kabar baik! Permohonan adopsi Anda untuk sepatu di bawah ini telah disetujui.
                             </p>
 
                             <!-- Item Card Details -->

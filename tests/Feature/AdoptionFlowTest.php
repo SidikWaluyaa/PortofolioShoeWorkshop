@@ -293,10 +293,10 @@ class AdoptionFlowTest extends TestCase
         Mail::assertSent(AdoptionAvailableAgainMail::class, fn ($m) => $m->hasTo($budi->email)
             && str_contains($m->render(), 'Mohon jangan transfer untuk sepatu ini dulu')
             && !str_contains($m->render(), 'Bayar &amp; Unggah Bukti Sekarang'));
-        $this->assertStringContainsString(
-            'Selesaikan pesanan Anda yang lain dulu',
-            $budi->fresh()->notifications()->latest()->first()->data['message']
-        );
+        // Several notifications share a timestamp, so look for it instead of relying on order
+        $this->assertTrue($budi->fresh()->notifications->contains(
+            fn ($n) => str_contains($n->data['message'], 'tersedia lagi. Selesaikan pesanan Anda yang lain dulu')
+        ));
         $this->actingAs($budi)->get(route('member.adoption-requests.show', $budiA))
             ->assertOk()
             ->assertSee('Selesaikan pesanan Anda yang lain dulu')
@@ -363,7 +363,7 @@ class AdoptionFlowTest extends TestCase
             ->assertDontSee('8100978521'); // no bank account / upload form while on hold
         $this->actingAs($b)->get(route('member.adoption-requests.index'))
             ->assertOk()
-            ->assertSee('Sedang Dipesan Pemohon Lain');
+            ->assertSee('Sedang dipesan pemohon lain');
         $this->actingAs($a)->get(route('member.adoption-requests.show', $reqA))->assertOk();
 
         $this->actingAs($this->admin)->get(route('admin.donation-requests.index'))
@@ -374,6 +374,17 @@ class AdoptionFlowTest extends TestCase
             ->assertOk()
             ->assertSee('Dipesan (menunggu verifikasi pembayaran)');
         $this->actingAs($this->admin)->get(route('admin.donation-items.export-pdf'))->assertOk();
+    }
+
+    public function test_public_navbar_links_to_the_member_adoption_page(): void
+    {
+        $member = User::factory()->create(['role' => 'member']);
+        $link = 'href="' . route('member.adoption-requests.index') . '"';
+
+        $html = $this->actingAs($member)->get(route('home'))->assertOk()->getContent();
+
+        // Desktop account dropdown + mobile menu
+        $this->assertSame(2, substr_count($html, $link));
     }
 
     public function test_all_new_and_changed_emails_render(): void

@@ -80,7 +80,7 @@
                                 <tr>
                                     <td>
                                         <a href="{{ route('katalog.index') }}" style="background-color: #22AF85; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 14px; font-weight: bold; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(34, 175, 133, 0.2);">
-                                            Jelajahi Katalog Donasi
+                                            Jelajahi Katalog Adopsi
                                         </a>
                                     </td>
                                 </tr>

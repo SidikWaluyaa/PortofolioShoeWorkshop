@@ -1,6 +1,6 @@
 @extends('layouts.main')
-@section('seo_title', 'Ajukan Permohonan — ' . $item->nama . ' - Shoe Workshop')
-@section('seo_description', 'Form pengajuan permohonan barang donasi ' . $item->nama . ' dari Shoe Workshop.')
+@section('seo_title', 'Ajukan Adopsi — ' . $item->nama . ' - Shoe Workshop')
+@section('seo_description', 'Form permohonan adopsi ' . $item->nama . ' dari Shoe Workshop.')
 
 @section('head')
 <style>
@@ -25,11 +25,11 @@
 
         {{-- Breadcrumb --}}
         <nav class="mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2 text-gray-500 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap">
-            <a href="{{ route('katalog.index') }}" class="hover:text-[#22AF85] transition-colors shrink-0">Katalog Donasi</a>
+            <a href="{{ route('katalog.index') }}" class="hover:text-[#22AF85] transition-colors shrink-0">Katalog Adopsi</a>
             <span class="material-symbols-outlined !text-[14px] shrink-0">chevron_right</span>
             <a href="{{ route('katalog.show', $item) }}" class="hover:text-[#22AF85] transition-colors shrink-0 max-w-[120px] sm:max-w-none truncate">{{ $item->nama }}</a>
             <span class="material-symbols-outlined !text-[14px] shrink-0">chevron_right</span>
-            <span class="text-[#22AF85] shrink-0">Ajukan Permohonan</span>
+            <span class="text-[#22AF85] shrink-0">Ajukan Adopsi</span>
         </nav>
 
         {{-- Mobile: compact item summary strip --}}
@@ -138,7 +138,7 @@
                         </div>
                         <h2 class="font-extrabold text-[#1c1c17] text-lg leading-tight">{{ $item->nama }}</h2>
                         <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                            {{ Str::limit($item->deskripsi, 120) ?? 'Barang donasi berkualitas dari koleksi Shoe Workshop.' }}
+                            {{ Str::limit($item->deskripsi, 120) ?? 'Sepatu hasil restorasi berkualitas dari Shoe Workshop.' }}
                         </p>
                     </div>
                 </div>
@@ -168,8 +168,8 @@
 
                     {{-- Form Header --}}
                     <div class="mb-6">
-                        <h1 class="text-2xl font-extrabold text-[#1c1c17] mb-1">Ajukan Permohonan</h1>
-                        <p class="text-sm text-gray-500">Lengkapi data berikut untuk mengajukan permohonan barang donasi ini.</p>
+                        <h1 class="text-2xl font-extrabold text-[#1c1c17] mb-1">Ajukan Adopsi</h1>
+                        <p class="text-sm text-gray-500">Lengkapi data berikut untuk mengajukan permohonan adopsi sepatu ini.</p>
                     </div>
 
                     {{-- Progress Indicator --}}
@@ -331,7 +331,7 @@
                                 @endforeach
                             </div>
                             <div class="bg-[#1c1c17] text-white px-4 py-3 flex justify-between items-center">
-                                <span class="text-sm font-bold uppercase tracking-wider">Total Biaya (Estimasi)</span>
+                                <span class="text-sm font-bold uppercase tracking-wider">Total Biaya Jasa (di luar ongkir)</span>
                                 <span class="text-lg font-black text-[#22AF85]" x-text="formattedTotal"></span>
                             </div>
                         </div>
@@ -367,8 +367,8 @@
                         <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Data Aman</span>
                     </div>
                     <div class="flex items-center gap-1.5 sm:gap-2">
-                        <span class="material-symbols-outlined !text-[18px] sm:!text-[22px]">local_shipping</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Gratis Kirim</span>
+                        <span class="material-symbols-outlined !text-[18px] sm:!text-[22px]">receipt_long</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Biaya Transparan</span>
                     </div>
                     <div class="flex items-center gap-1.5 sm:gap-2">
                         <span class="material-symbols-outlined !text-[18px] sm:!text-[22px]">eco</span>

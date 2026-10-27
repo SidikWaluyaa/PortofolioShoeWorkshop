@@ -151,11 +151,6 @@ class DonationCatalogController extends Controller
                 ->with('error', 'Barang ini sudah tidak tersedia atau sudah disalurkan.');
         }
 
-        if ($item->isQuotaFull()) {
-            return redirect()->route('katalog.show', $item)
-                ->with('error', 'Kuota pengajuan untuk barang ini sudah penuh.');
-        }
-        
         $hasActiveRequest = false;
         if (Auth::check()) {
             $hasActiveRequest = \App\Models\DonationRequest::where('user_id', Auth::id())
@@ -288,13 +283,6 @@ class DonationCatalogController extends Controller
         if ($item->status !== 'tersedia') {
             return response()->json([
                 'message' => 'Barang ini sudah tidak tersedia atau sudah disalurkan.'
-            ], 422);
-        }
-
-        // Check if quota is full
-        if ($item->isQuotaFull()) {
-            return response()->json([
-                'message' => 'Kuota pengajuan untuk barang ini sudah penuh.'
             ], 422);
         }
 

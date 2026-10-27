@@ -38,7 +38,7 @@ class SitemapController extends Controller
         );
 
         $sitemap->add(
-            Url::create('/donasi-katalog')
+            Url::create('/donasi')
                 ->setLastModificationDate(Carbon::now())
                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                 ->setPriority(0.7)

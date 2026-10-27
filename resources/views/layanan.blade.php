@@ -139,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Touch & Mouse events
     const startDrag = (e) => {
+      // Mouse: stop the browser from text-selecting the page while dragging
+      if (!e.touches) e.preventDefault();
       dragging = true;
       if(knob) knob.classList.add('scale-110', 'shadow-xl');
       setPos(e.touches ? e.touches[0].clientX : e.clientX);

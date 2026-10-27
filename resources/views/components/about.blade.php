@@ -105,7 +105,7 @@
                 <div class="grid grid-cols-3 lg:grid-cols-1 gap-3 sm:gap-4">
                     @foreach([
                         ['work_history', '9+', 'Tahun Berjalan'],
-                        ['group', '100K+', 'Pelanggan Puas'],
+                        ['group', '84K+', 'Pelanggan'],
                         ['volunteer_activism', '1.5K+', 'Donasi Disalurkan'],
                     ] as [$icon, $num, $label])
                     <div class="flex flex-col lg:flex-row items-center lg:items-center gap-1 sm:gap-4 text-center lg:text-left bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:bg-white/10 transition-colors">

@@ -385,7 +385,7 @@
                 <li>Garansi ini hanya berlaku untuk sepatu kamu yang direparasi di Shoe Workshop, sesuai dengan jasa yang dipilih ketika melakukan reparasi sepatu.</li>
                 <li>Waktu garansi adalah 100 hari setelah tanggal sepatu selesai dikerjakan oleh Shoe Workshop.</li>
                 <li>Garansi menjadi tidak berlaku jika pihak Shoe Workshop menemukan adanya unsur kesengajaan, penyalahgunaan garansi, campur tangan pihak ketiga dalam perbaikan, pemakaian yang tidak sesuai, serta force majeure yang menyebabkan kerusakan pada sepatu.</li>
-                <li>Kamu harus melakukan klaim garansi hanya melalui nomor pengaduan ShoeWorkshop (<strong>089533993980</strong>) (WA). Selain nomor ini, tidak akan kami tanggapi.</li>
+                <li>Kamu harus melakukan klaim garansi hanya melalui nomor pengaduan ShoeWorkshop (<strong>{{ '0' . substr($globalSettings['whatsapp_number'] ?? '62895339939800', 2) }}</strong>) (WA). Selain nomor ini, tidak akan kami tanggapi.</li>
                 <li>Jangan lupa, ketika klaim garansi, kamu harus mengirimkan bukti transaksi, nama akun Instagram/TikTok, atau username lain jika kamu tidak bisa menunjukkan informasi tersebut. Garansi kamu tidak akan kami proses.</li>
                 <li>Setelah klaim garansi sepatu disetujui pihak Shoe Workshop, kamu bisa mengirim kembali sepatumu untuk dilakukan proses garansi.</li>
                 <li>Biaya pengajuan reparasi sepatu garansi akan ditanggung sepenuhnya oleh pihak Shoe Workshop, tetapi tidak dengan ongkos kirim sepatu.</li>

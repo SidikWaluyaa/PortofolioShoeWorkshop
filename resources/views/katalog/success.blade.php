@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('seo_title', 'Pengajuan Berhasil — Shoe Workshop')
-@section('seo_description', 'Pengajuan permohonan barang donasi Anda berhasil dikirim.')
+@section('seo_description', 'Permohonan adopsi Anda berhasil dikirim.')
 
 @section('head')
 <style>
@@ -118,7 +118,7 @@
                     <div class="bg-white border border-dashed border-gray-200 rounded-lg p-3 space-y-2.5">
                         {{-- Header line --}}
                         <p class="text-xs text-gray-600 italic leading-relaxed">
-                            "Halo Admin Shoe Workshop, saya <span class="font-bold not-italic">{{ $pemohonNama }}</span> ingin mengonfirmasi pengajuan donasi saya dengan ID
+                            "Halo Admin Shoe Workshop, saya <span class="font-bold not-italic">{{ $pemohonNama }}</span> ingin mengonfirmasi permohonan adopsi saya dengan ID
                             <span class="font-bold not-italic text-[#22AF85]">{{ $reqCode }}</span>."
                         </p>
                         <div class="border-t border-gray-100 pt-2.5 space-y-1.5">
@@ -196,11 +196,11 @@
                 <div class="hidden md:block w-px h-8 bg-gray-200"></div>
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                        <span class="material-symbols-outlined !text-[18px] sm:!text-[20px] text-gray-600">local_shipping</span>
+                        <span class="material-symbols-outlined !text-[18px] sm:!text-[20px] text-gray-600">receipt_long</span>
                     </div>
                     <div class="text-left">
-                        <p class="text-[11px] font-bold leading-none mb-0.5">Gratis Kirim</p>
-                        <p class="text-[8px] sm:text-[9px] uppercase font-bold tracking-widest text-gray-400">Free Delivery</p>
+                        <p class="text-[11px] font-bold leading-none mb-0.5">Biaya Transparan</p>
+                        <p class="text-[8px] sm:text-[9px] uppercase font-bold tracking-widest text-gray-400">Jasa Saja</p>
                     </div>
                 </div>
             </div>
@@ -211,7 +211,7 @@
 
 <script>
 function copyMessage() {
-    const text = `Halo Admin Shoe Workshop, saya ingin mengonfirmasi pengajuan donasi saya dengan ID {{ $reqCode }}.
+    const text = `Halo Admin Shoe Workshop, saya ingin mengonfirmasi permohonan adopsi saya dengan ID {{ $reqCode }}.
 
 Detail Barang:
 - Nama      : {{ $itemNama }}

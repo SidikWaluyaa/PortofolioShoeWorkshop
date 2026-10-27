@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('seo_title', ($settings['site_title'] ?? 'Shoe Workshop') . ' | Reparasi & Perawatan Sepatu Profesional Bandung')
-@section('seo_description', 'Shoe Workshop Bandung – jasa reparasi sepatu, cuci sepatu, repaint, reglue, sol, dan jahit profesional. Garansi kualitas, proses cepat, konsultasi gratis. Berdiri sejak 2017, 100K+ pelanggan puas.')
+@section('seo_description', 'Shoe Workshop Bandung – jasa reparasi sepatu, cuci sepatu, repaint, reglue, sol, dan jahit profesional. Garansi kualitas, proses cepat, konsultasi gratis. Berdiri sejak 2017, 84K+ pelanggan.')
 @section('seo_keywords', 'reparasi sepatu bandung, cuci sepatu, repaint sepatu, reglue sepatu, sol lepas, jahit sepatu, shoe repair bandung, restorasi sepatu')
 @section('canonical_url', 'https://shoeworkshop.id/')
 @section('og_image', 'https://shoeworkshop.id/images/og-default.jpg')
@@ -10,7 +10,7 @@
         '@context' => 'https://schema.org',
         '@type'    => 'LocalBusiness',
         'name'     => $settings['site_title'] ?? 'Shoe Workshop',
-        'description' => 'Jasa reparasi sepatu, cuci, repaint, reglue, sol, dan jahit profesional di Bandung. Berdiri sejak 2017, 100K+ pelanggan puas.',
+        'description' => 'Jasa reparasi sepatu, cuci, repaint, reglue, sol, dan jahit profesional di Bandung. Berdiri sejak 2017, 84K+ pelanggan.',
         'url'      => 'https://shoeworkshop.id',
         'logo'     => 'https://shoeworkshop.id/favicon.png',
         'image'    => 'https://shoeworkshop.id/images/og-default.jpg',
@@ -259,6 +259,8 @@
 
         // Touch & Mouse events
         const startDrag = (e) => {
+          // Mouse: stop the browser from text-selecting the page while dragging
+          if (!e.touches) e.preventDefault();
           dragging = true;
           if(knob) knob.classList.add('scale-110', 'shadow-xl');
           setPos(e.touches ? e.touches[0].clientX : e.clientX);
