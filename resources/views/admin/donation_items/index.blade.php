@@ -66,6 +66,7 @@
                     <select name="status" id="status" class="w-full text-xs border-gray-200 rounded-xl focus:border-[#22AF85] focus:ring-1 focus:ring-[#22AF85] bg-gray-50/50 py-2.5">
                         <option value="">Semua Status</option>
                         <option value="tersedia" {{ request('status') === 'tersedia' ? 'selected' : '' }}>Tersedia</option>
+                        <option value="dipesan" {{ request('status') === 'dipesan' ? 'selected' : '' }}>Dipesan (Verifikasi Bayar)</option>
                         <option value="arsip" {{ request('status') === 'arsip' ? 'selected' : '' }}>Arsip</option>
                         <option value="disalurkan" {{ request('status') === 'disalurkan' ? 'selected' : '' }}>Sudah Disalurkan</option>
                     </select>
@@ -110,6 +111,14 @@
                         <span class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-white shadow-sm">
                             Tersedia
                         </span>
+                    @elseif($item->status === 'dipesan')
+                        <span class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-purple-600 text-white shadow-sm">
+                            Dipesan
+                        </span>
+                    @elseif($item->status === 'arsip')
+                        <span class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-yellow-500 text-white shadow-sm">
+                            Arsip
+                        </span>
                     @else
                         <span class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-gray-600 text-white shadow-sm">
                             Disalurkan
@@ -140,6 +149,13 @@
                     <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-gray-100/50 shadow-sm flex items-center gap-1.5 z-10">
                         <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
                         <span class="text-[9px] font-black tracking-widest uppercase text-yellow-700">Arsip</span>
+                    </div>
+                @elseif($item->status === 'dipesan')
+                    <div class="absolute inset-0 bg-purple-900/40 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center">
+                        <div class="bg-white/95 px-4 py-2 rounded-xl shadow-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined !text-[18px] text-purple-700">hourglass_top</span>
+                            <span class="text-xs font-black tracking-widest uppercase text-purple-700">Dipesan · Verifikasi</span>
+                        </div>
                     </div>
                 @else
                     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center">

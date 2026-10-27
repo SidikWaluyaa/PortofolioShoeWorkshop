@@ -19,8 +19,6 @@ class DonationItem extends Model
         'jasa_estimasi_waktu_formatted',
         'berat_formatted',
         'score_kelayakan_color',
-        'is_quota_full',
-        'pending_requests_count',
     ];
 
     protected $fillable = [
@@ -199,26 +197,11 @@ class DonationItem extends Model
     }
 
     /**
-     * Check if the quota for requesting this item is full (maximum 5 pending requests).
+     * Items listed in the public catalog. A shoe reserved by its first payer ('dipesan') stays
+     * hidden until the admin approves or rejects that payment.
      */
-    public function isQuotaFull(): bool
+    public function scopeVisibleInCatalog($query)
     {
-        return $this->requests()->where('status', 'pending')->count() >= 5;
-    }
-
-    /**
-     * Get whether the quota is full (attribute).
-     */
-    public function getIsQuotaFullAttribute(): bool
-    {
-        return $this->isQuotaFull();
-    }
-
-    /**
-     * Get the number of pending requests for this item (attribute).
-     */
-    public function getPendingRequestsCountAttribute(): int
-    {
-        return $this->requests()->where('status', 'pending')->count();
+        return $query->where('status', '!=', 'dipesan');
     }
 }

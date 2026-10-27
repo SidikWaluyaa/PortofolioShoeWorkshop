@@ -16,6 +16,18 @@ class PortfolioService
         return Project::where('is_active', true)->where('is_featured', true)->orderBy('created_at', 'desc')->get();
     }
 
+    /**
+     * Cards for the home page job-ticket stack: featured first, newest first.
+     */
+    public function forHome(int $limit = 5)
+    {
+        return Project::where('is_active', true)
+            ->orderByDesc('is_featured')
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
     public function getAll()
     {
         return Project::orderBy('created_at', 'desc')->get();

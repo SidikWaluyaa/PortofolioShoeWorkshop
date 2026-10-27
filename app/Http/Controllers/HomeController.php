@@ -11,7 +11,6 @@ use App\Services\ReviewService;
 use App\Services\ServiceCatalogService;
 use App\Services\SettingService;
 use App\Services\TrustService;
-use App\Services\WorkflowService;
 
 class HomeController extends Controller
 {
@@ -20,7 +19,6 @@ class HomeController extends Controller
         protected TrustService $trustService,
         protected ServiceCatalogService $serviceCatalogService,
         protected PortfolioService $portfolioService,
-        protected WorkflowService $workflowService,
         protected AboutService $aboutService,
         protected CtaService $ctaService,
         protected SettingService $settingService,
@@ -34,9 +32,8 @@ class HomeController extends Controller
             'heroes'           => $this->heroService->getActiveHeroes(),
             'trustItems'       => $this->trustService->getActive(),
             'services'         => \App\Models\LayananCategory::with('services')->orderBy('order')->take(4)->get(),
-            'portfolio'        => $this->portfolioService->getActive(),
+            'portfolio'        => $this->portfolioService->forHome(),
             'featuredPortfolio'=> $this->portfolioService->featured(),
-            'workflow'         => $this->workflowService->getActive(),
             'about'            => $this->aboutService->getActive(),
             'cta'              => $this->ctaService->getActive(),
             'settings'         => $this->settingService->all(),

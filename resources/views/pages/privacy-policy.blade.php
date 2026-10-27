@@ -23,10 +23,10 @@
                 <p>Kami mengumpulkan informasi yang Anda berikan secara langsung kepada kami, seperti saat Anda membuat akun, melakukan pemesanan reparasi, berdonasi sepatu, atau mendaftar untuk newsletter. Informasi ini mungkin termasuk nama lengkap, alamat email, nomor telepon, dan alamat pengiriman.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">2. Penggunaan Informasi</h4>
-                <p>Informasi yang kami kumpulkan digunakan untuk memproses pesanan dan layanan Anda (termasuk verifikasi pembayaran melalui payment gateway resmi kami), memberikan layanan pelanggan, serta mengirimkan pembaruan status perbaikan sepatu Anda.</p>
+                <p>Informasi yang kami kumpulkan digunakan untuk memproses pesanan dan layanan Anda (termasuk verifikasi bukti transfer pembayaran yang Anda unggah), memberikan layanan pelanggan, serta mengirimkan pembaruan status perbaikan sepatu Anda.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">3. Keamanan Data</h4>
-                <p>Kami mengimplementasikan standar keamanan yang memadai untuk melindungi data pribadi Anda dari akses yang tidak sah. Jika Anda melakukan pembayaran online, data pembayaran (seperti rincian kartu/rekening) diproses dengan aman secara langsung oleh mitra payment gateway (seperti Midtrans/Xendit) dan tidak disimpan di server kami.</p>
+                <p>Kami mengimplementasikan standar keamanan yang memadai untuk melindungi data pribadi Anda dari akses yang tidak sah. Bukti transfer yang Anda unggah hanya digunakan untuk verifikasi pembayaran dan hanya dapat diakses oleh tim admin kami. Kami tidak meminta maupun menyimpan data kartu atau kredensial perbankan Anda.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">4. Berbagi Informasi Pihak Ketiga</h4>
                 <p>Kami tidak menjual atau menyewakan informasi pribadi Anda kepada pihak ketiga manapun. Kami hanya membagikan informasi terbatas dengan penyedia layanan pihak ketiga yang membantu operasional kami, seperti jasa ekspedisi/kurir logistik untuk pengiriman, dan penyedia layanan pembayaran terverifikasi.</p>

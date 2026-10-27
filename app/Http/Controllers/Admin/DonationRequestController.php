@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\DonationRequest;
 use App\Models\DonationItem;
+use App\Exceptions\AdoptionConflictException;
 use App\Http\Controllers\Controller;
+use App\Services\AdoptionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -115,191 +116,25 @@ class DonationRequestController extends Controller
     /**
      * Update the status of a donation request.
      */
-    public function update(Request $request, DonationRequest $donationRequest)
+    public function update(Request $request, DonationRequest $donationRequest, AdoptionService $adoptionService)
     {
         $request->validate([
             'status' => ['required', 'string', 'in:pending,menunggu_pembayaran,menunggu_verifikasi,diproses,dikirim,ditolak,dibatalkan,selesai'],
+            'resi_pengiriman' => ['nullable', 'string', 'max:100'],
         ]);
 
+        $attributes = $request->status === 'dikirim' && $request->filled('resi_pengiriman')
+            ? ['resi_pengiriman' => $request->resi_pengiriman]
+            : [];
+
         try {
-            $otherRequests = collect();
-
-            DB::transaction(function () use ($request, $donationRequest, &$otherRequests) {
-                $oldStatus = $donationRequest->status;
-                $newStatus = $request->status;
-
-                $donationRequest->update(['status' => $newStatus]);
-
-                if ($newStatus === 'dikirim' && $request->has('resi_pengiriman')) {
-                    $donationRequest->update(['resi_pengiriman' => $request->resi_pengiriman]);
-                }
-                
-                // If approved (menunggu_pembayaran), lock the item and reject others
-                if ($newStatus === 'menunggu_pembayaran') {
-                    if ($donationRequest->donationItem) {
-                        $donationRequest->donationItem->update(['status' => 'disalurkan']);
-                        
-                        // Find other pending requests for this item
-                        $otherRequests = DonationRequest::where('donation_item_id', $donationRequest->donation_item_id)
-                            ->where('id', '!=', $donationRequest->id)
-                            ->where('status', 'pending')
-                            ->get();
-                            
-                        // Reject them all
-                        foreach ($otherRequests as $otherReq) {
-                            $otherReq->update(['status' => 'ditolak']);
-                        }
-                    }
-                }
-
-                // If cancelled or rejected (dibatalkan / ditolak), restore the item to 'tersedia' (available)
-                if (in_array($newStatus, ['dibatalkan', 'ditolak'])) {
-                    if ($donationRequest->donationItem) {
-                        $donationRequest->donationItem->update(['status' => 'tersedia']);
-                        if ($donationRequest->donationItem->donation) {
-                            $donationRequest->donationItem->donation->update(['status' => 'diterima']);
-                        }
-                    }
-                }
-            });
-
-            // Dispatch System Notification to Member
-            if ($donationRequest->user) {
-                $notifTitle = '';
-                $notifMessage = '';
-                $notifIcon = 'info';
-                $notifType = 'info';
-
-                switch ($request->status) {
-                    case 'menunggu_pembayaran':
-                        $notifTitle = 'Permohonan Disetujui!';
-                        $notifMessage = "Permohonan Anda untuk {$donationRequest->donationItem?->nama} disetujui! Silakan segera selesaikan tagihan/ongkir.";
-                        $notifIcon = 'task_alt';
-                        $notifType = 'success';
-                        break;
-                    case 'diproses':
-                        $notifTitle = 'Pembayaran Divalidasi';
-                        $notifMessage = "Pembayaran Anda untuk {$donationRequest->donationItem?->nama} divalidasi. Sepatu sedang disiapkan.";
-                        $notifIcon = 'inventory_2';
-                        $notifType = 'info';
-                        break;
-                    case 'dikirim':
-                        $notifTitle = 'Pesanan Dikirim';
-                        $notifMessage = "Hore! {$donationRequest->donationItem?->nama} Anda telah dikirim. Lacak sekarang!";
-                        $notifIcon = 'local_shipping';
-                        $notifType = 'success';
-                        break;
-                    case 'ditolak':
-                    case 'dibatalkan':
-                        $notifTitle = 'Permohonan Dibatalkan/Ditolak';
-                        $notifMessage = "Maaf, permohonan/tagihan Anda untuk {$donationRequest->donationItem?->nama} telah dibatalkan atau ditolak.";
-                        $notifIcon = 'cancel';
-                        $notifType = 'error';
-                        break;
-                }
-
-                if ($notifTitle) {
-                    $donationRequest->user->notify(new \App\Notifications\SystemNotification(
-                        $notifTitle,
-                        $notifMessage,
-                        route('member.adoption-requests.index'),
-                        $notifIcon,
-                        $notifType
-                    ));
-                }
-            }
-
-            $emailMsg = '';
-
-            // Auto-send email notification on approved/invoiced (menunggu_pembayaran)
-            if ($request->status === 'menunggu_pembayaran' && !empty($donationRequest->email)) {
-                try {
-                    Mail::to($donationRequest->email)->send(
-                        new \App\Mail\AdoptionApprovedInvoiceMail($donationRequest)
-                    );
-                    $emailMsg = ' Email tagihan terkirim ke ' . $donationRequest->email . '.';
-                } catch (\Exception $mailEx) {
-                    Log::error('Failed to send invoice email: ' . $mailEx->getMessage());
-                    $emailMsg = ' ⚠️ Gagal mengirim email tagihan ke ' . $donationRequest->email . '.';
-                }
-            }
-
-            // Auto-send email notification on shipped (dikirim)
-            if ($request->status === 'dikirim' && !empty($donationRequest->email)) {
-                try {
-                    // Send shipped mail
-                    Mail::to($donationRequest->email)->send(
-                        new \App\Mail\DonationShippedMail($donationRequest)
-                    );
-                    $emailMsg = ' Email resi pengiriman terkirim ke ' . $donationRequest->email . '.';
-                } catch (\Exception $mailEx) {
-                    Log::error('Failed to send shipped email: ' . $mailEx->getMessage());
-                    $emailMsg = ' ⚠️ Gagal mengirim email resi ke ' . $donationRequest->email . '.';
-                }
-            }
-
-            // Auto-send email notification on rejection (for the primary request)
-            if ($request->status === 'ditolak' && !empty($donationRequest->email)) {
-                try {
-                    Mail::to($donationRequest->email)->send(
-                        new \App\Mail\DonationRequestRejectedMail($donationRequest)
-                    );
-                    $emailMsg = ' Email notifikasi penolakan terkirim ke ' . $donationRequest->email . '.';
-                } catch (\Exception $mailEx) {
-                    Log::error('Failed to send rejection email: ' . $mailEx->getMessage());
-                    $emailMsg = ' ⚠️ Gagal mengirim email penolakan ke ' . $donationRequest->email . '.';
-                }
-            }
-
-            // Auto-send rejection email notifications for automatically rejected requests
-            $autoRejectedIds = [];
-            if ($request->status === 'menunggu_pembayaran' && $otherRequests->isNotEmpty()) {
-                $successMailCount = 0;
-                foreach ($otherRequests as $otherReq) {
-                    $autoRejectedIds[] = $otherReq->id;
-                    
-                    if ($otherReq->user) {
-                        $otherReq->user->notify(new \App\Notifications\SystemNotification(
-                            'Permohonan Ditolak',
-                            "Maaf, permohonan Anda untuk {$otherReq->donationItem?->nama} tidak terpilih karena barang telah diberikan kepada pemohon lain.",
-                            route('member.adoption-requests.index'),
-                            'cancel',
-                            'error'
-                        ));
-                    }
-
-                    if (!empty($otherReq->email)) {
-                        try {
-                            Mail::to($otherReq->email)->send(
-                                new \App\Mail\DonationRequestRejectedMail($otherReq)
-                            );
-                            $successMailCount++;
-                        } catch (\Exception $mailEx) {
-                            Log::error('Failed to send auto-rejection email to ' . $otherReq->email . ': ' . $mailEx->getMessage());
-                        }
-                    }
-                }
-                if ($successMailCount > 0) {
-                    $emailMsg .= " {$otherRequests->count()} permohonan lain untuk barang ini otomatis ditolak & {$successMailCount} email penolakan terkirim.";
-                } else {
-                    $emailMsg .= " {$otherRequests->count()} permohonan lain untuk barang ini otomatis ditolak.";
-                }
-            }
-
-            $successMsg = 'Status permohonan berhasil diperbarui.' . $emailMsg;
-
+            $result = $adoptionService->transition($donationRequest, $request->status, $attributes);
+        } catch (AdoptionConflictException $e) {
             if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => $successMsg,
-                    'new_status' => $request->status,
-                    'auto_rejected_ids' => $autoRejectedIds,
-                ]);
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
             }
 
-            return redirect()->route('admin.donation-requests.index')
-                             ->with('success', $successMsg);
-
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Admin donation request status update failed: ' . $e->getMessage());
 
@@ -313,6 +148,24 @@ class DonationRequestController extends Controller
             return redirect()->back()
                              ->with('error', 'Terjadi kesalahan sistem saat memperbarui status permohonan.');
         }
+
+        $successMsg = trim(
+            ($result['changed'] ? 'Status permohonan berhasil diperbarui.' : 'Data permohonan berhasil disimpan.')
+            . ' ' . implode(' ', $result['messages'])
+        );
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMsg,
+                'new_status' => $request->status,
+                'item_status' => $result['item_status'],
+                'request_statuses' => $result['requests'],
+            ]);
+        }
+
+        return redirect()->route('admin.donation-requests.index')
+                         ->with('success', $successMsg);
     }
 
     /**
@@ -390,24 +243,19 @@ class DonationRequestController extends Controller
     /**
      * Remove the specified donation request.
      */
-    public function destroy(Request $request, DonationRequest $donationRequest)
+    public function destroy(Request $request, DonationRequest $donationRequest, AdoptionService $adoptionService)
     {
         try {
-            DB::transaction(function () use ($donationRequest) {
-                // If it was approved, revert the item and donation status back
-                if ($donationRequest->status === 'disetujui') {
-                    if ($donationRequest->donationItem) {
-                        $donationRequest->donationItem->update(['status' => 'tersedia']);
-                        if ($donationRequest->donationItem->donation) {
-                            $donationRequest->donationItem->donation->update(['status' => 'diterima']);
-                        }
-                    }
-                }
-                $donationRequest->delete();
-            });
+            // Releases the shoe back to the catalog if this request was holding it
+            $result = $adoptionService->delete($donationRequest);
 
             if ($request->ajax() || $request->wantsJson()) {
-                return response()->json(['success' => true, 'message' => 'Permohonan berhasil dihapus.']);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Permohonan berhasil dihapus.',
+                    'item_status' => $result['item_status'],
+                    'request_statuses' => $result['requests'],
+                ]);
             }
 
             return redirect()->route('admin.donation-requests.index')

@@ -259,7 +259,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-bold text-[#1c1c17] group-hover:text-[#22AF85] transition-colors leading-snug">Ajukan Klaim Garansi</p>
-                                    <p class="text-[11px] text-gray-400 mt-0.5 leading-snug">Garansi 100 hari kerja</p>
+                                    <p class="text-[11px] text-gray-400 mt-0.5 leading-snug">Garansi 100 hari sejak selesai</p>
                                 </div>
                                 <span class="material-symbols-outlined text-gray-300 !text-[18px] shrink-0">arrow_forward_ios</span>
                             </a>

@@ -56,41 +56,33 @@
                  showPass: false, 
                  showConfirm: false,
                  password: '',
+                 // Mirrors the server rule: min. 8 characters, at least one letter and one number.
                  get hasLength() { return this.password.length >= 8; },
-                 get hasLower() { return /[a-z]/.test(this.password); },
-                 get hasUpper() { return /[A-Z]/.test(this.password); },
+                 get hasLetter() { return /[A-Za-z]/.test(this.password); },
                  get hasNumber() { return /[0-9]/.test(this.password); },
-                 get hasSymbol() { return /[^A-Za-z0-9]/.test(this.password); },
                  get score() {
-                     let s = 0;
-                     if (this.hasLength) s++;
-                     if (this.hasLower && this.hasUpper) s++;
-                     if (this.hasNumber) s++;
-                     if (this.hasSymbol) s++;
-                     return s;
+                     return [this.hasLength, this.hasLetter, this.hasNumber].filter(Boolean).length;
                  },
                  get strengthLabel() {
                      if (this.score <= 1) return 'Lemah';
                      if (this.score === 2) return 'Cukup';
-                     if (this.score === 3) return 'Kuat';
-                     return 'Sangat Kuat';
+                     return 'Kuat';
                  },
                  get nextHint() {
                      if (!this.hasLength) return 'Min. 8 karakter';
-                     if (!(this.hasLower && this.hasUpper)) return 'Gunakan huruf besar & kecil';
+                     if (!this.hasLetter) return 'Tambahkan huruf';
                      if (!this.hasNumber) return 'Tambahkan angka';
-                     if (!this.hasSymbol) return 'Tambahkan simbol';
-                     return 'Sandi memenuhi syarat';
+                     return '';
                  },
                  get activeColor() {
                      if (this.score <= 1) return '#ef4444';
                      if (this.score === 2) return '#f59e0b';
                      return '#10b981';
                  },
-                 get barStyle() {
-                     if (this.score <= 1) return 'background-color: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.4);';
-                     if (this.score === 2) return 'background-color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.4);';
-                     return 'background-color: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.4);';
+                 // Object (not string) so Alpine merges it with the bar's static flex/radius styles.
+                 barStyle(n) {
+                     if (this.score < n) return { backgroundColor: '#e5e7eb', boxShadow: 'none' };
+                     return { backgroundColor: this.activeColor, boxShadow: '0 0 8px ' + this.activeColor + '66' };
                  }
              }">
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;">
@@ -114,22 +106,19 @@
                         
                         <!-- Premium Thin Progress Bar -->
                         <div style="display: flex; gap: 4px; height: 4px; width: 100%; margin-bottom: 0.25rem;">
-                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out;" :style="score >= 1 ? barStyle : 'background-color:#e5e7eb'"></div>
-                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out 0.05s;" :style="score >= 2 ? barStyle : 'background-color:#e5e7eb'"></div>
-                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out 0.1s;" :style="score >= 3 ? barStyle : 'background-color:#e5e7eb'"></div>
-                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out 0.15s;" :style="score >= 4 ? barStyle : 'background-color:#e5e7eb'"></div>
+                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out;" :style="barStyle(1)"></div>
+                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out 0.05s;" :style="barStyle(2)"></div>
+                            <div style="flex: 1; border-radius: 999px; transition: all 0.4s ease-out 0.1s;" :style="barStyle(3)"></div>
                         </div>
 
                         <!-- Dynamic Single Line Hint -->
                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem;">
-                            <span style="font-weight: 700; transition: color 0.4s;" :style="'color:' + activeColor" x-text="strengthLabel"></span>
-                            
-                            <span style="color: #6b7280; font-weight: 500; transition: all 0.3s;" x-show="score < 4" x-text="nextHint"></span>
-                            
-                            <span style="color: #10b981; font-weight: 700; display: flex; align-items: center; gap: 4px;" x-show="score === 4">
-                                <svg style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                Sempurna!
+                            <span style="font-weight: 700; transition: color 0.4s; display: flex; align-items: center; gap: 4px;" :style="{ color: activeColor }">
+                                <svg x-show="score === 3" style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                <span x-text="strengthLabel"></span>
                             </span>
+
+                            <span style="color: #6b7280; font-weight: 500; transition: all 0.3s;" x-show="score < 3" x-text="nextHint"></span>
                         </div>
                     </div>
                     @error('password')

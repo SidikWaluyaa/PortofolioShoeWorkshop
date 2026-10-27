@@ -35,7 +35,7 @@
             <div class="greeting">Halo, {{ $donationRequest->nama_pemohon }}! 🎉</div>
             <p>Selamat! Permohonan adopsi Anda untuk sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong> telah <strong class="text-emerald">DISETUJUI</strong> oleh tim Shoe Workshop.</p>
             
-            <p>Sepatu ini siap menjadi teman perjalanan Anda yang baru. Namun sebelum itu, silakan selesaikan pembayaran biaya/ongkos kirim agar kami dapat segera mengirimkannya kepada Anda.</p>
+            <p>Sepatu ini siap menjadi teman perjalanan Anda yang baru. Siapa cepat dia dapat: sepatu menjadi milik pemohon pertama yang membayar dan mengunggah bukti pembayaran. Tagihan di bawah berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
 
             <div class="invoice-box">
                 <h3>Detail Tagihan</h3>

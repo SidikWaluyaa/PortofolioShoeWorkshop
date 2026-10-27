@@ -1,14 +1,11 @@
-<header x-data="{ open: false }" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center">
+<header x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center gap-6">
         {{-- Logo --}}
-        <a href="{{ route('member.dashboard') }}" class="flex items-center gap-2">
-            <div class="flex flex-col leading-tight">
-                <span class="text-lg font-extrabold text-[#1c1c17]">Shoe Workshop</span>
-                <div class="flex h-1 w-full">
-                    <div class="w-1/2 bg-[#22AF85]"></div>
-                    <div class="w-1/2 bg-[#FFC232]"></div>
-                </div>
-            </div>
+        <a href="{{ route('member.dashboard') }}" class="flex items-center gap-2 shrink-0">
+            <picture>
+                <source srcset="{{ asset('images/logo-navbar.webp') }}" type="image/webp">
+                <img src="{{ asset('images/logo-navbar.png') }}" alt="Shoe Workshop" width="480" height="131" class="h-9 sm:h-10 w-auto">
+            </picture>
         </a>
 
         {{-- Desktop Nav --}}
@@ -17,7 +14,7 @@
             <a href="{{ route('member.reparation-history.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.reparation-history.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Riwayat Reparasi</a>
             <a href="{{ route('member.adoption-requests.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.adoption-requests.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Adopsi Saya</a>
             <a href="{{ route('member.donations.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.donations.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Donasi Saya</a>
-            <a href="{{ route('katalog.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('katalog.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Katalog Donasi</a>
+            <a href="{{ route('katalog.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('katalog.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Katalog Adopsi</a>
             <a href="{{ route('member.checkin.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.checkin.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Daily Check-In</a>
             <a href="{{ route('member.rewards.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.rewards.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Rewards</a>
         </div>
@@ -96,6 +93,11 @@
         </button>
     </nav>
 
+    {{-- Dimmed backdrop: tapping anywhere outside the menu closes it (teleported so it covers the whole page) --}}
+    <template x-teleport="body">
+        <div x-show="open" x-transition.opacity @click="open = false" class="lg:hidden fixed inset-0 z-40 bg-black/30" style="display: none;"></div>
+    </template>
+
     {{-- Mobile menu --}}
     <div x-show="open"
          x-transition:enter="transition ease-out duration-200"
@@ -116,7 +118,7 @@
                 Donasi Saya
             </a>
             <a href="{{ route('katalog.index') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('katalog.*') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                Katalog Donasi
+                Katalog Adopsi
             </a>
             <a href="{{ route('member.checkin.index') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('member.checkin.*') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                 Daily Check-In

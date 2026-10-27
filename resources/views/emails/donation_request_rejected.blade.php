@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status Pengajuan Barang Donasi - Shoe Workshop</title>
+    <title>Status Permohonan Adopsi Sepatu - Shoe Workshop</title>
 </head>
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #1e293b;">
 
@@ -18,7 +18,7 @@
                     <tr>
                         <td align="center" style="background-color: #64748b; padding: 40px 30px; text-align: center;">
                             <span style="font-size: 11px; font-weight: 900; color: #cbd5e1; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 8px;">Shoe Workshop Donation</span>
-                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2;">Status Pengajuan Barang</h1>
+                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2;">Status Permohonan Adopsi</h1>
                         </td>
                     </tr>
 
@@ -29,10 +29,10 @@
                                 Halo <strong>{{ $donationRequest->nama_pemohon }}</strong>,
                             </p>
                             <p style="font-size: 15px; line-height: 1.6; color: #334155; margin-bottom: 20px;">
-                                Terima kasih telah mengajukan permohonan donasi di platform kami serta atas waktu yang Anda luangkan untuk melengkapi data pengajuan.
+                                Terima kasih telah mengajukan permohonan adopsi sepatu di platform kami.
                             </p>
                             <p style="font-size: 15px; line-height: 1.6; color: #334155; margin-bottom: 25px;">
-                                Mohon maaf, saat ini pengajuan Anda untuk barang donasi di bawah ini <strong>belum terpilih</strong> untuk disetujui:
+                                Mohon maaf, permohonan adopsi Anda untuk sepatu di bawah ini <strong>tidak dapat kami lanjutkan</strong>:
                             </p>
 
                             <!-- Item Card Details -->
@@ -68,11 +68,11 @@
                             @endif
 
                             <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 20px;">
-                                Dikarenakan ketersediaan barang donasi gratis kami yang sangat terbatas (hasil restorasi restorator profesional Shoe Workshop yang unik) dan tingginya volume pengajuan, tim kurasi kami harus memprioritaskan alasan pengajuan yang paling mendesak pada kesempatan kali ini.
+                                Hal ini biasanya terjadi karena bukti pembayaran tidak dapat kami verifikasi. Jika Anda merasa sudah melakukan pembayaran dengan benar, silakan hubungi CS kami via WhatsApp agar dapat kami bantu cek kembali.
                             </p>
 
                             <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 30px;">
-                                <strong>Jangan berkecil hati!</strong> Masih banyak pilihan barang donasi gratis berkualitas lainnya di katalog kami yang siap pakai. Kami sangat menyarankan Anda untuk mengajukan permohonan kembali pada barang alternatif lainnya yang masih tersedia.
+                                <strong>Jangan berkecil hati!</strong> Masih banyak sepatu hasil restorasi tim kami di katalog yang siap menemani langkah baru Anda.
                             </p>
 
                             <!-- Call To Action -->
@@ -80,7 +80,7 @@
                                 <tr>
                                     <td>
                                         <a href="{{ route('katalog.index') }}" style="background-color: #22AF85; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 14px; font-weight: bold; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(34, 175, 133, 0.2);">
-                                            Jelajahi Katalog Donasi
+                                            Jelajahi Katalog Adopsi
                                         </a>
                                     </td>
                                 </tr>

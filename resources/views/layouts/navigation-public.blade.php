@@ -1,14 +1,11 @@
-<header x-data="{ open: false }" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center">
+<header x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center gap-6">
         {{-- Logo --}}
-        <a href="{{ route('home') }}" class="flex items-center gap-2">
-            <div class="flex flex-col leading-tight">
-                <span class="text-lg font-extrabold text-[#1c1c17]">Shoe Workshop</span>
-                <div class="flex h-1 w-full">
-                    <div class="w-1/2 bg-[#22AF85]"></div>
-                    <div class="w-1/2 bg-[#FFC232]"></div>
-                </div>
-            </div>
+        <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0">
+            <picture>
+                <source srcset="{{ asset('images/logo-navbar.webp') }}" type="image/webp">
+                <img src="{{ asset('images/logo-navbar.png') }}" alt="Shoe Workshop" width="480" height="131" class="h-9 sm:h-10 w-auto">
+            </picture>
         </a>
 
         {{-- Desktop Nav --}}
@@ -81,13 +78,17 @@
                                     <span class="material-symbols-outlined !text-[18px]">history</span>
                                     Riwayat Reparasi
                                 </a>
+                                <a href="{{ route('member.adoption-requests.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
+                                    <span class="material-symbols-outlined !text-[18px]">shopping_bag</span>
+                                    Adopsi Saya
+                                </a>
                                 <a href="{{ route('member.donations.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
                                     <span class="material-symbols-outlined !text-[18px]">inventory_2</span>
                                     Donasi Saya
                                 </a>
                                 <a href="{{ route('katalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
                                     <span class="material-symbols-outlined !text-[18px]">apps</span>
-                                    Katalog Donasi
+                                    Katalog Adopsi
                                 </a>
                                 <a href="{{ route('member.checkin.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
                                     <span class="material-symbols-outlined !text-[18px]">event_available</span>
@@ -138,6 +139,11 @@
         </button>
     </nav>
 
+    {{-- Dimmed backdrop: tapping anywhere outside the menu closes it (teleported so it covers the whole page) --}}
+    <template x-teleport="body">
+        <div x-show="open" x-transition.opacity @click="open = false" class="lg:hidden fixed inset-0 z-40 bg-black/30" style="display: none;"></div>
+    </template>
+
     {{-- Mobile menu --}}
     <div x-show="open"
          x-transition:enter="transition ease-out duration-200"
@@ -172,13 +178,17 @@
                         <span class="material-symbols-outlined !text-[20px]">history</span>
                         Riwayat Reparasi
                     </a>
+                    <a href="{{ route('member.adoption-requests.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <span class="material-symbols-outlined !text-[20px]">shopping_bag</span>
+                        Adopsi Saya
+                    </a>
                     <a href="{{ route('member.donations.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                         <span class="material-symbols-outlined !text-[20px]">inventory_2</span>
                         Donasi Saya
                     </a>
                     <a href="{{ route('katalog.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                         <span class="material-symbols-outlined !text-[20px]">apps</span>
-                        Katalog Donasi
+                        Katalog Adopsi
                     </a>
                     <a href="{{ route('member.checkin.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                         <span class="material-symbols-outlined !text-[20px]">event_available</span>

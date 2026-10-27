@@ -133,6 +133,14 @@
             background-color: #d1fae5;
             color: #065f46;
         }
+        .badge-dipesan {
+            background-color: #ede9fe;
+            color: #5b21b6;
+        }
+        .badge-arsip {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
         .badge-disalurkan {
             background-color: #f1f5f9;
             color: #475569;
@@ -213,7 +221,7 @@
                         if (!empty($filters['search'])) $appliedFilters[] = 'Cari: "' . $filters['search'] . '"';
                         if (!empty($filters['brand'])) $appliedFilters[] = 'Brand: ' . $filters['brand'];
                         if (!empty($filters['kategori'])) $appliedFilters[] = 'Kategori: ' . ucfirst($filters['kategori']);
-                        if (!empty($filters['status'])) $appliedFilters[] = 'Status: ' . ($filters['status'] === 'tersedia' ? 'Tersedia' : 'Disalurkan');
+                        if (!empty($filters['status'])) $appliedFilters[] = 'Status: ' . ucfirst($filters['status']);
                         if (!empty($filters['sort'])) $appliedFilters[] = 'Urutan: ' . ($filters['sort'] === 'asc' ? 'Terlama (ASC)' : 'Terbaru (DESC)');
                     @endphp
                     {{ empty($appliedFilters) ? 'Semua Data (Tanpa Filter)' : implode(', ', $appliedFilters) }}
@@ -327,7 +335,7 @@
                     </td>
                     <td style="vertical-align: middle;">
                         <span class="badge badge-{{ $item->status }}">
-                            {{ $item->status === 'tersedia' ? 'Tersedia' : 'Disalurkan' }}
+                            {{ ucfirst($item->status) }}
                         </span>
                     </td>
                 </tr>

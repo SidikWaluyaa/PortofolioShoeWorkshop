@@ -47,6 +47,48 @@ class DonationRequest extends Model
     }
 
     /**
+     * Requests that stop the member from requesting another shoe (one active request at a time).
+     * A request on hold because someone else already paid for the shoe does not count.
+     */
+    public function scopeBlockingNewRequests(Builder $query)
+    {
+        return $query->where(function ($q) {
+            $q->where('status', 'menunggu_verifikasi')
+              ->orWhere(function ($waiting) {
+                  $waiting->where('status', 'menunggu_pembayaran')
+                          ->whereHas('donationItem', fn ($item) => $item->where('status', 'tersedia'));
+              });
+        });
+    }
+
+    /** Order statuses a member must finish before paying for another shoe. */
+    public const IN_PROGRESS_STATUSES = ['menunggu_verifikasi', 'diproses'];
+
+    /**
+     * The member's other order that is being verified or processed, which blocks paying for this one.
+     */
+    public function otherOrderInProgress(): ?self
+    {
+        if (!$this->user_id) {
+            return null;
+        }
+
+        return static::with('donationItem')
+            ->where('user_id', $this->user_id)
+            ->where('id', '!=', $this->id)
+            ->whereIn('status', self::IN_PROGRESS_STATUSES)
+            ->first();
+    }
+
+    /**
+     * Whether someone else already paid for this shoe and this request is waiting on the result.
+     */
+    public function isOnHold(): bool
+    {
+        return $this->status === 'menunggu_pembayaran' && $this->donationItem?->status === 'dipesan';
+    }
+
+    /**
      * Scope a query to apply filters from Request.
      */
     public function scopeFilterByRequest(Builder $query, \Illuminate\Http\Request $request)

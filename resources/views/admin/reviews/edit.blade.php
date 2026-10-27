@@ -25,6 +25,26 @@
                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20">
             </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Layanan</label>
+                    <input type="text" name="service" value="{{ old('service', $review?->service) }}" placeholder="mis. Repaint"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal Ulasan</label>
+                    <input type="date" name="reviewed_at" value="{{ old('reviewed_at', $review?->reviewed_at?->format('Y-m-d')) }}"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Sumber</label>
+                    <select name="source" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#22AF85] focus:ring-2 focus:ring-[#22AF85]/20">
+                        <option value="manual" @selected(old('source', $review?->source ?? 'manual') === 'manual')>Langsung ke kami</option>
+                        <option value="google" @selected(old('source', $review?->source) === 'google')>Ulasan Google</option>
+                    </select>
+                </div>
+            </div>
+
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Rating <span class="text-red-500">*</span></label>
                 <div class="flex gap-3">

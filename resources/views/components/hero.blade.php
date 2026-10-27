@@ -152,8 +152,8 @@
                                             <span class="material-symbols-outlined !text-xl text-[#1c1c17] fill-1">star</span>
                                         </div>
                                         <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">4.9/5 Rating</span>
-                                            <span class="text-[10px] font-semibold text-white/90 xl:text-xs drop-shadow-sm">2.000+ Pelanggan</span>
+                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">{{ $globalSettings['google_rating'] ?? '4,4' }}/5 di Google</span>
+                                            <span class="text-[10px] font-semibold text-white/90 xl:text-xs drop-shadow-sm">84K+ Pelanggan</span>
                                         </div>
                                     </div>
                                     
@@ -196,8 +196,8 @@
                                             <span class="material-symbols-outlined !text-xl text-[#22AF85] fill-1">local_shipping</span>
                                         </div>
                                         <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">Menuju Panti</span>
-                                            <span class="text-[10px] font-bold text-[#FFC232] xl:text-xs drop-shadow-sm">Asuhan Bandung</span>
+                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">Siap Diadopsi</span>
+                                            <span class="text-[10px] font-bold text-[#FFC232] xl:text-xs drop-shadow-sm">Lewat Katalog</span>
                                         </div>
                                     </div>
 
@@ -207,8 +207,8 @@
                                             <span class="material-symbols-outlined !text-xl text-[#FFC232] fill-1">handshake</span>
                                         </div>
                                         <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">100% Disalurkan</span>
-                                            <span class="text-[10px] font-bold text-white/90 xl:text-xs drop-shadow-sm">kepada yang berhak</span>
+                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">100% Direstorasi</span>
+                                            <span class="text-[10px] font-bold text-white/90 xl:text-xs drop-shadow-sm">sebelum diadopsi</span>
                                         </div>
                                     </div>
                                 @endif
@@ -277,8 +277,8 @@
                                                 <span class="material-symbols-outlined !text-base text-[#1c1c17] fill-1">star</span>
                                             </div>
                                             <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">4.9/5 Rating</span>
-                                                <span class="text-[9px] font-semibold text-white/90 drop-shadow-sm">2.000+ Pelanggan</span>
+                                                <span class="text-[11px] font-black text-white drop-shadow-md">{{ $globalSettings['google_rating'] ?? '4,4' }}/5 di Google</span>
+                                                <span class="text-[9px] font-semibold text-white/90 drop-shadow-sm">84K+ Pelanggan</span>
                                             </div>
                                         </div>
                                         {{-- Card 2 --}}
@@ -318,8 +318,8 @@
                                                 <span class="material-symbols-outlined !text-base text-[#22AF85] fill-1">local_shipping</span>
                                             </div>
                                             <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">Menuju Panti</span>
-                                                <span class="text-[9px] font-bold text-[#FFC232] drop-shadow-sm">Asuhan Bandung</span>
+                                                <span class="text-[11px] font-black text-white drop-shadow-md">Siap Diadopsi</span>
+                                                <span class="text-[9px] font-bold text-[#FFC232] drop-shadow-sm">Lewat Katalog</span>
                                             </div>
                                         </div>
                                         {{-- Card 3 --}}
@@ -328,8 +328,8 @@
                                                 <span class="material-symbols-outlined !text-base text-[#FFC232] fill-1">handshake</span>
                                             </div>
                                             <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">100% Disalurkan</span>
-                                                <span class="text-[9px] font-bold text-white/90 drop-shadow-sm">kepada yang berhak</span>
+                                                <span class="text-[11px] font-black text-white drop-shadow-md">100% Direstorasi</span>
+                                                <span class="text-[9px] font-bold text-white/90 drop-shadow-sm">sebelum diadopsi</span>
                                             </div>
                                         </div>
                                     @endif

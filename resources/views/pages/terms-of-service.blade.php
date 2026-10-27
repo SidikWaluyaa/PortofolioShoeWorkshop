@@ -23,7 +23,7 @@
                 <p>Estimasi waktu pengerjaan (SLA) yang kami berikan adalah perkiraan. Waktu aktual dapat berubah sewaktu-waktu tergantung pada tingkat kerusakan, ketersediaan material, dan antrean pengerjaan di workshop kami. Segala kerusakan bawaan yang tidak dilaporkan atau terlihat saat serah terima barang bukan menjadi tanggung jawab Shoe Workshop.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">2. Pembayaran & Tagihan</h4>
-                <p>Pembayaran layanan perbaikan maupun biaya ongkos kirim (untuk sepatu adopsi/donasi) harus dilakukan secara penuh sesuai dengan tagihan yang tertera di sistem kami. Pembayaran dilakukan melalui metode transfer bank, dompet digital, atau QRIS yang disediakan oleh mitra payment gateway resmi. Pesanan akan diproses atau dikirimkan kembali HANYA setelah dana terverifikasi masuk.</p>
+                <p>Pembayaran layanan perbaikan maupun biaya jasa restorasi (untuk sepatu adopsi) harus dilakukan secara penuh sesuai dengan tagihan yang tertera di sistem kami. Ongkos kirim sepatu adopsi tidak termasuk dalam tagihan, ditanggung oleh pemohon, dan ditagih terpisah oleh tim CS kami yang akan menghubungi Anda. Pembayaran dilakukan melalui transfer bank ke rekening resmi Shoe Workshop yang tercantum pada tagihan. Untuk adopsi sepatu, bukti transfer wajib diunggah melalui halaman Adopsi Saya untuk diverifikasi admin. Pesanan akan diproses atau dikirimkan HANYA setelah pembayaran terverifikasi.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">3. Kebijakan Pengembalian Dana (Refund Policy)</h4>
                 <p>Pengembalian dana (refund) HANYA dapat diproses dalam kondisi berikut:</p>

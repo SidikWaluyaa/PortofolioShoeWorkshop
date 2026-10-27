@@ -56,14 +56,20 @@ Route::post('/klaim-garansi/api/submit', [WarrantyClaimController::class, 'submi
 Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 
-Route::get('/donasi-katalog', [\App\Http\Controllers\DonationCatalogController::class, 'index'])->name('katalog.index');
-Route::get('/donasi-katalog/filter', [\App\Http\Controllers\DonationCatalogController::class, 'filter'])->name('katalog.filter');
-Route::get('/donasi-katalog/{item}', [\App\Http\Controllers\DonationCatalogController::class, 'show'])->name('katalog.show');
+// The catalog used to live at /donasi-katalog: keep old links (emails, socials, search results) working
+Route::get('/donasi-katalog/{path?}', function (\Illuminate\Http\Request $request, ?string $path = null) {
+    $query = $request->getQueryString();
+    return redirect('/donasi' . ($path ? '/' . $path : '') . ($query ? '?' . $query : ''), 301);
+})->where('path', '.*');
+
+Route::get('/donasi', [\App\Http\Controllers\DonationCatalogController::class, 'index'])->name('katalog.index');
+Route::get('/donasi/filter', [\App\Http\Controllers\DonationCatalogController::class, 'filter'])->name('katalog.filter');
+Route::get('/donasi/{item}', [\App\Http\Controllers\DonationCatalogController::class, 'show'])->name('katalog.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/donasi-katalog/{item}/ajukan', [\App\Http\Controllers\DonationCatalogController::class, 'requestForm'])->name('katalog.request.form');
-    Route::get('/donasi-katalog/{item}/sukses/{requestId}', [\App\Http\Controllers\DonationCatalogController::class, 'requestSuccess'])->name('katalog.success');
-    Route::post('/donasi-katalog/{item}/request', [\App\Http\Controllers\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
+    Route::get('/donasi/{item}/ajukan', [\App\Http\Controllers\DonationCatalogController::class, 'requestForm'])->name('katalog.request.form');
+    Route::get('/donasi/{item}/sukses/{requestId}', [\App\Http\Controllers\DonationCatalogController::class, 'requestSuccess'])->name('katalog.success');
+    Route::post('/donasi/{item}/request', [\App\Http\Controllers\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
     
     // Notifications
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');

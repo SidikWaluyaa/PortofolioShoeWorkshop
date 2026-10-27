@@ -2,7 +2,7 @@
     <x-slot name="header">Adopsi Saya</x-slot>
 
     <div class="mb-6">
-        <p class="text-sm text-gray-500">Pantau status permohonan donasi sepatu Anda di sini.</p>
+        <p class="text-sm text-gray-500">Pantau status adopsi sepatu Anda dan selesaikan langkah berikutnya di sini.</p>
     </div>
 
             @if ($errors->any())
@@ -15,11 +15,31 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 gap-6">
+            @php
+                // Progress tracker shown for active orders
+                $steps = [
+                    'menunggu_pembayaran' => 'Bayar',
+                    'menunggu_verifikasi' => 'Verifikasi',
+                    'diproses' => 'Disiapkan',
+                    'dikirim' => 'Dikirim',
+                    'selesai' => 'Selesai',
+                ];
+                $stepKeys = array_keys($steps);
+
+                $tones = [
+                    'amber'   => ['box' => 'bg-amber-50 border-amber-200', 'icon' => 'bg-amber-500', 'title' => 'text-amber-900', 'text' => 'text-amber-800'],
+                    'purple'  => ['box' => 'bg-purple-50 border-purple-200', 'icon' => 'bg-purple-600', 'title' => 'text-purple-900', 'text' => 'text-purple-800'],
+                    'blue'    => ['box' => 'bg-blue-50 border-blue-200', 'icon' => 'bg-blue-600', 'title' => 'text-blue-900', 'text' => 'text-blue-800'],
+                    'emerald' => ['box' => 'bg-emerald-50 border-emerald-200', 'icon' => 'bg-[#22AF85]', 'title' => 'text-emerald-900', 'text' => 'text-emerald-800'],
+                    'gray'    => ['box' => 'bg-gray-50 border-gray-200', 'icon' => 'bg-gray-600', 'title' => 'text-gray-900', 'text' => 'text-gray-600'],
+                    'red'     => ['box' => 'bg-red-50 border-red-100', 'icon' => 'bg-red-500', 'title' => 'text-red-900', 'text' => 'text-red-700'],
+                ];
+            @endphp
+
+            <div class="grid grid-cols-1 gap-5">
                 @forelse($requests as $req)
                     @php
                         $item = $req->donationItem;
-                        $servicesHtml = '';
                         $totalBiaya = 0;
                         if ($req->selected_services && count($req->selected_services) > 0 && $item) {
                             foreach ($req->selected_services as $srvId) {
@@ -29,93 +49,125 @@
                                 }
                             }
                         }
+                        $totalFormatted = 'Rp ' . number_format($totalBiaya, 0, ',', '.');
+                        $detailUrl = route('member.adoption-requests.show', $req->id);
+                        $otherOrder = $req->status === 'menunggu_pembayaran' ? $req->otherOrderInProgress() : null;
 
-                        // Status Color Mapping
-                        $statusColors = [
-                            'pending' => 'bg-gray-100 text-gray-700 border-gray-200',
-                            'menunggu_pembayaran' => 'bg-amber-100 text-amber-700 border-amber-200',
-                            'menunggu_verifikasi' => 'bg-purple-100 text-purple-700 border-purple-200',
-                            'diproses' => 'bg-blue-100 text-blue-700 border-blue-200',
-                            'dikirim' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
-                            'ditolak' => 'bg-red-50 text-red-500 border-red-100',
-                            'dibatalkan' => 'bg-red-100 text-red-700 border-red-200',
-                            'selesai' => 'bg-blue-100 text-blue-700 border-blue-200',
-                        ];
-                        $statusLabels = [
-                            'pending' => 'Menunggu Seleksi',
-                            'menunggu_pembayaran' => 'Menunggu Pembayaran',
-                            'menunggu_verifikasi' => 'Menunggu Verifikasi',
-                            'diproses' => 'Sedang Diproses',
-                            'dikirim' => 'Telah Dikirim',
-                            'ditolak' => 'Ditolak',
-                            'dibatalkan' => 'Dibatalkan',
-                            'selesai' => 'Selesai',
-                        ];
+                        // "What do I do next?" panel: [tone, icon, title, description, button label, button url, primary?]
+                        if ($req->isOnHold()) {
+                            $next = ['gray', 'hourglass_top', 'Sedang dipesan pemohon lain',
+                                'Pemohon lain sudah lebih dulu membayar dan sedang diverifikasi. Mohon jangan transfer dulu, kami kabari jika sepatu tersedia lagi.',
+                                'Lihat Status', $detailUrl, false];
+                        } elseif ($otherOrder) {
+                            $next = ['blue', 'pending_actions', 'Selesaikan pesanan lain dulu',
+                                'Pesanan ' . ($otherOrder->donationItem?->nama ?? 'Anda yang lain') . ' sedang diverifikasi/diproses. Mohon jangan transfer untuk sepatu ini dulu.',
+                                'Lihat Pesanan Lain', route('member.adoption-requests.show', $otherOrder->id), false];
+                        } else {
+                            $next = match ($req->status) {
+                                'menunggu_pembayaran' => ['amber', 'payments', 'Langkah berikutnya: bayar tagihan',
+                                    'Transfer sesuai tagihan, lalu unggah bukti transfernya. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang mengunggah bukti bayar.',
+                                    'Bayar & Unggah Bukti', $detailUrl . '#pembayaran', true],
+                                'menunggu_verifikasi' => ['purple', 'fact_check', 'Bukti bayar sedang dicek',
+                                    'Admin sedang memverifikasi pembayaran Anda. Selama proses ini sepatu sudah diamankan untuk Anda.',
+                                    'Lihat Detail Pesanan', $detailUrl, false],
+                                'diproses' => ['blue', 'inventory_2', 'Sepatu sedang disiapkan',
+                                    'Pembayaran terverifikasi. Kami akan mengabari nomor resi saat sepatu dikirim.',
+                                    'Lihat Detail Pesanan', $detailUrl, false],
+                                'dikirim' => ['emerald', 'local_shipping', 'Sepatu dalam perjalanan',
+                                    ($req->resi_pengiriman ? 'No. resi: ' . $req->resi_pengiriman . '. ' : '') . 'Sudah sampai? Konfirmasi penerimaan agar adopsi selesai.',
+                                    'Konfirmasi Sepatu Diterima', $detailUrl . '#konfirmasi', true],
+                                'selesai' => ['emerald', 'check_circle', 'Adopsi selesai',
+                                    'Sepatu resmi menjadi milik Anda. Terima kasih telah memberi kesempatan kedua untuk sepatu ini!',
+                                    'Lihat Detail', $detailUrl, false],
+                                'ditolak', 'dibatalkan' => ['red', 'cancel', $req->status === 'ditolak' ? 'Permohonan ditolak' : 'Permohonan dibatalkan',
+                                    'Permohonan ini tidak dapat dilanjutkan. Masih banyak sepatu hasil restorasi lain di katalog.',
+                                    'Cari Sepatu Lain', route('katalog.index'), false],
+                                default => ['gray', 'schedule', 'Menunggu proses',
+                                    'Permohonan Anda sedang kami proses.',
+                                    'Lihat Detail', $detailUrl, false],
+                            };
+                        }
+                        [$toneKey, $icon, $title, $desc, $ctaLabel, $ctaUrl, $isPrimary] = $next;
+                        $tone = $tones[$toneKey];
 
-                        $colorClass = $statusColors[$req->status] ?? 'bg-gray-100 text-gray-700';
-                        $labelText = $statusLabels[$req->status] ?? $req->status;
+                        $showSteps = in_array($req->status, $stepKeys) && !$req->isOnHold();
+                        $currentStep = array_search($req->status, $stepKeys);
                     @endphp
-                    
-                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
-                        <div class="md:w-1/3 bg-gray-50 border-r border-gray-100 p-6 flex flex-col items-center justify-center text-center">
+
+                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                        {{-- Shoe summary --}}
+                        <a href="{{ $detailUrl }}" class="flex items-center gap-4 p-4 sm:p-5 hover:bg-gray-50/60 transition">
                             @if($item)
-                                <img src="{{ $item->foto_utama_url }}" alt="Sepatu" class="w-32 h-32 object-cover rounded-2xl shadow-sm border border-gray-200 mb-4">
-                                <h3 class="font-black text-gray-900 text-lg">{{ $item->nama }}</h3>
-                                <p class="text-xs font-bold text-gray-500 mt-1 uppercase tracking-wider">{{ $item->brand ?? 'No Brand' }} • {{ $item->kode_barang }}</p>
+                                <img src="{{ $item->foto_utama_url }}" alt="{{ $item->nama }}" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-2xl border border-gray-200 flex-shrink-0">
                             @else
-                                <div class="w-32 h-32 bg-gray-200 rounded-2xl flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-gray-400 text-4xl">inventory_2</span>
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-gray-400">inventory_2</span>
                                 </div>
-                                <p class="text-gray-500 font-bold">Barang tidak tersedia</p>
                             @endif
-                        </div>
-                        
-                        <div class="p-6 md:w-2/3 flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Status Permohonan</span>
-                                        <span class="inline-flex px-3 py-1 rounded-xl text-xs font-black border {{ $colorClass }}">
-                                            {{ $labelText }}
-                                        </span>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Tanggal</span>
-                                        <span class="text-sm font-semibold text-gray-700">{{ $req->created_at->format('d M Y') }}</span>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="font-black text-gray-900 text-[15px] sm:text-base leading-snug line-clamp-2">{{ $item?->nama ?? 'Barang tidak tersedia' }}</h3>
+                                @if($item)
+                                    <p class="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-wider truncate">{{ $item->brand ?? 'No Brand' }} • {{ $item->kode_barang }}</p>
+                                @endif
+                                <p class="text-[11px] text-gray-400 mt-0.5">#ADPS-{{ str_pad($req->id, 5, '0', STR_PAD_LEFT) }} · {{ $req->created_at->format('d M Y') }}</p>
+                            </div>
+                            <span class="material-symbols-outlined text-gray-300 flex-shrink-0">chevron_right</span>
+                        </a>
+
+                        {{-- Progress tracker --}}
+                        @if($showSteps)
+                            <div class="px-4 sm:px-5 pb-1">
+                                <ol class="flex items-start">
+                                    @foreach($steps as $key => $label)
+                                        @php
+                                            $index = $loop->index;
+                                            $done = $index < $currentStep;
+                                            $active = $index === $currentStep;
+                                        @endphp
+                                        <li class="flex-1 flex flex-col items-center text-center relative">
+                                            @if(!$loop->first)
+                                                <span class="absolute top-[11px] right-1/2 w-full h-0.5 {{ $index <= $currentStep ? 'bg-[#22AF85]' : 'bg-gray-200' }}"></span>
+                                            @endif
+                                            <span class="relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black
+                                                {{ $done ? 'bg-[#22AF85] text-white' : ($active ? 'bg-white text-[#22AF85] ring-2 ring-[#22AF85]' : 'bg-gray-100 text-gray-400') }}">
+                                                @if($done)
+                                                    <span class="material-symbols-outlined !text-[14px]">check</span>
+                                                @else
+                                                    {{ $index + 1 }}
+                                                @endif
+                                            </span>
+                                            <span class="mt-1.5 text-[10px] sm:text-[11px] leading-tight {{ $active ? 'font-black text-gray-900' : 'font-semibold text-gray-400' }}">{{ $label }}</span>
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endif
+
+                        {{-- What to do next --}}
+                        <div class="p-4 sm:p-5">
+                            <div class="rounded-2xl border p-4 {{ $tone['box'] }}">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-8 h-8 rounded-full text-white flex items-center justify-center flex-shrink-0 {{ $tone['icon'] }}">
+                                        <span class="material-symbols-outlined !text-[18px]">{{ $icon }}</span>
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-black {{ $tone['title'] }}">{{ $title }}</p>
+                                        <p class="text-xs leading-relaxed mt-1 {{ $tone['text'] }}">{{ $desc }}</p>
                                     </div>
                                 </div>
-                                
-                                @if($req->status === 'menunggu_pembayaran')
-                                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start gap-3 mb-4">
-                                        <span class="material-symbols-outlined text-amber-500 text-lg mt-0.5">notification_important</span>
-                                        <div>
-                                            <p class="text-sm font-bold text-amber-900">Menunggu Pembayaran</p>
-                                            <p class="text-xs text-amber-700 mt-1">Harap segera lunasi tagihan sebesar <strong class="font-black">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong> agar pesanan tidak batal.</p>
-                                        </div>
-                                    </div>
-                                @elseif($req->status === 'dikirim')
-                                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-center justify-between mb-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-emerald-600 shadow-sm">
-                                                <span class="material-symbols-outlined text-[18px]">local_shipping</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">Pesanan Dikirim</p>
-                                                <p class="text-xs font-medium text-emerald-800">Cek detail untuk mengonfirmasi penerimaan barang.</p>
-                                            </div>
-                                        </div>
+
+                                @if($req->status === 'menunggu_pembayaran' && !$req->isOnHold() && !$otherOrder)
+                                    <div class="mt-4 flex items-center justify-between rounded-xl bg-white/70 border border-amber-100 px-4 py-3">
+                                        <span class="text-xs font-bold text-amber-900">Total tagihan <span class="font-medium text-amber-700">(di luar ongkir)</span></span>
+                                        <span class="text-base font-black text-gray-900">{{ $totalFormatted }}</span>
                                     </div>
                                 @endif
-                            </div>
 
-                            <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">ID Permohonan:</span>
-                                    <span class="text-xs font-black text-gray-700">#ADPS-{{ str_pad($req->id, 5, '0', STR_PAD_LEFT) }}</span>
-                                </div>
-                                <a href="{{ route('member.adoption-requests.show', $req->id) }}" class="px-5 py-2 bg-[#22AF85]/10 hover:bg-[#22AF85]/20 text-[#22AF85] font-bold text-xs rounded-xl transition flex items-center gap-1.5">
-                                    Lihat Detail
-                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                <a href="{{ $ctaUrl }}"
+                                   class="mt-4 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition
+                                          {{ $isPrimary ? 'bg-[#22AF85] hover:bg-[#1a936f] text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
+                                    {{ $ctaLabel }}
+                                    <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                                 </a>
                             </div>
                         </div>
@@ -125,9 +177,9 @@
                         <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
                             <span class="material-symbols-outlined text-4xl text-gray-300">inbox</span>
                         </div>
-                        <h3 class="text-lg font-black text-gray-900 mb-2">Belum ada permohonan</h3>
-                        <p class="text-gray-500 text-sm font-medium">Anda belum pernah mengajukan permohonan donasi sepatu. Yuk cek katalog donasi!</p>
-                        <a href="{{ route('katalog.index') }}" class="inline-block mt-6 px-6 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold rounded-xl transition shadow-sm">Lihat Katalog Donasi</a>
+                        <h3 class="text-lg font-black text-gray-900 mb-2">Belum ada permohonan adopsi</h3>
+                        <p class="text-gray-500 text-sm font-medium">Anda belum pernah mengajukan adopsi sepatu. Yuk cek sepatu hasil restorasi di katalog!</p>
+                        <a href="{{ route('katalog.index') }}" class="inline-block mt-6 px-6 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold rounded-xl transition shadow-sm">Lihat Katalog</a>
                     </div>
                 @endforelse
             </div>

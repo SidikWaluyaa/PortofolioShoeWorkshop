@@ -205,12 +205,6 @@ class DonationCatalogController extends Controller
             ], 422);
         }
 
-        if ($item->isQuotaFull()) {
-            return response()->json([
-                'message' => 'Kuota pengajuan untuk barang ini sudah penuh.'
-            ], 422);
-        }
-
         $request->validate([
             'nama_pemohon' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150'],

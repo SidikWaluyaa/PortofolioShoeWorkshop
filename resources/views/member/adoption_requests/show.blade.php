@@ -33,6 +33,10 @@
                 ];
                 $colorClass = $statusColors[$adoptionRequest->status] ?? 'bg-gray-100 text-gray-700';
                 $labelText = $statusLabels[$adoptionRequest->status] ?? $adoptionRequest->status;
+                if ($adoptionRequest->isOnHold()) {
+                    $colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
+                    $labelText = 'Ditahan · Sedang Dipesan';
+                }
             @endphp
             <span class="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-sm font-black border {{ $colorClass }}">
                 {{ $labelText }}
@@ -162,7 +166,7 @@
                         @endphp
 
                         @if($adoptionRequest->status === 'dikirim' && $adoptionRequest->resi_pengiriman)
-                            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl mb-6 flex flex-col md:flex-row items-center gap-4">
+                            <div id="konfirmasi" class="scroll-mt-24 bg-emerald-50 border border-emerald-100 p-4 rounded-2xl mb-6 flex flex-col md:flex-row items-center gap-4">
                                 <div class="flex items-center gap-4 w-full md:w-auto flex-1">
                                     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm flex-shrink-0">
                                         <span class="material-symbols-outlined text-2xl">local_shipping</span>
@@ -260,19 +264,45 @@
                             </div>
                         @endif
 
-                        @if($adoptionRequest->status === 'menunggu_pembayaran')
+                        @if($adoptionRequest->isOnHold())
+                            {{-- Someone else paid first: no bank details / upload until the admin decides --}}
+                            <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl mb-6 flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-full bg-gray-700 text-white flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+                                </div>
+                                <div class="text-[13px] text-gray-700 leading-relaxed font-medium space-y-1.5">
+                                    <p class="font-bold text-gray-900 text-sm">Sepatu ini sedang dipesan pemohon lain</p>
+                                    <p>Pemohon lain sudah lebih dulu mengunggah bukti pembayaran dan sedang diverifikasi admin. <strong>Mohon jangan melakukan transfer dulu.</strong></p>
+                                    <p>Permohonan Anda tetap aktif. Jika pembayaran tersebut tidak valid, sepatu tersedia lagi dan kami kabari lewat email serta notifikasi.</p>
+                                </div>
+                            </div>
+                        @elseif($adoptionRequest->status === 'menunggu_pembayaran' && ($otherOrder = $adoptionRequest->otherOrderInProgress()))
+                            {{-- One shoe at a time: hide payment details until the other order is done --}}
+                            <div class="bg-blue-50 border border-blue-200 p-5 rounded-2xl mb-6 flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[18px]">pending_actions</span>
+                                </div>
+                                <div class="text-[13px] text-blue-900 leading-relaxed font-medium space-y-1.5">
+                                    <p class="font-bold text-sm">Selesaikan pesanan Anda yang lain dulu</p>
+                                    <p>Pesanan <strong>{{ $otherOrder->donationItem?->nama ?? 'Anda sebelumnya' }}</strong> sedang diverifikasi/diproses. <strong>Mohon jangan transfer untuk sepatu ini dulu.</strong> Pembayaran dapat dilakukan setelah pesanan tersebut dikirim.</p>
+                                    <a href="{{ route('member.adoption-requests.show', $otherOrder->id) }}" class="inline-flex items-center gap-1 font-bold text-blue-700 hover:underline">
+                                        Lihat pesanan tersebut <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                    </a>
+                                </div>
+                            </div>
+                        @elseif($adoptionRequest->status === 'menunggu_pembayaran')
                             {{-- Warning Banner --}}
                             <div class="bg-amber-50 border border-amber-200/60 p-4 rounded-2xl mb-6 flex items-start gap-4">
                                 <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
                                     <span class="material-symbols-outlined text-[16px] font-bold">priority_high</span>
                                 </div>
                                 <p class="text-[13px] text-amber-900 leading-relaxed font-medium">
-                                    <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu akan dikunci hanya setelah bukti transfer diunggah dan terverifikasi. Segera lakukan pembayaran untuk mengamankan barang ini.
+                                    <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu langsung diamankan untuk Anda begitu bukti transfer diunggah, lalu diverifikasi admin. Segera lakukan pembayaran untuk mengamankan sepatu ini. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.
                                 </p>
                             </div>
 
                             {{-- Tagihan Card --}}
-                            <div class="bg-white border border-gray-100 p-6 md:p-8 rounded-2xl mb-6 shadow-sm">
+                            <div id="pembayaran" class="scroll-mt-24 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl mb-6 shadow-sm">
                                 <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                                     <div class="flex items-center gap-2">
                                         <span class="material-symbols-outlined text-gray-400">account_balance</span>
@@ -377,11 +407,11 @@
                                 @else
                                     <div class="p-5 text-center text-sm text-gray-500 font-medium flex flex-col items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-gray-300 text-3xl">money_off</span>
-                                        Tidak ada jasa berbayar yang dipilih. (Gratis)
+                                        Tidak ada jasa berbayar yang dipilih.
                                     </div>
                                 @endif
                                 <div class="bg-gray-900 px-5 py-4 flex justify-between items-center">
-                                    <span class="font-bold text-gray-400 text-[10px] uppercase tracking-wider">Total Pembayaran</span>
+                                    <span class="font-bold text-gray-400 text-[10px] uppercase tracking-wider">Total Pembayaran · di luar ongkir</span>
                                     <span class="text-xl font-black text-[#22AF85]">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
                                 </div>
                             </div>

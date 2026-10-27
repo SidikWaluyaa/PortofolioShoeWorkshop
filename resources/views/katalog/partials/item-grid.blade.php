@@ -2,7 +2,7 @@
     <div class="col-span-full py-16 text-center space-y-4">
         <span class="material-symbols-outlined !text-[64px] text-gray-300">search_off</span>
         <h3 class="text-xl font-bold text-[#191c1d]">Barang Tidak Ditemukan</h3>
-        <p class="text-sm text-gray-500 max-w-sm mx-auto">Tidak ada barang donasi yang cocok dengan pencarian, kategori, atau kondisi yang Anda pilih.</p>
+        <p class="text-sm text-gray-500 max-w-sm mx-auto">Tidak ada sepatu yang cocok dengan pencarian, kategori, atau kondisi yang Anda pilih.</p>
     </div>
 @else
     <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">

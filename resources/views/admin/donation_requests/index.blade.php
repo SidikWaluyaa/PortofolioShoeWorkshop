@@ -250,17 +250,12 @@
 
                         {{-- Status --}}
                         <td class="px-6 py-4 text-center" id="item-status-{{ $item->id }}">
-                            @php
-                                $hasActiveBooking = $item->requests->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'])->count() > 0;
-                                $isFinished = $item->requests->where('status', 'selesai')->count() > 0;
-                            @endphp
-                            
-                            @if($isFinished)
-                                <span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>
-                            @elseif($hasActiveBooking)
-                                <span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Di-booking</span>
+                            @if($item->status === 'dipesan')
+                                <span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Dipesan · Verifikasi</span>
                             @elseif($item->status === 'disalurkan')
                                 <span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>
+                            @elseif($item->status === 'arsip')
+                                <span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-400 text-xs font-bold border border-gray-200">Arsip</span>
                             @else
                                 <span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">Tersedia</span>
                             @endif
@@ -559,12 +554,12 @@
 
                         <div class="flex flex-wrap items-center gap-2" id="controls-${req.id}">
                             ${req.status === 'menunggu_verifikasi' ? `
-                                <button onclick="confirmAjax('Apakah Anda yakin struk pembayaran valid? Pesanan akan diproses.', () => ajaxUpdateStatus(${req.id}, 'diproses', this))" class="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition shadow-sm shadow-purple-200">Validasi Struk (Valid)</button>
-                                <button onclick="confirmAjax('Tolak struk ini? Sepatu akan dikembalikan ke Katalog.', () => ajaxUpdateStatus(${req.id}, 'ditolak', this))" class="px-2.5 py-1.5 bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 rounded-lg text-xs font-bold transition">Tolak Struk (Palsu)</button>
+                                <button onclick="confirmAjax('Apakah Anda yakin struk pembayaran valid? Pesanan akan diproses dan pemohon lain untuk sepatu ini otomatis ditolak.', () => ajaxUpdateStatus(${req.id}, 'diproses', this))" class="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition shadow-sm shadow-purple-200">Validasi Struk (Valid)</button>
+                                <button onclick="confirmAjax('Tolak struk ini? Sepatu akan kembali ke Katalog dan pemohon lain diberi tahu bahwa sepatu tersedia lagi.', () => ajaxUpdateStatus(${req.id}, 'ditolak', this))" class="px-2.5 py-1.5 bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 rounded-lg text-xs font-bold transition">Tolak Struk (Palsu)</button>
                             ` : ''}
 
                             ${['menunggu_pembayaran', 'menunggu_verifikasi'].includes(req.status) ? `
-                                <button onclick="confirmAjax('Apakah Anda yakin membatalkan permohonan ini? Sepatu akan kembali ke Katalog.', () => ajaxUpdateStatus(${req.id}, 'dibatalkan', this))" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Batalkan Pesanan</button>
+                                <button onclick="confirmAjax('Apakah Anda yakin membatalkan permohonan ini?${req.status === 'menunggu_verifikasi' ? ' Sepatu akan kembali ke Katalog dan pemohon lain diberi tahu.' : ''}', () => ajaxUpdateStatus(${req.id}, 'dibatalkan', this))" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Batalkan Pesanan</button>
                             ` : ''}
 
                             ${['diproses', 'dikirim', 'selesai'].includes(req.status) ? `
@@ -656,15 +651,12 @@
             // Update status badge
             const statusCell = document.getElementById(`item-status-${item.id}`);
             if (statusCell) {
-                const isFinished = item.requests.some(r => r.status === 'selesai');
-                const hasActiveBooking = item.requests.some(r => ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'].includes(r.status));
-                
-                if (isFinished) {
-                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>`;
-                } else if (hasActiveBooking) {
-                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Di-booking</span>`;
+                if (item.status === 'dipesan') {
+                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Dipesan · Verifikasi</span>`;
                 } else if (item.status === 'disalurkan') {
                     statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>`;
+                } else if (item.status === 'arsip') {
+                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-400 text-xs font-bold border border-gray-200">Arsip</span>`;
                 } else {
                     statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">Tersedia</span>`;
                 }
@@ -721,27 +713,12 @@
                     if (currentItemIndex !== null) {
                         const item = itemsData[currentItemIndex];
                         
-                        // Update status of targeted request
-                        const req = item.requests.find(r => r.id === id);
-                        if (req) req.status = newStatus;
-
-                        // If approved, update item status to disalurkan
-                        if (newStatus === 'menunggu_pembayaran') {
-                            item.status = 'disalurkan';
-                        } else if (newStatus === 'dibatalkan') {
-                            // Revert item status to tersedia if no approved requests exist
-                            const hasActive = item.requests.some(r => ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'].includes(r.status));
-                            if (!hasActive) item.status = 'tersedia';
-                        }
-
-                        // Auto-rejections implementation: If current was approved, update other pending requests to 'ditolak'
-                        if (newStatus === 'menunggu_pembayaran' && data.auto_rejected_ids && data.auto_rejected_ids.length > 0) {
-                            item.requests.forEach(r => {
-                                if (data.auto_rejected_ids.includes(r.id)) {
-                                    r.status = 'ditolak';
-                                }
-                            });
-                        }
+                        // Sync from the server: the change may also hold, reject or release other requests
+                        const statuses = data.request_statuses || {};
+                        item.requests.forEach(r => {
+                            if (statuses[r.id]) r.status = statuses[r.id];
+                        });
+                        if (data.item_status) item.status = data.item_status;
 
                         // Re-render drawer and sync main list row
                         renderDrawerRequests(item.requests, item);
@@ -843,9 +820,12 @@
                         const item = itemsData[currentItemIndex];
                         item.requests = item.requests.filter(r => r.id !== id);
 
-                        // If no approved requests left, make sure item status is updated
-                        const hasApproved = item.requests.some(r => r.status === 'disetujui');
-                        if (!hasApproved) item.status = 'tersedia';
+                        // Deleting the request that held the shoe releases it; sync from the server
+                        const statuses = data.request_statuses || {};
+                        item.requests.forEach(r => {
+                            if (statuses[r.id]) r.status = statuses[r.id];
+                        });
+                        if (data.item_status) item.status = data.item_status;
 
                         // If all requests are deleted for this item, remove the row entirely and close drawer
                         if (item.requests.length === 0) {
