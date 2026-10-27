@@ -33,6 +33,10 @@
                 ];
                 $colorClass = $statusColors[$adoptionRequest->status] ?? 'bg-gray-100 text-gray-700';
                 $labelText = $statusLabels[$adoptionRequest->status] ?? $adoptionRequest->status;
+                if ($adoptionRequest->isOnHold()) {
+                    $colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
+                    $labelText = 'Ditahan · Sedang Dipesan';
+                }
             @endphp
             <span class="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-sm font-black border {{ $colorClass }}">
                 {{ $labelText }}
@@ -260,7 +264,33 @@
                             </div>
                         @endif
 
-                        @if($adoptionRequest->status === 'menunggu_pembayaran')
+                        @if($adoptionRequest->isOnHold())
+                            {{-- Someone else paid first: no bank details / upload until the admin decides --}}
+                            <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl mb-6 flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-full bg-gray-700 text-white flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+                                </div>
+                                <div class="text-[13px] text-gray-700 leading-relaxed font-medium space-y-1.5">
+                                    <p class="font-bold text-gray-900 text-sm">Sepatu ini sedang dipesan pemohon lain</p>
+                                    <p>Pemohon lain sudah lebih dulu mengunggah bukti pembayaran dan sedang diverifikasi admin. <strong>Mohon jangan melakukan transfer dulu.</strong></p>
+                                    <p>Permohonan Anda tetap aktif. Jika pembayaran tersebut tidak valid, sepatu tersedia lagi dan kami kabari lewat email serta notifikasi.</p>
+                                </div>
+                            </div>
+                        @elseif($adoptionRequest->status === 'menunggu_pembayaran' && ($otherOrder = $adoptionRequest->otherOrderInProgress()))
+                            {{-- One shoe at a time: hide payment details until the other order is done --}}
+                            <div class="bg-blue-50 border border-blue-200 p-5 rounded-2xl mb-6 flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[18px]">pending_actions</span>
+                                </div>
+                                <div class="text-[13px] text-blue-900 leading-relaxed font-medium space-y-1.5">
+                                    <p class="font-bold text-sm">Selesaikan pesanan Anda yang lain dulu</p>
+                                    <p>Pesanan <strong>{{ $otherOrder->donationItem?->nama ?? 'Anda sebelumnya' }}</strong> sedang diverifikasi/diproses. <strong>Mohon jangan transfer untuk sepatu ini dulu.</strong> Pembayaran dapat dilakukan setelah pesanan tersebut dikirim.</p>
+                                    <a href="{{ route('member.adoption-requests.show', $otherOrder->id) }}" class="inline-flex items-center gap-1 font-bold text-blue-700 hover:underline">
+                                        Lihat pesanan tersebut <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                    </a>
+                                </div>
+                            </div>
+                        @elseif($adoptionRequest->status === 'menunggu_pembayaran')
                             {{-- Warning Banner --}}
                             <div class="bg-amber-50 border border-amber-200/60 p-4 rounded-2xl mb-6 flex items-start gap-4">
                                 <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">

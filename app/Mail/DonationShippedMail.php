@@ -31,7 +31,7 @@ class DonationShippedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '📦 Sepatu Donasi Anda Telah Dikirim!',
+            subject: '📦 Sepatu Adopsi Anda Telah Dikirim!',
         );
     }
 

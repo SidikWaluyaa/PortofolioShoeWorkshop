@@ -278,7 +278,7 @@ class DonationItemController extends Controller
             'kondisi' => ['required', 'string', 'in:baru,seperti_baru,sudah_diperbaiki'],
             'ukuran' => ['nullable', 'string', 'max:50'],
             'warna' => ['nullable', 'string', 'max:50'],
-            'status' => ['required', 'string', 'in:tersedia,disalurkan,arsip'],
+            'status' => ['required', 'string', 'in:tersedia,dipesan,disalurkan,arsip'],
             'deskripsi' => ['nullable', 'string'],
             'foto_utama' => ['nullable', 'image', 'max:20480'],
             'foto_detail' => ['nullable', 'array'],

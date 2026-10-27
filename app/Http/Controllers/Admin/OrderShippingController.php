@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DonationRequest;
+use App\Services\AdoptionService;
 
 class OrderShippingController extends Controller
 {
@@ -29,7 +30,7 @@ class OrderShippingController extends Controller
 
         return view('admin.orders.index', compact('orders', 'tab'));
     }
-    public function rollback(Request $request, DonationRequest $order)
+    public function rollback(Request $request, DonationRequest $order, AdoptionService $adoptionService)
     {
         // Pastikan hanya super_admin yang bisa mengakses
         if (auth()->user()->role !== 'super_admin') {
@@ -42,15 +43,8 @@ class OrderShippingController extends Controller
         }
 
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($order) {
-                // Update status DonationRequest (Pesanan) menjadi dibatalkan
-                $order->update(['status' => 'dibatalkan']);
-                
-                // Update status DonationItem (Sepatu) menjadi tersedia
-                if ($order->donationItem) {
-                    $order->donationItem->update(['status' => 'tersedia']);
-                }
-            });
+            // Cancels the order and returns the shoe to the catalog ('tersedia')
+            $adoptionService->transition($order, 'dibatalkan');
 
             return redirect()->back()->with('success', 'Rollback berhasil! Pesanan dibatalkan dan Sepatu kembali tersedia di Katalog.');
         } catch (\Exception $e) {

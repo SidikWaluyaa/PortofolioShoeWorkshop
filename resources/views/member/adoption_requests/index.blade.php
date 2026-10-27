@@ -54,6 +54,10 @@
 
                         $colorClass = $statusColors[$req->status] ?? 'bg-gray-100 text-gray-700';
                         $labelText = $statusLabels[$req->status] ?? $req->status;
+                        if ($req->isOnHold()) {
+                            $colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
+                            $labelText = 'Ditahan · Sedang Dipesan';
+                        }
                     @endphp
                     
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
@@ -85,7 +89,23 @@
                                     </div>
                                 </div>
                                 
-                                @if($req->status === 'menunggu_pembayaran')
+                                @if($req->isOnHold())
+                                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-start gap-3 mb-4">
+                                        <span class="material-symbols-outlined text-gray-500 text-lg mt-0.5">hourglass_top</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-900">Sedang Dipesan Pemohon Lain</p>
+                                            <p class="text-xs text-gray-600 mt-1">Pembayaran pemohon lain sedang diverifikasi. Mohon jangan transfer dulu, kami kabari jika sepatu tersedia lagi.</p>
+                                        </div>
+                                    </div>
+                                @elseif($req->status === 'menunggu_pembayaran' && $req->otherOrderInProgress())
+                                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-start gap-3 mb-4">
+                                        <span class="material-symbols-outlined text-blue-500 text-lg mt-0.5">pending_actions</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-blue-900">Selesaikan Pesanan Lain Dulu</p>
+                                            <p class="text-xs text-blue-700 mt-1">Pesanan Anda yang lain sedang diverifikasi/diproses. Mohon jangan transfer untuk sepatu ini dulu.</p>
+                                        </div>
+                                    </div>
+                                @elseif($req->status === 'menunggu_pembayaran')
                                     <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start gap-3 mb-4">
                                         <span class="material-symbols-outlined text-amber-500 text-lg mt-0.5">notification_important</span>
                                         <div>

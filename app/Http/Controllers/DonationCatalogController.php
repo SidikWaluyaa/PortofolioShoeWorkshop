@@ -23,7 +23,7 @@ class DonationCatalogController extends Controller
         $statuses = ['tersedia', 'disalurkan'];
         
         // Build query for initial render
-        $query = DonationItem::query();
+        $query = DonationItem::visibleInCatalog();
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -131,7 +131,8 @@ class DonationCatalogController extends Controller
         $settings = Setting::pluck('value', 'key')->all();
         
         // Fetch 4 other latest donation items, excluding current item, prioritized by status 'tersedia'
-        $otherItems = DonationItem::where((string) 'id', '!=', $item->id)
+        $otherItems = DonationItem::visibleInCatalog()
+            ->where((string) 'id', '!=', $item->id)
             ->orderBy((string) 'status', 'desc')
             ->latest()
             ->take(4)
@@ -158,7 +159,7 @@ class DonationCatalogController extends Controller
         $hasActiveRequest = false;
         if (Auth::check()) {
             $hasActiveRequest = \App\Models\DonationRequest::where('user_id', Auth::id())
-                ->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi'])
+                ->blockingNewRequests()
                 ->exists();
         }
 
@@ -194,7 +195,7 @@ class DonationCatalogController extends Controller
         $categories = ['sepatu', 'tas', 'topi'];
         $conditions = ['baru', 'seperti_baru', 'sudah_diperbaiki'];
         $statuses = ['tersedia', 'disalurkan'];
-        $query = DonationItem::query();
+        $query = DonationItem::visibleInCatalog();
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -310,7 +311,7 @@ class DonationCatalogController extends Controller
 
         // Check if user has an active request (limit 1 active request rule)
         $activeRequestExists = DonationRequest::where('user_id', Auth::id())
-            ->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi'])
+            ->blockingNewRequests()
             ->exists();
 
         if ($activeRequestExists) {

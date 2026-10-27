@@ -24,7 +24,13 @@ php artisan test tests/Feature/RewardClaimTest.php   # satu file
 ./vendor/bin/pint         # gaya kode (Laravel Pint)
 ```
 
-Test berjalan di SQLite in-memory (`phpunit.xml`), dengan mail `array` dan queue `sync`. Production memakai MySQL, jadi migration yang meng-`ALTER` kolom enum tetap harus jalan di SQLite.
+Test default berjalan di SQLite in-memory (`phpunit.xml`), dengan mail `array` dan queue `sync`. Saat ini beberapa migration lama memakai `ALTER TABLE … MODIFY` yang khusus MySQL, sehingga suite gagal di SQLite. Jalankan test di database MySQL terpisah:
+
+```bash
+DB_CONNECTION=mysql DB_DATABASE=shoe_workshop_testing php artisan test
+```
+
+Migration baru yang mengubah enum harus jalan di dua driver (lihat `2026_10_27_000000_add_dipesan_status_to_donation_items_table.php`). Sekitar 37 test lama memang sudah gagal karena usang. Bandingkan dengan kondisi sebelum perubahan, bukan mengharapkan semuanya hijau.
 
 ## Arsitektur
 
@@ -48,8 +54,8 @@ Test berjalan di SQLite in-memory (`phpunit.xml`), dengan mail `array` dan queue
 
 **Siklus donasi (CSR)**: ini alur domain utama. Status berupa string/enum yang sudah diubah oleh banyak migration, jadi cek migration terbaru sebelum menambah nilai baru.
 - `Donation` (member mendonasikan sepatu): `pending` → `disetujui` (disetujui, menunggu pengiriman/resi) → `diterima` (diterima, dengan foto bukti) → restorasi (`siap_rilis` → `masuk_katalog`) atau `disalurkan`. Bisa juga `ditolak`. Member hanya bisa mengedit donasi selama masih `pending`, dan hanya bisa mengisi resi saat `disetujui`.
-- `DonationItem` adalah sepatu hasil restorasi di katalog publik. Statusnya `tersedia` saat tampil di katalog. Terhubung ke `DonationItemService` / layanan reparasi.
-- `DonationRequest` ("adopsi", member mengajukan item katalog): `pending` → `menunggu_pembayaran` → `menunggu_verifikasi` (member mengunggah bukti bayar) → `diproses` → `dikirim` → `selesai` (member mengunggah `bukti_penerimaan`). Bisa juga `ditolak` atau `dibatalkan`. Menyetujui satu pengajuan menandai item jadi `disalurkan` dan menolak pengajuan lain untuk item yang sama. Admin mengirim email persetujuan/penolakan secara manual lewat route khusus.
+- `DonationItem` adalah sepatu hasil restorasi di katalog publik: `tersedia` → `dipesan` (disembunyikan dari katalog selama pembayaran diverifikasi) → `disalurkan`, atau `arsip`. Terhubung ke `DonationItemService` / layanan reparasi.
+- `DonationRequest` ("adopsi") memakai aturan **siapa cepat dia dapat**, dan semua perpindahan statusnya lewat `AdoptionService::transition()`. Jangan meng-update status langsung. Pengajuan langsung dibuat sebagai `menunggu_pembayaran` dengan email tagihan (ini kebijakan, bukan bug), jadi banyak orang bisa mengajukan sepatu yang sama. Pemohon pertama yang mengunggah bukti bayar → `menunggu_verifikasi`, sepatu jadi `dipesan`, dan pemohon lain "ditahan" (tetap `menunggu_pembayaran`, tidak bisa bayar). Kalau admin menyetujui (`diproses` → `dikirim` → `selesai`), sepatu jadi `disalurkan` dan pemohon lain otomatis `ditolak`. Kalau admin menolak/membatalkan, sepatu kembali `tersedia` dan pemohon lain diberi tahu. Email ke user hanya dikirim saat status benar-benar berubah. Pengujian alur ini ada di `tests/Feature/AdoptionFlowTest.php`.
 - Gamifikasi: check-in `DailyLogin` berupa unggahan foto yang di-approve admin. Streak yang disetujui membuka `Reward`, dan klaimnya dicatat di `UserReward` dengan kode unik. Reward punya `kategori_reward` (misalnya `donasi`), `stok` opsional, dan masa berlaku `berlaku_dari`/`berlaku_sampai`.
 
 **Notifikasi & email**: mailable ada di `app/Mail/`, dikirim lewat Resend (`resend/resend-php`, `symfony/resend-mailer`). Notifikasi in-app memakai tabel `notifications` (`SystemNotification`, `MemberAdoptionStatusNotification`). Email reset password dan verifikasi memakai view custom di `resources/views/emails/auth/`, dipasang di `AppServiceProvider`.

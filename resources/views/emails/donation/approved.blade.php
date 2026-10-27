@@ -28,8 +28,8 @@
             <h1>Shoe Workshop</h1>
         </div>
         <div class="content">
-            <div class="greeting">Halo, {{ $donation->nama }}! 💖</div>
-            <p>Kabar gembira! Sepatu yang Anda ajukan untuk didonasikan (<strong class="text-emerald">{{ $donation->brand ?? 'Sepatu Anda' }}</strong>) telah memenuhi standar kelayakan kami dan <strong class="text-emerald">DISETUJUI</strong>.</p>
+            <div class="greeting">Halo, {{ $donation->user?->name ?? 'Donatur' }}! 💖</div>
+            <p>Kabar gembira! Sepatu yang Anda ajukan untuk didonasikan (<strong class="text-emerald">{{ $donation->nama_sepatu ?? 'Sepatu Anda' }}</strong>) telah memenuhi standar kelayakan kami dan <strong class="text-emerald">DISETUJUI</strong>.</p>
             
             <p>Langkah selanjutnya adalah mengirimkan sepatu tersebut ke markas Shoe Workshop. Silakan kemas sepatu Anda dengan rapi dan aman, lalu kirimkan (atau antar langsung) ke alamat berikut:</p>
 

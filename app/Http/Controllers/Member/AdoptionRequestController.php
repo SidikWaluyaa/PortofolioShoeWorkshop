@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\DonationRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ImageCompressionHelper;
+use App\Exceptions\AdoptionConflictException;
+use App\Services\AdoptionService;
 
 class AdoptionRequestController extends Controller
 {
@@ -30,7 +32,7 @@ class AdoptionRequestController extends Controller
         return view('member.adoption_requests.show', compact('adoptionRequest'));
     }
 
-    public function uploadPayment(Request $request, DonationRequest $adoptionRequest)
+    public function uploadPayment(Request $request, DonationRequest $adoptionRequest, AdoptionService $adoptionService)
     {
         if ($adoptionRequest->user_id !== auth()->id()) {
             abort(403);
@@ -41,28 +43,21 @@ class AdoptionRequestController extends Controller
         ]);
 
         if ($request->hasFile('bukti_pembayaran')) {
-            if ($adoptionRequest->bukti_pembayaran) {
-                Storage::disk('public')->delete($adoptionRequest->bukti_pembayaran);
-            }
+            $oldPath = $adoptionRequest->bukti_pembayaran;
             $path = ImageCompressionHelper::compressAndStore($request->file('bukti_pembayaran'), 'payments', null, false, 800, 800);
-            \Illuminate\Support\Facades\DB::transaction(function () use ($adoptionRequest, $request, $path) {
-                // Update current request
-                $adoptionRequest->update([
-                    'bukti_pembayaran' => $path,
-                    'status' => 'menunggu_verifikasi',
-                ]);
 
-                // Lock the item (hide from catalog)
-                if ($adoptionRequest->donationItem) {
-                    $adoptionRequest->donationItem->update(['status' => 'disalurkan']);
-                    
-                    // Automatically reject all other requests for this item
-                    DonationRequest::where('donation_item_id', $adoptionRequest->donation_item_id)
-                        ->where('id', '!=', $adoptionRequest->id)
-                        ->update(['status' => 'ditolak']);
-                }
-            });
-            
+            // First payer reserves the shoe; the other requesters are put on hold
+            try {
+                $adoptionService->submitPayment($adoptionRequest, $path);
+            } catch (AdoptionConflictException $e) {
+                Storage::disk('public')->delete($path);
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+
+            if ($oldPath) {
+                Storage::disk('public')->delete($oldPath);
+            }
+
             $admins = \App\Models\User::where('role', 'admin')->get();
             if ($admins->isNotEmpty()) {
                 \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
@@ -78,7 +73,7 @@ class AdoptionRequestController extends Controller
         return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi admin.');
     }
 
-    public function complete(\Illuminate\Http\Request $request, DonationRequest $adoptionRequest)
+    public function complete(\Illuminate\Http\Request $request, DonationRequest $adoptionRequest, AdoptionService $adoptionService)
     {
         if ($adoptionRequest->user_id !== auth()->id()) {
             abort(403);
@@ -97,10 +92,7 @@ class AdoptionRequestController extends Controller
             $path = $request->file('bukti_penerimaan')->store('receipts', 'public');
         }
 
-        $adoptionRequest->update([
-            'status' => 'selesai',
-            'bukti_penerimaan' => $path
-        ]);
+        $adoptionService->transition($adoptionRequest, 'selesai', ['bukti_penerimaan' => $path]);
 
         // Send Notification to Member
         auth()->user()->notify(new \App\Notifications\SystemNotification(

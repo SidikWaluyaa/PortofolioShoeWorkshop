@@ -199,6 +199,15 @@ class DonationItem extends Model
     }
 
     /**
+     * Items listed in the public catalog. A shoe reserved by its first payer ('dipesan') stays
+     * hidden until the admin approves or rejects that payment.
+     */
+    public function scopeVisibleInCatalog($query)
+    {
+        return $query->where('status', '!=', 'dipesan');
+    }
+
+    /**
      * Check if the quota for requesting this item is full (maximum 5 pending requests).
      */
     public function isQuotaFull(): bool

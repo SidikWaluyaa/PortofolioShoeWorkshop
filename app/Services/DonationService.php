@@ -123,6 +123,16 @@ class DonationService
                 'volunteer_activism',
                 'success'
             ));
+
+            if ($donation->user->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($donation->user->email)->send(
+                        new \App\Mail\DonationReceivedMail($donation)
+                    );
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send donation received email: ' . $e->getMessage());
+                }
+            }
         }
 
         return $donation;
@@ -148,6 +158,16 @@ class DonationService
                 'cancel',
                 'error'
             ));
+
+            if ($donation->user->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($donation->user->email)->send(
+                        new \App\Mail\DonationRejectedMail($donation)
+                    );
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send donation rejected email: ' . $e->getMessage());
+                }
+            }
         }
 
         return $donation;

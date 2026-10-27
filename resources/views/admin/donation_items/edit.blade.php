@@ -116,6 +116,8 @@
                             Arsip</option>
                         @if($donationItem->status === 'disalurkan')
                             <option value="disalurkan" selected>Sudah Disalurkan</option>
+                        @elseif($donationItem->status === 'dipesan')
+                            <option value="dipesan" selected>Dipesan (menunggu verifikasi pembayaran)</option>
                         @endif
                     </select>
                     @error('status')
