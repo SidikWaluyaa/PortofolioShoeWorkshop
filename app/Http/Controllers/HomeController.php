@@ -37,7 +37,7 @@ class HomeController extends Controller
             'about'            => $this->aboutService->getActive(),
             'cta'              => $this->ctaService->getActive(),
             'settings'         => $this->settingService->all(),
-            'latestPosts'      => $this->blogService->getActive(3),
+            'latestPosts'      => $this->blogService->getActive(),
             'reviews'          => $this->reviewService->getActive(),
             'donationShowcase' => \App\Models\DonationItem::with('reparationServices.service', 'donation.user')
                                     ->where('status', 'tersedia')

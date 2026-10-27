@@ -146,9 +146,10 @@
 
             {{-- 7. ARTIKEL --}}
             <section id="blog" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">
-                <div class="text-center mb-6 sm:mb-8 space-y-3">
-                    <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase">Blog & Artikel</p>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17] leading-tight">Tips & Edukasi<br class="hidden sm:block"> Perawatan Sepatu</h2>
+                <div class="text-center mb-8 sm:mb-10 space-y-4">
+                    <p class="text-sm font-semibold text-[#22AF85] tracking-widest uppercase">Klinik Sepatu</p>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-[#1c1c17] leading-tight">Sepatumu kenapa?</h2>
+                    <p class="text-gray-500 max-w-xl mx-auto">Pilih keluhannya. Kami jelaskan penyebabnya, cara mencegahnya, dan layanan yang bisa memperbaikinya.</p>
                 </div>
                 @include('components.blog', ['posts' => $latestPosts])
             </section>
