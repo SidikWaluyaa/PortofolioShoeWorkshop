@@ -36,9 +36,8 @@ class RegisteredUserController extends Controller
                 'required',
                 'confirmed',
                 Rules\Password::min(8)
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols(),
+                    ->letters()
+                    ->numbers(),
                 'regex:/^(?!(.)\1+$).+$/',
             ],
             'phone' => ['required', 'numeric', 'digits_between:11,13', 'unique:users,phone'],
