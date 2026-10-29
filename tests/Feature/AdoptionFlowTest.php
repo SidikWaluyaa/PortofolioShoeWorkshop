@@ -103,7 +103,9 @@ class AdoptionFlowTest extends TestCase
         Mail::assertSent(AdoptionOnHoldMail::class, fn ($m) => $m->hasTo($b->email));
         Mail::assertNotSent(AdoptionOnHoldMail::class, fn ($m) => $m->hasTo($a->email));
 
-        // Hidden from the public catalog while the payment is being verified
+        // Hidden from the public catalog while the payment is being verified (seen as a guest:
+        // the payer's own notification dropdown names the shoe)
+        $this->app['auth']->forgetGuards();
         $this->get(route('katalog.index'))->assertDontSee('Nike Air Max Adopsi');
         $this->get(route('katalog.filter'), ['X-Requested-With' => 'XMLHttpRequest'])->assertDontSee('Nike Air Max Adopsi');
     }

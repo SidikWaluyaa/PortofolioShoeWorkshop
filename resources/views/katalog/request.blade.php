@@ -142,24 +142,6 @@
                         </p>
                     </div>
                 </div>
-
-                {{-- Environmental Impact Card --}}
-                <div class="bg-[#22AF85] text-white p-5 rounded-2xl shadow-md">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="material-symbols-outlined fill-1 !text-[24px]">eco</span>
-                        <span class="font-bold text-base">Dampak Lingkungan</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-[11px] font-bold opacity-75 uppercase mb-1">CO2 Dihemat</p>
-                            <p class="font-extrabold text-xl">12.5 kg</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-bold opacity-75 uppercase mb-1">Air Terkonservasi</p>
-                            <p class="font-extrabold text-xl">2,100 L</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {{-- Right Column: Form --}}
