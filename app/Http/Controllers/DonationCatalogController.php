@@ -162,9 +162,14 @@ class DonationCatalogController extends Controller
         $blockReason = Auth::check() ? $this->newRequestBlockReason($item) : null;
         $hasActiveRequest = $blockReason !== null;
 
+        // Prefill the address from the member's last request that used the structured form
+        $lastAddress = Auth::check()
+            ? DonationRequest::where('user_id', Auth::id())->whereNotNull('kecamatan')->latest()->first()?->only(DonationRequest::ADDRESS_FIELDS)
+            : null;
+
         $selectedServiceIds = request()->input('services', []);
         $settings = Setting::pluck('value', 'key')->all();
-        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds', 'hasActiveRequest', 'blockReason', 'curationMode'));
+        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds', 'hasActiveRequest', 'blockReason', 'curationMode', 'lastAddress'));
     }
 
     /**
@@ -297,13 +302,32 @@ class DonationCatalogController extends Controller
             'nama_pemohon' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150'],
             'kontak_pemohon' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
-            'alamat_pengiriman' => ['required', 'string', 'min:10'],
+            'alamat_jalan' => ['required', 'string', 'min:5', 'max:255'],
+            'alamat_rt_rw' => ['nullable', 'string', 'max:20'],
+            'alamat_patokan' => ['nullable', 'string', 'max:255'],
+            'provinsi' => ['required', 'string', 'max:100'],
+            'kota' => ['required', 'string', 'max:100'],
+            'kecamatan' => ['required', 'string', 'max:100', function ($attribute, $value, $fail) use ($request) {
+                if (!\App\Support\Wilayah::isValid($request->provinsi, $request->kota, $value)) {
+                    $fail('Pilih provinsi, kota/kabupaten, dan kecamatan dari daftar.');
+                }
+            }],
+            'kelurahan' => ['required', 'string', 'max:100'],
+            'kode_pos' => ['required', 'digits:5'],
             'alasan' => ['required', 'string', 'min:20', 'max:1000'],
             'selected_services' => ['nullable', 'array'],
             'selected_services.*' => ['integer', 'exists:donation_item_services,id'],
         ], [
             'alasan.min' => 'Ceritakan alasan Anda minimal 20 karakter, misalnya sepatu ini untuk siapa dan untuk dipakai apa.',
             'alasan.max' => 'Alasan maksimal 1000 karakter.',
+            'alamat_jalan.required' => 'Isi nama jalan dan nomor rumah.',
+            'alamat_jalan.min' => 'Nama jalan dan nomor rumah terlalu pendek.',
+            'provinsi.required' => 'Pilih provinsi.',
+            'kota.required' => 'Pilih kota/kabupaten.',
+            'kecamatan.required' => 'Pilih kecamatan.',
+            'kelurahan.required' => 'Isi kelurahan/desa.',
+            'kode_pos.required' => 'Isi kode pos.',
+            'kode_pos.digits' => 'Kode pos terdiri dari 5 angka.',
         ]);
 
         if ($blockReason = $this->newRequestBlockReason($item)) {
@@ -330,7 +354,8 @@ class DonationCatalogController extends Controller
                     'nama_pemohon' => $request->nama_pemohon,
                     'email' => $request->email,
                     'kontak_pemohon' => $cleaned,
-                    'alamat_pengiriman' => $request->alamat_pengiriman,
+                    'alamat_pengiriman' => DonationRequest::composeAddress($request->only(DonationRequest::ADDRESS_FIELDS)),
+                    ...$request->only(DonationRequest::ADDRESS_FIELDS),
                     'alasan' => $request->alasan,
                     'selected_services' => $request->selected_services ?? [],
                     'status' => $curationMode ? 'pending' : 'menunggu_pembayaran',

@@ -56,7 +56,12 @@ class AdoptionCurationTest extends TestCase
             'nama_pemohon' => $user->name,
             'email' => $user->email,
             'kontak_pemohon' => '081234567890',
-            'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
+            'alamat_jalan' => 'Jl. Merdeka No. 10',
+            'provinsi' => 'Jawa Barat',
+            'kota' => 'Kota Bandung',
+            'kecamatan' => 'Sumur Bandung',
+            'kelurahan' => 'Braga',
+            'kode_pos' => '40111',
             'alasan' => $alasan,
         ]);
     }
@@ -98,6 +103,61 @@ class AdoptionCurationTest extends TestCase
         // And a pending request cannot be paid
         $this->pay($member, $request)->assertSessionHas('error');
         $this->assertSame('pending', $request->fresh()->status);
+    }
+
+    public function test_the_address_is_stored_per_field_and_as_one_line(): void
+    {
+        $member = User::factory()->create(['role' => 'member']);
+
+        $this->actingAs($member)->post(route('katalog.request', $this->item), [
+            'nama_pemohon' => $member->name,
+            'email' => $member->email,
+            'kontak_pemohon' => '081234567890',
+            'alamat_jalan' => 'Jl. Kembar I No. 41',
+            'alamat_rt_rw' => '002/005',
+            'alamat_patokan' => 'depan masjid',
+            'provinsi' => 'Jawa Barat',
+            'kota' => 'Kota Bandung',
+            'kecamatan' => 'Regol',
+            'kelurahan' => 'Cigereleng',
+            'kode_pos' => '40253',
+            'alasan' => 'Untuk anak saya yang baru masuk SMP, sepatunya sudah jebol.',
+        ])->assertRedirect(route('member.adoption-requests.index'));
+
+        $request = DonationRequest::firstOrFail();
+        $this->assertSame('Regol', $request->kecamatan);
+        $this->assertSame('40253', $request->kode_pos);
+        $this->assertSame(
+            'Jl. Kembar I No. 41, RT/RW 002/005, Kel. Cigereleng, Kec. Regol, Kota Bandung, Jawa Barat 40253 (Patokan: depan masjid)',
+            $request->alamat_pengiriman
+        );
+
+        // The next request form is prefilled with this address
+        $other = $this->makeItem('Sepatu Kedua');
+        $this->actingAs($member)->get(route('katalog.request.form', $other))
+            ->assertOk()
+            ->assertSee('Diisi dari alamat pengajuan terakhirmu')
+            ->assertSee('Jl. Kembar I No. 41');
+    }
+
+    public function test_a_district_outside_the_chosen_city_is_refused(): void
+    {
+        $member = User::factory()->create(['role' => 'member']);
+
+        $this->actingAs($member)->post(route('katalog.request', $this->item), [
+            'nama_pemohon' => $member->name,
+            'email' => $member->email,
+            'kontak_pemohon' => '081234567890',
+            'alamat_jalan' => 'Jl. Kembar I No. 41',
+            'provinsi' => 'Jawa Barat',
+            'kota' => 'Kota Bandung',
+            'kecamatan' => 'Menteng',
+            'kelurahan' => 'Cigereleng',
+            'kode_pos' => '4025',
+            'alasan' => 'Untuk anak saya yang baru masuk SMP, sepatunya sudah jebol.',
+        ])->assertSessionHasErrors(['kecamatan', 'kode_pos']);
+
+        $this->assertSame(0, DonationRequest::count());
     }
 
     public function test_the_reason_must_be_at_least_20_characters(): void

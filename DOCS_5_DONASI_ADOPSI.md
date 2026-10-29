@@ -115,7 +115,7 @@ Dari halaman sepatu di katalog → **Ajukan Adopsi**. Data yang diisi:
 | Nama pemohon      | Wajib                                                                                                                                                            |
 | Email             | Wajib, untuk notifikasi dan tagihan                                                                                                                              |
 | Nomor WhatsApp    | Wajib. Otomatis disimpan dalam format 62…                                                                                                                       |
-| Alamat pengiriman | Wajib, minimal 10 karakter                                                                                                                                       |
+| Alamat pengiriman | Dipisah per bagian: nama jalan & nomor rumah, RT/RW (opsional), patokan (opsional), provinsi, kota/kabupaten, kecamatan (ketiganya dipilih dari daftar resmi Kemendagri), kelurahan/desa, dan kode pos 5 angka. Pengajuan berikutnya otomatis terisi dari alamat terakhir |
 | Alasan mengadopsi | Wajib, **minimal 20 karakter**. Form memberi petunjuk: sepatu untuk siapa, akan dipakai untuk apa, dan kenapa dibutuhkan. Alasan ini jadi bahan kurasi |
 | Pilihan jasa      | Jasa **wajib** otomatis tercentang dan tidak bisa dihapus. Jasa **opsional** boleh dipilih                                                          |
 
@@ -273,5 +273,6 @@ Hal-hal berikut **belum ada aturannya**, baik di sistem maupun di Syarat & Keten
 - Semua perpindahan status adopsi lewat `App\Services\AdoptionService::transition()`. Jangan update kolom status langsung.
 - Status donasi diatur di `App\Services\DonationService`.
 - Mode adopsi dibaca dari setting `adoption_mode` (`kurasi` default, atau `cepat`) lewat `AdoptionService::curationMode()`. Di mode kurasi, *menunggu_pembayaran* ikut memegang sepatu (*dipesan*), dan batas bayar disimpan di kolom `donation_requests.batas_bayar`.
+- Alamat pengajuan adopsi disimpan per kolom (`alamat_jalan` … `kode_pos`) dan juga digabung ke `alamat_pengiriman` lewat `DonationRequest::composeAddress()`. Daftar provinsi/kota/kecamatan ada di `public/data/wilayah` (sumber: github.com/cahyadsn/wilayah, MIT), dibuat ulang dengan `scripts/build_wilayah.py`, dan divalidasi oleh `App\Support\Wilayah`.
 - Pengujian alur adopsi: `tests/Feature/AdoptionCurationTest.php` (mode kurasi) dan `tests/Feature/AdoptionFlowTest.php` (mode siapa cepat).
 - Detail kebijakan juga tercatat di `CLAUDE.md` bagian "Siklus donasi (CSR)".
