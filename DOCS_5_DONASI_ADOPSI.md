@@ -87,37 +87,45 @@ pending ──► disetujui ──► diterima ──► siap_rilis ──► ma
 
 ## 4. Alur Adopsi (mengambil sepatu)
 
-### 4.1 Prinsip utama: siapa cepat dia dapat
+### 4.1 Prinsip utama: dikurasi admin
 
-- **Banyak orang boleh mengajukan sepatu yang sama.** Setiap pengajuan langsung mendapat tagihan.
-- **Sepatu menjadi milik pemohon pertama yang mengunggah bukti transfer**, bukan pemohon pertama yang mengajukan.
-- Begitu ada yang membayar, sepatu **disembunyikan dari katalog** dan pemohon lain **ditahan** (tidak bisa membayar) sampai admin memutuskan.
+Mulai 29 Oktober 2026 (kebijakan sementara dari manajemen), penerima sepatu adopsi **dipilih oleh admin**:
 
-Ini kebijakan yang disengaja, bukan kesalahan sistem.
+- **Banyak orang boleh mengajukan sepatu yang sama.** Saat mengajukan, **belum ada tagihan dan belum ada pembayaran**.
+- Admin meninjau semua pengajuan untuk satu sepatu, lalu **memilih satu penerima**. Bahan pertimbangannya:
+  - **alasan pengajuan**;
+  - **urutan waktu pengajuan** (siapa yang lebih dulu mengajukan);
+  - riwayat member, yaitu jumlah sepatu yang pernah didonasikan dan jumlah adopsi sebelumnya. Data ini ditampilkan di panel admin sebagai bahan bantu.
+- Pemohon terpilih mendapat tagihan dan harus membayar dalam **2×24 jam**.
+- Pemohon lain **tidak langsung ditolak**. Mereka menjadi **cadangan**, sehingga kalau pemohon terpilih tidak membayar, admin tinggal memilih cadangan tanpa ada yang perlu mengajukan ulang.
+
+Mode ini bisa dikembalikan ke **"Siapa Cepat Dia Dapat"** kapan saja lewat **Admin → Pengaturan → Mode Adopsi Sepatu**, tanpa deploy ulang (lihat 4.8). Ganti mode hanya saat tidak ada pemohon yang sedang terpilih atau menunggu pembayaran.
 
 ### 4.2 Mengajukan adopsi
 
 Dari halaman sepatu di katalog → **Ajukan Adopsi**. Data yang diisi:
 
-| Data              | Keterangan                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------------ |
-| Nama pemohon      | Wajib                                                                                                  |
-| Email             | Wajib, untuk tagihan dan notifikasi                                                                    |
-| Nomor WhatsApp    | Wajib. Otomatis disimpan dalam format 62…                                                             |
-| Alamat pengiriman | Wajib, minimal 10 karakter                                                                             |
-| Alasan mengadopsi | Wajib                                                                                                  |
-| Pilihan jasa      | Jasa **wajib** otomatis tercentang dan tidak bisa dihapus. Jasa **opsional** boleh dipilih |
+| Data              | Keterangan                                                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nama pemohon      | Wajib                                                                                                                                                            |
+| Email             | Wajib, untuk notifikasi dan tagihan                                                                                                                              |
+| Nomor WhatsApp    | Wajib. Otomatis disimpan dalam format 62…                                                                                                                       |
+| Alamat pengiriman | Wajib, minimal 10 karakter                                                                                                                                       |
+| Alasan mengadopsi | Wajib, **minimal 20 karakter**. Form memberi petunjuk: sepatu untuk siapa, akan dipakai untuk apa, dan kenapa dibutuhkan. Alasan ini jadi bahan kurasi |
+| Pilihan jasa      | Jasa **wajib** otomatis tercentang dan tidak bisa dihapus. Jasa **opsional** boleh dipilih                                                          |
 
 Batasan:
 
-- Member hanya boleh punya **1 pengajuan aktif** (menunggu pembayaran atau verifikasi). Pengajuan baru ditolak sampai yang lama selesai.
-- **Pengecualian:** kalau pengajuan member sedang **ditahan** karena sepatunya dibayar orang lain, member tetap boleh mengajukan sepatu lain.
+- Member boleh punya **maksimal 3 pengajuan yang sedang dikurasi** sekaligus.
+- Satu member hanya bisa mengajukan **satu kali untuk sepatu yang sama**.
+- Setelah mengajukan, member mendapat email **"Pengajuan Adopsi Diterima"** yang menjelaskan proses kurasi dan meminta **tidak transfer apa pun dulu**.
 
-### 4.3 Tagihan dan pembayaran
+### 4.3 Tagihan dan pembayaran (hanya untuk pemohon terpilih)
 
+- Tagihan terbit **saat admin memilih pemohon**, dikirim ke email, dan tombol bayar muncul di **Portal Member → Adopsi Saya**. Sebelum terpilih, tombol bayar dan nomor rekening tidak ditampilkan.
+- **Batas bayar 2×24 jam** sejak terpilih. Tanggal dan jamnya tercantum di email tagihan, di halaman Adopsi Saya, dan di panel admin.
 - **Tagihan = total biaya jasa restorasi** yang dipilih (wajib + opsional). Tidak ada harga untuk sepatunya sendiri.
 - **Ongkos kirim tidak termasuk tagihan.** CS akan menghubungi pemohon lewat WhatsApp untuk menagih ongkir secara terpisah.
-- Tagihan dikirim ke email saat pengajuan dibuat, dan juga tampil di **Portal Member → Adopsi Saya**.
 - Pembayaran dengan **transfer bank manual** ke rekening resmi:
   | Bank    | No. Rekening  | Atas Nama                 |
   | ------- | ------------- | ------------------------- |
@@ -125,42 +133,58 @@ Batasan:
   | Mandiri | 1300030119047 | PT TERANG GARAM SOLUSINDO |
 - Setelah transfer, **unggah bukti transfer** di halaman Adopsi Saya (JPG/PNG, maks. 5 MB).
 - **Satu pembayaran dalam satu waktu:** member tidak bisa membayar sepatu lain selama ada pesanannya yang sedang **diverifikasi** atau **diproses**.
+- **Lewat batas bayar** tidak membatalkan pesanan secara otomatis. Panel admin menandainya "Lewat batas bayar", lalu admin memutuskan untuk membatalkannya atau memberi kelonggaran.
 - Payment gateway (bayar otomatis) direncanakan, tapi belum tersedia.
 
 ### 4.4 Status adopsi
 
 ```
-menunggu_pembayaran ──► menunggu_verifikasi ──► diproses ──► dikirim ──► selesai
-        │                        │
-        │ (orang lain bayar)     └──► ditolak / dibatalkan
-        ▼
-     ditahan ──► ditolak (sepatu jatuh ke orang lain)
-             └─► bisa bayar lagi (sepatu tersedia kembali)
+pending (kurasi) ──► menunggu_pembayaran ──► menunggu_verifikasi ──► diproses ──► dikirim ──► selesai
+      │                (terpilih, 2×24 jam)           │
+      │                      │                        └──► ditolak (bukti tidak valid)
+      │                      └──► dibatalkan (tidak bayar) → sepatu tersedia lagi, admin pilih cadangan
+      ├──► cadangan (orang lain terpilih) ──► bisa dipilih kalau yang terpilih batal
+      └──► ditolak (tidak terpilih / sepatu sudah diadopsi orang lain)
 ```
 
-| Status                         | Artinya                                                               | Status sepatu di katalog                             |
-| ------------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------- |
-| **menunggu_pembayaran**  | Tagihan terbit, belum bayar                                           | Tersedia                                             |
-| **ditahan**              | Orang lain sudah lebih dulu membayar. **Jangan transfer dulu.** | Disembunyikan (dipesan)                              |
-| **menunggu_verifikasi**  | Bukti transfer diunggah, menunggu dicek admin                         | Disembunyikan (dipesan)                              |
-| **diproses**             | Pembayaran terverifikasi, sepatu disiapkan                            | Disalurkan                                           |
-| **dikirim**              | Sepatu dikirim, nomor resi diinformasikan                             | Disalurkan                                           |
-| **selesai**              | Pemohon mengonfirmasi sepatu diterima                                 | Disalurkan                                           |
-| **ditolak / dibatalkan** | Pengajuan tidak dilanjutkan                                           | Kembali tersedia (kecuali sudah jatuh ke orang lain) |
+| Status                         | Artinya                                                                       | Status sepatu di katalog                    |
+| ------------------------------ | ----------------------------------------------------------------------------- | ------------------------------------------- |
+| **pending (Menunggu Kurasi)**  | Pengajuan masuk, menunggu dipilih admin. **Jangan transfer.**                | Tersedia                                    |
+| **cadangan**                   | Admin sudah memilih orang lain. Masih bisa dipilih kalau orang itu batal.    | Disembunyikan (dipesan)                     |
+| **menunggu_pembayaran**        | Terpilih. Tagihan terbit, bayar dalam 2×24 jam                                | Disembunyikan (dipesan)                     |
+| **menunggu_verifikasi**        | Bukti transfer diunggah, menunggu dicek admin                                 | Disembunyikan (dipesan)                     |
+| **diproses**                   | Pembayaran terverifikasi, sepatu disiapkan                                    | Disalurkan                                  |
+| **dikirim**                    | Sepatu dikirim, nomor resi diinformasikan                                     | Disalurkan                                  |
+| **selesai**                    | Pemohon mengonfirmasi sepatu diterima                                         | Disalurkan                                  |
+| **ditolak / dibatalkan**       | Pengajuan tidak dilanjutkan                                                   | Tersedia lagi, kecuali sudah jatuh ke orang lain |
 
-Catatan: "ditahan" bukan status tersendiri di database. Pengajuannya tetap *menunggu_pembayaran*, tapi tombol bayar dikunci karena sepatunya sedang dipesan orang lain.
+Catatan: "cadangan" bukan status tersendiri di database. Pengajuannya tetap *pending*, tapi sepatunya sedang dipegang pemohon terpilih.
 
-### 4.5 Keputusan admin setelah ada yang membayar
+### 4.5 Keputusan admin
 
-**Admin menyetujui** pembayaran (→ diproses):
+**Memilih pemohon** (tombol *Pilih Pemohon Ini*):
+
+- Sepatu langsung **disembunyikan dari katalog** (status sepatu: *dipesan*), dan orang baru tidak bisa mengajukan sepatu itu.
+- Pemohon terpilih menerima email tagihan dengan batas bayar 2×24 jam.
+- Pemohon lain tetap *pending* sebagai cadangan, tanpa email tambahan.
+- Hanya satu pemohon yang bisa dipilih pada satu waktu.
+
+**Pemohon terpilih tidak membayar** (tombol *Batalkan (Tidak Bayar)*):
+
+- Pesanannya dibatalkan, sepatu **kembali tersedia**, dan admin bisa memilih pemohon cadangan.
+
+**Menyetujui pembayaran** (→ diproses):
 
 - Sepatu resmi milik pemohon tersebut (status sepatu: *disalurkan*).
-- **Semua pemohon lain untuk sepatu itu otomatis ditolak** dan mendapat email "sepatu sudah diambil".
+- **Semua cadangan otomatis ditolak** dan mendapat email "sepatu sudah diadopsi pemohon lain".
 
-**Admin menolak** pembayaran (misalnya bukti tidak valid atau nominal tidak sesuai):
+**Menolak pembayaran** (bukti tidak valid atau nominal tidak sesuai):
 
-- Sepatu **kembali tersedia** di katalog.
-- Pemohon yang ditahan mendapat email "sepatu tersedia lagi" dan bisa langsung membayar. Sekali lagi berlaku siapa cepat dia dapat.
+- Sepatu kembali tersedia, dan admin bisa memilih pemohon lain.
+
+**Menolak pengajuan yang masih dikurasi** (tombol *Tolak*):
+
+- Pemohon menerima email bahwa pengajuannya **belum terpilih**.
 
 ### 4.6 Pengiriman dan penyelesaian
 
@@ -172,18 +196,29 @@ Catatan: "ditahan" bukan status tersendiri di database. Pengajuannya tetap *menu
 
 Email hanya dikirim **saat status benar-benar berubah**.
 
-| Kejadian                       | Email                                       |
-| ------------------------------ | ------------------------------------------- |
-| Pengajuan dibuat               | Tagihan (rincian jasa + rekening)           |
-| Orang lain membayar lebih dulu | Pemberitahuan ditahan, jangan transfer dulu |
-| Pembayaran disetujui           | Pesanan diproses                            |
-| Sepatu dikirim                 | Info pengiriman + resi                      |
-| Pemohon konfirmasi diterima    | Adopsi selesai                              |
-| Sepatu jatuh ke pemohon lain   | Sepatu sudah diambil                        |
-| Sepatu tersedia lagi           | Sepatu tersedia, silakan bayar              |
-| Pengajuan ditolak              | Penolakan                                   |
+| Kejadian                                    | Email                                                      |
+| ------------------------------------------- | ---------------------------------------------------------- |
+| Pengajuan dibuat                            | Pengajuan diterima, sedang dikurasi, jangan transfer dulu |
+| Dipilih admin                               | Selamat terpilih + tagihan + batas bayar 2×24 jam          |
+| Pembayaran disetujui                        | Pesanan diproses                                           |
+| Sepatu dikirim                              | Info pengiriman + resi                                     |
+| Pemohon konfirmasi diterima                 | Adopsi selesai                                             |
+| Sepatu diadopsi pemohon lain (cadangan)     | Sepatu sudah diadopsi pemohon lain                         |
+| Pengajuan ditolak saat kurasi               | Belum terpilih                                             |
+| Bukti bayar ditolak                         | Penolakan, hubungi CS jika merasa sudah bayar benar        |
+
+Pemohon cadangan **tidak** dikirimi email saat orang lain terpilih. Statusnya terlihat di halaman Adopsi Saya. Pembatalan karena tidak membayar hanya mengirim notifikasi di portal.
 
 Notifikasi check-in tidak dikirim lewat email.
+
+### 4.8 Mode alternatif: Siapa Cepat Dia Dapat
+
+Kalau saklar di Pengaturan diubah ke **Siapa Cepat Dia Dapat**, aturan sebelum 29 Oktober 2026 berlaku lagi:
+
+- Setiap pengajuan langsung mendapat tagihan, tanpa batas waktu bayar.
+- **Pemohon pertama yang mengunggah bukti transfer** mendapatkan sepatu. Sepatu disembunyikan dari katalog dan pemohon lain **ditahan** (tidak bisa membayar) sampai admin memutuskan.
+- Jika pembayaran itu ditolak, pemohon yang ditahan mendapat email "sepatu tersedia lagi" dan bisa membayar.
+- Member hanya boleh punya **1 pengajuan aktif**. Pengecualiannya, member yang sedang ditahan boleh mengajukan sepatu lain.
 
 ---
 
@@ -204,9 +239,11 @@ Notifikasi check-in tidak dikirim lewat email.
 | Donasi baru masuk                           | Cek foto dan kondisi → **Setujui** atau **Tolak** (wajib tulis alasan)                                          |
 | Sepatu donasi tiba                          | **Konfirmasi diterima** + unggah foto bukti                                                                            |
 | Restorasi selesai                           | Tandai **siap rilis** → buat item katalog (kode barang, foto, jasa wajib/opsional + harga) → **masuk katalog** |
+| Pengajuan adopsi masuk                      | Buka **Permintaan Adopsi** → **Tinjau Pengaju**. Baca alasan, lihat urutan dan riwayat donasi → **Pilih Pemohon Ini** pada satu orang, atau **Tolak** |
+| Pemohon terpilih lewat batas bayar 2×24 jam | Pastikan dulu lewat WhatsApp. Jika batal → **Batalkan (Tidak Bayar)** → pilih pemohon cadangan                         |
 | Bukti transfer adopsi masuk                 | Cocokkan nominal dan rekening → **Setujui** (diproses) atau **Tolak**                                           |
 | Pesanan disetujui                           | **CS hubungi pemohon via WhatsApp untuk ongkir** → kirim → isi resi (dikirim)                                        |
-| Pemohon bertanya "kenapa tidak bisa bayar?" | Kemungkinan **ditahan** (orang lain sudah bayar) atau ia punya pesanan lain yang sedang diverifikasi/diproses          |
+| Pemohon bertanya "kenapa tidak bisa bayar?" | Pengajuannya **masih dikurasi** atau ia **cadangan** (belum terpilih), atau ia punya pesanan lain yang sedang diverifikasi/diproses |
 
 Selalu ubah status lewat tombol di panel admin, jangan langsung di database. Email dan perpindahan status sepatu hanya berjalan lewat tombol tersebut.
 
@@ -216,7 +253,7 @@ Selalu ubah status lewat tombol di panel admin, jangan langsung di database. Ema
 
 Hal-hal berikut **belum ada aturannya**, baik di sistem maupun di Syarat & Ketentuan. Sebaiknya diputuskan dan dituliskan:
 
-1. **Batas waktu pembayaran.** Tagihan adopsi yang tidak dibayar tidak pernah kedaluwarsa, sehingga satu sepatu bisa menumpuk banyak tagihan menggantung.
+1. **Pembatalan otomatis.** Batas bayar 2×24 jam sudah berlaku, tapi pembatalannya masih manual oleh admin. Belum diputuskan apakah sistem perlu membatalkan otomatis.
 2. **Pembatalan oleh pemohon.** Belum ada tombol batal untuk member. Pembatalan harus lewat CS/admin.
 3. **Refund adopsi.** Bagaimana kalau pembayaran ditolak admin atau pesanan dibatalkan setelah transfer? Ketentuan refund saat ini hanya membahas reparasi.
 4. **Ongkir tidak dibayar.** Belum ada aturan jika pemohon tidak membayar ongkir setelah dihubungi CS: berapa lama ditunggu, dan apakah biaya jasa dikembalikan.
@@ -230,5 +267,6 @@ Hal-hal berikut **belum ada aturannya**, baik di sistem maupun di Syarat & Keten
 
 - Semua perpindahan status adopsi lewat `App\Services\AdoptionService::transition()`. Jangan update kolom status langsung.
 - Status donasi diatur di `App\Services\DonationService`.
-- Pengujian alur adopsi: `tests/Feature/AdoptionFlowTest.php`.
+- Mode adopsi dibaca dari setting `adoption_mode` (`kurasi` default, atau `cepat`) lewat `AdoptionService::curationMode()`. Di mode kurasi, *menunggu_pembayaran* ikut memegang sepatu (*dipesan*), dan batas bayar disimpan di kolom `donation_requests.batas_bayar`.
+- Pengujian alur adopsi: `tests/Feature/AdoptionCurationTest.php` (mode kurasi) dan `tests/Feature/AdoptionFlowTest.php` (mode siapa cepat).
 - Detail kebijakan juga tercatat di `CLAUDE.md` bagian "Siklus donasi (CSR)".

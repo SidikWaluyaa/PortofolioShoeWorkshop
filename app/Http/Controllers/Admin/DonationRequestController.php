@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Donation;
 use App\Models\DonationRequest;
 use App\Models\DonationItem;
 use App\Exceptions\AdoptionConflictException;
@@ -110,7 +111,40 @@ class DonationRequestController extends Controller
             $q->orderBy('created_at', 'desc');
         }, 'reparationServices.service'])->paginate(10)->withQueryString();
 
-        return view('admin.donation_requests.index', compact('items'));
+        $this->attachMemberHistory($items->getCollection());
+        $curationMode = AdoptionService::curationMode();
+
+        return view('admin.donation_requests.index', compact('items', 'curationMode'));
+    }
+
+    /**
+     * Curation aid: how many shoes each requester has donated (received by the workshop) and adopted.
+     */
+    private function attachMemberHistory($items): void
+    {
+        $userIds = $items->flatMap->requests->pluck('user_id')->filter()->unique();
+        if ($userIds->isEmpty()) {
+            return;
+        }
+
+        $donated = Donation::whereIn('user_id', $userIds)
+            ->whereIn('status', ['diterima', 'siap_rilis', 'masuk_katalog', 'disalurkan'])
+            ->selectRaw('user_id, count(*) as total')
+            ->groupBy('user_id')
+            ->pluck('total', 'user_id');
+
+        $adopted = DonationRequest::whereIn('user_id', $userIds)
+            ->whereIn('status', ['diproses', 'dikirim', 'selesai'])
+            ->selectRaw('user_id, count(*) as total')
+            ->groupBy('user_id')
+            ->pluck('total', 'user_id');
+
+        foreach ($items as $item) {
+            foreach ($item->requests as $request) {
+                $request->setAttribute('member_donasi', (int) ($donated[$request->user_id] ?? 0));
+                $request->setAttribute('member_adopsi', (int) ($adopted[$request->user_id] ?? 0));
+            }
+        }
     }
 
     /**
@@ -161,6 +195,8 @@ class DonationRequestController extends Controller
                 'new_status' => $request->status,
                 'item_status' => $result['item_status'],
                 'request_statuses' => $result['requests'],
+                'request_deadlines' => DonationRequest::where('donation_item_id', $donationRequest->donation_item_id)
+                    ->pluck('batas_bayar', 'id'),
             ]);
         }
 

@@ -356,7 +356,11 @@
                             </button>
                         </div>
                         <p class="hidden sm:block text-center text-[11px] text-gray-400 mt-3 font-semibold">
-                            Klik tombol "Ajukan Adopsi" untuk mengajukan permohonan. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang membayar.
+                            @if(\App\Services\AdoptionService::curationMode())
+                                Klik "Ajukan Adopsi" dan ceritakan alasanmu. Tim kami memilih penerima dengan mempertimbangkan alasan dan urutan waktu pengajuan. Belum ada pembayaran saat mengajukan.
+                            @else
+                                Klik tombol "Ajukan Adopsi" untuk mengajukan permohonan. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang membayar.
+                            @endif
                         </p>
                     </div>
                 </div>

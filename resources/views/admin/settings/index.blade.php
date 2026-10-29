@@ -80,6 +80,28 @@
                             </div>
                         </div>
 
+                        @php $adoptionMode = ($settings['adoption_mode'] ?? 'kurasi') === 'cepat' ? 'cepat' : 'kurasi'; @endphp
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <h3 class="text-lg font-bold mb-1">Mode Adopsi Sepatu</h3>
+                            <p class="text-xs text-gray-400 mb-4">Menentukan cara penerima sepatu adopsi dipilih. Ganti mode hanya saat tidak ada pemohon yang sedang terpilih atau menunggu pembayaran.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="flex items-start gap-3 p-4 rounded-xl border cursor-pointer has-[:checked]:border-[#22AF85] has-[:checked]:bg-emerald-50/50">
+                                    <input type="radio" name="adoption_mode" value="kurasi" class="mt-1 text-[#22AF85] focus:ring-[#22AF85]" @checked($adoptionMode === 'kurasi')>
+                                    <span>
+                                        <span class="block font-bold text-sm text-gray-900">Kurasi Admin</span>
+                                        <span class="block text-xs text-gray-500 mt-1 leading-relaxed">Member mengajukan tanpa membayar. Admin memilih satu penerima dari alasan dan urutan pengajuan. Penerima terpilih membayar dalam 2×24 jam, pemohon lain menjadi cadangan. Maksimal 3 pengajuan per member yang sedang dikurasi.</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-start gap-3 p-4 rounded-xl border cursor-pointer has-[:checked]:border-[#22AF85] has-[:checked]:bg-emerald-50/50">
+                                    <input type="radio" name="adoption_mode" value="cepat" class="mt-1 text-[#22AF85] focus:ring-[#22AF85]" @checked($adoptionMode === 'cepat')>
+                                    <span>
+                                        <span class="block font-bold text-sm text-gray-900">Siapa Cepat Dia Dapat</span>
+                                        <span class="block text-xs text-gray-500 mt-1 leading-relaxed">Tagihan langsung terbit saat mengajukan. Pemohon pertama yang mengunggah bukti bayar mendapatkan sepatu, pemohon lain ditahan.</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="mt-8 pt-6 border-t border-gray-100">
                             <h3 class="text-lg font-bold mb-1">Rating Google</h3>
                             <p class="text-xs text-gray-400 mb-4">Ditampilkan di section Testimoni & hero beranda. Samakan dengan angka di Google Maps secara berkala.</p>

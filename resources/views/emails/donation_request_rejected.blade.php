@@ -68,7 +68,11 @@
                             @endif
 
                             <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 20px;">
+                                @if($donationRequest->bukti_pembayaran)
                                 Hal ini biasanya terjadi karena bukti pembayaran tidak dapat kami verifikasi. Jika Anda merasa sudah melakukan pembayaran dengan benar, silakan hubungi CS kami via WhatsApp agar dapat kami bantu cek kembali.
+                                @else
+                                Setelah meninjau semua pengajuan untuk sepatu ini, pengajuan Anda belum terpilih kali ini. Terima kasih sudah meluangkan waktu menuliskan alasan Anda.
+                                @endif
                             </p>
 
                             <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 30px;">

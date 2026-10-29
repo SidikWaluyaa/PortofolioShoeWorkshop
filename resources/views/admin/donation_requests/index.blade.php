@@ -50,7 +50,7 @@
                     <label for="status" class="block text-xs font-black text-gray-700 mb-1.5 uppercase tracking-wider">Status</label>
                     <select name="status" id="status" class="w-full text-xs border-gray-200 rounded-xl focus:border-[#22AF85] focus:ring-1 focus:ring-[#22AF85] bg-gray-50/50 py-2.5">
                         <option value="">Semua Status</option>
-                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>⏳ Menunggu</option>
+                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>⏳ {{ $curationMode ? 'Menunggu Kurasi' : 'Menunggu' }}</option>
                         <option value="disetujui" {{ request('status') === 'disetujui' ? 'selected' : '' }}>✅ Disetujui / Diproses</option>
                         <option value="ditolak" {{ request('status') === 'ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                         <option value="dibatalkan" {{ request('status') === 'dibatalkan' ? 'selected' : '' }}>🚫 Dibatalkan</option>
@@ -233,12 +233,12 @@
                                 </span>
                                 @if($pendingCount > 0)
                                     <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
-                                        {{ $pendingCount }} Menunggu
+                                        {{ $pendingCount }} {{ $curationMode ? 'Menunggu Kurasi' : 'Menunggu' }}
                                     </span>
                                 @endif
                                 @if($item->requests->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi'])->count() > 0)
                                     <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-700 border border-purple-100">
-                                        Menunggu Bayar/Validasi
+                                        {{ $curationMode ? 'Ada Terpilih' : 'Menunggu Bayar/Validasi' }}
                                     </span>
                                 @elseif($item->requests->whereIn('status', ['diproses', 'dikirim', 'selesai'])->count() > 0)
                                     <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -251,7 +251,7 @@
                         {{-- Status --}}
                         <td class="px-6 py-4 text-center" id="item-status-{{ $item->id }}">
                             @if($item->status === 'dipesan')
-                                <span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Dipesan · Verifikasi</span>
+                                <span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Dipesan</span>
                             @elseif($item->status === 'disalurkan')
                                 <span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>
                             @elseif($item->status === 'arsip')
@@ -325,7 +325,24 @@
         
         // Pass complete blade database collection to JavaScript safely
         const itemsData = @json($items->items());
+        const curationMode = @json($curationMode);
         let currentItemIndex = null;
+
+        // Requester-supplied text goes into innerHTML: always escape it
+        function esc(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        }
+
+        // Request statuses that hold the shoe (in curation mode the chosen requester holds it before paying)
+        const HOLDING = curationMode
+            ? ['menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim', 'selesai', 'disetujui']
+            : ['menunggu_verifikasi', 'diproses', 'dikirim', 'selesai', 'disetujui'];
+
+        function formatWib(iso, withDay = false) {
+            const opts = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            if (withDay) opts.weekday = 'long';
+            return new Date(iso).toLocaleString('id-ID', opts) + ' WIB';
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Flatpickr range selector
@@ -413,7 +430,25 @@
                 return;
             }
 
-            requests.forEach(req => {
+            // Curation: active requesters in order of submission ("#1" is the earliest), closed ones last without a rank
+            const closed = r => ['ditolak', 'dibatalkan'].includes(r.status);
+            const bySubmission = (a, b) => new Date(a.created_at) - new Date(b.created_at);
+            const active = requests.filter(r => !closed(r)).sort(bySubmission);
+            const ordered = [...active, ...requests.filter(closed).sort(bySubmission)];
+            const rank = Object.fromEntries(active.map((r, i) => [r.id, i + 1]));
+            const holder = requests.find(r => HOLDING.includes(r.status));
+            const pendingCount = requests.filter(r => r.status === 'pending').length;
+
+            if (curationMode) {
+                const intro = document.createElement('div');
+                intro.className = 'p-4 rounded-2xl border text-xs leading-relaxed ' + (holder ? 'bg-purple-50 border-purple-100 text-purple-900' : 'bg-emerald-50 border-emerald-100 text-emerald-900');
+                intro.innerHTML = holder
+                    ? `<p class="font-black text-sm mb-1">Sudah ada pemohon terpilih</p><p><strong>${esc(holder.nama_pemohon)}</strong> memegang sepatu ini. ${pendingCount} pemohon lain menjadi cadangan. Jika pemohon terpilih tidak membayar sampai batas waktu, batalkan pesanannya lalu pilih cadangan.</p>`
+                    : `<p class="font-black text-sm mb-1">${pendingCount} pengajuan menunggu kurasi</p><p>Baca alasan tiap pemohon, lalu klik <strong>Pilih Pemohon Ini</strong> pada satu orang. Sepatu langsung disembunyikan dari katalog, pemohon terpilih menerima tagihan dengan batas bayar 2×24 jam, dan pemohon lain tetap menjadi cadangan.</p>`;
+                body.appendChild(intro);
+            }
+
+            (curationMode ? ordered : requests).forEach(req => {
                 // Color mapping for request statuses
                 const colors = {
                     pending: 'bg-gray-100 text-gray-700 border-gray-200',
@@ -426,8 +461,8 @@
                     selesai: 'bg-blue-100 text-blue-700 border-blue-200'
                 };
                 const labels = { 
-                    pending: 'Menunggu', 
-                    menunggu_pembayaran: 'Tagihan Dikirim', 
+                    pending: curationMode ? (holder ? 'Cadangan' : 'Menunggu Kurasi') : 'Menunggu', 
+                    menunggu_pembayaran: curationMode ? 'Terpilih · Menunggu Bayar' : 'Tagihan Dikirim', 
                     menunggu_verifikasi: 'Cek Pembayaran',
                     diproses: 'Diproses',
                     dikirim: 'Dikirim',
@@ -503,16 +538,20 @@
                 reqCard.innerHTML = `
                     <div class="flex items-start justify-between">
                         <div>
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${timeStr}</span>
-                            <h4 class="font-bold text-gray-900 text-sm mt-0.5">${req.nama_pemohon}</h4>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                ${curationMode && rank[req.id] ? `<span class="text-gray-700">#${rank[req.id]} ${rank[req.id] === 1 ? 'pengaju pertama' : 'pengaju'}</span> · ` : ''}${timeStr}
+                            </span>
+                            <h4 class="font-bold text-gray-900 text-sm mt-0.5">${esc(req.nama_pemohon)}</h4>
                             <div class="flex flex-col gap-0.5 mt-1 text-[11px] text-gray-500">
-                                <span>Hub: <strong>+${req.kontak_pemohon}</strong></span>
-                                <span>Email: <strong>${req.email || '-'}</strong></span>
+                                <span>Hub: <strong>+${esc(req.kontak_pemohon)}</strong></span>
+                                <span>Email: <strong>${esc(req.email || '-')}</strong></span>
                             </div>
                             ${req.user_id ? `
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 mt-1.5 rounded bg-gray-50 text-[9px] text-gray-500 font-semibold border border-gray-200">
-                                    👤 Terdaftar (ID: ${req.user_id})
-                                </span>
+                                <div class="flex flex-wrap gap-1 mt-1.5">
+                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 text-[9px] text-gray-500 font-semibold border border-gray-200">👤 Member (ID: ${req.user_id})</span>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold border ${req.member_donasi > 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-gray-50 text-gray-500 border-gray-200'}">Donasi ${req.member_donasi ?? 0} sepatu</span>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold border bg-gray-50 text-gray-500 border-gray-200">Adopsi ${req.member_adopsi ?? 0}x</span>
+                                </div>
                             ` : ''}
                         </div>
                         <span id="badge-${req.id}" class="px-2.5 py-1 rounded-lg text-[10px] font-black border ${badgeColor}">
@@ -521,15 +560,22 @@
                     </div>
 
                     <div class="text-xs text-gray-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                        <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-1">Alasan Pengajuan</p>
-                        <p class="italic text-gray-800 leading-relaxed font-medium">"${req.alasan || '-'}"</p>
+                        <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-1">Alasan Pengajuan <span class="normal-case tracking-normal font-semibold">· ${(req.alasan || '').trim().length} karakter</span></p>
+                        <p class="italic text-gray-800 leading-relaxed font-medium whitespace-pre-line">"${esc(req.alasan || '-')}"</p>
                     </div>
+
+                    ${req.status === 'menunggu_pembayaran' && req.batas_bayar ? `
+                        <div class="text-xs p-3 rounded-xl border flex items-center gap-2 ${new Date(req.batas_bayar) < new Date() ? 'bg-red-50 border-red-100 text-red-700' : 'bg-amber-50 border-amber-100 text-amber-800'}">
+                            <span class="material-symbols-outlined text-[16px]">timer</span>
+                            <span>${new Date(req.batas_bayar) < new Date() ? '<strong>Lewat batas bayar</strong> sejak' : 'Batas bayar:'} <strong>${formatWib(req.batas_bayar, true)}</strong></span>
+                        </div>
+                    ` : ''}
 
                     ${servicesHtml}
 
                     <div class="text-xs text-gray-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                         <p class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-1">Alamat Pengiriman</p>
-                        <p class="text-gray-800 leading-relaxed font-medium">${req.alamat_pengiriman}</p>
+                        <p class="text-gray-800 leading-relaxed font-medium">${esc(req.alamat_pengiriman)}</p>
                     </div>
 
                     {{-- Actions and Links --}}
@@ -547,19 +593,24 @@
                         ${req.resi_pengiriman ? `
                             <div class="flex items-center gap-2 bg-emerald-50 p-2.5 rounded-xl border border-emerald-100 mb-1">
                                 <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[16px]">local_shipping</span> Resi: <span class="font-mono bg-white px-2 py-0.5 rounded border border-emerald-200 ml-1">${req.resi_pengiriman}</span>
+                                    <span class="material-symbols-outlined text-[16px]">local_shipping</span> Resi: <span class="font-mono bg-white px-2 py-0.5 rounded border border-emerald-200 ml-1">${esc(req.resi_pengiriman)}</span>
                                 </span>
                             </div>
                         ` : ''}
 
                         <div class="flex flex-wrap items-center gap-2" id="controls-${req.id}">
+                            ${curationMode && req.status === 'pending' ? `
+                                <button ${holder ? 'disabled title="Sudah ada pemohon terpilih"' : ''} onclick="confirmAjax('Pilih pemohon ini sebagai penerima? Sepatu disembunyikan dari katalog, tagihan dikirim dengan batas bayar 2×24 jam, dan pemohon lain tetap menjadi cadangan.', () => ajaxUpdateStatus(${req.id}, 'menunggu_pembayaran', this))" class="px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm ${holder ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#22AF85] hover:bg-[#1a936f] text-white'}">Pilih Pemohon Ini</button>
+                                <button onclick="confirmAjax('Tolak pengajuan ini? Pemohon menerima email bahwa pengajuannya belum terpilih.', () => ajaxUpdateStatus(${req.id}, 'ditolak', this))" class="px-2.5 py-1.5 bg-white border border-red-100 hover:bg-red-50 text-red-600 rounded-lg text-xs font-bold transition ml-auto">Tolak</button>
+                            ` : ''}
+
                             ${req.status === 'menunggu_verifikasi' ? `
                                 <button onclick="confirmAjax('Apakah Anda yakin struk pembayaran valid? Pesanan akan diproses dan pemohon lain untuk sepatu ini otomatis ditolak.', () => ajaxUpdateStatus(${req.id}, 'diproses', this))" class="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition shadow-sm shadow-purple-200">Validasi Struk (Valid)</button>
                                 <button onclick="confirmAjax('Tolak struk ini? Sepatu akan kembali ke Katalog dan pemohon lain diberi tahu bahwa sepatu tersedia lagi.', () => ajaxUpdateStatus(${req.id}, 'ditolak', this))" class="px-2.5 py-1.5 bg-white border border-purple-200 hover:bg-purple-50 text-purple-700 rounded-lg text-xs font-bold transition">Tolak Struk (Palsu)</button>
                             ` : ''}
 
                             ${['menunggu_pembayaran', 'menunggu_verifikasi'].includes(req.status) ? `
-                                <button onclick="confirmAjax('Apakah Anda yakin membatalkan permohonan ini?${req.status === 'menunggu_verifikasi' ? ' Sepatu akan kembali ke Katalog dan pemohon lain diberi tahu.' : ''}', () => ajaxUpdateStatus(${req.id}, 'dibatalkan', this))" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">Batalkan Pesanan</button>
+                                <button onclick="confirmAjax('Apakah Anda yakin membatalkan permohonan ini?${curationMode ? ' Sepatu kembali ke Katalog dan Anda bisa memilih pemohon cadangan.' : (req.status === 'menunggu_verifikasi' ? ' Sepatu akan kembali ke Katalog dan pemohon lain diberi tahu.' : '')}', () => ajaxUpdateStatus(${req.id}, 'dibatalkan', this))" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-xs font-bold transition ml-auto">${curationMode && req.status === 'menunggu_pembayaran' ? 'Batalkan (Tidak Bayar)' : 'Batalkan Pesanan'}</button>
                             ` : ''}
 
                             ${['diproses', 'dikirim', 'selesai'].includes(req.status) ? `
@@ -652,7 +703,7 @@
             const statusCell = document.getElementById(`item-status-${item.id}`);
             if (statusCell) {
                 if (item.status === 'dipesan') {
-                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Dipesan · Verifikasi</span>`;
+                    statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">Dipesan</span>`;
                 } else if (item.status === 'disalurkan') {
                     statusCell.innerHTML = `<span class="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold border border-gray-200">Disalurkan</span>`;
                 } else if (item.status === 'arsip') {
@@ -671,7 +722,7 @@
 
                 let badgesHtml = `<span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">${total} Pengaju</span>`;
                 if (pending > 0) {
-                    badgesHtml += ` <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">${pending} Menunggu</span>`;
+                    badgesHtml += ` <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">${pending} ${curationMode ? 'Menunggu Kurasi' : 'Menunggu'}</span>`;
                 }
                 if (active > 0) {
                     badgesHtml += ` <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Ada Terpilih</span>`;
@@ -715,8 +766,10 @@
                         
                         // Sync from the server: the change may also hold, reject or release other requests
                         const statuses = data.request_statuses || {};
+                        const deadlines = data.request_deadlines || {};
                         item.requests.forEach(r => {
                             if (statuses[r.id]) r.status = statuses[r.id];
+                            if (r.id in deadlines) r.batas_bayar = deadlines[r.id];
                         });
                         if (data.item_status) item.status = data.item_status;
 

@@ -42,6 +42,7 @@ class AdoptionFlowTest extends TestCase
         Mail::fake();
         Storage::fake('public');
         Setting::create(['key' => 'whatsapp_number', 'value' => '628123456789']);
+        Setting::updateOrCreate(['key' => 'adoption_mode'], ['value' => 'cepat']);
 
         $this->admin = User::factory()->create(['role' => 'admin']);
         $this->item = $this->makeItem('Nike Air Max Adopsi');
@@ -67,7 +68,7 @@ class AdoptionFlowTest extends TestCase
             'email' => $user->email,
             'kontak_pemohon' => '6281234567890',
             'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
-            'alasan' => 'Butuh sepatu',
+            'alasan' => 'Butuh sepatu untuk kerja harian',
             'status' => $status,
         ]);
     }
@@ -253,7 +254,7 @@ class AdoptionFlowTest extends TestCase
             'email' => $b->email,
             'kontak_pemohon' => '081234567890',
             'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
-            'alasan' => 'Butuh sepatu',
+            'alasan' => 'Butuh sepatu untuk kerja harian',
         ])->assertRedirect(route('member.adoption-requests.index'));
 
         $this->assertSame(2, DonationRequest::where('user_id', $b->id)->count());
@@ -270,7 +271,7 @@ class AdoptionFlowTest extends TestCase
             'email' => $a->email,
             'kontak_pemohon' => '081234567890',
             'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
-            'alasan' => 'Butuh sepatu',
+            'alasan' => 'Butuh sepatu untuk kerja harian',
         ])->assertSessionHas('error');
 
         $this->assertSame(1, DonationRequest::where('user_id', $a->id)->count());
@@ -368,7 +369,7 @@ class AdoptionFlowTest extends TestCase
 
         $this->actingAs($this->admin)->get(route('admin.donation-requests.index'))
             ->assertOk()
-            ->assertSee('Dipesan · Verifikasi');
+            ->assertSee('Dipesan');
         $this->actingAs($this->admin)->get(route('admin.donation-items.index'))->assertOk()->assertSee('Dipesan');
         $this->actingAs($this->admin)->get(route('admin.donation-items.edit', $this->item))
             ->assertOk()

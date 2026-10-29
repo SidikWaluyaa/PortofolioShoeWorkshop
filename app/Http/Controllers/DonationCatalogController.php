@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Models\DonationItem;
 use App\Models\DonationRequest;
 use App\Models\Campaign;
+use App\Services\AdoptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -157,16 +158,13 @@ class DonationCatalogController extends Controller
                 ->with('error', 'Barang ini sudah tidak tersedia atau sudah disalurkan.');
         }
 
-        $hasActiveRequest = false;
-        if (Auth::check()) {
-            $hasActiveRequest = \App\Models\DonationRequest::where('user_id', Auth::id())
-                ->blockingNewRequests()
-                ->exists();
-        }
+        $curationMode = AdoptionService::curationMode();
+        $blockReason = Auth::check() ? $this->newRequestBlockReason($item) : null;
+        $hasActiveRequest = $blockReason !== null;
 
         $selectedServiceIds = request()->input('services', []);
         $settings = Setting::pluck('value', 'key')->all();
-        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds', 'hasActiveRequest'));
+        return view('katalog.request', compact('item', 'settings', 'selectedServiceIds', 'hasActiveRequest', 'blockReason', 'curationMode'));
     }
 
     /**
@@ -300,22 +298,22 @@ class DonationCatalogController extends Controller
             'email' => ['required', 'email', 'max:150'],
             'kontak_pemohon' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
             'alamat_pengiriman' => ['required', 'string', 'min:10'],
-            'alasan' => ['required', 'string'],
+            'alasan' => ['required', 'string', 'min:20', 'max:1000'],
             'selected_services' => ['nullable', 'array'],
             'selected_services.*' => ['integer', 'exists:donation_item_services,id'],
+        ], [
+            'alasan.min' => 'Ceritakan alasan Anda minimal 20 karakter, misalnya sepatu ini untuk siapa dan untuk dipakai apa.',
+            'alasan.max' => 'Alasan maksimal 1000 karakter.',
         ]);
 
-        // Check if user has an active request (limit 1 active request rule)
-        $activeRequestExists = DonationRequest::where('user_id', Auth::id())
-            ->blockingNewRequests()
-            ->exists();
-
-        if ($activeRequestExists) {
-            return redirect()->back()->withInput()->with('error', 'Anda masih memiliki permohonan aktif yang belum diselesaikan (menunggu pembayaran / verifikasi). Harap selesaikan terlebih dahulu sebelum mengambil sepatu lain.');
+        if ($blockReason = $this->newRequestBlockReason($item)) {
+            return redirect()->back()->withInput()->with('error', $blockReason);
         }
 
+        $curationMode = AdoptionService::curationMode();
+
         try {
-            $donationRequest = DB::transaction(function () use ($request, $item) {
+            $donationRequest = DB::transaction(function () use ($request, $item, $curationMode) {
                 // Normalize phone number prefix to starts with '62'
                 $phone = $request->kontak_pemohon;
                 $cleaned = preg_replace('/[^0-9]/', '', $phone);
@@ -325,7 +323,7 @@ class DonationCatalogController extends Controller
                     $cleaned = '62' . $cleaned;
                 }
 
-                // Create request record - Langsung terbit tagihan
+                // Curation mode waits for the admin's choice; "siapa cepat" mode issues the invoice right away
                 $donationRequest = DonationRequest::create([
                     'donation_item_id' => $item->id,
                     'user_id' => Auth::id(),
@@ -335,42 +333,69 @@ class DonationCatalogController extends Controller
                     'alamat_pengiriman' => $request->alamat_pengiriman,
                     'alasan' => $request->alasan,
                     'selected_services' => $request->selected_services ?? [],
-                    'status' => 'menunggu_pembayaran',
+                    'status' => $curationMode ? 'pending' : 'menunggu_pembayaran',
                 ]);
 
                 return $donationRequest;
             });
 
-            $admins = \App\Models\User::where('role', 'admin')->get();
+            $admins = \App\Models\User::whereIn('role', ['admin', 'super_admin'])->get();
             if ($admins->isNotEmpty()) {
                 \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
                     'Pengajuan Adopsi Baru!',
-                    Auth::user()->name . ' baru saja mengajukan adopsi untuk barang kode: ' . $item->kode_barang . '.',
+                    Auth::user()->name . ' baru saja mengajukan adopsi untuk barang kode: ' . $item->kode_barang . ($curationMode ? '. Menunggu kurasi.' : '.'),
                     route('admin.donation-requests.index'),
                     'shopping_bag',
                     'info'
                 ));
             }
 
-            // Send Invoice Email to Member
+            // Curation mode: "we received it" email; otherwise the invoice
             if (!empty($request->email)) {
                 try {
                     \Illuminate\Support\Facades\Mail::to($request->email)->send(
-                        new \App\Mail\AdoptionApprovedInvoiceMail($donationRequest)
+                        $curationMode
+                            ? new \App\Mail\AdoptionSubmittedMail($donationRequest)
+                            : new \App\Mail\AdoptionApprovedInvoiceMail($donationRequest)
                     );
                 } catch (\Exception $mailEx) {
-                    Log::error('Failed to send invoice email during adoption checkout: ' . $mailEx->getMessage());
+                    Log::error('Failed to send email after adoption request: ' . $mailEx->getMessage());
                 }
             }
 
-            // Redirect to Member's Adopsi Saya page to upload receipt immediately
             return redirect()->route('member.adoption-requests.index')
-                ->with('success', 'Tagihan berhasil dibuat! Silakan cek email Anda untuk detail pembayaran atau langsung upload bukti pembayaran di sini.');
+                ->with('success', $curationMode
+                    ? 'Pengajuan terkirim! Tim kami akan mengkurasi semua pengajuan untuk sepatu ini. Jika Anda terpilih, tagihan dikirim lewat email. Mohon jangan transfer apa pun sebelum terpilih.'
+                    : 'Tagihan berhasil dibuat! Silakan cek email Anda untuk detail pembayaran atau langsung upload bukti pembayaran di sini.');
 
         } catch (\Exception $e) {
             Log::error('Failed to submit donation request: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memproses permohonan. Silakan coba lagi.');
         }
+    }
+
+    /**
+     * Why the logged-in member may not request this shoe right now, or null when they may.
+     */
+    private function newRequestBlockReason(DonationItem $item): ?string
+    {
+        $mine = DonationRequest::where('user_id', Auth::id());
+
+        if ((clone $mine)->where('donation_item_id', $item->id)->whereIn('status', DonationRequest::ACTIVE_STATUSES)->exists()) {
+            return 'Anda sudah mengajukan sepatu ini. Pantau statusnya di halaman Adopsi Saya.';
+        }
+
+        if (AdoptionService::curationMode()) {
+            $limit = DonationRequest::CURATION_LIMIT;
+
+            return (clone $mine)->where('status', 'pending')->count() >= $limit
+                ? "Anda sudah memiliki {$limit} pengajuan yang sedang dikurasi. Tunggu hasil kurasinya dulu sebelum mengajukan sepatu lain."
+                : null;
+        }
+
+        return (clone $mine)->blockingNewRequests()->exists()
+            ? 'Anda masih memiliki permohonan aktif yang belum diselesaikan (menunggu pembayaran / verifikasi). Harap selesaikan terlebih dahulu sebelum mengambil sepatu lain.'
+            : null;
     }
 
     /**

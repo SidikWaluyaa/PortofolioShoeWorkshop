@@ -21,6 +21,7 @@ class DonationRequest extends Model
         'alasan',
         'selected_services',
         'status',
+        'batas_bayar',
         'bukti_pembayaran',
         'resi_pengiriman',
         'bukti_penerimaan',
@@ -28,7 +29,17 @@ class DonationRequest extends Model
 
     protected $casts = [
         'selected_services' => 'array',
+        'batas_bayar' => 'datetime',
     ];
+
+    /** Curation mode: how many shoes a member may have waiting for curation at once. */
+    public const CURATION_LIMIT = 3;
+
+    /** Curation mode: hours the chosen requester has to pay. */
+    public const PAYMENT_WINDOW_HOURS = 48;
+
+    /** Requests still in the running for a shoe, used to stop duplicate requests for the same shoe. */
+    public const ACTIVE_STATUSES = ['pending', 'menunggu_pembayaran', 'menunggu_verifikasi', 'diproses', 'dikirim'];
 
     /**
      * Get the donation item being requested.
@@ -81,11 +92,30 @@ class DonationRequest extends Model
     }
 
     /**
-     * Whether someone else already paid for this shoe and this request is waiting on the result.
+     * "Siapa cepat" mode: someone else already paid for this shoe and this request is waiting on the result.
+     * A request chosen in curation mode (it has a payment deadline) holds the shoe itself, so it is never on hold.
      */
     public function isOnHold(): bool
     {
-        return $this->status === 'menunggu_pembayaran' && $this->donationItem?->status === 'dipesan';
+        return $this->status === 'menunggu_pembayaran'
+            && $this->batas_bayar === null
+            && $this->donationItem?->status === 'dipesan';
+    }
+
+    /**
+     * Curation mode: still waiting for curation while the admin already chose someone else for the shoe.
+     */
+    public function isReserve(): bool
+    {
+        return $this->status === 'pending' && $this->donationItem?->status === 'dipesan';
+    }
+
+    /**
+     * Curation mode: the chosen requester did not pay before the deadline.
+     */
+    public function isPaymentOverdue(): bool
+    {
+        return $this->status === 'menunggu_pembayaran' && $this->batas_bayar?->isPast();
     }
 
     /**

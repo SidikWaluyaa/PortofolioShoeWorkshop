@@ -22,7 +22,7 @@
                     'selesai' => 'bg-blue-100 text-blue-700 border-blue-200',
                 ];
                 $statusLabels = [
-                    'pending' => 'Menunggu Seleksi',
+                    'pending' => 'Menunggu Kurasi',
                     'menunggu_pembayaran' => 'Menunggu Pembayaran',
                     'menunggu_verifikasi' => 'Menunggu Verifikasi',
                     'diproses' => 'Sedang Diproses',
@@ -36,6 +36,8 @@
                 if ($adoptionRequest->isOnHold()) {
                     $colorClass = 'bg-gray-100 text-gray-700 border-gray-200';
                     $labelText = 'Ditahan · Sedang Dipesan';
+                } elseif ($adoptionRequest->isReserve()) {
+                    $labelText = 'Cadangan';
                 }
             @endphp
             <span class="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-sm font-black border {{ $colorClass }}">
@@ -74,7 +76,7 @@
                     @else
                         @php
                             $steps = [
-                                'pending' => ['label' => 'Diajukan', 'icon' => 'drafts'],
+                                'pending' => ['label' => 'Kurasi', 'icon' => 'manage_search'],
                                 'menunggu_pembayaran' => ['label' => 'Tagihan', 'icon' => 'account_balance'],
                                 'menunggu_verifikasi' => ['label' => 'Verifikasi', 'icon' => 'hourglass_empty'],
                                 'diproses' => ['label' => 'Diproses', 'icon' => 'build'],
@@ -264,7 +266,25 @@
                             </div>
                         @endif
 
-                        @if($adoptionRequest->isOnHold())
+                        @if($adoptionRequest->status === 'pending')
+                            {{-- Curation: nothing to pay until the admin chooses this requester --}}
+                            <div class="{{ $adoptionRequest->isReserve() ? 'bg-gray-50 border-gray-200' : 'bg-blue-50 border-blue-200' }} border p-5 rounded-2xl mb-6 flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-full {{ $adoptionRequest->isReserve() ? 'bg-gray-700' : 'bg-blue-600' }} text-white flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[18px]">{{ $adoptionRequest->isReserve() ? 'hourglass_top' : 'manage_search' }}</span>
+                                </div>
+                                <div class="text-[13px] {{ $adoptionRequest->isReserve() ? 'text-gray-700' : 'text-blue-900' }} leading-relaxed font-medium space-y-1.5">
+                                    @if($adoptionRequest->isReserve())
+                                        <p class="font-bold text-gray-900 text-sm">Kamu masuk daftar cadangan</p>
+                                        <p>Sepatu ini sedang ditawarkan ke pemohon lain yang terpilih. Jika pemohon tersebut tidak menyelesaikan pembayaran dalam 2×24 jam, pengajuanmu masih bisa dipilih dan kami kabari lewat email.</p>
+                                    @else
+                                        <p class="font-bold text-sm">Pengajuanmu sedang dikurasi</p>
+                                        <p>Satu sepatu bisa diajukan beberapa orang. Tim kami meninjau semua pengajuan dengan mempertimbangkan <strong>alasan pengajuan</strong> dan <strong>urutan waktu pengajuan</strong>.</p>
+                                        <p>Jika terpilih, tagihan dikirim lewat email dan tombol pembayaran muncul di halaman ini. Tagihan perlu dibayar dalam 2×24 jam sejak terpilih.</p>
+                                    @endif
+                                    <p><strong>Mohon jangan melakukan transfer apa pun sebelum terpilih.</strong></p>
+                                </div>
+                            </div>
+                        @elseif($adoptionRequest->isOnHold())
                             {{-- Someone else paid first: no bank details / upload until the admin decides --}}
                             <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl mb-6 flex items-start gap-4">
                                 <div class="w-9 h-9 rounded-full bg-gray-700 text-white flex items-center justify-center flex-shrink-0">
@@ -294,10 +314,20 @@
                             {{-- Warning Banner --}}
                             <div class="bg-amber-50 border border-amber-200/60 p-4 rounded-2xl mb-6 flex items-start gap-4">
                                 <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <span class="material-symbols-outlined text-[16px] font-bold">priority_high</span>
+                                    <span class="material-symbols-outlined text-[16px] font-bold">{{ $adoptionRequest->batas_bayar ? 'celebration' : 'priority_high' }}</span>
                                 </div>
                                 <p class="text-[13px] text-amber-900 leading-relaxed font-medium">
-                                    <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu langsung diamankan untuk Anda begitu bukti transfer diunggah, lalu diverifikasi admin. Segera lakukan pembayaran untuk mengamankan sepatu ini. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.
+                                    @if($adoptionRequest->batas_bayar)
+                                        <strong class="font-bold">Selamat, kamu terpilih!</strong> Sepatu ini sudah kami amankan untukmu.
+                                        @if($adoptionRequest->isPaymentOverdue())
+                                            <strong class="font-bold text-red-700">Batas waktu pembayaran ({{ $adoptionRequest->batas_bayar->translatedFormat('d M Y, H.i') }} WIB) sudah lewat.</strong> Segera unggah bukti transfer atau hubungi CS kami, karena sepatu dapat dialihkan ke pemohon lain.
+                                        @else
+                                            Selesaikan pembayaran dan unggah bukti transfer <strong class="font-bold">sebelum {{ $adoptionRequest->batas_bayar->translatedFormat('l, d M Y, H.i') }} WIB</strong>. Lewat dari itu, sepatu dapat dialihkan ke pemohon lain.
+                                        @endif
+                                        Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.
+                                    @else
+                                        <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu langsung diamankan untuk Anda begitu bukti transfer diunggah, lalu diverifikasi admin. Segera lakukan pembayaran untuk mengamankan sepatu ini. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.
+                                    @endif
                                 </p>
                             </div>
 
