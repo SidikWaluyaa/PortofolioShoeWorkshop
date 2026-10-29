@@ -269,6 +269,21 @@
                             </div>
                         </div>
 
+                        <!-- Size -->
+                        @if(!empty($sizeOptions))
+                        <div>
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Ukuran</h4>
+                            <div class="grid grid-cols-5 gap-2">
+                                @foreach($sizeOptions as $size)
+                                    <button type="button" @click="toggleSize(@js($size))"
+                                            :aria-pressed="sizes.includes(@js($size)).toString()"
+                                            :class="sizes.includes(@js($size)) ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-gray-50 border-gray-200 text-gray-700'"
+                                            class="py-2 rounded-xl border text-xs font-bold transition-all">{{ $size }}</button>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
                         <!-- Price -->
                         <div>
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Harga Jasa Reparasi</h4>
@@ -433,6 +448,24 @@
                             </label>
                         </div>
                     </div>
+
+                    {{-- Ukuran Filter --}}
+                    @if(!empty($sizeOptions))
+                    <div>
+                        <div class="flex items-center justify-between mb-2.5">
+                            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Ukuran</h3>
+                            <button type="button" x-show="sizes.length" x-cloak @click="clearSizes()" class="text-xs font-bold text-[#22AF85] hover:underline">Reset</button>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            @foreach($sizeOptions as $size)
+                                <button type="button" @click="toggleSize(@js($size))"
+                                        :aria-pressed="sizes.includes(@js($size)).toString()"
+                                        :class="sizes.includes(@js($size)) ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white border-[#bcc9c6] text-[#191c1d] hover:border-[#22AF85] hover:text-[#22AF85]'"
+                                        class="py-2 rounded-lg border text-sm font-semibold transition-colors">{{ $size }}</button>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
 
                     {{-- Price Range Filter --}}
                     <div>
@@ -768,6 +801,7 @@
         return {
             search: '',
             categories: [],
+            sizes: [],
             condition: '',
             status: '',
             minPrice: 0,
@@ -823,6 +857,7 @@
                     this.categories = ['sepatu', 'tas', 'topi'];
                 }
                 
+                this.sizes = (urlParams.get('size') || '').split('|').filter(v => v !== '');
                 this.condition = urlParams.get('condition') || '';
                 this.status = urlParams.get('status') || '';
                 this.minPrice = urlParams.get('min_price') ? parseInt(urlParams.get('min_price')) : 0;
@@ -855,6 +890,7 @@
                     } else {
                         this.categories = ['sepatu', 'tas', 'topi'];
                     }
+                    this.sizes = (params.get('size') || '').split('|').filter(v => v !== '');
                     this.condition = params.get('condition') || '';
                     this.status = params.get('status') || '';
                     this.minPrice = params.get('min_price') ? parseInt(params.get('min_price')) : 0;
@@ -896,6 +932,7 @@
                         url.searchParams.set('category', this.categories.join(','));
                     }
                     
+                    if (this.sizes.length) url.searchParams.set('size', this.sizes.join('|'));
                     if (this.condition) url.searchParams.set('condition', this.condition);
                     if (this.status) url.searchParams.set('status', this.status);
                     
@@ -966,6 +1003,12 @@
                     url.searchParams.delete('category');
                 }
                 
+                if (this.sizes.length) {
+                    url.searchParams.set('size', this.sizes.join('|'));
+                } else {
+                    url.searchParams.delete('size');
+                }
+
                 if (this.condition) {
                     url.searchParams.set('condition', this.condition);
                 } else {
@@ -1037,6 +1080,22 @@
                 this.updateUrl();
             },
 
+            toggleSize(size) {
+                this.page = 1;
+                this.sizes = this.sizes.includes(size)
+                    ? this.sizes.filter(s => s !== size)
+                    : [...this.sizes, size];
+                this.fetchFilter();
+                this.updateUrl();
+            },
+
+            clearSizes() {
+                this.page = 1;
+                this.sizes = [];
+                this.fetchFilter();
+                this.updateUrl();
+            },
+
             setCondition(cond) {
                 this.page = 1;
                 this.condition = cond;
@@ -1061,6 +1120,7 @@
             clearAll() {
                 this.search = '';
                 this.categories = ['sepatu', 'tas', 'topi'];
+                this.sizes = [];
                 this.condition = '';
                 this.status = '';
                 this.minPrice = 0;

@@ -156,6 +156,7 @@
             }
             .btn-cta:active { transform: translateY(0); }
             .btn-cta svg { width: 18px; height: 18px; }
+            .btn-cta:disabled { opacity: .7; cursor: wait; transform: none; }
 
             /* ── Checkbox ── */
             .auth-check {
@@ -283,5 +284,28 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            // Lock the submit button once a form is sent. A second tap would reach the server
+            // after the first one already logged the user in and rotated the session, which ends in a 419.
+            document.addEventListener('submit', function (e) {
+                if (e.defaultPrevented) return;
+                var button = e.target.querySelector('button[type="submit"]');
+                if (!button) return;
+                if (e.target.dataset.submitting) { e.preventDefault(); return; }
+                e.target.dataset.submitting = '1';
+                button.dataset.label = button.innerHTML;
+                button.disabled = true;
+                button.textContent = 'Memproses…';
+            });
+            // Coming back with the browser's back button restores the page from cache with the button still locked
+            window.addEventListener('pageshow', function () {
+                document.querySelectorAll('form[data-submitting]').forEach(function (form) {
+                    var button = form.querySelector('button[type="submit"]');
+                    delete form.dataset.submitting;
+                    if (button && button.dataset.label) { button.innerHTML = button.dataset.label; button.disabled = false; }
+                });
+            });
+        </script>
     </body>
 </html>

@@ -94,6 +94,53 @@ class DonationCatalogTest extends TestCase
         $response->assertDontSee('Sepatu Nike Air');
     }
 
+    public function test_archived_items_are_hidden_from_catalog(): void
+    {
+        DonationItem::create([
+            'nama' => 'Sepatu Masih Dipajang',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'tersedia',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+        $archived = DonationItem::create([
+            'nama' => 'Sepatu Sudah Diarsipkan',
+            'brand' => 'Compass',
+            'kategori' => 'sepatu',
+            'status' => 'arsip',
+            'foto_utama_path' => 'images/katalog/vintage_cap.png',
+        ]);
+
+        $this->get(route('katalog.index'))
+            ->assertSee('Sepatu Masih Dipajang')
+            ->assertDontSee('Sepatu Sudah Diarsipkan');
+
+        $this->get(route('katalog.filter'), ['HTTP_X-Requested-With' => 'XMLHttpRequest'])
+            ->assertSee('Sepatu Masih Dipajang')
+            ->assertDontSee('Sepatu Sudah Diarsipkan');
+
+        $this->get(route('katalog.show', $archived))->assertNotFound();
+    }
+
+    public function test_catalog_filtering_by_size(): void
+    {
+        foreach (['42' => 'Sepatu Ukuran Empat Dua', '36,5' => 'Sepatu Ukuran Tiga Enam', '40' => 'Sepatu Ukuran Empat Puluh'] as $size => $name) {
+            DonationItem::create([
+                'nama' => $name,
+                'brand' => 'Compass',
+                'kategori' => 'sepatu',
+                'ukuran' => $size,
+                'status' => 'tersedia',
+                'foto_utama_path' => 'images/katalog/vintage_cap.png',
+            ]);
+        }
+
+        $this->get(route('katalog.filter', ['size' => '42|36,5']), ['HTTP_X-Requested-With' => 'XMLHttpRequest'])
+            ->assertSee('Sepatu Ukuran Empat Dua')
+            ->assertSee('Sepatu Ukuran Tiga Enam')
+            ->assertDontSee('Sepatu Ukuran Empat Puluh');
+    }
+
     public function test_catalog_filtering_by_status(): void
     {
         $item1 = DonationItem::create([
