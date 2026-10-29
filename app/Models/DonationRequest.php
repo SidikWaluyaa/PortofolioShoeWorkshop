@@ -18,6 +18,14 @@ class DonationRequest extends Model
         'email',
         'kontak_pemohon',
         'alamat_pengiriman',
+        'alamat_jalan',
+        'alamat_rt_rw',
+        'alamat_patokan',
+        'kelurahan',
+        'kecamatan',
+        'kota',
+        'provinsi',
+        'kode_pos',
         'alasan',
         'selected_services',
         'status',
@@ -100,6 +108,27 @@ class DonationRequest extends Model
         return $this->status === 'menunggu_pembayaran'
             && $this->batas_bayar === null
             && $this->donationItem?->status === 'dipesan';
+    }
+
+    /** Structured address fields, in the order they are written on a shipping label. */
+    public const ADDRESS_FIELDS = ['alamat_jalan', 'alamat_rt_rw', 'alamat_patokan', 'kelurahan', 'kecamatan', 'kota', 'provinsi', 'kode_pos'];
+
+    /**
+     * One-line address for the admin panel, emails and couriers, e.g.
+     * "Jl. Merdeka No. 10, RT 02/RW 05, Kel. Sukasari, Kec. Sukasari, Kota Bandung, Jawa Barat 40153 (Patokan: depan masjid)".
+     */
+    public static function composeAddress(array $parts): string
+    {
+        $line = collect([
+            $parts['alamat_jalan'] ?? null,
+            filled($parts['alamat_rt_rw'] ?? null) ? 'RT/RW ' . $parts['alamat_rt_rw'] : null,
+            filled($parts['kelurahan'] ?? null) ? 'Kel. ' . $parts['kelurahan'] : null,
+            filled($parts['kecamatan'] ?? null) ? 'Kec. ' . $parts['kecamatan'] : null,
+            $parts['kota'] ?? null,
+            trim(($parts['provinsi'] ?? '') . ' ' . ($parts['kode_pos'] ?? '')),
+        ])->map(fn ($part) => trim((string) $part))->filter()->implode(', ');
+
+        return filled($parts['alamat_patokan'] ?? null) ? $line . ' (Patokan: ' . trim($parts['alamat_patokan']) . ')' : $line;
     }
 
     /**

@@ -253,7 +253,12 @@ class AdoptionFlowTest extends TestCase
             'nama_pemohon' => $b->name,
             'email' => $b->email,
             'kontak_pemohon' => '081234567890',
-            'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
+            'alamat_jalan' => 'Jl. Merdeka No. 10',
+            'provinsi' => 'Jawa Barat',
+            'kota' => 'Kota Bandung',
+            'kecamatan' => 'Sumur Bandung',
+            'kelurahan' => 'Braga',
+            'kode_pos' => '40111',
             'alasan' => 'Butuh sepatu untuk kerja harian',
         ])->assertRedirect(route('member.adoption-requests.index'));
 
@@ -270,7 +275,12 @@ class AdoptionFlowTest extends TestCase
             'nama_pemohon' => $a->name,
             'email' => $a->email,
             'kontak_pemohon' => '081234567890',
-            'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
+            'alamat_jalan' => 'Jl. Merdeka No. 10',
+            'provinsi' => 'Jawa Barat',
+            'kota' => 'Kota Bandung',
+            'kecamatan' => 'Sumur Bandung',
+            'kelurahan' => 'Braga',
+            'kode_pos' => '40111',
             'alasan' => 'Butuh sepatu untuk kerja harian',
         ])->assertSessionHas('error');
 

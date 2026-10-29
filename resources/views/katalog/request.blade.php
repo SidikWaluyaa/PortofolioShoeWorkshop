@@ -276,21 +276,115 @@
                             @enderror
                         </div>
 
-                        {{-- Alamat Pengiriman --}}
-                        <div>
-                            <label for="alamat_pengiriman" class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alamat Pengiriman</label>
-                            <div class="relative">
-                                <span class="material-symbols-outlined absolute left-3.5 top-3.5 text-gray-400 !text-[20px]">location_on</span>
-                                <textarea id="alamat_pengiriman" name="alamat_pengiriman"
-                                          rows="3"
-                                          required
-                                          placeholder="Nama jalan, nomor rumah, kecamatan, dan kota..."
-                                          class="w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl text-sm font-medium text-[#1c1c17] placeholder-gray-400 input-focus transition-all resize-none {{ $errors->has('alamat_pengiriman') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">{{ old('alamat_pengiriman') }}</textarea>
+                        {{-- Alamat Pengiriman: structured so couriers and CS get the district and postcode --}}
+                        @php
+                            $addressInit = collect(\App\Models\DonationRequest::ADDRESS_FIELDS)
+                                ->mapWithKeys(fn ($field) => [$field => old($field, $lastAddress[$field] ?? '')])
+                                ->all();
+                            $prefilled = !old('alamat_jalan') && !empty($lastAddress);
+                            $inputClass = 'w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm font-medium text-[#1c1c17] placeholder-gray-400 input-focus transition-all';
+                            $fieldBorder = fn ($field) => $errors->has($field) ? 'border-red-400 bg-red-50' : 'border-gray-200';
+                        @endphp
+                        <fieldset x-data="{
+                                      tree: [],
+                                      kecamatanList: [],
+                                      provinsi: @js($addressInit['provinsi']),
+                                      kota: @js($addressInit['kota']),
+                                      kecamatan: @js($addressInit['kecamatan']),
+                                      loadingKecamatan: false,
+                                      async init() {
+                                          this.tree = await (await fetch(@js(asset('data/wilayah/provinsi-kota.json')))).json();
+                                          if (this.kota) await this.loadKecamatan(false);
+                                      },
+                                      get kotaList() {
+                                          return (this.tree.find(p => p.nama === this.provinsi) || { kota: [] }).kota;
+                                      },
+                                      async loadKecamatan(reset = true) {
+                                          if (reset) this.kecamatan = '';
+                                          this.kecamatanList = [];
+                                          const city = this.kotaList.find(k => k.nama === this.kota);
+                                          if (!city) return;
+                                          this.loadingKecamatan = true;
+                                          this.kecamatanList = await (await fetch(@js(asset('data/wilayah/kecamatan')) + '/' + city.kode + '.json')).json();
+                                          this.loadingKecamatan = false;
+                                      }
+                                  }">
+                            <legend class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Alamat Pengiriman</legend>
+                            <p class="text-xs text-gray-500 mb-3">Lengkapi sampai kecamatan dan kode pos supaya ongkos kirim bisa langsung kami hitung.</p>
+                            @if($prefilled)
+                                <p class="mb-3 text-xs text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">Diisi dari alamat pengajuan terakhirmu. Ubah jika perlu.</p>
+                            @endif
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label for="alamat_jalan" class="block text-xs font-bold text-gray-600 mb-1">Nama jalan & nomor rumah</label>
+                                    <input type="text" id="alamat_jalan" name="alamat_jalan" value="{{ $addressInit['alamat_jalan'] }}" required minlength="5" maxlength="255" autocomplete="address-line1"
+                                           placeholder="Contoh: Jl. Kembar I No. 41" class="{{ $inputClass }} {{ $fieldBorder('alamat_jalan') }}">
+                                    @error('alamat_jalan') <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p> @enderror
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-3 items-end">
+                                    <div>
+                                        <label for="alamat_rt_rw" class="block text-xs font-bold text-gray-600 mb-1">RT/RW <span class="font-medium text-gray-400">(opsional)</span></label>
+                                        <input type="text" id="alamat_rt_rw" name="alamat_rt_rw" value="{{ $addressInit['alamat_rt_rw'] }}" maxlength="20"
+                                               placeholder="002/005" class="{{ $inputClass }} {{ $fieldBorder('alamat_rt_rw') }}">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label for="alamat_patokan" class="block text-xs font-bold text-gray-600 mb-1">Patokan <span class="font-medium text-gray-400">(opsional)</span></label>
+                                        <input type="text" id="alamat_patokan" name="alamat_patokan" value="{{ $addressInit['alamat_patokan'] }}" maxlength="255"
+                                               placeholder="Contoh: depan masjid, pagar hijau" class="{{ $inputClass }} {{ $fieldBorder('alamat_patokan') }}">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="provinsi" class="block text-xs font-bold text-gray-600 mb-1">Provinsi</label>
+                                        <select id="provinsi" name="provinsi" required x-model="provinsi" @change="kota = ''; kecamatan = ''; kecamatanList = []"
+                                                class="{{ $inputClass }} {{ $fieldBorder('provinsi') }}">
+                                            <option value="">Pilih provinsi</option>
+                                            <template x-for="p in tree" :key="p.kode">
+                                                <option :value="p.nama" x-text="p.nama" :selected="p.nama === provinsi"></option>
+                                            </template>
+                                        </select>
+                                        @error('provinsi') <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label for="kota" class="block text-xs font-bold text-gray-600 mb-1">Kota/Kabupaten</label>
+                                        <select id="kota" name="kota" required x-model="kota" @change="loadKecamatan()" :disabled="!provinsi"
+                                                class="{{ $inputClass }} {{ $fieldBorder('kota') }} disabled:opacity-60">
+                                            <option value="" x-text="provinsi ? 'Pilih kota/kabupaten' : 'Pilih provinsi dulu'"></option>
+                                            <template x-for="k in kotaList" :key="k.kode">
+                                                <option :value="k.nama" x-text="k.nama" :selected="k.nama === kota"></option>
+                                            </template>
+                                        </select>
+                                        @error('kota') <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label for="kecamatan" class="block text-xs font-bold text-gray-600 mb-1">Kecamatan</label>
+                                        <select id="kecamatan" name="kecamatan" required x-model="kecamatan" :disabled="!kota || loadingKecamatan"
+                                                class="{{ $inputClass }} {{ $fieldBorder('kecamatan') }} disabled:opacity-60">
+                                            <option value="" x-text="loadingKecamatan ? 'Memuat…' : (kota ? 'Pilih kecamatan' : 'Pilih kota dulu')"></option>
+                                            <template x-for="name in kecamatanList" :key="name">
+                                                <option :value="name" x-text="name" :selected="name === kecamatan"></option>
+                                            </template>
+                                        </select>
+                                        @error('kecamatan') <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label for="kelurahan" class="block text-xs font-bold text-gray-600 mb-1">Kelurahan/Desa</label>
+                                        <input type="text" id="kelurahan" name="kelurahan" value="{{ $addressInit['kelurahan'] }}" required maxlength="100"
+                                               placeholder="Contoh: Cigereleng" class="{{ $inputClass }} {{ $fieldBorder('kelurahan') }}">
+                                        @error('kelurahan') <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label for="kode_pos" class="block text-xs font-bold text-gray-600 mb-1">Kode pos</label>
+                                        <input type="text" id="kode_pos" name="kode_pos" value="{{ $addressInit['kode_pos'] }}" required inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code"
+                                               placeholder="40253" class="{{ $inputClass }} {{ $fieldBorder('kode_pos') }}">
+                                        @error('kode_pos') <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p> @enderror
+                                    </div>
+                                </div>
                             </div>
-                            @error('alamat_pengiriman')
-                                <p class="mt-1.5 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        </fieldset>
 
                         {{-- Alasan Pengajuan --}}
                         <div x-data="{ alasan: @js(old('alasan', '')) }">
