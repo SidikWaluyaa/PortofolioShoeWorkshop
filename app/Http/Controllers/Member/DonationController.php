@@ -13,10 +13,14 @@ class DonationController extends Controller
         protected DonationService $donationService,
     ) {}
 
-    public function index()
+    public function index(\App\Services\RewardService $rewardService)
     {
         $donations = $this->donationService->getByUser(Auth::id());
-        return view('member.donations.index', compact('donations'));
+        $donations->getCollection()->load('donationItem');
+        // Reward claims are only offered while management has an active donation reward
+        $hasDonationReward = $rewardService->getAvailableRewards(null, 'donasi')->isNotEmpty();
+
+        return view('member.donations.index', compact('donations', 'hasDonationReward'));
     }
 
     public function create()
@@ -24,17 +28,28 @@ class DonationController extends Controller
         return view('member.donations.create');
     }
 
+    private function messages(): array
+    {
+        return [
+            'kondisi.required' => 'Pilih kondisi sepatu.',
+            'kondisi.in' => 'Kami hanya menerima sepatu dengan kelayakan di atas ' . \App\Models\Donation::MIN_KONDISI . '%. Pilih salah satu kondisi yang tersedia.',
+            'foto.required' => 'Unggah minimal 1 foto sepatu.',
+            'foto.*.image' => 'File foto harus berupa gambar.',
+        ];
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_sepatu' => 'required|string|max:150',
+            'brand' => 'nullable|string|max:100',
             'ukuran' => 'required|string|max:10',
-            'kondisi' => 'required|integer|min:0|max:100',
+            'kondisi' => ['required', 'integer', \Illuminate\Validation\Rule::in(array_keys(\App\Models\Donation::KONDISI_OPTIONS))],
             'harga' => 'nullable|integer|min:0',
             'deskripsi' => 'nullable|string|max:2000',
             'foto' => 'required|array',
             'foto.*' => 'image',
-        ]);
+        ], $this->messages());
 
         $this->donationService->create($validated, $request->file('foto'));
 
@@ -80,15 +95,16 @@ class DonationController extends Controller
 
         $validated = $request->validate([
             'nama_sepatu' => 'required|string|max:150',
+            'brand' => 'nullable|string|max:100',
             'ukuran' => 'required|string|max:10',
-            'kondisi' => 'required|integer|min:0|max:100',
+            'kondisi' => ['required', 'integer', \Illuminate\Validation\Rule::in(array_keys(\App\Models\Donation::KONDISI_OPTIONS))],
             'harga' => 'nullable|integer|min:0',
             'deskripsi' => 'nullable|string|max:2000',
             'foto' => 'nullable|array',
             'foto.*' => 'image',
             'existing_photos' => 'nullable|array',
             'existing_photos.*' => 'string',
-        ]);
+        ], $this->messages());
 
         if ($request->has('existing_photos_present')) {
             $existingPhotos = $request->input('existing_photos', []);

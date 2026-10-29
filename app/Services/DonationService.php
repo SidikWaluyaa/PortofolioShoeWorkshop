@@ -26,6 +26,7 @@ class DonationService
         $donation = Donation::create([
             'user_id' => Auth::id(),
             'nama_sepatu' => $data['nama_sepatu'],
+            'brand' => $data['brand'] ?? null,
             'ukuran' => $data['ukuran'],
             'kondisi' => $data['kondisi'],
             'harga' => $data['harga'] ?? 0,
@@ -248,6 +249,7 @@ class DonationService
 
         $updateData = [
             'nama_sepatu' => $data['nama_sepatu'],
+            'brand' => $data['brand'] ?? null,
             'ukuran' => $data['ukuran'],
             'kondisi' => $data['kondisi'],
             'harga' => $data['harga'] ?? 0,

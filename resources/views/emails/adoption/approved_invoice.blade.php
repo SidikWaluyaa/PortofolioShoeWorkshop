@@ -33,9 +33,15 @@
         </div>
         <div class="content">
             <div class="greeting">Halo, {{ $donationRequest->nama_pemohon }}! 🎉</div>
-            <p>Selamat! Permohonan adopsi Anda untuk sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong> telah <strong class="text-emerald">DISETUJUI</strong> oleh tim Shoe Workshop.</p>
-            
-            <p>Sepatu ini siap menjadi teman perjalanan Anda yang baru. Siapa cepat dia dapat: sepatu menjadi milik pemohon pertama yang membayar dan mengunggah bukti pembayaran. Tagihan di bawah berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
+            @if($donationRequest->batas_bayar)
+                <p>Selamat! Setelah kurasi, Anda <strong class="text-emerald">TERPILIH</strong> untuk mengadopsi sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong>.</p>
+
+                <p>Sepatu ini sudah kami amankan untuk Anda. Selesaikan pembayaran dan unggah bukti transfer <strong>sebelum {{ $donationRequest->batas_bayar->translatedFormat('l, d F Y, H.i') }} WIB</strong>. Jika lewat dari batas waktu tersebut, sepatu dapat kami alihkan ke pemohon lain. Tagihan di bawah berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
+            @else
+                <p>Selamat! Permohonan adopsi Anda untuk sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong> telah <strong class="text-emerald">DISETUJUI</strong> oleh tim Shoe Workshop.</p>
+
+                <p>Sepatu ini siap menjadi teman perjalanan Anda yang baru. Siapa cepat dia dapat: sepatu menjadi milik pemohon pertama yang membayar dan mengunggah bukti pembayaran. Tagihan di bawah berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
+            @endif
 
             <div class="invoice-box">
                 <h3>Detail Tagihan</h3>
@@ -83,7 +89,7 @@
             </div>
 
             <div style="text-align: center;">
-                <p style="font-size: 13px; margin-bottom: 5px;">Setelah melakukan transfer, unggah foto bukti transfer di halaman pengajuan adopsi Anda. Sepatu menjadi milik pemohon pertama yang mengunggah bukti pembayaran.</p>
+                <p style="font-size: 13px; margin-bottom: 5px;">Setelah melakukan transfer, unggah foto bukti transfer di halaman pengajuan adopsi Anda.@unless($donationRequest->batas_bayar) Sepatu menjadi milik pemohon pertama yang mengunggah bukti pembayaran.@endunless</p>
                 <a href="{{ route('member.adoption-requests.show', $donationRequest->id) }}#pembayaran" class="btn">Unggah Bukti Transfer</a>
             </div>
         </div>

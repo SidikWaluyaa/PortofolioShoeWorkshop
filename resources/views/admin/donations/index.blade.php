@@ -64,6 +64,7 @@
                                  'user_email' => $donation->user->email,
                                  'spk' => $donation->spk,
                                  'nama_sepatu' => $donation->nama_sepatu,
+                                 'brand' => $donation->brand,
                                  'ukuran' => $donation->ukuran,
                                  'kondisi' => $donation->kondisi,
                                  'harga_formatted' => 'Rp ' . number_format($donation->harga, 0, ',', '.'),
@@ -91,6 +92,7 @@
                                             <span class="font-mono text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded block w-fit mb-0.5">{{ $donation->spk }}</span>
                                         @endif
                                         <span class="text-gray-950 font-medium">{{ $donation->nama_sepatu }}</span>
+                                        @if($donation->brand)<span class="block text-[11px] text-gray-400">{{ $donation->brand }}</span>@endif
                                     </div>
                                 </div>
                             </td>
@@ -187,7 +189,7 @@
                                         </div>
                                         <div>
                                             <span class="text-gray-500 block mb-1">Nama Sepatu</span>
-                                            <span class="font-bold text-gray-900 text-sm" x-text="activeDonation.nama_sepatu"></span>
+                                            <span class="font-bold text-gray-900 text-sm" x-text="activeDonation.nama_sepatu + (activeDonation.brand ? ' · ' + activeDonation.brand : '')"></span>
                                         </div>
                                         <div>
                                             <span class="text-gray-500 block mb-1">Ukuran</span>

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('seo_title', 'Adopsi Sepatu Hasil Restorasi - Program Donasi | Shoe Workshop')
-@section('seo_description', 'Adopsi sepatu layak pakai hasil restorasi Shoe Workshop. Siapa cepat dia dapat: cukup bayar biaya jasa restorasinya.')
+@section('seo_description', 'Adopsi sepatu layak pakai hasil restorasi Shoe Workshop. Cukup bayar biaya jasa restorasinya.')
 @section('seo_keywords', 'adopsi sepatu, sepatu bekas restorasi, katalog donasi, sepatu layak pakai, shoe workshop bandung')
 
 @section('head')
@@ -32,7 +32,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Program Donasi</span>
                 <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Adopsi Sepatu Hasil Restorasi</h1>
-                <p class="text-gray-500 max-w-xl mx-auto text-base">Sepatu donasi hasil restorasi workshop kami, siap diadopsi. Siapa cepat dia dapat: cukup bayar biaya jasa restorasinya.</p>
+                <p class="text-gray-500 max-w-xl mx-auto text-base">Sepatu donasi hasil restorasi workshop kami, siap diadopsi. Cukup bayar biaya jasa restorasinya{{ \App\Services\AdoptionService::curationMode() ? ', dan penerimanya dipilih tim kami dari alasan pengajuan.' : '. Siapa cepat dia dapat.' }}</p>
             </div>
         </div>
 

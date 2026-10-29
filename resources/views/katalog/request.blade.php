@@ -189,13 +189,30 @@
                             <span class="material-symbols-outlined !text-[20px]">warning</span>
                         </div>
                         <div>
-                            <h4 class="text-sm font-extrabold text-orange-800 mb-1">Anda Memiliki Permohonan Aktif</h4>
-                            <p class="text-xs text-orange-700 leading-relaxed mb-3">Sistem kami memberlakukan aturan 1 permohonan aktif per member. Anda tidak dapat mengajukan adopsi baru karena masih memiliki tagihan yang belum diselesaikan pada permohonan sebelumnya.</p>
+                            <h4 class="text-sm font-extrabold text-orange-800 mb-1">Belum bisa mengajukan sepatu ini</h4>
+                            <p class="text-xs text-orange-700 leading-relaxed mb-3">{{ $blockReason }}</p>
                             <a href="{{ route('member.adoption-requests.index') }}" class="inline-flex items-center gap-1 text-[11px] font-bold bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-colors">
-                                Selesaikan Tagihan Sebelumnya <span class="material-symbols-outlined !text-[14px]">arrow_forward</span>
+                                Lihat Adopsi Saya <span class="material-symbols-outlined !text-[14px]">arrow_forward</span>
                             </a>
                         </div>
                     </div>
+                    @elseif($curationMode)
+                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-start gap-3">
+                        <div class="bg-white p-2 rounded-xl text-[#22AF85] flex-shrink-0 mt-0.5">
+                            <span class="material-symbols-outlined !text-[20px]">manage_search</span>
+                        </div>
+                        <div class="text-xs text-emerald-900 leading-relaxed">
+                            <h4 class="text-sm font-extrabold mb-1">Pengajuan dikurasi oleh tim kami</h4>
+                            <p>Satu sepatu bisa diajukan beberapa orang. Kami memilih penerimanya dengan mempertimbangkan <strong>alasan pengajuan</strong> dan <strong>urutan waktu pengajuan</strong>. Jika terpilih, tagihan dikirim lewat email dan perlu dibayar dalam 2×24 jam. Belum ada pembayaran apa pun saat mengajukan.</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold flex items-center gap-2">
+                            <span class="material-symbols-outlined !text-[18px]">error</span>
+                            {{ session('error') }}
+                        </div>
                     @endif
 
                     {{-- General Error --}}
@@ -276,16 +293,25 @@
                         </div>
 
                         {{-- Alasan Pengajuan --}}
-                        <div>
-                            <label for="alasan" class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alasan Mengajukan Donasi</label>
+                        <div x-data="{ alasan: @js(old('alasan', '')) }">
+                            <label for="alasan" class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alasan Mengajukan Adopsi</label>
+                            <p id="alasan-hint" class="text-xs text-gray-500 leading-relaxed mb-2">
+                                Ceritakan singkat: <strong class="text-gray-700">sepatu ini untuk siapa</strong> (diri sendiri, anak, orang tua, dll.), <strong class="text-gray-700">akan dipakai untuk apa</strong> (kerja, sekolah, olahraga, harian), dan <strong class="text-gray-700">kenapa Anda membutuhkannya</strong>.@if($curationMode) Alasan ini jadi bahan pertimbangan tim kami saat kurasi.@endif
+                            </p>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-3.5 text-gray-400 !text-[20px]">description</span>
                                 <textarea id="alasan" name="alasan"
-                                          rows="3"
+                                          rows="4"
                                           required
-                                          placeholder="Jelaskan alasan mengapa Anda membutuhkan barang ini..."
+                                          minlength="20"
+                                          maxlength="1000"
+                                          x-model="alasan"
+                                          aria-describedby="alasan-hint"
+                                          placeholder="Contoh: Untuk anak saya yang baru masuk SMP. Sepatu sekolahnya sudah jebol dan ukuran ini pas untuknya."
                                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl text-sm font-medium text-[#1c1c17] placeholder-gray-400 input-focus transition-all resize-none {{ $errors->has('alasan') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">{{ old('alasan') }}</textarea>
                             </div>
+                            <p class="mt-1.5 text-xs font-semibold" :class="alasan.trim().length >= 20 ? 'text-[#22AF85]' : 'text-gray-400'"
+                               x-text="alasan.trim().length >= 20 ? 'Sudah cukup, terima kasih!' : `Minimal 20 karakter (${alasan.trim().length}/20)`"></p>
                             @error('alasan')
                                 <p class="mt-1.5 text-xs text-red-600 font-semibold">{{ $message }}</p>
                             @enderror

@@ -46,7 +46,7 @@ class RewardService
     public function getUnclaimedDonationCount(int $userId): int
     {
         return \App\Models\Donation::where('user_id', $userId)
-            ->whereIn('status', ['diterima', 'siap_rilis', 'disalurkan'])
+            ->whereIn('status', \App\Models\Donation::REWARD_ELIGIBLE_STATUSES)
             ->where('is_reward_claimed', false)
             ->count();
     }
@@ -78,7 +78,7 @@ class RewardService
 
             // Get oldest eligible donation
             $donation = \App\Models\Donation::where('user_id', $user->id)
-                ->whereIn('status', ['diterima', 'siap_rilis', 'disalurkan'])
+                ->whereIn('status', \App\Models\Donation::REWARD_ELIGIBLE_STATUSES)
                 ->where('is_reward_claimed', false)
                 ->orderBy('created_at', 'asc')
                 ->lockForUpdate()

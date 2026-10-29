@@ -13,6 +13,7 @@ use App\Mail\DonationRequestRejectedMail;
 use App\Mail\DonationShippedMail;
 use App\Models\DonationItem;
 use App\Models\DonationRequest;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\SystemNotification;
 use Illuminate\Mail\Mailable;
@@ -22,17 +23,22 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Adoption ("siapa cepat dia dapat") status flow for catalog requests.
+ * Adoption status flow for catalog requests. The `adoption_mode` setting picks one of two policies:
  *
- * Everyone may request a shoe and gets an invoice right away. The first requester to upload
- * payment proof reserves the shoe ('dipesan', hidden from the catalog) and the others are put
- * on hold. If the admin approves that payment the shoe is 'disalurkan' and the others are
- * rejected; if the admin rejects it the shoe is 'tersedia' again and the others may pay.
+ * - "kurasi" (default): requests wait as 'pending' while the admin curates them. The chosen requester
+ *   gets an invoice with a payment deadline and the shoe is reserved ('dipesan', hidden from the
+ *   catalog); the other requesters stay 'pending' as reserves the admin can pick if the chosen one
+ *   does not pay.
+ * - "cepat" ("siapa cepat dia dapat"): everyone gets an invoice right away. The first requester to
+ *   upload payment proof reserves the shoe and the others are put on hold.
+ *
+ * In both modes, approving the payment hands the shoe over ('disalurkan') and rejects the others;
+ * rejecting or cancelling the holder makes the shoe 'tersedia' again.
  */
 class AdoptionService
 {
     /** Request statuses that hold the shoe, mapped to the item status they imply ('disetujui' is legacy data). */
-    private const HOLDING_STATUSES = [
+    private const BASE_HOLDING_STATUSES = [
         'menunggu_verifikasi' => 'dipesan',
         'disetujui'           => 'disalurkan',
         'diproses'            => 'disalurkan',
@@ -40,12 +46,31 @@ class AdoptionService
         'selesai'             => 'disalurkan',
     ];
 
-    /** Request statuses of people still waiting for the shoe ('pending' is legacy). */
+    /** Request statuses of people still waiting for the shoe. */
     private const WAITING_STATUSES = ['pending', 'menunggu_pembayaran'];
 
     /**
-     * Member uploads payment proof: the first one to do so reserves the shoe. A member pays for one
-     * shoe at a time, so this is refused while another of their orders is being verified or processed.
+     * Whether new adoption requests go through admin curation (the default) rather than first-come-first-pay.
+     */
+    public static function curationMode(): bool
+    {
+        return Setting::where('key', 'adoption_mode')->value('value') !== 'cepat';
+    }
+
+    /**
+     * In curation mode the chosen requester holds the shoe from the moment the invoice is issued.
+     */
+    private function holdingStatuses(): array
+    {
+        return self::curationMode()
+            ? ['menunggu_pembayaran' => 'dipesan'] + self::BASE_HOLDING_STATUSES
+            : self::BASE_HOLDING_STATUSES;
+    }
+
+    /**
+     * Member uploads payment proof. In "cepat" mode the first one to do so reserves the shoe; in curation
+     * mode only the chosen requester can pay. A member pays for one shoe at a time, so this is refused
+     * while another of their orders is being verified or processed.
      *
      * @throws AdoptionConflictException when the request is not awaiting payment, the shoe is no longer available, or another order is in progress
      */
@@ -55,7 +80,8 @@ class AdoptionService
             if ($locked->status !== 'menunggu_pembayaran') {
                 throw new AdoptionConflictException('Bukti pembayaran hanya dapat diunggah saat permohonan menunggu pembayaran.');
             }
-            if (!$item || $item->status !== 'tersedia') {
+            $expectedItemStatus = self::curationMode() ? 'dipesan' : 'tersedia';
+            if (!$item || $item->status !== $expectedItemStatus) {
                 throw new AdoptionConflictException('Maaf, sepatu ini sedang dipesan atau sudah diadopsi pemohon lain. Mohon jangan melakukan transfer dulu, kami akan mengabari Anda.');
             }
 
@@ -87,12 +113,18 @@ class AdoptionService
                 $guard($locked, $item);
             }
 
+            $holding = $this->holdingStatuses();
             $oldStatus = $locked->status;
-            $oldHold = self::HOLDING_STATUSES[$oldStatus] ?? null;
-            $newHold = self::HOLDING_STATUSES[$newStatus] ?? null;
+            $oldHold = $holding[$oldStatus] ?? null;
+            $newHold = $holding[$newStatus] ?? null;
 
             if ($newHold && !$oldHold && $item && $this->otherHolderExists($locked)) {
                 throw new AdoptionConflictException('Sepatu ini sudah dipesan pemohon lain. Selesaikan atau tolak permohonan tersebut terlebih dahulu.');
+            }
+
+            // The chosen requester gets a payment deadline when the invoice is issued
+            if ($newStatus === 'menunggu_pembayaran' && $oldStatus !== $newStatus && self::curationMode()) {
+                $attributes += ['batas_bayar' => now()->addHours(DonationRequest::PAYMENT_WINDOW_HOURS)];
             }
 
             $locked->update(array_merge($attributes, ['status' => $newStatus]));
@@ -150,7 +182,7 @@ class AdoptionService
      */
     public function delete(DonationRequest $request): array
     {
-        if (isset(self::HOLDING_STATUSES[$request->status])) {
+        if (isset($this->holdingStatuses()[$request->status])) {
             $this->transition($request, 'dibatalkan');
         }
 
@@ -168,7 +200,7 @@ class AdoptionService
     {
         return DonationRequest::where('donation_item_id', $request->donation_item_id)
             ->where('id', '!=', $request->id)
-            ->whereIn('status', array_keys(self::HOLDING_STATUSES))
+            ->whereIn('status', array_keys($this->holdingStatuses()))
             ->exists();
     }
 
@@ -191,8 +223,11 @@ class AdoptionService
         }
 
         $name = $request->donationItem?->nama;
+        $invoice = self::curationMode()
+            ? ['Selamat, Anda Terpilih!', "Anda terpilih untuk mengadopsi {$name}. Selesaikan pembayaran sebelum " . $request->batas_bayar?->translatedFormat('d M Y, H.i') . ' WIB.', 'celebration', 'success']
+            : ['Tagihan Adopsi Terbit', "Tagihan adopsi untuk {$name} sudah terbit. Siapa cepat dia dapat, segera selesaikan pembayaran.", 'receipt_long', 'info'];
         $notification = match ($request->status) {
-            'menunggu_pembayaran' => ['Tagihan Adopsi Terbit', "Tagihan adopsi untuk {$name} sudah terbit. Siapa cepat dia dapat, segera selesaikan pembayaran.", 'receipt_long', 'info'],
+            'menunggu_pembayaran' => $invoice,
             'diproses'            => ['Pembayaran Divalidasi', "Pembayaran Anda untuk {$name} divalidasi. Sepatu sedang disiapkan.", 'inventory_2', 'info'],
             'dikirim'             => ['Pesanan Dikirim', "Hore! {$name} Anda telah dikirim. Lacak sekarang!", 'local_shipping', 'success'],
             'ditolak', 'dibatalkan' => ['Permohonan Dibatalkan/Ditolak', "Maaf, permohonan/tagihan Anda untuk {$name} telah dibatalkan atau ditolak.", 'cancel', 'error'],
@@ -235,7 +270,7 @@ class AdoptionService
     {
         $config = [
             'on_hold'   => [AdoptionOnHoldMail::class, 'Sepatu Sedang Dipesan', 'Sepatu %s sedang dipesan pemohon lain dan menunggu verifikasi. Mohon jangan transfer dulu, kami kabari hasilnya.', 'hourglass_top', 'info', '%d pemohon lain diberi tahu bahwa sepatu sedang dipesan.'],
-            'taken'     => [AdoptionTakenMail::class, 'Sepatu Sudah Diadopsi', 'Maaf, sepatu %s sudah diadopsi pemohon lain. Yuk cari sepatu lain di katalog!', 'cancel', 'error', '%d permohonan lain otomatis ditolak karena sepatu sudah diadopsi.'],
+            'taken'     => [AdoptionTakenMail::class, 'Sepatu Sudah Diadopsi', 'Terima kasih sudah mengajukan. Sepatu %s sudah diadopsi pemohon lain. Yuk cari sepatu lain di katalog!', 'cancel', 'error', '%d permohonan lain otomatis ditolak karena sepatu sudah diadopsi.'],
             'available' => [AdoptionAvailableAgainMail::class, 'Sepatu Tersedia Lagi!', 'Sepatu %s tersedia lagi. Siapa cepat dia dapat, segera selesaikan pembayaran!', 'notifications_active', 'success', '%d pemohon lain diberi tahu bahwa sepatu tersedia lagi.'],
         ];
 

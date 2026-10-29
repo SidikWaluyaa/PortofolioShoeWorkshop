@@ -16,8 +16,9 @@
             @endif
 
             @php
-                // Progress tracker shown for active orders
-                $steps = [
+                // Progress tracker shown for active orders; curation adds a first step
+                $curationMode = \App\Services\AdoptionService::curationMode();
+                $steps = ($curationMode ? ['pending' => 'Kurasi'] : []) + [
                     'menunggu_pembayaran' => 'Bayar',
                     'menunggu_verifikasi' => 'Verifikasi',
                     'diproses' => 'Disiapkan',
@@ -54,7 +55,15 @@
                         $otherOrder = $req->status === 'menunggu_pembayaran' ? $req->otherOrderInProgress() : null;
 
                         // "What do I do next?" panel: [tone, icon, title, description, button label, button url, primary?]
-                        if ($req->isOnHold()) {
+                        if ($req->isReserve()) {
+                            $next = ['gray', 'hourglass_top', 'Kamu masuk daftar cadangan',
+                                'Sepatu ini sedang ditawarkan ke pemohon lain yang terpilih. Jika pemohon tersebut tidak menyelesaikan pembayaran, pengajuanmu masih bisa dipilih. Mohon jangan transfer apa pun.',
+                                'Lihat Detail Pengajuan', $detailUrl, false];
+                        } elseif ($req->status === 'pending') {
+                            $next = ['blue', 'manage_search', 'Sedang dikurasi tim kami',
+                                'Kami meninjau semua pengajuan untuk sepatu ini. Alasan pengajuan dan urutan waktu pengajuan jadi bahan pertimbangan. Jika terpilih, tagihan dikirim lewat email dan tombol bayar muncul di sini. Mohon jangan transfer apa pun sebelum terpilih.',
+                                'Lihat Detail Pengajuan', $detailUrl, false];
+                        } elseif ($req->isOnHold()) {
                             $next = ['gray', 'hourglass_top', 'Sedang dipesan pemohon lain',
                                 'Pemohon lain sudah lebih dulu membayar dan sedang diverifikasi. Mohon jangan transfer dulu, kami kabari jika sepatu tersedia lagi.',
                                 'Lihat Status', $detailUrl, false];
@@ -64,9 +73,15 @@
                                 'Lihat Pesanan Lain', route('member.adoption-requests.show', $otherOrder->id), false];
                         } else {
                             $next = match ($req->status) {
-                                'menunggu_pembayaran' => ['amber', 'payments', 'Langkah berikutnya: bayar tagihan',
-                                    'Transfer sesuai tagihan, lalu unggah bukti transfernya. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang mengunggah bukti bayar.',
-                                    'Bayar & Unggah Bukti', $detailUrl . '#pembayaran', true],
+                                'menunggu_pembayaran' => $req->batas_bayar
+                                    ? ['amber', 'celebration', 'Selamat, kamu terpilih! Bayar sebelum ' . $req->batas_bayar->translatedFormat('d M, H.i') . ' WIB',
+                                        $req->isPaymentOverdue()
+                                            ? 'Batas waktu pembayaran sudah lewat. Segera unggah bukti transfer atau hubungi CS kami, karena sepatu dapat dialihkan ke pemohon lain.'
+                                            : 'Sepatu sudah kami amankan untukmu. Transfer sesuai tagihan, lalu unggah bukti transfernya sebelum batas waktu.',
+                                        'Bayar & Unggah Bukti', $detailUrl . '#pembayaran', true]
+                                    : ['amber', 'payments', 'Langkah berikutnya: bayar tagihan',
+                                        'Transfer sesuai tagihan, lalu unggah bukti transfernya. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang mengunggah bukti bayar.',
+                                        'Bayar & Unggah Bukti', $detailUrl . '#pembayaran', true],
                                 'menunggu_verifikasi' => ['purple', 'fact_check', 'Bukti bayar sedang dicek',
                                     'Admin sedang memverifikasi pembayaran Anda. Selama proses ini sepatu sudah diamankan untuk Anda.',
                                     'Lihat Detail Pesanan', $detailUrl, false],
@@ -90,7 +105,7 @@
                         [$toneKey, $icon, $title, $desc, $ctaLabel, $ctaUrl, $isPrimary] = $next;
                         $tone = $tones[$toneKey];
 
-                        $showSteps = in_array($req->status, $stepKeys) && !$req->isOnHold();
+                        $showSteps = in_array($req->status, $stepKeys) && !$req->isOnHold() && !$req->isReserve();
                         $currentStep = array_search($req->status, $stepKeys);
                     @endphp
 
