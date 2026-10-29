@@ -227,7 +227,7 @@
                                                             <p class="text-sm text-gray-500 mb-4">Mohon unggah foto paket yang telah Anda terima sebagai bukti bahwa pesanan telah sampai dengan selamat.</p>
                                                             
                                                             <div class="relative border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl p-8 text-center transition cursor-pointer mb-4" onclick="document.getElementById('bukti_penerimaan').click()">
-                                                                <input type="file" x-ref="fileUpload" id="bukti_penerimaan" name="bukti_penerimaan" accept="image/jpeg,image/png,image/jpg,application/pdf" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
+                                                                <input type="file" x-ref="fileUpload" id="bukti_penerimaan" name="bukti_penerimaan" accept="image/jpeg,image/png" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
                                                                 
                                                                 <div class="w-10 h-10 bg-white shadow-sm border border-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-600">
                                                                     <span class="material-symbols-outlined text-[20px]">add_a_photo</span>
@@ -341,13 +341,13 @@
                                 <form action="{{ route('member.adoption-requests.upload-payment', $adoptionRequest->id) }}" method="POST" enctype="multipart/form-data" x-data="{ fileName: null }">
                                     @csrf
                                     <div class="relative border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl p-8 text-center transition cursor-pointer mb-4" onclick="document.getElementById('bukti_pembayaran').click()">
-                                        <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" accept="image/jpeg,image/png,image/jpg,application/pdf" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
+                                        <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" accept="image/jpeg,image/png" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
                                         
                                         <div class="w-10 h-10 bg-white shadow-sm border border-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-600">
                                             <span class="material-symbols-outlined text-[20px]">upload</span>
                                         </div>
                                         <p class="text-sm font-bold text-gray-700 mb-1" x-show="!fileName">Seret bukti transfer ke sini, atau <span class="text-[#22AF85] underline">pilih file</span></p>
-                                        <p class="text-[11px] text-gray-500" x-show="!fileName">Format JPG, PNG, atau PDF, maks 5MB</p>
+                                        <p class="text-[11px] text-gray-500" x-show="!fileName">Format JPG atau PNG, maks 5MB</p>
                                         
                                         <div x-show="fileName" class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200" style="display: none;">
                                             <span class="material-symbols-outlined text-[14px] text-gray-400">attach_file</span>

@@ -83,8 +83,8 @@
             </div>
 
             <div style="text-align: center;">
-                <p style="font-size: 13px; margin-bottom: 5px;">Setelah melakukan transfer, harap kirimkan bukti pembayaran melalui WhatsApp admin kami.</p>
-                <a href="https://wa.me/628123456789?text=Halo%20Admin%20Shoe%20Workshop,%20saya%20ingin%20konfirmasi%20pembayaran%20adopsi%20untuk%20ID%20ADPS-{{ $donationRequest->id }}" class="btn">Konfirmasi Pembayaran</a>
+                <p style="font-size: 13px; margin-bottom: 5px;">Setelah melakukan transfer, unggah foto bukti transfer di halaman pengajuan adopsi Anda. Sepatu menjadi milik pemohon pertama yang mengunggah bukti pembayaran.</p>
+                <a href="{{ route('member.adoption-requests.show', $donationRequest->id) }}#pembayaran" class="btn">Unggah Bukti Transfer</a>
             </div>
         </div>
         <div class="footer">

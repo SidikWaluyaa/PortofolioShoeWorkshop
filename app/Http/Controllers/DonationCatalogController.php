@@ -44,6 +44,8 @@ class DonationCatalogController extends Controller
             }
         }
 
+        $this->applySizeFilter($query, $request);
+
         if ($request->filled('condition') && in_array($request->input('condition'), $conditions)) {
             $query->where((string) 'kondisi', $request->input('condition'));
         }
@@ -120,7 +122,9 @@ class DonationCatalogController extends Controller
         }
         $activeCampaign = $activeCampaigns->first(); // Backwards compatibility for tests
 
-        return view('katalog.index', compact('items', 'categories', 'settings', 'activeCampaigns', 'activeCampaign', 'maxPriceLimit'));
+        $sizeOptions = $this->sizeOptions();
+
+        return view('katalog.index', compact('items', 'categories', 'settings', 'activeCampaigns', 'activeCampaign', 'maxPriceLimit', 'sizeOptions'));
     }
 
     /**
@@ -128,6 +132,8 @@ class DonationCatalogController extends Controller
      */
     public function show(DonationItem $item)
     {
+        abort_if($item->status === 'arsip', 404);
+
         $settings = Setting::pluck('value', 'key')->all();
         
         // Fetch 4 other latest donation items, excluding current item, prioritized by status 'tersedia'
@@ -210,6 +216,8 @@ class DonationCatalogController extends Controller
                 $query->whereRaw('1 = 0');
             }
         }
+
+        $this->applySizeFilter($query, $request);
 
         if ($request->filled('condition') && in_array($request->input('condition'), $conditions)) {
             $query->where((string) 'kondisi', $request->input('condition'));
@@ -363,5 +371,43 @@ class DonationCatalogController extends Controller
             Log::error('Failed to submit donation request: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memproses permohonan. Silakan coba lagi.');
         }
+    }
+
+    /**
+     * Sizes are picked as chips and sent joined by "|", since a size can contain a comma ("36,5").
+     */
+    private function applySizeFilter($query, Request $request): void
+    {
+        if (! $request->filled('size')) {
+            return;
+        }
+
+        $sizes = array_filter(array_map('trim', explode('|', $request->input('size'))), 'strlen');
+        if (! empty($sizes)) {
+            $query->whereIn('ukuran', $sizes);
+        }
+    }
+
+    /**
+     * Every shoe size currently in the catalog, smallest first. Values outside a
+     * realistic shoe range (typos such as "85") are left out of the chips.
+     */
+    private function sizeOptions(): array
+    {
+        return DonationItem::visibleInCatalog()
+            ->whereNotNull('ukuran')
+            ->where('ukuran', '!=', '')
+            ->distinct()
+            ->pluck('ukuran')
+            ->map(fn ($size) => trim($size))
+            ->filter(function ($size) {
+                $number = (float) str_replace(',', '.', $size);
+
+                return $number >= 15 && $number <= 50;
+            })
+            ->unique()
+            ->sortBy(fn ($size) => (float) str_replace(',', '.', $size))
+            ->values()
+            ->all();
     }
 }
