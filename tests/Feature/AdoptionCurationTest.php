@@ -231,6 +231,29 @@ class AdoptionCurationTest extends TestCase
         $this->assertStringContainsString('"member_donasi":0', $html);
     }
 
+    public function test_unpaid_invoices_from_before_curation_go_back_to_curation(): void
+    {
+        $member = User::factory()->create(['role' => 'member']);
+        $base = [
+            'donation_item_id' => $this->item->id,
+            'user_id' => $member->id,
+            'nama_pemohon' => $member->name,
+            'email' => $member->email,
+            'kontak_pemohon' => '6281234567890',
+            'alamat_pengiriman' => 'Jl. Merdeka No. 10, Bandung',
+            'alasan' => 'Untuk kerja harian, sepatu lama sudah rusak.',
+        ];
+        $legacy = DonationRequest::create($base + ['status' => 'menunggu_pembayaran']);
+        $paid = DonationRequest::create($base + ['status' => 'menunggu_pembayaran', 'bukti_pembayaran' => 'payments/x.jpg']);
+        $chosen = DonationRequest::create($base + ['status' => 'menunggu_pembayaran', 'batas_bayar' => now()->addDay()]);
+
+        (require database_path('migrations/2026_10_30_090000_move_unpaid_legacy_invoices_to_curation.php'))->up();
+
+        $this->assertSame('pending', $legacy->fresh()->status);
+        $this->assertSame('menunggu_pembayaran', $paid->fresh()->status);
+        $this->assertSame('menunggu_pembayaran', $chosen->fresh()->status);
+    }
+
     public function test_switching_to_cepat_restores_the_instant_invoice(): void
     {
         Setting::where('key', 'adoption_mode')->update(['value' => 'cepat']);

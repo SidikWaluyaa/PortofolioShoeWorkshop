@@ -77,7 +77,8 @@ class MemberDonationPageTest extends TestCase
             ->assertSee('di atas 70%', false)
             ->assertSee('Seperti baru')
             ->assertSee('Rusak berat')
-            ->assertSee('Insole dan label ukuran');
+            ->assertSee('Samping kiri')
+            ->assertSee('Samping kanan');
     }
 
     public function test_a_pending_donation_does_not_claim_a_shipping_method_yet(): void

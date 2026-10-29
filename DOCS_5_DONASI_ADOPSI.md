@@ -49,7 +49,7 @@ Member mengisi formulir di **Portal Member → Donasi Saya → Donasi Baru**:
 | Ukuran           | Wajib (boleh desimal, misalnya 40,5)                                                                                                                                                |
 | Kondisi          | Wajib, pilih salah satu kartu: **Seperti baru (±95%)**, **Sangat layak (±85%)**, **Layak pakai (±75%)**. Kartu "Rusak berat (< 70%)" hanya menampilkan penjelasan dan mengunci tombol kirim |
 | Catatan kondisi  | Opsional, maks. 2.000 karakter                                                                                                                                                      |
-| Foto             | **Wajib minimal 1 foto.** Ada 4 kotak sesuai sudut: depan, samping, belakang, serta bagian dalam dan label ukuran                                                                    |
+| Foto             | **Wajib minimal 1 foto.** Ada 4 kotak sesuai sudut: depan, samping kiri, samping kanan, dan belakang                                                                    |
 
 Sistem menolak nilai kondisi di luar ketiga pilihan tersebut. Donasi lama yang dinilai dengan slider (0–100%) harus memilih ulang kondisinya saat diedit.
 

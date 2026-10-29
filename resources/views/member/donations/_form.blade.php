@@ -5,10 +5,10 @@
     $isEdit = isset($donation);
     $existing = $isEdit ? array_values($donation->foto_path ?? []) : [];
     $slots = [
-        ['label' => 'Depan', 'hint' => 'Ujung depan, lidah, dan tali', 'icon' => 'straighten'],
-        ['label' => 'Samping', 'hint' => 'Sisi luar, logo, dan sol samping', 'icon' => 'swap_horiz'],
-        ['label' => 'Belakang', 'hint' => 'Tumit dan sol belakang', 'icon' => 'u_turn_left'],
-        ['label' => 'Dalam & tag', 'hint' => 'Insole dan label ukuran', 'icon' => 'sell'],
+        ['label' => 'Depan', 'hint' => 'Ujung depan, lidah, dan tali'],
+        ['label' => 'Samping kiri', 'hint' => 'Sisi kiri dan sol samping'],
+        ['label' => 'Samping kanan', 'hint' => 'Sisi kanan, logo, dan sol samping'],
+        ['label' => 'Belakang', 'hint' => 'Tumit dan sol belakang'],
     ];
     $extraPhotos = array_slice($existing, count($slots));
 
@@ -240,9 +240,9 @@
                 Contoh foto 4 sudut
             </h3>
             <div class="mt-3 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 aspect-[16/9]">
-                <img src="{{ asset('images/contoh_angle_sepatu.jpg') }}" alt="Contoh foto sepatu dari depan, samping, belakang, dan bagian dalam" class="w-full h-full object-cover" loading="lazy">
+                <img src="{{ asset('images/contoh_angle_sepatu.jpg') }}" alt="Contoh foto sepatu dari depan, samping, dan belakang" class="w-full h-full object-cover" loading="lazy">
             </div>
-            <p class="mt-3 text-xs text-gray-500 leading-relaxed">Foto sesuai urutan kotak di form: depan, samping, belakang, lalu bagian dalam dan label ukuran. Foto akan dikompres otomatis.</p>
+            <p class="mt-3 text-xs text-gray-500 leading-relaxed">Foto sesuai urutan kotak di form: depan, samping kiri, samping kanan, lalu belakang. Foto akan dikompres otomatis.</p>
         </div>
     </aside>
 </div>
