@@ -19,6 +19,7 @@
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Email</span><span class="text-gray-700">{{ $donation->user->email }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Nomor SPK</span><span class="font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg text-xs">{{ $donation->spk ?? '-' }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Nama Sepatu</span><span class="font-bold text-gray-900">{{ $donation->nama_sepatu }}</span></div>
+                    <div><span class="text-gray-500 block text-xs font-medium mb-1">Brand</span><span class="text-gray-700">{{ $donation->brand ?: '-' }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Ukuran</span><span class="text-gray-700">{{ $donation->ukuran }}</span></div>
                     <div><span class="text-gray-500 block text-xs font-medium mb-1">Kondisi</span>
                         <div class="flex items-center gap-2">

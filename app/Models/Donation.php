@@ -10,6 +10,7 @@ class Donation extends Model
         'user_id',
         'spk',
         'nama_sepatu',
+        'brand',
         'ukuran',
         'kondisi',
         'harga',
@@ -25,6 +26,36 @@ class Donation extends Model
         'verified_at',
         'is_reward_claimed',
     ];
+
+    /** Only shoes rated above this condition (percent) are accepted as donations. */
+    public const MIN_KONDISI = 70;
+
+    /**
+     * Condition choices on the donation form, stored as a percentage. All of them are above MIN_KONDISI;
+     * the form also shows a "below 70%" card that explains the shoe can't be accepted.
+     */
+    public const KONDISI_OPTIONS = [
+        95 => ['label' => 'Seperti baru', 'desc' => 'Jarang dipakai. Sol, upper, dan jahitan utuh, tanpa noda berarti.'],
+        85 => ['label' => 'Sangat layak', 'desc' => 'Bekas pakai wajar. Sol masih tebal, tidak ada sobek atau lem yang lepas.'],
+        75 => ['label' => 'Layak pakai', 'desc' => 'Ada tanda pakai: sol mulai aus, lecet atau noda ringan, tanpa kerusakan besar.'],
+    ];
+
+    /** Donations the workshop has received, which earn the donor one donation-reward claim. */
+    public const REWARD_ELIGIBLE_STATUSES = ['diterima', 'siap_rilis', 'masuk_katalog', 'disalurkan'];
+
+    /**
+     * Whether the donor has actually chosen how to send the shoe. The column defaults to 'ekspedisi'
+     * as a placeholder, so an expedition without a receipt number means "not chosen yet".
+     */
+    public function hasChosenShipping(): bool
+    {
+        return $this->metode_pengiriman === 'antar_langsung' || filled($this->no_resi);
+    }
+
+    public function getKondisiLabelAttribute(): ?string
+    {
+        return self::KONDISI_OPTIONS[$this->kondisi]['label'] ?? null;
+    }
 
     protected static function booted()
     {

@@ -38,16 +38,20 @@ Istilah yang dipakai di seluruh situs:
 
 ### 3.1 Mengajukan donasi
 
-Member mengisi formulir di **Portal Member → Donasi → Donasi Baru**:
+**Syarat utama: Shoe Workshop hanya menerima sepatu dengan kelayakan di atas 70%.** Sepatu dengan sol jebol atau lepas, upper sobek, berjamur, atau berbau menyengat belum bisa diterima.
 
-| Data            | Keterangan                      |
-| --------------- | ------------------------------- |
-| Nama sepatu     | Wajib, maks. 150 karakter       |
-| Ukuran          | Wajib                           |
-| Kondisi         | Wajib, dalam persen (0–100%)   |
-| Perkiraan harga | Opsional                        |
-| Deskripsi       | Opsional, maks. 2.000 karakter  |
-| Foto            | **Wajib, minimal 1 foto** |
+Member mengisi formulir di **Portal Member → Donasi Saya → Donasi Baru**:
+
+| Data             | Keterangan                                                                                                                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nama/model       | Wajib, maks. 150 karakter                                                                                                                                                           |
+| Brand            | Opsional, maks. 100 karakter. Otomatis terisi saat admin membuat item katalog dari donasi ini                                                                                       |
+| Ukuran           | Wajib (boleh desimal, misalnya 40,5)                                                                                                                                                |
+| Kondisi          | Wajib, pilih salah satu kartu: **Seperti baru (±95%)**, **Sangat layak (±85%)**, **Layak pakai (±75%)**. Kartu "Rusak berat (< 70%)" hanya menampilkan penjelasan dan mengunci tombol kirim |
+| Catatan kondisi  | Opsional, maks. 2.000 karakter                                                                                                                                                      |
+| Foto             | **Wajib minimal 1 foto.** Ada 4 kotak sesuai sudut: depan, samping, belakang, serta bagian dalam dan label ukuran                                                                    |
+
+Sistem menolak nilai kondisi di luar ketiga pilihan tersebut. Donasi lama yang dinilai dengan slider (0–100%) harus memilih ulang kondisinya saat diedit.
 
 Admin mendapat notifikasi setiap ada donasi baru.
 
@@ -78,7 +82,8 @@ pending ──► disetujui ──► diterima ──► siap_rilis ──► ma
 
 ### 3.4 Reward untuk donatur
 
-- Setiap donasi yang sudah **diterima** memberi **satu kesempatan klaim** reward berkategori *donasi* (Portal Member → Reward).
+- **Saat ini (29 Oktober 2026) manajemen belum memberikan reward untuk donasi.** Halaman Donasi Saya hanya menampilkan ajakan klaim selama ada reward berkategori *donasi* yang aktif, ada stoknya, dan masih dalam masa berlaku. Kalau tidak ada, ajakan itu tidak muncul sama sekali.
+- Setiap donasi yang sudah **diterima** (termasuk yang sudah siap rilis, masuk katalog, atau disalurkan) memberi **satu kesempatan klaim** reward berkategori *donasi* (Portal Member → Reward).
 - Satu donasi = satu klaim. Klaim memakai donasi tertua yang belum dipakai.
 - Reward bisa punya **stok** dan **masa berlaku**. Klaim gagal kalau stok habis atau di luar masa berlaku.
 - Setiap klaim menghasilkan **kode unik** untuk ditukarkan.
@@ -258,7 +263,7 @@ Hal-hal berikut **belum ada aturannya**, baik di sistem maupun di Syarat & Keten
 3. **Refund adopsi.** Bagaimana kalau pembayaran ditolak admin atau pesanan dibatalkan setelah transfer? Ketentuan refund saat ini hanya membahas reparasi.
 4. **Ongkir tidak dibayar.** Belum ada aturan jika pemohon tidak membayar ongkir setelah dihubungi CS: berapa lama ditunggu, dan apakah biaya jasa dikembalikan.
 5. **Garansi sepatu adopsi.** Belum jelas apakah hasil restorasi sepatu adopsi ikut garansi 100 hari seperti layanan reparasi.
-6. **Syarat sepatu donasi.** Belum ada kriteria tertulis (kondisi minimal, jenis sepatu yang diterima/ditolak). Saat ini sepenuhnya penilaian admin.
+6. **Syarat sepatu donasi selain kelayakan.** Batas kelayakan di atas 70% sudah berlaku. Belum ada aturan untuk jenis sepatu (misalnya sandal, sepatu anak, sepatu safety) maupun syarat kebersihan.
 7. **Masa garansi di Syarat & Ketentuan.** Tertulis "sesuai masa garansi layanan masing-masing", sementara materi lain menyebut 100 hari setelah sepatu selesai. Perlu disamakan.
 
 ---

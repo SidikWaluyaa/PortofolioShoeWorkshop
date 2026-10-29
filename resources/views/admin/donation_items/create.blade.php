@@ -50,7 +50,7 @@
                     <label for="brand"
                         class="block text-xs font-black text-gray-700 uppercase tracking-wider mb-2">Brand /
                         Merek</label>
-                    <input type="text" id="brand" name="brand" value="{{ old('brand') }}"
+                    <input type="text" id="brand" name="brand" value="{{ old('brand', isset($donation) ? $donation->brand : '') }}"
                         placeholder="Contoh: Nike (kosongkan jika tidak ada)"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22AF85]/20 focus:border-[#22AF85] text-sm text-gray-900 font-medium transition" />
                     @error('brand')
