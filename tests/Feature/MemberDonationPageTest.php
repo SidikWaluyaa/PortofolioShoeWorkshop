@@ -54,6 +54,11 @@ class MemberDonationPageTest extends TestCase
         $this->assertSame('Nike', $donation->brand);
         $this->assertSame(85, (int) $donation->kondisi);
         $this->assertCount(2, $donation->foto_path);
+        $this->assertSame('Donasi Terkirim', $this->member->fresh()->notifications->first()->data['title']);
+        $this->assertSame(1, $this->member->fresh()->unreadNotifications->count());
+
+        // Relative times in the notification list are Indonesian whatever APP_LOCALE is
+        $this->assertSame('3 bulan yang lalu', now()->subMonths(3)->diffForHumans());
     }
 
     public function test_shoes_at_or_below_70_percent_are_refused(): void

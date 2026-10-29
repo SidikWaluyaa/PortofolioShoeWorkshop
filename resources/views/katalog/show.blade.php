@@ -296,24 +296,12 @@
                         </div>
                         @endif
 
-                        <!-- Environmental Impact Indicator -->
-                        @php
-                            $co2Offsets = [
-                                'sepatu' => '12.5 kg offset',
-                                'tas' => '9.2 kg offset',
-                                'topi' => '4.5 kg offset',
-                            ];
-                            $offsetVal = $co2Offsets[$item->kategori] ?? '8.5 kg offset';
-                        @endphp
+                        {{-- No numbers on purpose: there is no measured CO2/water saving per shoe --}}
                         <div class="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-4 mb-6">
                             <div class="w-10 h-10 rounded-full bg-[#22AF85]/10 flex items-center justify-center flex-shrink-0 text-[#22AF85]">
                                 <span class="material-symbols-outlined !text-[24px]">eco</span>
                             </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-[#22AF85] uppercase tracking-wider">Penyelamatan Lingkungan (CO2 SAVINGS)</p>
-                                <p class="text-sm font-bold text-[#22AF85] mt-0.5">{{ $offsetVal }}</p>
-                                <p class="text-[11px] text-gray-500 mt-0.5">Dengan memilih barang hasil restorasi, Anda ikut mencegah limbah industri baru.</p>
-                            </div>
+                            <p class="text-[13px] text-gray-600 leading-relaxed">Dengan mengadopsi sepatu hasil restorasi, kamu memperpanjang umur sepatu dan membantu mengurangi sepatu yang berakhir di tempat sampah.</p>
                         </div>
                     </div>
 

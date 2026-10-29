@@ -89,6 +89,7 @@ class AdoptionCurationTest extends TestCase
         $this->assertSame('tersedia', $this->item->fresh()->status);
         Mail::assertSent(AdoptionSubmittedMail::class, fn ($m) => $m->hasTo($member->email));
         Mail::assertNotSent(AdoptionApprovedInvoiceMail::class);
+        $this->assertSame('Pengajuan Adopsi Terkirim', $member->fresh()->notifications->first()->data['title']);
 
         // Nothing to pay yet: no bank account or upload form
         $this->actingAs($member)->get(route('member.adoption-requests.show', $request))
@@ -218,6 +219,7 @@ class AdoptionCurationTest extends TestCase
 
         $this->pay($ani, $aniReq)->assertSessionHas('success');
         $this->assertSame('menunggu_verifikasi', $aniReq->fresh()->status);
+        $this->assertTrue($ani->fresh()->notifications->contains(fn ($n) => $n->data['title'] === 'Bukti Bayar Terkirim'));
         $this->assertSame('dipesan', $this->item->fresh()->status);
 
         $this->choose($aniReq, 'diproses')->assertOk();

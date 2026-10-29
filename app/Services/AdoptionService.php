@@ -228,6 +228,7 @@ class AdoptionService
             : ['Tagihan Adopsi Terbit', "Tagihan adopsi untuk {$name} sudah terbit. Siapa cepat dia dapat, segera selesaikan pembayaran.", 'receipt_long', 'info'];
         $notification = match ($request->status) {
             'menunggu_pembayaran' => $invoice,
+            'menunggu_verifikasi' => ['Bukti Bayar Terkirim', "Bukti transfer untuk {$name} sudah kami terima dan sedang dicek admin. Sepatu sudah diamankan untuk Anda.", 'fact_check', 'info'],
             'diproses'            => ['Pembayaran Divalidasi', "Pembayaran Anda untuk {$name} divalidasi. Sepatu sedang disiapkan.", 'inventory_2', 'info'],
             'dikirim'             => ['Pesanan Dikirim', "Hore! {$name} Anda telah dikirim. Lacak sekarang!", 'local_shipping', 'success'],
             'ditolak', 'dibatalkan' => ['Permohonan Dibatalkan/Ditolak', "Maaf, permohonan/tagihan Anda untuk {$name} telah dibatalkan atau ditolak.", 'cancel', 'error'],

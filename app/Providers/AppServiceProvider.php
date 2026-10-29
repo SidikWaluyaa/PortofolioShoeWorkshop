@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        // Dates shown to users ("3 bulan yang lalu", "Sabtu, 31 Oktober") are always Indonesian,
+        // whatever APP_LOCALE the server has
+        \Carbon\Carbon::setLocale('id');
+
         if (env('APP_ENV') === 'production') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }

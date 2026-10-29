@@ -51,7 +51,15 @@ class DonationController extends Controller
             'foto.*' => 'image',
         ], $this->messages());
 
-        $this->donationService->create($validated, $request->file('foto'));
+        $donation = $this->donationService->create($validated, $request->file('foto'));
+
+        Auth::user()->notify(new \App\Notifications\SystemNotification(
+            'Donasi Terkirim',
+            "Donasi {$donation->nama_sepatu} sedang ditinjau tim kami, biasanya 1–2 hari kerja. Terima kasih sudah berbagi!",
+            route('member.donations.index'),
+            'volunteer_activism',
+            'info'
+        ));
 
         $admins = \App\Models\User::where('role', 'admin')->get();
         if ($admins->isNotEmpty()) {

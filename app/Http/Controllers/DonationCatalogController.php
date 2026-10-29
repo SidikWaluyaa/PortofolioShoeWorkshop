@@ -375,6 +375,16 @@ class DonationCatalogController extends Controller
                 ));
             }
 
+            Auth::user()->notify(new \App\Notifications\SystemNotification(
+                $curationMode ? 'Pengajuan Adopsi Terkirim' : 'Tagihan Adopsi Terbit',
+                $curationMode
+                    ? "Pengajuanmu untuk {$item->nama} sedang dikurasi tim kami. Mohon jangan transfer apa pun sebelum terpilih."
+                    : "Tagihan adopsi untuk {$item->nama} sudah terbit. Siapa cepat dia dapat, segera selesaikan pembayaran.",
+                route('member.adoption-requests.show', $donationRequest->id),
+                $curationMode ? 'manage_search' : 'receipt_long',
+                'info'
+            ));
+
             // Curation mode: "we received it" email; otherwise the invoice
             if (!empty($request->email)) {
                 try {
