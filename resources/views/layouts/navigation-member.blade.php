@@ -1,3 +1,8 @@
+@php
+    // Coming-soon features stay out of the menu until management switches them on
+    $navCheckin = \App\Support\MemberFeatures::checkinEnabled();
+    $navRewards = \App\Support\MemberFeatures::rewardsVisible(Auth::user());
+@endphp
 <header x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center gap-6">
         {{-- Logo --}}
@@ -10,13 +15,17 @@
 
         {{-- Desktop Nav --}}
         <div class="hidden lg:flex items-center gap-4 xl:gap-6">
-            <a href="{{ route('member.dashboard') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.dashboard') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Dashboard</a>
+            <a href="{{ route('member.dashboard') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.dashboard') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Beranda</a>
             <a href="{{ route('member.reparation-history.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.reparation-history.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Riwayat Reparasi</a>
             <a href="{{ route('member.adoption-requests.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.adoption-requests.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Adopsi Saya</a>
             <a href="{{ route('member.donations.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.donations.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Donasi Saya</a>
             <a href="{{ route('katalog.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('katalog.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Katalog Adopsi</a>
+            @if($navCheckin)
             <a href="{{ route('member.checkin.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.checkin.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Daily Check-In</a>
+            @endif
+            @if($navRewards)
             <a href="{{ route('member.rewards.index') }}" class="whitespace-nowrap text-sm font-semibold {{ request()->routeIs('member.rewards.*') ? 'text-[#22AF85] active-nav-border' : 'text-gray-500 hover:text-[#22AF85] transition-colors' }}">Rewards</a>
+            @endif
         </div>
 
         {{-- Account Buttons --}}
@@ -106,7 +115,7 @@
          class="lg:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <a href="{{ route('member.dashboard') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('member.dashboard') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                Dashboard
+                Beranda
             </a>
             <a href="{{ route('member.reparation-history.index') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('member.reparation-history.*') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                 Riwayat Reparasi
@@ -120,12 +129,16 @@
             <a href="{{ route('katalog.index') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('katalog.*') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                 Katalog Adopsi
             </a>
+            @if($navCheckin)
             <a href="{{ route('member.checkin.index') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('member.checkin.*') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                 Daily Check-In
             </a>
+            @endif
+            @if($navRewards)
             <a href="{{ route('member.rewards.index') }}" @click="open=false" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('member.rewards.*') ? 'bg-[#22AF85]/10 text-[#22AF85]' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                 Rewards
             </a>
+            @endif
         </div>
         
         <div class="border-t border-gray-100 pt-3 mt-3">

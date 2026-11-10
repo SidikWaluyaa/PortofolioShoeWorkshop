@@ -1,6 +1,23 @@
 <x-member-layout>
     <x-slot name="header">Daily Check-In</x-slot>
 
+    @unless($enabled)
+        {{-- Coming soon: management switches this on in Admin → Pengaturan --}}
+        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 sm:p-12 text-center max-w-2xl mx-auto">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-100">
+                <span class="material-symbols-outlined !text-[16px]">schedule</span> Segera hadir
+            </span>
+            <div class="w-20 h-20 mx-auto mt-6 rounded-full bg-emerald-50 flex items-center justify-center">
+                <span class="material-symbols-outlined text-emerald-500 !text-[40px]">photo_camera</span>
+            </div>
+            <h2 class="mt-5 text-xl font-black text-gray-900">Daily Check-In sedang kami siapkan</h2>
+            <p class="mt-2 text-sm text-gray-500 leading-relaxed">Nanti kamu bisa mengunggah foto sepatu yang kamu pakai setiap hari, mengumpulkan streak 7 hari, lalu menukarnya dengan reward. Kami kabari lewat notifikasi begitu fitur ini dibuka.</p>
+            <a href="{{ route('member.dashboard') }}" class="inline-flex items-center gap-2 mt-6 px-5 py-3 rounded-xl bg-[#22AF85] hover:bg-[#1a936f] text-white text-sm font-bold transition">
+                Kembali ke Beranda <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
+            </a>
+        </div>
+    @else
+
     {{-- Streak Visual --}}
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-8">
         <div class="text-center mb-6">
@@ -197,4 +214,5 @@
             <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-xl border-2 border-[#22AF85]"></div> Hari Ini</div>
         </div>
     </div>
+    @endunless
 </x-member-layout>

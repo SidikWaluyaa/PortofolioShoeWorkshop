@@ -44,12 +44,14 @@ Migration baru yang mengubah enum harus jalan di dua driver (lihat `2026_10_27_0
 **CMS landing page**: `HomeController` mengambil record aktif dari tiap model section (hero, trust, layanan/`LayananCategory`, projects, workflow, about, CTA, reviews, posts, `DonationItem` yang tersedia) lalu merender `home.blade.php`, yang tersusun dari partial di `resources/views/components/`. Admin mengelola tiap section lewat resource controller.
 - Ada dua katalog layanan. `Service` / `admin.services` adalah versi lama. `LayananCategory` → `LayananService` (`admin.layanan-categories.services`) adalah versi yang dipakai sekarang oleh home page dan `/layanan`.
 
+**Fitur member yang belum dibuka**: `App\Support\MemberFeatures`. Daily Check-In mati sampai setting `checkin_enabled` = `1` (halaman tampil "Segera hadir", check-in ditolak, menu disembunyikan). Menu Rewards hanya tampil kalau check-in aktif, ada reward donasi aktif, atau member pernah klaim reward. Beranda member (`member.dashboard`) adalah daftar "Perlu tindakanmu" lintas reparasi, adopsi, dan donasi.
+
 **Setting global**: tabel key/value `settings` dimuat sekali per request di `AppServiceProvider` dan dibagikan ke **semua view** sebagai `$globalSettings`. Admin mengubahnya di `admin.settings`. Info kontak, toggle, dan konfigurasi API eksternal semuanya disimpan di sini.
 
 **API Eksternal** dikonfigurasi lewat baris di tabel `settings`, bukan `.env`. Dokumen yang menyebut `API_BASE_URL` sudah usang.
 - `TrackingController` dan `Admin\TrackingController` membaca `tracking_base_url` dan memanggil `GET {base}/api/v1/public/track?spk_number=`.
 - `WarrantyClaimController` mem-proxy request cek/submit garansi ke backend supaya browser tidak kena CORS. Base URL-nya juga dari `tracking_base_url`.
-- `Member\ReparationHistoryController` membaca `workshop_api_base_url` dan `workshop_api_key`, memanggil `/customer-portal/orders?phone=` dengan header `X-API-KEY`, dan meng-cache hasilnya 5 menit per nomor HP.
+- `ReparationHistoryService` (dipakai Riwayat Reparasi dan beranda member) membaca `workshop_api_base_url` dan `workshop_api_key`, memanggil `/customer-portal/orders?phone=` dengan header `X-API-KEY`, dan meng-cache hasilnya 5 menit per nomor HP. Respons API dirapikan di `present()` sebelum dikirim ke view: catatan internal dan foto dengan `is_public = false` dibuang, status workshop dipetakan ke 6 tahap pelanggan, SPK berakhiran `-GR` adalah garansi (Rp 0, tanpa layanan). Angka `payment.*` dari API tidak mencakup pembayaran lewat invoice, jadi sisa tagihan sengaja tidak ditampilkan; hanya status `L` (lunas) yang dipakai.
 - `Admin\AiDescriptionController` memanggil OpenRouter memakai `OPENROUTER_API_KEY` / `OPENROUTER_MODEL` dari `.env`.
 
 **Siklus donasi (CSR)**: ini alur domain utama. Status berupa string/enum yang sudah diubah oleh banyak migration, jadi cek migration terbaru sebelum menambah nilai baru.
@@ -67,7 +69,7 @@ Migration baru yang mengubah enum harus jalan di dua driver (lihat `2026_10_27_0
 
 **Upload**: gambar dari user dan admin disimpan di disk `public`. Sebagian besar alur upload melewati `App\Helpers\ImageCompressionHelper` sebelum disimpan, jadi pakai helper ini untuk upload gambar baru. Ekspor memakai `barryvdh/laravel-dompdf` (PDF) dan ekspor Excel buatan sendiri di `Admin\DonationItemController`.
 
-**Frontend**: Blade, Alpine.js, dan Tailwind CSS **v3** (`tailwind.config.js`, PostCSS). `@tailwindcss/vite` v4 ada di `package.json` tapi tidak dipakai di `vite.config.js`, jadi jangan pakai sintaks v4. Font Plus Jakarta Sans dan ikon Material Symbols Outlined. Aplikasi ini PWA via `vite-plugin-pwa`; `npm run build` harus menjalankan `pwa-postbuild.js` supaya service worker dilayani dari web root. Layout ada di `resources/views/layouts/`. View admin di `resources/views/admin/` dan view member di `resources/views/member/`. Role `donatur` sudah diganti jadi `member`, tapi masih ada beberapa pemanggilan `view('donatur.…')` (misalnya di `Member\ReparationHistoryController`). Folder `resources/views/donatur/` sudah tidak ada, jadi jalur kode tersebut akan error.
+**Frontend**: Blade, Alpine.js, dan Tailwind CSS **v3** (`tailwind.config.js`, PostCSS). `@tailwindcss/vite` v4 ada di `package.json` tapi tidak dipakai di `vite.config.js`, jadi jangan pakai sintaks v4. Font Plus Jakarta Sans dan ikon Material Symbols Outlined. Aplikasi ini PWA via `vite-plugin-pwa`; `npm run build` harus menjalankan `pwa-postbuild.js` supaya service worker dilayani dari web root. Layout ada di `resources/views/layouts/`. View admin di `resources/views/admin/` dan view member di `resources/views/member/`. Role `donatur` sudah diganti jadi `member`; folder `resources/views/donatur/` sudah tidak ada. Beberapa test lama masih memanggil route `donatur.*` dan memang gagal.
 
 ## Hal yang Perlu Diwaspadai
 

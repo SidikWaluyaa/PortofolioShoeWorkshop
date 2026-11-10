@@ -48,473 +48,232 @@
                 <div>
                     <h4 class="font-bold text-red-950">Gagal Menghubungkan Layanan API</h4>
                     <p class="text-xs text-red-700 mt-1 leading-relaxed">{{ $error }}</p>
-                    <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-red-800 hover:underline mt-3">
+                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $globalSettings['whatsapp_number'] ?? '') }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-red-800 hover:underline mt-3">
                         Hubungi Dukungan CS WhatsApp →
                     </a>
                 </div>
             </div>
 
-        {{-- 4. STATE: SUCCESS / RETRIEVED --}}
+        {{-- 4. STATE: SUCCESS --}}
         @else
-            @if(empty($orders))
-                <div class="bg-white border border-gray-200 rounded-2xl p-10 sm:p-14 text-center shadow-sm max-w-xl mx-auto">
-                    <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100 shadow-inner">
-                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
-                        </svg>
+            @php
+                $orders = collect($orders ?? []);
+                $waNumber = preg_replace('/\D/', '', $globalSettings['whatsapp_number'] ?? '');
+                $address = $globalSettings['address'] ?? 'Jl. Kembar I No.41, Cigereleng, Kec. Regol, Kota Bandung';
+                $steps = \App\Services\ReparationHistoryService::STEPS;
+                $activeStages = \App\Services\ReparationHistoryService::ACTIVE_STAGES;
+                // Tab each order belongs to (cancelled/donated/archived orders only show under "Semua")
+                $groupOf = fn ($o) => match (true) {
+                    in_array($o['stage'], $activeStages) || $o['stage'] === 'diantar' => 'berjalan',
+                    $o['stage'] === 'siap_diambil' => 'siap',
+                    $o['stage'] === 'diambil' => 'selesai',
+                    default => 'lainnya',
+                };
+                // Ready to pick up first, then repairs in progress, then the rest (newest first within each)
+                $orders = $orders->sortBy(fn ($o) => ['siap' => 0, 'berjalan' => 1, 'selesai' => 2, 'lainnya' => 3][$groupOf($o)])->values();
+                $counts = $orders->countBy($groupOf);
+                $tones = [
+                    'amber'   => ['box' => 'bg-amber-50 border-amber-200', 'icon' => 'bg-amber-500', 'title' => 'text-amber-900', 'text' => 'text-amber-800'],
+                    'purple'  => ['box' => 'bg-purple-50 border-purple-200', 'icon' => 'bg-purple-600', 'title' => 'text-purple-900', 'text' => 'text-purple-800'],
+                    'blue'    => ['box' => 'bg-blue-50 border-blue-200', 'icon' => 'bg-blue-600', 'title' => 'text-blue-900', 'text' => 'text-blue-800'],
+                    'emerald' => ['box' => 'bg-emerald-50 border-emerald-200', 'icon' => 'bg-[#22AF85]', 'title' => 'text-emerald-900', 'text' => 'text-emerald-800'],
+                    'red'     => ['box' => 'bg-red-50 border-red-100', 'icon' => 'bg-red-500', 'title' => 'text-red-900', 'text' => 'text-red-700'],
+                    'gray'    => ['box' => 'bg-gray-50 border-gray-200', 'icon' => 'bg-gray-600', 'title' => 'text-gray-900', 'text' => 'text-gray-600'],
+                ];
+                $rupiah = fn ($n) => 'Rp ' . number_format($n, 0, ',', '.');
+            @endphp
+
+            @if($orders->isEmpty())
+                <div class="bg-white border border-gray-100 rounded-3xl p-10 sm:p-14 text-center shadow-sm max-w-xl mx-auto">
+                    <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-5">
+                        <span class="material-symbols-outlined !text-[32px]">build</span>
                     </div>
-                    <h3 class="text-lg font-black text-gray-900 mb-2">Belum Ada Riwayat Reparasi</h3>
-                    <p class="text-sm text-gray-500 mb-6 leading-relaxed">
-                        Kami tidak menemukan riwayat pesanan pengerjaan sepatu untuk nomor HP <strong>{{ Auth::user()->phone }}</strong> di database kami saat ini.
-                    </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                        <a href="https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-500/25 transition-all">
-                            Konsultasi via WhatsApp
-                        </a>
-                        <a href="{{ route('member.dashboard') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">
-                            Kembali ke Dashboard
-                        </a>
-                    </div>
+                    <h3 class="text-lg font-black text-gray-900 mb-2">Belum ada riwayat reparasi</h3>
+                    <p class="text-sm text-gray-500 mb-6 leading-relaxed">Kami belum menemukan pesanan reparasi untuk nomor HP <strong>{{ Auth::user()->phone }}</strong>. Kalau kamu pernah reparasi dengan nomor lain, hubungi CS kami.</p>
+                    @if($waNumber)
+                        <a href="https://wa.me/{{ $waNumber }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition">Hubungi CS via WhatsApp</a>
+                    @endif
                 </div>
             @else
-                @php
-                    $totalCount = count($orders);
-                    $activeCount = 0;
-                    $completedCount = 0;
-                    $totalRemaining = 0;
-
-                    foreach($orders as $order) {
-                        $statusCode = strtoupper($order['status']['code'] ?? 'PENDING');
-                        $isCompleted = in_array($statusCode, ['SELESAI', 'DIKIRIM', 'DIAMBIL']);
-                        $isCancelled = $statusCode === 'BATAL';
-                        if (!$isCompleted && !$isCancelled) {
-                            $activeCount++;
-                        }
-                        if ($isCompleted) {
-                            $completedCount++;
-                        }
-                        $totalRemaining += ($order['payment']['remaining_balance'] ?? 0);
-                    }
-                @endphp
-
-                <script>
-                    window.reparationOrders = @json($orders);
-                </script>
-
-                {{-- Interactive Alpine.js Container --}}
-                <div x-data="{
-                    searchQuery: '',
-                    activeTab: 'all',
-                    lightboxOpen: false,
-                    lightboxSrc: '',
-                    lightboxCaption: '',
-                    detailModalOpen: false,
-                    selectedOrder: null,
-                    orders: window.reparationOrders || [],
-                    openLightbox(src, caption) {
-                        this.lightboxSrc = src;
-                        this.lightboxCaption = caption || '';
-                        this.lightboxOpen = true;
-                    },
-                    openDetailModal(order) {
-                        this.selectedOrder = order;
-                        this.detailModalOpen = true;
-                    },
-                    isOrderVisible(order) {
-                        if (!order) return false;
-
-                        const query = this.searchQuery.toLowerCase().trim();
-                        let matchesSearch = true;
-                        if (query) {
-                            const matchesSpk = order.spk_number && order.spk_number.toLowerCase().includes(query);
-                            const matchesBrand = order.shoe_brand && order.shoe_brand.toLowerCase().includes(query);
-                            const matchesType = order.shoe_type && order.shoe_type.toLowerCase().includes(query);
-                            const matchesServices = order.services && order.services.some(s => s.service_name && s.service_name.toLowerCase().includes(query));
-                            matchesSearch = matchesSpk || matchesBrand || matchesType || matchesServices;
-                        }
-
-                        if (!matchesSearch) return false;
-
-                        const statusCode = order.status && order.status.code ? order.status.code.toUpperCase() : 'PENDING';
-                        const isCompleted = ['SELESAI', 'DIKIRIM', 'DIAMBIL'].includes(statusCode);
-                        const isCancelled = statusCode === 'BATAL';
-                        const isUnpaid = order.payment && order.payment.status && order.payment.status.toLowerCase() !== 'lunas';
-
-                        if (this.activeTab === 'active') {
-                            return !isCompleted && !isCancelled;
-                        } else if (this.activeTab === 'completed') {
-                            return isCompleted;
-                        } else if (this.activeTab === 'unpaid') {
-                            return isUnpaid;
-                        }
-                        return true;
-                    }
-                }">
-                    {{-- SaaS Metric Strip --}}
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-white p-4 rounded-2xl border border-gray-150 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total SPK</p>
-                                <p class="text-xl font-extrabold text-gray-900 mt-1">{{ $totalCount }}</p>
-                            </div>
-                            <div class="p-2.5 bg-gray-50 text-gray-400 border border-gray-100 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-                            </div>
+                <div x-data="{ tab: 'all', q: '' }">
+                    {{-- Tabs + search --}}
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+                        <div class="flex gap-2 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 [scrollbar-width:none]">
+                            @foreach(['all' => 'Semua', 'berjalan' => 'Sedang berjalan', 'siap' => 'Siap diambil', 'selesai' => 'Selesai'] as $key => $label)
+                                <button type="button" @click="tab = '{{ $key }}'"
+                                        :class="tab === '{{ $key }}' ? 'bg-[#22AF85] border-[#22AF85] text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-[#22AF85]'"
+                                        class="shrink-0 px-4 py-2 rounded-full border text-sm font-semibold transition">
+                                    {{ $label }} <span class="opacity-70">{{ $key === 'all' ? $orders->count() : ($counts[$key] ?? 0) }}</span>
+                                </button>
+                            @endforeach
                         </div>
-                        <div class="bg-white p-4 rounded-2xl border border-gray-150 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pengerjaan</p>
-                                <div class="flex items-center gap-2 mt-1">
-                                    @if($activeCount > 0)
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                                    </span>
-                                    @endif
-                                    <p class="text-xl font-extrabold text-gray-900">{{ $activeCount }}</p>
-                                </div>
-                            </div>
-                            <div class="p-2.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl border border-gray-150 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Selesai</p>
-                                <p class="text-xl font-extrabold text-gray-900 mt-1">{{ $completedCount }}</p>
-                            </div>
-                            <div class="p-2.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl border border-gray-150 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sisa Tagihan</p>
-                                <p class="text-xl font-extrabold {{ $totalRemaining > 0 ? 'text-red-600' : 'text-gray-900' }} mt-1">
-                                    Rp {{ number_format($totalRemaining, 0, ',', '.') }}
-                                </p>
-                            </div>
-                            <div class="p-2.5 {{ $totalRemaining > 0 ? 'bg-red-50 text-red-600 border-red-150' : 'bg-gray-50 text-gray-400 border-gray-100' }} border rounded-xl">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                            </div>
-                        </div>
+                        <label class="relative sm:ml-auto sm:w-72">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-[20px]">search</span>
+                            <input type="search" x-model="q" placeholder="Cari SPK atau merek"
+                                   class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        </label>
                     </div>
 
-                    {{-- Search and Tab Filter Bar --}}
-                    <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-gray-150 shadow-sm mb-6">
-                        {{-- Filter Tabs --}}
-                        <div class="flex items-center gap-1 p-1 bg-gray-100 rounded-xl w-full md:w-auto overflow-x-auto">
-                            <button @click="activeTab = 'all'" :class="activeTab === 'all' ? 'bg-white text-gray-900 shadow-sm font-bold' : 'text-gray-500 hover:text-gray-900 font-semibold'" class="px-4 py-2 text-xs rounded-lg transition duration-200 flex-shrink-0">
-                                Semua SPK
-                            </button>
-                            <button @click="activeTab = 'active'" :class="activeTab === 'active' ? 'bg-white text-gray-900 shadow-sm font-bold' : 'text-gray-500 hover:text-gray-900 font-semibold'" class="px-4 py-2 text-xs rounded-lg transition duration-200 flex-shrink-0">
-                                Sedang Berjalan
-                            </button>
-                            <button @click="activeTab = 'completed'" :class="activeTab === 'completed' ? 'bg-white text-gray-900 shadow-sm font-bold' : 'text-gray-500 hover:text-gray-900 font-semibold'" class="px-4 py-2 text-xs rounded-lg transition duration-200 flex-shrink-0">
-                                Selesai
-                            </button>
-                            <button @click="activeTab = 'unpaid'" :class="activeTab === 'unpaid' ? 'bg-white text-gray-900 shadow-sm font-bold' : 'text-gray-500 hover:text-gray-900 font-semibold'" class="px-4 py-2 text-xs rounded-lg transition duration-200 flex-shrink-0">
-                                Belum Lunas
-                            </button>
-                        </div>
-
-                        {{-- Search Input --}}
-                        <div class="relative w-full md:w-80">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </span>
-                            <input x-model="searchQuery" type="text" placeholder="Cari SPK, merek sepatu, atau layanan..." class="w-full pl-10 pr-4 py-2.5 text-xs border border-gray-200 rounded-xl outline-none focus:border-emerald-500 transition bg-gray-50/50 focus:bg-white">
-                        </div>
-                    </div>
-
-                    {{-- Empty Search Results State --}}
-                    <div x-show="orders.length > 0 && Array.from(document.querySelectorAll('.reparation-order-card')).every(el => el.style.display === 'none')" class="bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
-                        <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100 shadow-inner">
-                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-gray-900 mb-1">Pesanan Tidak Ditemukan</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed max-w-sm mx-auto">
-                            Tidak ditemukan SPK yang cocok dengan kata kunci pencarian atau filter yang sedang aktif. Silakan ganti kriteria pencarian Anda.
-                        </p>
-                    </div>
-
-                    {{-- Orders Cards Grid (Catalog Style) --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($orders as $index => $order)
+                    <div class="grid grid-cols-1 gap-5">
+                        @foreach($orders as $order)
                             @php
-                                $paymentStatus = $order['payment']['status'] ?? 'Belum Bayar';
-                                $paymentColor = match(strtolower($paymentStatus)) {
-                                    'lunas' => 'bg-emerald-500 text-white border-transparent',
-                                    'sebagian' => 'bg-blue-500 text-white border-transparent',
-                                    default => 'bg-amber-500 text-white border-transparent',
+                                $group = $groupOf($order);
+                                $search = strtolower(implode(' ', [$order['spk'], $order['brand'], $order['type'], collect($order['services'])->pluck('name')->implode(' ')]));
+                                $estimasi = $order['estimation_date'] ? ' Estimasi selesai ' . $order['estimation_date']->translatedFormat('d M Y') . '.' : '';
+                                $waLink = $waNumber ? 'https://wa.me/' . $waNumber . '?text=' . rawurlencode('Halo Shoe Workshop, saya mau tanya SPK ' . $order['spk']) : null;
+                                [$toneKey, $icon, $title, $desc] = match ($order['stage']) {
+                                    'belum_diterima' => ['blue', 'inventory', 'Sepatumu belum sampai di workshop', 'Antar atau kirim sepatumu ke workshop. Kami mulai mengecek begitu sepatu diterima.'],
+                                    'dicek' => ['blue', 'manage_search', 'Sedang dicek tim kami', 'Kami memeriksa kondisi sepatu dan menentukan pengerjaan yang dibutuhkan.'],
+                                    'konfirmasi' => ['amber', 'support_agent', 'Tim kami perlu konfirmasimu', 'CS kami akan menghubungimu lewat WhatsApp soal pengerjaan sepatu ini. Kamu juga bisa menghubungi kami lebih dulu.'],
+                                    'pembayaran' => ['amber', 'payments', 'Menunggu pembayaran', 'Pengerjaan dimulai setelah pembayaran atau DP kami terima. Hubungi CS untuk rincian tagihan.'],
+                                    'verifikasi' => ['purple', 'fact_check', 'Pembayaran sedang dicek', 'Tim kami sedang memverifikasi pembayaranmu. Pengerjaan berlanjut setelah terverifikasi.'],
+                                    'dikerjakan' => ['blue', 'construction', 'Sedang dikerjakan', 'Tahap saat ini: ' . $order['status_label'] . '.' . $estimasi],
+                                    'qc' => ['blue', 'verified', 'Pemeriksaan akhir (QC)', 'Sepatumu sedang dicek kualitasnya sebelum diserahkan.' . $estimasi],
+                                    'siap_diambil' => ['emerald', 'storefront', 'Siap diambil!', 'Ambil di ' . $address . ', Senin–Sabtu 09.00–17.00 WIB (Minggu tutup).'],
+                                    'diantar' => ['emerald', 'local_shipping', 'Sedang diantar', 'Sepatumu sedang dalam perjalanan ke alamatmu.'],
+                                    'diambil' => ['emerald', 'task_alt', 'Sudah diambil' . ($order['taken_date'] ? ' ' . $order['taken_date']->translatedFormat('d M Y') : ''), 'Terima kasih sudah mempercayakan sepatumu ke Shoe Workshop.'],
+                                    'batal' => ['red', 'cancel', 'Dibatalkan', 'Pesanan ini dibatalkan. Hubungi CS kalau ada pertanyaan.'],
+                                    'donasi' => ['gray', 'volunteer_activism', 'Tidak diambil', 'Sepatu tidak diambil sampai batas waktu, sehingga didonasikan sesuai ketentuan.'],
+                                    default => ['gray', 'inventory_2', 'Diarsipkan', 'Pesanan ini sudah diarsipkan.'],
                                 };
-
-                                $statusCode = strtoupper($order['status']['code'] ?? 'PENDING');
-                                $statusLabel = $order['status']['label'] ?? 'Sedang Diproses';
-
-                                $statusTagClass = match($statusCode) {
-                                    'SELESAI', 'DIKIRIM', 'DIAMBIL' => 'bg-emerald-100 text-emerald-800 border-emerald-200',
-                                    'BATAL' => 'bg-red-150 text-red-800 border-red-200',
-                                    default => 'bg-amber-100 text-amber-800 border-amber-200',
-                                };
-
-                                $hasUnpaid = ($order['payment']['remaining_balance'] ?? 0) > 0;
-                                $coverPhoto = collect($order['photos'] ?? [])->firstWhere((string) 'is_spk_cover', true) ?? collect($order['photos'] ?? [])->first();
+                                $tone = $tones[$toneKey];
+                                $showWa = in_array($order['stage'], ['konfirmasi', 'pembayaran', 'batal']);
                             @endphp
 
-                            <div x-show="isOrderVisible(orders[{{ $index }}])" class="reparation-order-card bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col h-full">
-                                
-                                {{-- Card Media Top --}}
-                                <div class="relative h-44 bg-gray-50 border-b border-gray-100 overflow-hidden flex-shrink-0 group">
-                                    @if($coverPhoto)
-                                        <img src="{{ $coverPhoto['photo_url'] }}" alt="Cover" class="w-full h-full object-cover transition duration-300 group-hover:scale-105 cursor-pointer" @click="openLightbox('{{ $coverPhoto['photo_url'] }}', '{{ addslashes($coverPhoto['caption'] ?? '') }}')">
-                                        <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition duration-300"></div>
+                            <article x-show="(tab === 'all' || tab === '{{ $group }}') && (!q || @js($search).includes(q.toLowerCase().trim()))"
+                                     class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                                {{-- Shoe summary --}}
+                                <div class="flex items-center gap-4 p-4 sm:p-5">
+                                    @if($order['cover'])
+                                        <img src="{{ $order['cover'] }}" alt="" loading="lazy" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-2xl border border-gray-200 bg-gray-50 flex-shrink-0">
                                     @else
-                                        <div class="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                                            <svg class="w-8 h-8 mb-1.5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tidak Ada Foto</span>
-                                        </div>
+                                        <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                            <span class="material-symbols-outlined !text-[30px]">steps</span>
+                                        </span>
                                     @endif
-
-                                    {{-- SPK Code (Floating Left) --}}
-                                    <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-white/10 shadow-sm">
-                                        <span class="font-mono font-bold text-white text-[10px] tracking-wider uppercase">{{ $order['spk_number'] }}</span>
-                                    </div>
-
-                                    {{-- Floating Badges (Right Side) --}}
-                                    <div class="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
-                                        <span class="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shadow-sm border {{ $statusTagClass }}">
-                                            {{ $statusLabel }}
-                                        </span>
-                                        <span class="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shadow-sm {{ $paymentColor }}">
-                                            {{ $paymentStatus }}
-                                        </span>
-                                    </div>
-
-                                    {{-- Mini Date Overlay at Bottom --}}
-                                    <div class="absolute bottom-2 left-3 text-[9px] text-white/90 bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
-                                        Masuk: {{ isset($order['entry_date']) ? \Carbon\Carbon::parse($order['entry_date'])->format('d/m/y') : '-' }}
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h3 class="font-black text-gray-900 text-[15px] sm:text-base leading-snug">{{ trim(($order['brand'] ?? '') . ' ' . ($order['type'] ?? '')) ?: 'Sepatu' }}</h3>
+                                            @if($order['is_warranty'])
+                                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-bold uppercase tracking-wider">Garansi</span>
+                                            @endif
+                                        </div>
+                                        <p class="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-wider truncate">
+                                            {{ collect([$order['size'] ? 'Ukuran ' . $order['size'] : null, $order['color']])->filter()->implode(' • ') }}
+                                        </p>
+                                        <p class="text-[11px] text-gray-400 mt-0.5 font-mono">{{ $order['spk'] }}@if($order['entry_date']) <span class="font-sans">· masuk {{ $order['entry_date']->translatedFormat('d M Y') }}</span>@endif</p>
                                     </div>
                                 </div>
 
-                                {{-- Card Content --}}
-                                <div class="p-5 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        {{-- Title: Brand & Model --}}
-                                        <h3 class="text-sm font-black text-gray-900 leading-snug">
-                                            {{ $order['shoe_brand'] ?? 'Tanpa Merek' }}
-                                            @if(isset($order['shoe_type']) && $order['shoe_type'] !== '-')
-                                                <span class="text-xs text-gray-500 font-semibold block mt-0.5">({{ $order['shoe_type'] }})</span>
-                                            @endif
-                                        </h3>
-
-                                        {{-- Specifications --}}
-                                        <div class="grid grid-cols-2 gap-2.5 mt-3.5">
-                                            <div class="bg-gray-50 border border-gray-150 rounded-xl p-2.5">
-                                                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">Warna</span>
-                                                <span class="font-extrabold text-xs text-gray-800">{{ $order['shoe_color'] ?? '-' }}</span>
-                                            </div>
-                                            <div class="bg-gray-50 border border-gray-150 rounded-xl p-2.5">
-                                                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">Ukuran</span>
-                                                <span class="font-extrabold text-xs text-gray-800">{{ $order['shoe_size'] ?? '-' }}</span>
-                                            </div>
-                                        </div>
-
-                                        {{-- Dates & Services summary --}}
-                                        <div class="mt-3.5 pt-3.5 border-t border-gray-100 space-y-2 text-xs text-gray-650">
-                                            @if(isset($order['estimation_date']))
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium">📅 Estimasi Selesai:</span>
-                                                    <span class="font-bold text-emerald-600">{{ \Carbon\Carbon::parse($order['estimation_date'])->format('d M Y') }}</span>
-                                                </div>
-                                            @endif
-
-                                            <div class="pt-1.5">
-                                                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Layanan Utama</span>
-                                                <div class="flex flex-wrap gap-1">
-                                                    @foreach(array_slice($order['services'], 0, 2) as $svc)
-                                                        <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-600 rounded text-[9px] font-semibold">
-                                                            {{ $svc['service_name'] }}
-                                                        </span>
-                                                    @endforeach
-                                                    @if(count($order['services']) > 2)
-                                                        <span class="px-2 py-0.5 bg-gray-200 border border-gray-255 text-gray-700 rounded text-[9px] font-black">
-                                                            +{{ count($order['services']) - 2 }}
-                                                        </span>
+                                {{-- Progress tracker --}}
+                                @if($order['step'] !== null)
+                                    <div class="px-4 sm:px-5 pb-1">
+                                        <ol class="flex items-start">
+                                            @foreach($steps as $index => $label)
+                                                @php
+                                                    $done = $index < $order['step'];
+                                                    $active = $index === $order['step'];
+                                                @endphp
+                                                <li class="flex-1 flex flex-col items-center text-center relative">
+                                                    @if(!$loop->first)
+                                                        <span class="absolute top-[11px] right-1/2 w-full h-0.5 {{ $index <= $order['step'] ? 'bg-[#22AF85]' : 'bg-gray-200' }}"></span>
                                                     @endif
-                                                </div>
+                                                    <span class="relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black
+                                                        {{ $done ? 'bg-[#22AF85] text-white' : ($active ? 'bg-white text-[#22AF85] ring-2 ring-[#22AF85]' : 'bg-gray-100 text-gray-400') }}">
+                                                        @if($done)
+                                                            <span class="material-symbols-outlined !text-[14px]">check</span>
+                                                        @else
+                                                            {{ $index + 1 }}
+                                                        @endif
+                                                    </span>
+                                                    <span class="mt-1.5 text-[10px] sm:text-[11px] leading-tight {{ $active ? 'font-black text-gray-900' : 'font-semibold text-gray-400' }}">{{ $label }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ol>
+                                    </div>
+                                @endif
+
+                                {{-- What's happening / what to do --}}
+                                <div class="p-4 sm:p-5">
+                                    <div class="rounded-2xl border p-4 {{ $tone['box'] }}">
+                                        <div class="flex items-start gap-3">
+                                            <span class="w-8 h-8 rounded-full text-white flex items-center justify-center flex-shrink-0 {{ $tone['icon'] }}">
+                                                <span class="material-symbols-outlined !text-[18px]">{{ $icon }}</span>
+                                            </span>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-black {{ $tone['title'] }}">{{ $title }}</p>
+                                                <p class="text-xs leading-relaxed mt-1 {{ $tone['text'] }}">{{ $desc }}</p>
                                             </div>
                                         </div>
+                                        @if($showWa && $waLink)
+                                            <a href="{{ $waLink }}" target="_blank" rel="noopener"
+                                               class="mt-4 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold bg-[#22AF85] hover:bg-[#1a936f] text-white transition">
+                                                Hubungi CS via WhatsApp <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
+                                            </a>
+                                        @elseif($order['stage'] === 'diambil')
+                                            <a href="{{ route('warranty.index') }}" class="mt-3 inline-flex items-center gap-1 text-xs font-bold {{ $tone['title'] }} hover:underline">
+                                                Ada masalah setelah diambil? Ajukan klaim garansi <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                                            </a>
+                                        @endif
                                     </div>
 
-                                    {{-- Card Actions --}}
-                                    <div class="mt-5 pt-3.5 border-t border-gray-100 flex flex-col gap-3">
-                                        <div class="flex items-center justify-between text-xs">
-                                            <div>
-                                                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-wider block leading-none mb-1">Total Biaya</span>
-                                                <span class="text-sm font-black text-gray-900">Rp {{ number_format($order['payment']['total_amount'] ?? 0, 0, ',', '.') }}</span>
+                                    {{-- Details --}}
+                                    <details class="group mt-3">
+                                        <summary class="flex items-center justify-between cursor-pointer list-none px-1 py-2 text-sm font-bold text-gray-700 hover:text-[#22AF85]">
+                                            Rincian pengerjaan
+                                            <span class="material-symbols-outlined text-gray-400 transition-transform group-open:rotate-180">expand_more</span>
+                                        </summary>
+                                        <div class="px-1 pb-1 space-y-4">
+                                            <div class="rounded-xl border border-gray-100 overflow-hidden">
+                                                @forelse($order['services'] as $service)
+                                                    <div class="flex justify-between gap-3 px-4 py-2.5 text-sm border-b border-gray-100 last:border-0">
+                                                        <span class="text-gray-700">{{ $service['name'] }}</span>
+                                                        <span class="font-semibold text-gray-900 whitespace-nowrap">{{ $service['cost'] > 0 ? $rupiah($service['cost']) : '-' }}</span>
+                                                    </div>
+                                                @empty
+                                                    <p class="px-4 py-2.5 text-sm text-gray-500">{{ $order['is_warranty'] ? 'Pengerjaan ulang dari klaim garansi.' : 'Rincian layanan belum tersedia.' }}</p>
+                                                @endforelse
+                                                <div class="flex justify-between items-center gap-3 px-4 py-3 bg-gray-50 text-sm">
+                                                    <span class="font-bold text-gray-700">Total biaya</span>
+                                                    <span class="flex items-center gap-2">
+                                                        @if($order['is_warranty'] && $order['total'] <= 0)
+                                                            <span class="font-black text-emerald-700">Gratis (garansi)</span>
+                                                        @else
+                                                            <span class="font-black text-gray-900">{{ $rupiah($order['total']) }}</span>
+                                                            @if($order['is_paid'])
+                                                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-bold uppercase">Lunas</span>
+                                                            @endif
+                                                        @endif
+                                                    </span>
+                                                </div>
                                             </div>
-                                            @if($hasUnpaid)
-                                                <div class="text-right">
-                                                    <span class="text-[8px] font-bold text-red-500 uppercase tracking-wider block leading-none mb-1">Kurang Bayar</span>
-                                                    <span class="text-xs font-black text-red-650">Rp {{ number_format($order['payment']['remaining_balance'] ?? 0, 0, ',', '.') }}</span>
+
+                                            <dl class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                                                @foreach(['Masuk' => $order['entry_date'], 'Estimasi selesai' => $order['estimation_date'], 'Selesai' => $order['finished_date'], 'Diambil' => $order['taken_date']] as $label => $date)
+                                                    <div class="rounded-xl bg-gray-50 px-3 py-2">
+                                                        <dt class="text-gray-400 font-semibold">{{ $label }}</dt>
+                                                        <dd class="mt-0.5 font-bold text-gray-800">{{ $date ? $date->translatedFormat('d M Y') : '-' }}</dd>
+                                                    </div>
+                                                @endforeach
+                                            </dl>
+
+                                            @if($order['photos'])
+                                                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                                                    @foreach($order['photos'] as $photo)
+                                                        <a href="{{ $photo['url'] }}" target="_blank" rel="noopener" class="block aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50" title="{{ $photo['caption'] }}">
+                                                            <img src="{{ $photo['url'] }}" alt="{{ $photo['caption'] ?? 'Foto pengerjaan' }}" loading="lazy" class="w-full h-full object-cover">
+                                                        </a>
+                                                    @endforeach
                                                 </div>
                                             @endif
                                         </div>
-
-                                        <button @click="openDetailModal(orders[{{ $index }}])" class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold rounded-xl transition duration-200 shadow-sm shadow-emerald-500/10">
-                                            <span>Lihat Rincian Progress</span>
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    </details>
                                 </div>
-                            </div>
+                            </article>
                         @endforeach
                     </div>
 
-                    {{-- Detail Modal Dialog (Z-Index 40) --}}
-                    <div x-show="detailModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" x-transition x-cloak style="display: none;">
-                        <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-gray-100" @click.away="detailModalOpen = false">
-                            
-                            {{-- Modal Header --}}
-                            <div class="px-5 py-4 bg-gray-50 border-b border-gray-150 flex items-center justify-between flex-shrink-0">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-xs">
-                                        <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <span class="font-mono font-bold text-gray-900 text-xs tracking-wider" x-text="selectedOrder ? selectedOrder.spk_number : ''"></span>
-                                        <p class="text-[9px] text-gray-400">Rincian Progress & Layanan Pengerjaan</p>
-                                    </div>
-                                </div>
-                                <button @click="detailModalOpen = false" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </div>
-
-                            {{-- Modal Body (Scrollable) --}}
-                            <div class="p-5 overflow-y-auto space-y-4 flex-1 text-xs" x-show="selectedOrder">
-                                {{-- Specs Card --}}
-                                <div class="grid grid-cols-2 gap-3 bg-gray-50 border border-gray-150 rounded-xl p-3.5">
-                                    <div>
-                                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">Merek & Model</span>
-                                        <span class="font-extrabold text-gray-900 text-xs" x-text="(selectedOrder ? selectedOrder.shoe_brand : '') + (selectedOrder && selectedOrder.shoe_type && selectedOrder.shoe_type !== '-' ? ' ('+selectedOrder.shoe_type+')' : '')"></span>
-                                    </div>
-                                    <div>
-                                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">Spesifikasi</span>
-                                        <span class="font-bold text-gray-700 text-[11px]" x-text="selectedOrder ? 'Warna: ' + selectedOrder.shoe_color + ' • Size: ' + selectedOrder.shoe_size : ''"></span>
-                                    </div>
-                                </div>
-
-                                {{-- Dates & Status --}}
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div class="border border-gray-150 rounded-xl p-3 flex items-center justify-between">
-                                        <div>
-                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">Status</span>
-                                            <span class="font-black text-gray-900 text-[11px] mt-0.5 block" x-text="selectedOrder && selectedOrder.status ? selectedOrder.status.label : ''"></span>
-                                        </div>
-                                        <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" x-show="selectedOrder && selectedOrder.status && ['SELESAI', 'DIKIRIM', 'DIAMBIL'].includes(selectedOrder.status.code.toUpperCase())"></span>
-                                        <span class="h-2 w-2 rounded-full bg-red-500 shadow-sm shadow-red-500/50" x-show="selectedOrder && selectedOrder.status && selectedOrder.status.code.toUpperCase() === 'BATAL'"></span>
-                                        <span class="relative flex h-2 w-2" x-show="selectedOrder && selectedOrder.status && !['SELESAI', 'DIKIRIM', 'DIAMBIL', 'BATAL'].includes(selectedOrder.status.code.toUpperCase())">
-                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-450 opacity-75"></span>
-                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                                        </span>
-                                    </div>
-
-                                    <div class="border border-gray-150 rounded-xl p-3 flex items-center justify-between">
-                                        <div>
-                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">Est. Selesai</span>
-                                            <span class="font-black text-gray-900 text-[11px] mt-0.5 block" x-text="selectedOrder && selectedOrder.estimation_date ? new Date(selectedOrder.estimation_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Services breakdown --}}
-                                <div>
-                                    <h4 class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Layanan & Pembayaran</h4>
-                                    <div class="bg-gray-50 border border-gray-150 rounded-xl overflow-hidden shadow-xs">
-                                        <table class="w-full text-[10px] text-left border-collapse">
-                                            <thead>
-                                                <tr class="bg-gray-100/60 border-b border-gray-150 text-gray-600 font-bold">
-                                                    <th class="py-2 px-3">Layanan</th>
-                                                    <th class="py-2 px-3 text-right">Biaya</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-gray-100 text-gray-700 bg-white">
-                                                <template x-for="svc in (selectedOrder ? selectedOrder.services : [])">
-                                                    <tr class="hover:bg-gray-50/50 transition-colors">
-                                                        <td class="py-2.5 px-3 font-bold text-gray-950" x-text="svc.service_name"></td>
-                                                        <td class="py-2.5 px-3 text-right font-bold text-gray-900 font-mono" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(svc.cost || 0)"></td>
-                                                    </tr>
-                                                </template>
-                                                
-                                                <tr class="bg-gray-50/50 font-bold border-t border-gray-150 text-gray-900">
-                                                    <td class="py-2 px-3 text-right">Total:</td>
-                                                    <td class="py-2 px-3 text-right font-black font-mono text-xs text-gray-950" x-text="selectedOrder && selectedOrder.payment ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(selectedOrder.payment.total_amount || 0) : 'Rp 0'"></td>
-                                                </tr>
-                                                <tr class="text-emerald-700 bg-emerald-50/10 font-bold" x-show="selectedOrder && selectedOrder.payment && selectedOrder.payment.paid_amount > 0">
-                                                    <td class="py-2 px-3 text-right">Telah Dibayar:</td>
-                                                    <td class="py-2 px-3 text-right font-black font-mono text-xs" x-text="selectedOrder && selectedOrder.payment ? '- ' + new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(selectedOrder.payment.paid_amount || 0) : 'Rp 0'"></td>
-                                                </tr>
-                                                <tr class="text-red-700 bg-red-50/10 font-bold" x-show="selectedOrder && selectedOrder.payment && selectedOrder.payment.remaining_balance > 0">
-                                                    <td class="py-2 px-3 text-right">Sisa Tagihan:</td>
-                                                    <td class="py-2 px-3 text-right font-black font-mono text-xs" x-text="selectedOrder && selectedOrder.payment ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(selectedOrder.payment.remaining_balance || 0) : 'Rp 0'"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                {{-- Progress Photos --}}
-                                <div x-show="selectedOrder && selectedOrder.photos && selectedOrder.photos.length > 0">
-                                    <h4 class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-2">Galeri Foto Progress</h4>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                        <template x-for="photo in (selectedOrder ? selectedOrder.photos : [])">
-                                            <div @click="openLightbox(photo.photo_url, photo.caption)" class="block relative rounded-xl overflow-hidden border border-gray-150 h-16 bg-gray-50 group shadow-xs cursor-pointer">
-                                                <img :src="photo.photo_url" :alt="photo.caption" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
-                                                <div class="absolute inset-0 bg-black/15 group-hover:bg-black/0 transition duration-300"></div>
-                                                <span class="absolute top-1 left-1 bg-black/60 text-white text-[7px] font-black px-1 py-0.5 rounded uppercase tracking-wider" x-text="photo.step === 'WAREHOUSE_BEFORE' ? 'Before' : (photo.step === 'FINISH' ? 'After' : photo.step)"></span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Modal Footer --}}
-                            <div class="px-5 py-3.5 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-2.5 flex-shrink-0">
-                                <button @click="detailModalOpen = false" class="px-3.5 py-2 bg-white border border-gray-200 text-gray-700 font-bold text-xs rounded-xl hover:bg-gray-100 transition shadow-xs">
-                                    Tutup Rincian
-                                </button>
-                                <a :href="'https://wa.me/{{ $settings['whatsapp_number'] ?? '' }}?text=Halo%20Admin%20ShoeWorkshop,%20saya%20ingin%20tanya%20mengenai%20progress%20sepatu%20SPK%20' + (selectedOrder ? selectedOrder.spk_number : '')" target="_blank" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-sm shadow-emerald-500/20 transition flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[16px]">chat</span>
-                                    Tanya Admin WA
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Image Lightbox Modal (Z-Index 50 - floats on top of Detail Modal) --}}
-                    <div x-show="lightboxOpen" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs" x-transition x-cloak style="display: none;">
-                        <div class="relative max-w-4xl max-h-[85vh] overflow-hidden bg-white rounded-2xl p-2 shadow-2xl" @click.away="lightboxOpen = false">
-                            <button @click="lightboxOpen = false" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition shadow-md">
-                                <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
-                            <img :src="lightboxSrc" class="max-w-full max-h-[78vh] rounded-xl object-contain">
-                            <div class="px-4 py-3 bg-white" x-show="lightboxCaption">
-                                <p class="text-xs font-bold text-gray-900" x-text="lightboxCaption"></p>
-                            </div>
-                        </div>
-                    </div>
+                    <p x-show="q" x-cloak class="mt-6 text-center text-sm text-gray-500">Tidak menemukan yang dicari? Coba kata kunci lain atau hapus pencarian.</p>
                 </div>
             @endif
         @endif

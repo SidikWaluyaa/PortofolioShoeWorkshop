@@ -103,6 +103,19 @@
                         </div>
 
                         <div class="mt-8 pt-6 border-t border-gray-100">
+                            <h3 class="text-lg font-bold mb-1">Fitur Member</h3>
+                            <p class="text-xs text-gray-400 mb-4">Fitur yang masih disiapkan tampil sebagai "Segera hadir" dan disembunyikan dari menu member sampai dinyalakan.</p>
+                            <input type="hidden" name="checkin_enabled" value="0">
+                            <label class="flex items-start gap-3 p-4 rounded-xl border cursor-pointer has-[:checked]:border-[#22AF85] has-[:checked]:bg-emerald-50/50 max-w-xl">
+                                <input type="checkbox" name="checkin_enabled" value="1" class="mt-1 rounded text-[#22AF85] focus:ring-[#22AF85]" @checked(($settings['checkin_enabled'] ?? '0') === '1')>
+                                <span>
+                                    <span class="block font-bold text-sm text-gray-900">Daily Check-In aktif</span>
+                                    <span class="block text-xs text-gray-500 mt-1 leading-relaxed">Member bisa mengunggah foto sepatu harian dan mengumpulkan streak. Saat mati, halaman Check-In menampilkan "Segera hadir" dan check-in ditolak.</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-gray-100">
                             <h3 class="text-lg font-bold mb-1">Rating Google</h3>
                             <p class="text-xs text-gray-400 mb-4">Ditampilkan di section Testimoni & hero beranda. Samakan dengan angka di Google Maps secara berkala.</p>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
