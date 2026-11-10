@@ -1,3 +1,8 @@
+@php
+    // Coming-soon features stay out of the account menu until management switches them on
+    $navCheckin = Auth::check() && \App\Support\MemberFeatures::checkinEnabled();
+    $navRewards = Auth::check() && \App\Support\MemberFeatures::rewardsVisible(Auth::user());
+@endphp
 <header x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4 flex justify-between items-center gap-6">
         {{-- Logo --}}
@@ -90,14 +95,18 @@
                                     <span class="material-symbols-outlined !text-[18px]">apps</span>
                                     Katalog Adopsi
                                 </a>
+                                @if($navCheckin)
                                 <a href="{{ route('member.checkin.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
                                     <span class="material-symbols-outlined !text-[18px]">event_available</span>
                                     Daily Check-In
                                 </a>
+                                @endif
+                                @if($navRewards)
                                 <a href="{{ route('member.rewards.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-[#22AF85]/10 hover:text-[#22AF85] transition-all">
                                     <span class="material-symbols-outlined !text-[18px]">card_membership</span>
                                     Rewards Saya
                                 </a>
+                                @endif
                             @endif
                         </div>
 
@@ -190,14 +199,18 @@
                         <span class="material-symbols-outlined !text-[20px]">apps</span>
                         Katalog Adopsi
                     </a>
+                    @if($navCheckin)
                     <a href="{{ route('member.checkin.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                         <span class="material-symbols-outlined !text-[20px]">event_available</span>
                         Daily Check-In
                     </a>
+                    @endif
+                    @if($navRewards)
                     <a href="{{ route('member.rewards.index') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                         <span class="material-symbols-outlined !text-[20px]">card_membership</span>
                         Rewards Saya
                     </a>
+                    @endif
                 @endif
                 <a href="{{ route('profile.edit') }}" @click="open=false" class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg">
                     <span class="material-symbols-outlined !text-[20px]">person</span>
