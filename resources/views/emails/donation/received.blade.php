@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="greeting">Halo, {{ $donation->user?->name ?? 'Donatur' }}! 💚</div>
-    <p>Sepatu donasi Anda, <strong class="text-emerald">{{ $donation->nama_sepatu }}</strong>, telah <strong>kami terima</strong> di workshop dan kini masuk antrean restorasi.</p>
+    <p>Sepatu donasi kamu, <strong class="text-emerald">{{ $donation->nama_sepatu }}</strong>, telah <strong>kami terima</strong> di workshop dan kini masuk antrean restorasi.</p>
 
     <div class="info-box">
         <h3>Detail Donasi</h3>

@@ -54,6 +54,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home'));
+        // Registering from the Adapt & Adopt donation form brings the donor back to send it
+        return redirect()->intended(route('home'));
     }
 }

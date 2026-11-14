@@ -318,7 +318,7 @@ class DonationCatalogController extends Controller
             'selected_services' => ['nullable', 'array'],
             'selected_services.*' => ['integer', 'exists:donation_item_services,id'],
         ], [
-            'alasan.min' => 'Ceritakan alasan Anda minimal 20 karakter, misalnya sepatu ini untuk siapa dan untuk dipakai apa.',
+            'alasan.min' => 'Ceritakan alasan kamu minimal 20 karakter, misalnya sepatu ini untuk siapa dan untuk dipakai apa.',
             'alasan.max' => 'Alasan maksimal 1000 karakter.',
             'alamat_jalan.required' => 'Isi nama jalan dan nomor rumah.',
             'alamat_jalan.min' => 'Nama jalan dan nomor rumah terlalu pendek.',
@@ -400,8 +400,8 @@ class DonationCatalogController extends Controller
 
             return redirect()->route('member.adoption-requests.index')
                 ->with('success', $curationMode
-                    ? 'Pengajuan terkirim! Tim kami akan mengkurasi semua pengajuan untuk sepatu ini. Jika Anda terpilih, tagihan dikirim lewat email. Mohon jangan transfer apa pun sebelum terpilih.'
-                    : 'Tagihan berhasil dibuat! Silakan cek email Anda untuk detail pembayaran atau langsung upload bukti pembayaran di sini.');
+                    ? 'Pengajuan terkirim! Tim kami akan mengkurasi semua pengajuan untuk sepatu ini. Jika kamu terpilih, tagihan dikirim lewat email. Mohon jangan transfer apa pun sebelum terpilih.'
+                    : 'Tagihan berhasil dibuat! Silakan cek email kamu untuk detail pembayaran atau langsung upload bukti pembayaran di sini.');
 
         } catch (\Exception $e) {
             Log::error('Failed to submit donation request: ' . $e->getMessage());
@@ -417,19 +417,19 @@ class DonationCatalogController extends Controller
         $mine = DonationRequest::where('user_id', Auth::id());
 
         if ((clone $mine)->where('donation_item_id', $item->id)->whereIn('status', DonationRequest::ACTIVE_STATUSES)->exists()) {
-            return 'Anda sudah mengajukan sepatu ini. Pantau statusnya di halaman Adopsi Saya.';
+            return 'Kamu sudah mengajukan sepatu ini. Pantau statusnya di halaman Adopsi Saya.';
         }
 
         if (AdoptionService::curationMode()) {
             $limit = DonationRequest::CURATION_LIMIT;
 
             return (clone $mine)->where('status', 'pending')->count() >= $limit
-                ? "Anda sudah memiliki {$limit} pengajuan yang sedang dikurasi. Tunggu hasil kurasinya dulu sebelum mengajukan sepatu lain."
+                ? "Kamu sudah memiliki {$limit} pengajuan yang sedang dikurasi. Tunggu hasil kurasinya dulu sebelum mengajukan sepatu lain."
                 : null;
         }
 
         return (clone $mine)->blockingNewRequests()->exists()
-            ? 'Anda masih memiliki permohonan aktif yang belum diselesaikan (menunggu pembayaran / verifikasi). Harap selesaikan terlebih dahulu sebelum mengambil sepatu lain.'
+            ? 'Kamu masih memiliki permohonan aktif yang belum diselesaikan (menunggu pembayaran / verifikasi). Harap selesaikan terlebih dahulu sebelum mengambil sepatu lain.'
             : null;
     }
 

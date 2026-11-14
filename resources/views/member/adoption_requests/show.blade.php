@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <a href="{{ route('member.adoption-requests.index') }}" class="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-[#22AF85] hover:border-[#22AF85] transition shadow-sm flex-shrink-0">
+                <a href="{{ route('member.adoption-requests.index') }}" class="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-aa-green hover:border-aa-green transition shadow-sm flex-shrink-0">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </a>
                 <div class="flex flex-col">
@@ -16,7 +16,7 @@
                     'menunggu_pembayaran' => 'bg-amber-100 text-amber-700 border-amber-200',
                     'menunggu_verifikasi' => 'bg-purple-100 text-purple-700 border-purple-200',
                     'diproses' => 'bg-blue-100 text-blue-700 border-blue-200',
-                    'dikirim' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                    'dikirim' => 'bg-aa-beige text-aa-green border-aa-beige',
                     'ditolak' => 'bg-red-50 text-red-500 border-red-100',
                     'dibatalkan' => 'bg-red-100 text-red-700 border-red-200',
                     'selesai' => 'bg-blue-100 text-blue-700 border-blue-200',
@@ -70,7 +70,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold text-red-900 text-sm">Permohonan {{ ucfirst($adoptionRequest->status) }}</h4>
-                                <p class="text-xs text-red-700 mt-1">Mohon maaf, permohonan Anda tidak dapat dilanjutkan.</p>
+                                <p class="text-xs text-red-700 mt-1">Mohon maaf, permohonan kamu tidak dapat dilanjutkan.</p>
                             </div>
                         </div>
                     @else
@@ -92,7 +92,7 @@
                             <div class="min-w-[600px] relative mt-2 mb-2">
                                 <!-- Progress Line -->
                                 <div class="absolute left-6 right-6 top-5 w-[calc(100%-3rem)] h-1 bg-gray-200 rounded-full z-0"></div>
-                                <div class="absolute left-6 top-5 h-1 bg-[#22AF85] rounded-full z-0 transition-all duration-500" style="width: {{ count($stepKeys) > 1 ? ($currentIndex / (count($stepKeys) - 1) * 100) * 0.9 : 0 }}%;"></div>
+                                <div class="absolute left-6 top-5 h-1 bg-aa-green rounded-full z-0 transition-all duration-500" style="width: {{ count($stepKeys) > 1 ? ($currentIndex / (count($stepKeys) - 1) * 100) * 0.9 : 0 }}%;"></div>
 
                                 <!-- Steps -->
                                 <div class="relative z-10 flex justify-between">
@@ -107,9 +107,9 @@
                                             $textClass = '';
                                             
                                             if ($isPast || $isCurrent) {
-                                                $circleClass = 'bg-[#22AF85] shadow-md shadow-[#22AF85]/20 ring-4 ring-gray-50';
+                                                $circleClass = 'bg-aa-green shadow-md shadow-aa-green/20 ring-4 ring-gray-50';
                                                 $iconClass = 'text-white';
-                                                $textClass = $isCurrent ? 'text-[#22AF85] font-black' : 'text-gray-700 font-bold';
+                                                $textClass = $isCurrent ? 'text-aa-green font-black' : 'text-gray-700 font-bold';
                                             } else {
                                                 $circleClass = 'bg-white border-2 border-gray-200 ring-4 ring-gray-50';
                                                 $iconClass = 'text-gray-300';
@@ -168,18 +168,18 @@
                         @endphp
 
                         @if($adoptionRequest->status === 'dikirim' && $adoptionRequest->resi_pengiriman)
-                            <div id="konfirmasi" class="scroll-mt-24 bg-emerald-50 border border-emerald-100 p-4 rounded-2xl mb-6 flex flex-col md:flex-row items-center gap-4">
+                            <div id="konfirmasi" class="scroll-mt-24 bg-aa-beige/40 border border-aa-beige p-4 rounded-2xl mb-6 flex flex-col md:flex-row items-center gap-4">
                                 <div class="flex items-center gap-4 w-full md:w-auto flex-1">
-                                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm flex-shrink-0">
+                                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-aa-green shadow-sm flex-shrink-0">
                                         <span class="material-symbols-outlined text-2xl">local_shipping</span>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">Nomor Resi Pengiriman</p>
-                                        <p class="font-mono text-emerald-900 font-black text-xl">{{ $adoptionRequest->resi_pengiriman }}</p>
+                                        <p class="text-[10px] font-bold text-aa-green uppercase tracking-wider mb-0.5">Nomor Resi Pengiriman</p>
+                                        <p class="font-mono text-aa-green font-black text-xl">{{ $adoptionRequest->resi_pengiriman }}</p>
                                     </div>
                                 </div>
                                 <div class="w-full md:w-auto shrink-0 mt-2 md:mt-0" x-data="{ showModal: false }">
-                                    <button @click="showModal = true" type="button" class="w-full px-5 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition shadow-md shadow-[#22AF85]/20 flex items-center justify-center gap-2">
+                                    <button @click="showModal = true" type="button" class="w-full px-5 py-3 bg-aa-green hover:bg-aa-green-dark text-white font-bold text-sm rounded-xl transition shadow-md shadow-aa-green/20 flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-[18px]">done_all</span> Pesanan Diterima
                                     </button>
 
@@ -209,9 +209,9 @@
                                                               $event.preventDefault();
                                                               Swal.fire({
                                                                   title: 'File Terlalu Besar!',
-                                                                  text: 'Ukuran foto maksimal adalah 5MB. Silakan kompres foto Anda terlebih dahulu.',
+                                                                  text: 'Ukuran foto maksimal adalah 5MB. Silakan kompres foto kamu terlebih dahulu.',
                                                                   icon: 'error',
-                                                                  confirmButtonColor: '#22AF85'
+                                                                  confirmButtonColor: '#0F3D3B'
                                                               });
                                                           }
                                                       ">
@@ -219,14 +219,14 @@
                                                     <div class="bg-white px-6 pt-6 pb-6">
                                                         <div class="flex justify-between items-center mb-5">
                                                             <h3 class="text-lg leading-6 font-black text-gray-900 flex items-center gap-2">
-                                                                <span class="material-symbols-outlined text-[#22AF85]">inventory_2</span> Bukti Penerimaan
+                                                                <span class="material-symbols-outlined text-aa-green">inventory_2</span> Bukti Penerimaan
                                                             </h3>
                                                             <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-500">
                                                                 <span class="material-symbols-outlined">close</span>
                                                             </button>
                                                         </div>
                                                         <div class="mt-2">
-                                                            <p class="text-sm text-gray-500 mb-4">Mohon unggah foto paket yang telah Anda terima sebagai bukti bahwa pesanan telah sampai dengan selamat.</p>
+                                                            <p class="text-sm text-gray-500 mb-4">Mohon unggah foto paket yang telah kamu terima sebagai bukti bahwa pesanan telah sampai dengan selamat.</p>
                                                             
                                                             <div class="relative border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 rounded-xl p-8 text-center transition cursor-pointer mb-4" onclick="document.getElementById('bukti_penerimaan').click()">
                                                                 <input type="file" x-ref="fileUpload" id="bukti_penerimaan" name="bukti_penerimaan" accept="image/jpeg,image/png" required class="hidden" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
@@ -244,7 +244,7 @@
                                                         <button type="button" @click="showModal = false" class="w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-6 py-2.5 bg-white text-base font-bold text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm transition">
                                                             Batal
                                                         </button>
-                                                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-[#22AF85] text-base font-bold text-white hover:bg-[#1a936f] sm:w-auto sm:text-sm transition">
+                                                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-aa-green text-base font-bold text-white hover:bg-aa-green-dark sm:w-auto sm:text-sm transition">
                                                             Kirim & Selesaikan
                                                         </button>
                                                     </div>
@@ -293,7 +293,7 @@
                                 <div class="text-[13px] text-gray-700 leading-relaxed font-medium space-y-1.5">
                                     <p class="font-bold text-gray-900 text-sm">Sepatu ini sedang dipesan pemohon lain</p>
                                     <p>Pemohon lain sudah lebih dulu mengunggah bukti pembayaran dan sedang diverifikasi admin. <strong>Mohon jangan melakukan transfer dulu.</strong></p>
-                                    <p>Permohonan Anda tetap aktif. Jika pembayaran tersebut tidak valid, sepatu tersedia lagi dan kami kabari lewat email serta notifikasi.</p>
+                                    <p>Permohonan kamu tetap aktif. Jika pembayaran tersebut tidak valid, sepatu tersedia lagi dan kami kabari lewat email serta notifikasi.</p>
                                 </div>
                             </div>
                         @elseif($adoptionRequest->status === 'menunggu_pembayaran' && ($otherOrder = $adoptionRequest->otherOrderInProgress()))
@@ -303,8 +303,8 @@
                                     <span class="material-symbols-outlined text-[18px]">pending_actions</span>
                                 </div>
                                 <div class="text-[13px] text-blue-900 leading-relaxed font-medium space-y-1.5">
-                                    <p class="font-bold text-sm">Selesaikan pesanan Anda yang lain dulu</p>
-                                    <p>Pesanan <strong>{{ $otherOrder->donationItem?->nama ?? 'Anda sebelumnya' }}</strong> sedang diverifikasi/diproses. <strong>Mohon jangan transfer untuk sepatu ini dulu.</strong> Pembayaran dapat dilakukan setelah pesanan tersebut dikirim.</p>
+                                    <p class="font-bold text-sm">Selesaikan pesanan kamu yang lain dulu</p>
+                                    <p>Pesanan <strong>{{ $otherOrder->donationItem?->nama ?? 'kamu sebelumnya' }}</strong> sedang diverifikasi/diproses. <strong>Mohon jangan transfer untuk sepatu ini dulu.</strong> Pembayaran dapat dilakukan setelah pesanan tersebut dikirim.</p>
                                     <a href="{{ route('member.adoption-requests.show', $otherOrder->id) }}" class="inline-flex items-center gap-1 font-bold text-blue-700 hover:underline">
                                         Lihat pesanan tersebut <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                                     </a>
@@ -324,9 +324,9 @@
                                         @else
                                             Selesaikan pembayaran dan unggah bukti transfer <strong class="font-bold">sebelum {{ $adoptionRequest->batas_bayar->translatedFormat('l, d M Y, H.i') }} WIB</strong>. Lewat dari itu, sepatu dapat dialihkan ke pemohon lain.
                                         @endif
-                                        Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.
+                                        Ongkos kirim dikonfirmasi oleh CS kami setelah pembayaran.
                                     @else
-                                        <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu langsung diamankan untuk Anda begitu bukti transfer diunggah, lalu diverifikasi admin. Segera lakukan pembayaran untuk mengamankan sepatu ini. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.
+                                        <strong class="font-bold">Sistem berlaku siapa cepat dia dapat.</strong> Sepatu langsung diamankan untuk kamu begitu bukti transfer diunggah, lalu diverifikasi admin. Segera lakukan pembayaran untuk mengamankan sepatu ini. Ongkos kirim dikonfirmasi oleh CS kami setelah pembayaran.
                                     @endif
                                 </p>
                             </div>
@@ -376,7 +376,7 @@
                                         <div class="w-10 h-10 bg-white shadow-sm border border-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-600">
                                             <span class="material-symbols-outlined text-[20px]">upload</span>
                                         </div>
-                                        <p class="text-sm font-bold text-gray-700 mb-1" x-show="!fileName">Seret bukti transfer ke sini, atau <span class="text-[#22AF85] underline">pilih file</span></p>
+                                        <p class="text-sm font-bold text-gray-700 mb-1" x-show="!fileName">Seret bukti transfer ke sini, atau <span class="text-aa-green underline">pilih file</span></p>
                                         <p class="text-[11px] text-gray-500" x-show="!fileName">Format JPG atau PNG, maks 5MB</p>
                                         
                                         <div x-show="fileName" class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200" style="display: none;">
@@ -387,7 +387,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <button type="submit" class="w-full py-3.5 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold text-sm rounded-xl transition shadow-md shadow-[#22AF85]/20 flex items-center justify-center gap-2">
+                                    <button type="submit" class="w-full py-3.5 bg-aa-green hover:bg-aa-green-dark text-white font-bold text-sm rounded-xl transition shadow-md shadow-aa-green/20 flex items-center justify-center gap-2">
                                         Kirim Bukti Transfer &rarr;
                                     </button>
                                 </form>
@@ -422,7 +422,7 @@
                                             @if($srv)
                                                 <div class="flex justify-between items-center py-3 px-3">
                                                     <span class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                        <span class="material-symbols-outlined text-[16px] text-[#22AF85]">check_circle</span>
+                                                        <span class="material-symbols-outlined text-[16px] text-aa-green">check_circle</span>
                                                         {{ $srv->jasa_nama_manual ?: ($srv->service ? $srv->service->name : 'Layanan') }}
                                                     </span>
                                                     <span class="text-sm font-bold text-gray-900">Rp {{ number_format($srv->jasa_harga, 0, ',', '.') }}</span>
@@ -442,7 +442,7 @@
                                 @endif
                                 <div class="bg-gray-900 px-5 py-4 flex justify-between items-center">
                                     <span class="font-bold text-gray-400 text-[10px] uppercase tracking-wider">Total Pembayaran · di luar ongkir</span>
-                                    <span class="text-xl font-black text-[#22AF85]">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
+                                    <span class="text-xl font-black text-aa-green">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -488,7 +488,7 @@
             
             {{-- Help text --}}
             <div class="text-center pb-8">
-                <p class="text-xs text-gray-400 font-medium">Ada masalah dengan pesanan ini? <a href="#" class="text-[#22AF85] hover:underline">Hubungi Admin</a></p>
+                <p class="text-xs text-gray-400 font-medium">Ada masalah dengan pesanan ini? <a href="#" class="text-aa-green hover:underline">Hubungi Admin</a></p>
             </div>
     </div>
 
@@ -531,7 +531,7 @@
             const toast = document.createElement('div');
             toast.id = 'copy-toast';
             toast.className = 'fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl z-[100] transform transition-all translate-y-20 flex items-center gap-3 text-sm font-semibold border border-gray-800';
-            toast.innerHTML = `<span class="material-symbols-outlined text-[#22AF85]">check_circle</span> ` + message;
+            toast.innerHTML = `<span class="material-symbols-outlined text-aa-green">check_circle</span> ` + message;
             document.body.appendChild(toast);
             requestAnimationFrame(() => toast.classList.remove('translate-y-20'));
             setTimeout(() => {

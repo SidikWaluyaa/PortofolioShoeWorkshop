@@ -26,7 +26,7 @@ class AdoptionOnHoldMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Sepatu Sedang Dipesan Pemohon Lain - Shoe Workshop',
+            subject: 'Sepatu sedang dipesan pemohon lain · Adapt & Adopt',
         );
     }
 

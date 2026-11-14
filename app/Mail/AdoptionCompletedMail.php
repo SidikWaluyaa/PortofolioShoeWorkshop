@@ -26,7 +26,7 @@ class AdoptionCompletedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '🎉 Adopsi Sepatu Selesai, Terima Kasih! - Shoe Workshop',
+            subject: 'Adopsi selesai, terima kasih · Adapt & Adopt',
         );
     }
 

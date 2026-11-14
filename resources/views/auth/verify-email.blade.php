@@ -21,6 +21,8 @@
         </p>
     </div>
 
+    @include('auth.partials.donation-draft-note', ['verifyStep' => true])
+
     @if (session('status') == 'verification-link-sent')
         <div style="margin-bottom:1.5rem;padding:1rem;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;color:#065f46;font-size:0.875rem;font-weight:600;text-align:center;">
             Tautan verifikasi baru telah dikirim ke email Anda!

@@ -1,22 +1,23 @@
 @extends('layouts.main')
-@section('seo_title', 'Ajukan Adopsi — ' . $item->nama . ' - Shoe Workshop')
+@section('seo_title', 'Ajukan Adopsi ' . $item->nama . ' · Adapt & Adopt by ShoeWorkshop')
 @section('seo_description', 'Form permohonan adopsi ' . $item->nama . ' dari Shoe Workshop.')
 
 @section('head')
+@include('layouts.partials.aa-fonts')
 <style>
     [x-cloak] { display: none !important; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .fill-1 { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .input-focus:focus {
         outline: none;
-        border-color: #22AF85;
+        border-color: #0F3D3B;
         box-shadow: 0 0 0 3px rgba(34, 175, 133, 0.12);
     }
 </style>
 @endsection
 
 @section('content')
-<div class="bg-[#f8f9fa] text-[#1c1c17] min-h-screen flex flex-col">
+<div class="bg-aa-white text-[#1c1c17] min-h-screen flex flex-col">
 
     {{-- NavBar --}}
     @include('layouts.navigation-public')
@@ -25,11 +26,11 @@
 
         {{-- Breadcrumb --}}
         <nav class="mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2 text-gray-500 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap">
-            <a href="{{ route('katalog.index') }}" class="hover:text-[#22AF85] transition-colors shrink-0">Katalog Adopsi</a>
+            <a href="{{ route('katalog.index') }}" class="hover:text-aa-green transition-colors shrink-0">Katalog Adopsi</a>
             <span class="material-symbols-outlined !text-[14px] shrink-0">chevron_right</span>
-            <a href="{{ route('katalog.show', $item) }}" class="hover:text-[#22AF85] transition-colors shrink-0 max-w-[120px] sm:max-w-none truncate">{{ $item->nama }}</a>
+            <a href="{{ route('katalog.show', $item) }}" class="hover:text-aa-green transition-colors shrink-0 max-w-[120px] sm:max-w-none truncate">{{ $item->nama }}</a>
             <span class="material-symbols-outlined !text-[14px] shrink-0">chevron_right</span>
-            <span class="text-[#22AF85] shrink-0">Ajukan Adopsi</span>
+            <span class="text-aa-green shrink-0">Ajukan Adopsi</span>
         </nav>
 
         {{-- Mobile: compact item summary strip --}}
@@ -38,13 +39,13 @@
                 <img src="{{ $item->foto_utama_url }}" alt="{{ $item->nama }}" class="max-h-full max-w-full object-contain">
             </div>
             <div class="min-w-0">
-                <p class="text-[10px] font-bold text-[#22AF85] uppercase tracking-wider">{{ $item->brand ?? 'Shoe Workshop' }}</p>
+                <p class="text-[10px] font-bold text-aa-green uppercase tracking-wider">{{ $item->brand ?? 'Shoe Workshop' }}</p>
                 <p class="font-extrabold text-[#1c1c17] text-sm leading-tight truncate">{{ $item->nama }}</p>
                 <div class="flex items-center gap-1.5 mt-1">
                     @php
                         $condBadgeClasses = [
                             'baru' => 'bg-blue-50 text-blue-700',
-                            'seperti_baru' => 'bg-green-50 text-green-700',
+                            'seperti_baru' => 'bg-aa-beige/40 text-aa-green',
                             'sudah_diperbaiki' => 'bg-yellow-50 text-yellow-700',
                         ];
                         $condBadgeLabels = [
@@ -74,7 +75,7 @@
                         <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}"
                              class="max-h-full max-w-full object-contain transition-transform duration-400 hover:scale-105">
                         <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                            <span class="bg-green-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                            <span class="bg-aa-green text-aa-beige px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
                                 <span class="material-symbols-outlined !text-[12px]">verified</span>
                                 Kualitas Terverifikasi
                             </span>
@@ -86,7 +87,7 @@
                     <div class="flex gap-2 sm:gap-3 overflow-x-auto p-4 border-t border-gray-100 bg-gray-50/50">
                         <!-- Thumbnail 1 (Active) -->
                         <button @click="activeImage = '{{ $item->foto_utama_url }}'; activeIndex = 0" 
-                                :class="activeIndex === 0 ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
+                                :class="activeIndex === 0 ? 'border-2 border-aa-green' : 'border border-gray-200 hover:border-aa-green'"
                                 class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-white p-1.5 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
                             <img alt="Foto Utama" class="max-w-full max-h-full object-contain" src="{{ $item->foto_utama_url }}"/>
                         </button>
@@ -104,7 +105,7 @@
                         @foreach($detailPhotos as $i => $path)
                             @if($i < 3)
                                 <button @click="activeImage = '{{ $detailUrl($path) }}'; activeIndex = {{ $i + 1 }}" 
-                                        :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
+                                        :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-aa-green' : 'border border-gray-200 hover:border-aa-green'"
                                         class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-white p-1.5 transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
                                     <img alt="Detail {{ $i + 1 }}" class="max-w-full max-h-full object-contain" src="{{ $detailUrl($path) }}"/>
                                 </button>
@@ -117,7 +118,7 @@
                         @php
                             $condBadgeClasses = [
                                 'baru' => 'bg-blue-50 text-blue-700 border border-blue-200',
-                                'seperti_baru' => 'bg-green-50 text-green-700 border border-green-200',
+                                'seperti_baru' => 'bg-aa-beige/40 text-aa-green border border-green-200',
                                 'sudah_diperbaiki' => 'bg-yellow-50 text-yellow-700 border border-yellow-200',
                             ];
                             $condBadgeLabels = [
@@ -157,11 +158,11 @@
                     {{-- Progress Indicator --}}
                     <div class="mb-6">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-[11px] font-bold text-[#22AF85] uppercase tracking-wider">Data & Pengiriman</span>
+                            <span class="text-[11px] font-bold text-aa-green uppercase tracking-wider">Data & Pengiriman</span>
                             <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Langkah 1 dari 1</span>
                         </div>
                         <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-[#22AF85] rounded-full w-full transition-all"></div>
+                            <div class="h-full bg-aa-green rounded-full w-full transition-all"></div>
                         </div>
                     </div>
 
@@ -179,11 +180,11 @@
                         </div>
                     </div>
                     @elseif($curationMode)
-                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-start gap-3">
-                        <div class="bg-white p-2 rounded-xl text-[#22AF85] flex-shrink-0 mt-0.5">
+                    <div class="mb-6 p-4 bg-aa-beige/40 border border-aa-beige rounded-2xl flex items-start gap-3">
+                        <div class="bg-white p-2 rounded-xl text-aa-green flex-shrink-0 mt-0.5">
                             <span class="material-symbols-outlined !text-[20px]">manage_search</span>
                         </div>
-                        <div class="text-xs text-emerald-900 leading-relaxed">
+                        <div class="text-xs text-aa-green leading-relaxed">
                             <h4 class="text-sm font-extrabold mb-1">Pengajuan dikurasi oleh tim kami</h4>
                             <p>Satu sepatu bisa diajukan beberapa orang. Kami memilih penerimanya dengan mempertimbangkan <strong>alasan pengajuan</strong> dan <strong>urutan waktu pengajuan</strong>. Jika terpilih, tagihan dikirim lewat email dan perlu dibayar dalam 2×24 jam. Belum ada pembayaran apa pun saat mengajukan.</p>
                         </div>
@@ -215,7 +216,7 @@
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 !text-[20px]">person</span>
                                 <input type="text" id="nama_pemohon" name="nama_pemohon"
                                        value="{{ old('nama_pemohon', Auth::user()?->name ?? '') }}"
-                                       placeholder="Masukkan nama lengkap Anda"
+                                       placeholder="Masukkan nama lengkap kamu"
                                        required
                                        class="w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl text-sm font-medium text-[#1c1c17] placeholder-gray-400 input-focus transition-all {{ $errors->has('nama_pemohon') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">
                             </div>
@@ -231,7 +232,7 @@
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 !text-[20px]">mail</span>
                                 <input type="email" id="email" name="email"
                                        value="{{ old('email', Auth::user()?->email ?? '') }}"
-                                       placeholder="Masukkan alamat email aktif Anda"
+                                       placeholder="Masukkan alamat email aktif kamu"
                                        required
                                        class="w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl text-sm font-medium text-[#1c1c17] placeholder-gray-400 input-focus transition-all {{ $errors->has('email') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">
                             </div>
@@ -292,9 +293,9 @@
                                       }
                                   }">
                             <legend class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Alamat Pengiriman</legend>
-                            <p class="text-xs text-gray-500 mb-3">Lengkapi sampai kecamatan dan kode pos supaya ongkos kirim bisa langsung kami hitung.</p>
+                            <p class="text-xs text-gray-500 mb-3">Lengkapi sampai kecamatan dan kode pos supaya sepatu sampai ke alamat yang tepat.</p>
                             @if($prefilled)
-                                <p class="mb-3 text-xs text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">Diisi dari alamat pengajuan terakhirmu. Ubah jika perlu.</p>
+                                <p class="mb-3 text-xs text-aa-green bg-aa-beige/40 border border-aa-beige rounded-xl px-3 py-2">Diisi dari alamat pengajuan terakhirmu. Ubah jika perlu.</p>
                             @endif
 
                             <div class="space-y-3">
@@ -372,7 +373,7 @@
                         <div x-data="{ alasan: @js(old('alasan', '')) }">
                             <label for="alasan" class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alasan Mengajukan Adopsi</label>
                             <p id="alasan-hint" class="text-xs text-gray-500 leading-relaxed mb-2">
-                                Ceritakan singkat: <strong class="text-gray-700">sepatu ini untuk siapa</strong> (diri sendiri, anak, orang tua, dll.), <strong class="text-gray-700">akan dipakai untuk apa</strong> (kerja, sekolah, olahraga, harian), dan <strong class="text-gray-700">kenapa Anda membutuhkannya</strong>.@if($curationMode) Alasan ini jadi bahan pertimbangan tim kami saat kurasi.@endif
+                                Ceritakan singkat: <strong class="text-gray-700">sepatu ini untuk siapa</strong> (diri sendiri, anak, orang tua, dll.), <strong class="text-gray-700">akan dipakai untuk apa</strong> (kerja, sekolah, olahraga, harian), dan <strong class="text-gray-700">kenapa kamu membutuhkannya</strong>.@if($curationMode) Alasan ini jadi bahan pertimbangan tim kami saat kurasi.@endif
                             </p>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-3.5 text-gray-400 !text-[20px]">description</span>
@@ -386,7 +387,7 @@
                                           placeholder="Contoh: Untuk anak saya yang baru masuk SMP. Sepatu sekolahnya sudah jebol dan ukuran ini pas untuknya."
                                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl text-sm font-medium text-[#1c1c17] placeholder-gray-400 input-focus transition-all resize-none {{ $errors->has('alasan') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">{{ old('alasan') }}</textarea>
                             </div>
-                            <p class="mt-1.5 text-xs font-semibold" :class="alasan.trim().length >= 20 ? 'text-[#22AF85]' : 'text-gray-400'"
+                            <p class="mt-1.5 text-xs font-semibold" :class="alasan.trim().length >= 20 ? 'text-aa-green' : 'text-gray-400'"
                                x-text="alasan.trim().length >= 20 ? 'Sudah cukup, terima kasih!' : `Minimal 20 karakter (${alasan.trim().length}/20)`"></p>
                             @error('alasan')
                                 <p class="mt-1.5 text-xs text-red-600 font-semibold">{{ $message }}</p>
@@ -405,7 +406,7 @@
                                     <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition-colors">
                                         <div class="pt-0.5">
                                             <input type="checkbox" name="selected_services[]" value="{{ $rs->id }}" 
-                                                class="w-5 h-5 rounded border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"
+                                                class="w-5 h-5 rounded border-gray-300 text-aa-green focus:ring-aa-green"
                                                 @change="calculateTotal"
                                                 x-model="checkedServices"
                                                 @if($rs->is_mandatory) checked disabled @endif>
@@ -423,7 +424,7 @@
                                                     </p>
                                                     <p class="text-[10px] font-semibold text-gray-500 uppercase">{{ $rs->jasa_estimasi_waktu }} Hari Pengerjaan</p>
                                                 </div>
-                                                <p class="text-sm font-bold text-[#22AF85]">{{ $rs->jasa_harga_formatted }}</p>
+                                                <p class="text-sm font-bold text-aa-green">{{ $rs->jasa_harga_formatted }}</p>
                                             </div>
                                             @if($rs->is_mandatory)
                                                 <span class="inline-block mt-1 px-2 py-0.5 bg-red-50 text-red-600 rounded text-[9px] font-bold uppercase">Wajib</span>
@@ -434,7 +435,7 @@
                             </div>
                             <div class="bg-[#1c1c17] text-white px-4 py-3 flex justify-between items-center">
                                 <span class="text-sm font-bold uppercase tracking-wider">Total Biaya Jasa (di luar ongkir)</span>
-                                <span class="text-lg font-black text-[#22AF85]" x-text="formattedTotal"></span>
+                                <span class="text-lg font-black text-aa-green" x-text="formattedTotal"></span>
                             </div>
                         </div>
                         @endif
@@ -442,7 +443,7 @@
                         {{-- Action Buttons --}}
                         <div class="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <button type="submit" id="submitBtn" {{ $hasActiveRequest ? 'disabled' : '' }}
-                                    class="w-full py-4 {{ $hasActiveRequest ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#22AF85] hover:opacity-90 text-white active:scale-[0.98]' }} rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 transition-all flex items-center justify-center gap-2">
+                                    class="w-full py-4 {{ $hasActiveRequest ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-aa-burgundy hover:bg-aa-burgundy-dark text-aa-beige active:scale-[0.98]' }} rounded-xl font-bold text-sm shadow-md shadow-aa-burgundy/20 transition-all flex items-center justify-center gap-2">
                                 <span id="btnText">{{ $hasActiveRequest ? 'Pengajuan Terkunci' : 'Kirim Pengajuan' }}</span>
                                 @if(!$hasActiveRequest)
                                     <span class="material-symbols-outlined !text-[18px]" id="btnIcon">send</span>
@@ -455,7 +456,7 @@
                                 @endif
                             </button>
                             <a href="{{ route('katalog.show', $item) }}"
-                               class="text-center sm:text-left text-sm text-gray-500 hover:text-[#22AF85] transition-colors font-semibold underline underline-offset-4">
+                               class="text-center sm:text-left text-sm text-gray-500 hover:text-aa-green transition-colors font-semibold underline underline-offset-4">
                                 Batal
                             </a>
                         </div>

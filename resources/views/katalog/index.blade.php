@@ -1,9 +1,10 @@
 @extends('layouts.main')
-@section('seo_title', 'Adopsi Sepatu Hasil Restorasi - Program Donasi | Shoe Workshop')
-@section('seo_description', 'Adopsi sepatu layak pakai hasil restorasi Shoe Workshop. Cukup bayar biaya jasa restorasinya.')
+@section('seo_title', 'Katalog Adopsi · Adapt & Adopt by ShoeWorkshop')
+@section('seo_description', 'Adopsi sepatu layak pakai hasil restorasi Shoe Workshop. Cukup bayar biaya jasa reparasinya.')
 @section('seo_keywords', 'adopsi sepatu, sepatu bekas restorasi, katalog donasi, sepatu layak pakai, shoe workshop bandung')
 
 @section('head')
+@include('layouts.partials.aa-fonts')
 <style>
     [x-cloak] { display: none !important; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -21,18 +22,23 @@
 @endsection
 
 @section('content')
-<div x-data="catalogApp()" x-init="initApp()" class="bg-[#f8f9fa] text-[#191c1d] min-h-screen flex flex-col justify-between">
+<div x-data="catalogApp()" x-init="initApp()" class="bg-aa-white text-[#191c1d] min-h-screen flex flex-col justify-between">
     
     <!-- TopNavBar Component -->
     @include('layouts.navigation-public')
 
     <div class="pt-20 flex-grow flex flex-col">
-        {{-- Hero header --}}
-        <div class="bg-gradient-to-br from-green-50/60 to-white py-16 border-b border-gray-100 w-full">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <span class="inline-block text-xs font-bold tracking-[0.25em] text-[#22AF85] uppercase mb-3">Program Donasi</span>
-                <h1 class="text-4xl sm:text-5xl font-black text-gray-900 mb-4">Adopsi Sepatu Hasil Restorasi</h1>
-                <p class="text-gray-500 max-w-xl mx-auto text-base">Sepatu donasi hasil restorasi workshop kami, siap diadopsi. Cukup bayar biaya jasa restorasinya{{ \App\Services\AdoptionService::curationMode() ? ', dan penerimanya dipilih tim kami dari alasan pengajuan.' : '. Siapa cepat dia dapat.' }}</p>
+        {{-- Hero header: Adapt & Adopt program --}}
+        <div class="bg-aa-green text-aa-beige py-12 sm:py-14 w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center gap-6">
+                <a href="{{ route('adapt-adopt.index') }}" class="flex-shrink-0" aria-label="Tentang Adapt & Adopt">
+                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="820" height="500" class="w-32 sm:w-40">
+                </a>
+                <div>
+                    <span class="inline-block text-xs font-bold tracking-[0.2em] text-aa-sage uppercase mb-2">Katalog Adopsi</span>
+                    <h1 class="font-aa text-3xl sm:text-5xl font-extrabold leading-tight mb-3">Sepatu yang menunggu pemilik baru</h1>
+                    <p class="text-aa-beige/85 max-w-2xl text-base leading-relaxed">Pilih sepatu hasil restorasi, lihat kondisinya, lalu ajukan adopsi. Kamu tidak membayar harga sepatunya, hanya biaya jasa reparasinya{{ \App\Services\AdoptionService::curationMode() ? '. Penerimanya dipilih tim kami dari alasan pengajuan.' : '. Siapa cepat dia dapat.' }}</p>
+                </div>
             </div>
         </div>
 
@@ -80,10 +86,10 @@
                                 
                                 @if($campaign->type === 'text_only')
                                     <!-- Text Only Glassmorphic Banner -->
-                                    <div class="relative overflow-hidden rounded-2xl border border-[#22AF85]/20 bg-gradient-to-r from-green-50 to-[#22AF85]/5 p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-all hover:shadow-md aspect-[12/5] sm:aspect-auto h-auto sm:h-auto justify-center">
-                                        <div class="absolute -right-16 -top-16 w-36 h-36 bg-[#22AF85]/5 rounded-full blur-2xl"></div>
+                                    <div class="relative overflow-hidden rounded-2xl border border-aa-green/20 bg-gradient-to-r from-aa-beige/40 to-aa-green/5 p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-all hover:shadow-md aspect-[12/5] sm:aspect-auto h-auto sm:h-auto justify-center">
+                                        <div class="absolute -right-16 -top-16 w-36 h-36 bg-aa-green/5 rounded-full blur-2xl"></div>
                                         <div class="space-y-1 relative z-10 flex-grow max-w-3xl">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#22AF85]/10 text-[#22AF85] uppercase tracking-wider">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-aa-green/10 text-aa-green uppercase tracking-wider">
                                                 Promosi
                                             </span>
                                             <h3 class="text-xs sm:text-lg md:text-xl font-extrabold text-[#1c1c17] truncate">
@@ -95,7 +101,7 @@
                                         </div>
                                         <div class="flex-shrink-0 relative z-10 hidden sm:block">
                                             <a href="{{ route('campaigns.click', $campaign->id) }}" target="_blank"
-                                               class="inline-flex items-center gap-2 px-6 py-3.5 bg-[#22AF85] text-white text-sm font-bold rounded-xl hover:brightness-105 active:scale-95 transition-all shadow-md shadow-[#22AF85]/10">
+                                               class="inline-flex items-center gap-2 px-6 py-3.5 bg-aa-green text-white text-sm font-bold rounded-xl hover:brightness-105 active:scale-95 transition-all shadow-md shadow-aa-green/10">
                                                 {{ $campaign->cta_text }}
                                                 <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
                                             </a>
@@ -132,7 +138,7 @@
                         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
                             <template x-for="idx in Array.from({ length: slidesCount }, (_, i) => i)" :key="idx">
                                 <button @click="activeSlide = idx" 
-                                        :class="activeSlide === idx ? 'w-6 bg-[#22AF85]' : 'w-2 bg-gray-300 hover:bg-gray-400'"
+                                        :class="activeSlide === idx ? 'w-6 bg-aa-green' : 'w-2 bg-gray-300 hover:bg-gray-400'"
                                         class="h-2 rounded-full transition-all duration-300"></button>
                             </template>
                         </div>
@@ -144,7 +150,7 @@
             <div class="lg:hidden block sticky top-[72px] z-30 bg-white border border-gray-200 rounded-2xl shadow-sm -mx-2 mb-2 p-3">
                 <!-- Search Row -->
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="flex-grow flex items-center bg-gray-55 rounded-xl px-3 py-2 border border-gray-200 focus-within:border-[#22AF85] focus-within:ring-1 focus-within:ring-[#22AF85] transition-all">
+                    <div class="flex-grow flex items-center bg-gray-55 rounded-xl px-3 py-2 border border-gray-200 focus-within:border-aa-green focus-within:ring-1 focus-within:ring-aa-green transition-all">
                         <span class="material-symbols-outlined text-gray-400 mr-2 !text-[18px]">search</span>
                         <input type="text" x-model="search" @input.debounce.300ms="page = 1; fetchFilter()"
                                placeholder="Cari nama, brand..." class="bg-transparent border-none p-0 focus:ring-0 text-xs w-full text-gray-700 placeholder-gray-400"/>
@@ -156,17 +162,17 @@
                     <div class="flex-grow overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-1.5 pr-2">
                         <!-- Category pills -->
                         <button @click="toggleCategory('sepatu')"
-                                :class="categories.includes('sepatu') ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="categories.includes('sepatu') ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
                             Sepatu
                         </button>
                         <button @click="toggleCategory('tas')"
-                                :class="categories.includes('tas') ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="categories.includes('tas') ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
                             Tas
                         </button>
                         <button @click="toggleCategory('topi')"
-                                :class="categories.includes('topi') ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="categories.includes('topi') ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all flex items-center gap-1">
                             Topi
                         </button>
@@ -175,17 +181,17 @@
 
                         <!-- Condition pills -->
                         <button @click="setCondition(condition === 'baru' ? '' : 'baru')"
-                                :class="condition === 'baru' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="condition === 'baru' ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
                             Baru
                         </button>
                         <button @click="setCondition(condition === 'seperti_baru' ? '' : 'seperti_baru')"
-                                :class="condition === 'seperti_baru' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="condition === 'seperti_baru' ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
                             Like New
                         </button>
                         <button @click="setCondition(condition === 'sudah_diperbaiki' ? '' : 'sudah_diperbaiki')"
-                                :class="condition === 'sudah_diperbaiki' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="condition === 'sudah_diperbaiki' ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
                             Refurbished
                         </button>
@@ -194,12 +200,12 @@
 
                         <!-- Status pills -->
                         <button @click="setStatus(status === 'tersedia' ? '' : 'tersedia')"
-                                :class="status === 'tersedia' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="status === 'tersedia' ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
                             Tersedia
                         </button>
                         <button @click="setStatus(status === 'disalurkan' ? '' : 'disalurkan')"
-                                :class="status === 'disalurkan' ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white text-gray-650 border-gray-200'"
+                                :class="status === 'disalurkan' ? 'bg-aa-green text-white border-aa-green' : 'bg-white text-gray-650 border-gray-200'"
                                 class="px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all">
                             Disalurkan
                         </button>
@@ -209,7 +215,7 @@
 
                     <!-- Filter Button to Open Bottom Sheet -->
                     <button @click="mobileFilterOpen = true"
-                            class="px-2 py-1 flex flex-col items-center justify-center text-[10px] font-bold text-gray-700 hover:text-[#22AF85] shrink-0 active:scale-95 transition-all">
+                            class="px-2 py-1 flex flex-col items-center justify-center text-[10px] font-bold text-gray-700 hover:text-aa-green shrink-0 active:scale-95 transition-all">
                         <span class="material-symbols-outlined !text-[18px]">filter_list</span>
                         <span>Filter</span>
                     </button>
@@ -256,15 +262,15 @@
                             <div class="flex flex-wrap gap-2">
                                 <label class="cursor-pointer">
                                     <input type="checkbox" value="sepatu" x-model="categories" @change="page = 1; updateCategoryFilter()" class="sr-only peer"/>
-                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-[#22AF85] peer-checked:text-white peer-checked:border-[#22AF85] bg-gray-50 border-gray-200 text-gray-650 transition-all">Sepatu</span>
+                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-aa-green peer-checked:text-white peer-checked:border-aa-green bg-gray-50 border-gray-200 text-gray-650 transition-all">Sepatu</span>
                                 </label>
                                 <label class="cursor-pointer select-none">
                                     <input type="checkbox" value="tas" x-model="categories" @change="page = 1; fetchFilter()" class="hidden peer"/>
-                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-[#22AF85] peer-checked:text-white peer-checked:border-[#22AF85] bg-gray-50 border-gray-200 text-gray-655 transition-all">Tas</span>
+                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-aa-green peer-checked:text-white peer-checked:border-aa-green bg-gray-50 border-gray-200 text-gray-655 transition-all">Tas</span>
                                 </label>
                                 <label class="cursor-pointer select-none">
                                     <input type="checkbox" value="topi" x-model="categories" @change="page = 1; fetchFilter()" class="hidden peer"/>
-                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-[#22AF85] peer-checked:text-white peer-checked:border-[#22AF85] bg-gray-50 border-gray-200 text-gray-655 transition-all">Topi</span>
+                                    <span class="px-3.5 py-2 rounded-xl border text-xs font-bold block peer-checked:bg-aa-green peer-checked:text-white peer-checked:border-aa-green bg-gray-50 border-gray-200 text-gray-655 transition-all">Topi</span>
                                 </label>
                             </div>
                         </div>
@@ -277,7 +283,7 @@
                                 @foreach($sizeOptions as $size)
                                     <button type="button" @click="toggleSize(@js($size))"
                                             :aria-pressed="sizes.includes(@js($size)).toString()"
-                                            :class="sizes.includes(@js($size)) ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-gray-50 border-gray-200 text-gray-700'"
+                                            :class="sizes.includes(@js($size)) ? 'bg-aa-green text-white border-aa-green' : 'bg-gray-50 border-gray-200 text-gray-700'"
                                             class="py-2 rounded-xl border text-xs font-bold transition-all">{{ $size }}</button>
                                 @endforeach
                             </div>
@@ -289,19 +295,19 @@
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Harga Jasa Reparasi</h4>
                             <div class="relative min-h-[40px] mt-2 px-1">
                                 <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
-                                <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                                <div class="absolute h-2 rounded bg-aa-green top-1/2 -translate-y-1/2"
                                      :style="`left: ${(minPrice / maxPriceLimit) * 100}%; right: ${100 - (maxPrice / maxPriceLimit) * 100}%`"></div>
                                 
                                 <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="minPrice"
                                        @input="page = 1; if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
-                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                                 
                                 <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="maxPrice"
                                        @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
-                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                             </div>
                             <div class="flex items-center justify-between gap-3 mt-4">
-                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                     <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
                                     <div class="flex items-center gap-1 mt-0.5">
                                         <span class="text-xs font-bold text-gray-400">Rp</span>
@@ -310,7 +316,7 @@
                                     </div>
                                 </div>
                                 <span class="text-gray-400 text-xs font-medium select-none">—</span>
-                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                     <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
                                     <div class="flex items-center gap-1 mt-0.5">
                                         <span class="text-xs font-bold text-gray-400">Rp</span>
@@ -326,19 +332,19 @@
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Tingkat Kelayakan</h4>
                             <div class="relative min-h-[40px] mt-2 px-1">
                                 <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
-                                <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                                <div class="absolute h-2 rounded bg-aa-green top-1/2 -translate-y-1/2"
                                      :style="`left: ${minKelayakan}%; right: ${100 - maxKelayakan}%`"></div>
                                 
                                 <input type="range" min="0" max="100" step="5" x-model.number="minKelayakan"
                                        @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
-                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                                 
                                 <input type="range" min="0" max="100" step="5" x-model.number="maxKelayakan"
                                        @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
-                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                       class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                             </div>
                             <div class="flex items-center justify-between gap-3 mt-4">
-                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                     <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
                                     <div class="flex items-center gap-1 mt-0.5">
                                         <input type="number" x-model.number="minKelayakan" @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
@@ -347,7 +353,7 @@
                                     </div>
                                 </div>
                                 <span class="text-gray-400 text-xs font-medium select-none">—</span>
-                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                                <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                     <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
                                     <div class="flex items-center gap-1 mt-0.5">
                                         <input type="number" x-model.number="maxKelayakan" @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
@@ -363,20 +369,20 @@
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Kondisi</h4>
                             <div class="flex flex-col gap-3">
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === ''" @change="page = 1; setCondition('')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Semua Kondisi</span>
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === ''" @change="page = 1; setCondition('')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Semua Kondisi</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'baru'" @change="page = 1; setCondition('baru')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Baru</span>
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'baru'" @change="page = 1; setCondition('baru')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Baru</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'seperti_baru'" @change="page = 1; setCondition('seperti_baru')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Like New</span>
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'seperti_baru'" @change="page = 1; setCondition('seperti_baru')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Like New</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'sudah_diperbaiki'" @change="page = 1; setCondition('sudah_diperbaiki')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Refurbished</span>
+                                    <input type="radio" name="kondisi_filter_mobile" :checked="condition === 'sudah_diperbaiki'" @change="page = 1; setCondition('sudah_diperbaiki')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Refurbished</span>
                                 </label>
                             </div>
                         </div>
@@ -386,16 +392,16 @@
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Status</h4>
                             <div class="flex flex-col gap-3">
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="status_filter_mobile" :checked="status === ''" @change="page = 1; setStatus('')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Semua Status</span>
+                                    <input type="radio" name="status_filter_mobile" :checked="status === ''" @change="page = 1; setStatus('')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Semua Status</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="status_filter_mobile" :checked="status === 'tersedia'" @change="page = 1; setStatus('tersedia')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Tersedia</span>
+                                    <input type="radio" name="status_filter_mobile" :checked="status === 'tersedia'" @change="page = 1; setStatus('tersedia')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Tersedia</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="status_filter_mobile" :checked="status === 'disalurkan'" @change="page = 1; setStatus('disalurkan')" class="w-5 h-5 border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"/>
-                                    <span class="text-sm font-medium text-gray-750 group-hover:text-[#22AF85]">Sudah Disalurkan</span>
+                                    <input type="radio" name="status_filter_mobile" :checked="status === 'disalurkan'" @change="page = 1; setStatus('disalurkan')" class="w-5 h-5 border-gray-300 text-aa-green focus:ring-aa-green"/>
+                                    <span class="text-sm font-medium text-gray-750 group-hover:text-aa-green">Sudah Disalurkan</span>
                                 </label>
                             </div>
                         </div>
@@ -407,7 +413,7 @@
                             Reset
                         </button>
                         <button @click="mobileFilterOpen = false"
-                                class="w-1/2 py-3.5 bg-[#22AF85] text-white rounded-xl text-sm font-bold active:scale-95 transition-all shadow-md shadow-[#22AF85]/20">
+                                class="w-1/2 py-3.5 bg-aa-green text-white rounded-xl text-sm font-bold active:scale-95 transition-all shadow-md shadow-aa-green/20">
                             Tampilkan
                         </button>
                     </div>
@@ -420,7 +426,7 @@
                     {{-- Search Bar --}}
                     <div>
                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Cari Barang</h3>
-                        <div class="flex items-center bg-white rounded-xl px-4 py-3 border border-gray-200 shadow-sm focus-within:border-[#22AF85] focus-within:ring-1 focus-within:ring-[#22AF85] transition-all">
+                        <div class="flex items-center bg-white rounded-xl px-4 py-3 border border-gray-200 shadow-sm focus-within:border-aa-green focus-within:ring-1 focus-within:ring-aa-green transition-all">
                             <span class="material-symbols-outlined text-gray-400 mr-2 !text-[20px]">search</span>
                             <input type="text" x-model="search" @input.debounce.300ms="page = 1; fetchFilter()"
                                    placeholder="Cari nama, brand..." class="bg-transparent border-none p-0 focus:ring-0 text-sm w-full text-gray-700 placeholder-gray-400"/>
@@ -433,18 +439,18 @@
                         <div class="flex flex-col gap-3">
                             <label class="flex items-center gap-3 cursor-pointer group select-none">
                                 <input type="checkbox" value="sepatu" x-model="categories" @change="page = 1; updateCategoryFilter()"
-                                       class="w-5 h-5 rounded border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Sepatu</span>
+                                       class="w-5 h-5 rounded border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Sepatu</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group select-none">
                                 <input type="checkbox" value="tas" x-model="categories" @change="page = 1; updateCategoryFilter()"
-                                       class="w-5 h-5 rounded border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Tas</span>
+                                       class="w-5 h-5 rounded border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Tas</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group select-none">
                                 <input type="checkbox" value="topi" x-model="categories" @change="page = 1; updateCategoryFilter()"
-                                       class="w-5 h-5 rounded border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Topi</span>
+                                       class="w-5 h-5 rounded border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Topi</span>
                             </label>
                         </div>
                     </div>
@@ -454,13 +460,13 @@
                     <div>
                         <div class="flex items-center justify-between mb-2.5">
                             <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Ukuran</h3>
-                            <button type="button" x-show="sizes.length" x-cloak @click="clearSizes()" class="text-xs font-bold text-[#22AF85] hover:underline">Reset</button>
+                            <button type="button" x-show="sizes.length" x-cloak @click="clearSizes()" class="text-xs font-bold text-aa-green hover:underline">Reset</button>
                         </div>
                         <div class="grid grid-cols-4 gap-2">
                             @foreach($sizeOptions as $size)
                                 <button type="button" @click="toggleSize(@js($size))"
                                         :aria-pressed="sizes.includes(@js($size)).toString()"
-                                        :class="sizes.includes(@js($size)) ? 'bg-[#22AF85] text-white border-[#22AF85]' : 'bg-white border-[#bcc9c6] text-[#191c1d] hover:border-[#22AF85] hover:text-[#22AF85]'"
+                                        :class="sizes.includes(@js($size)) ? 'bg-aa-green text-white border-aa-green' : 'bg-white border-[#bcc9c6] text-[#191c1d] hover:border-aa-green hover:text-aa-green'"
                                         class="py-2 rounded-lg border text-sm font-semibold transition-colors">{{ $size }}</button>
                             @endforeach
                         </div>
@@ -474,21 +480,21 @@
                             <!-- Track background -->
                             <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
                             <!-- Track active range -->
-                            <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                            <div class="absolute h-2 rounded bg-aa-green top-1/2 -translate-y-1/2"
                                  :style="`left: ${(minPrice / maxPriceLimit) * 100}%; right: ${100 - (maxPrice / maxPriceLimit) * 100}%`"></div>
                             
                             <!-- HTML Range inputs -->
                             <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="minPrice"
                                    @input="page = 1; if(minPrice > maxPrice) minPrice = maxPrice; debouncedFetchFilter();"
-                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                             
                             <input type="range" min="0" :max="maxPriceLimit" step="10000" x-model.number="maxPrice"
                                    @input="page = 1; if(maxPrice < minPrice) maxPrice = minPrice; debouncedFetchFilter();"
-                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                         </div>
                         <div class="flex items-center justify-between gap-3 mt-4">
                             <!-- Min Price Input Card -->
-                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                 <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
                                 <div class="flex items-center gap-1 mt-0.5">
                                     <span class="text-xs font-bold text-gray-400">Rp</span>
@@ -501,7 +507,7 @@
                             <span class="text-gray-400 text-xs font-medium select-none">—</span>
 
                             <!-- Max Price Input Card -->
-                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                 <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
                                 <div class="flex items-center gap-1 mt-0.5">
                                     <span class="text-xs font-bold text-gray-400">Rp</span>
@@ -517,19 +523,19 @@
                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2.5">Tingkat Kelayakan</h3>
                         <div class="relative min-h-[40px] mt-2 px-1">
                             <div class="absolute h-2 rounded bg-gray-200 left-0 right-0 top-1/2 -translate-y-1/2"></div>
-                            <div class="absolute h-2 rounded bg-[#22AF85] top-1/2 -translate-y-1/2"
+                            <div class="absolute h-2 rounded bg-aa-green top-1/2 -translate-y-1/2"
                                  :style="`left: ${minKelayakan}%; right: ${100 - maxKelayakan}%`"></div>
                             
                             <input type="range" min="0" max="100" step="5" x-model.number="minKelayakan"
                                    @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
-                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                             
                             <input type="range" min="0" max="100" step="5" x-model.number="maxKelayakan"
                                    @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
-                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#22AF85] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#22AF85] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
+                                   class="absolute pointer-events-none appearance-none z-20 h-2 w-full bg-transparent focus:outline-none focus:ring-0 top-1/2 -translate-y-1/2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-aa-green [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-aa-green [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md" />
                         </div>
                         <div class="flex items-center justify-between gap-3 mt-4">
-                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                 <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Minimal</label>
                                 <div class="flex items-center gap-1 mt-0.5">
                                     <input type="number" x-model.number="minKelayakan" @input="page = 1; if(minKelayakan > maxKelayakan) minKelayakan = maxKelayakan; debouncedFetchFilter();"
@@ -540,7 +546,7 @@
 
                             <span class="text-gray-400 text-xs font-medium select-none">—</span>
 
-                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-[#22AF85] focus-within:border-[#22AF85] transition-all">
+                            <div class="flex-grow bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm focus-within:ring-1 focus-within:ring-aa-green focus-within:border-aa-green transition-all">
                                 <label class="block text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">Maksimal</label>
                                 <div class="flex items-center gap-1 mt-0.5">
                                     <input type="number" x-model.number="maxKelayakan" @input="page = 1; if(maxKelayakan < minKelayakan) maxKelayakan = minKelayakan; debouncedFetchFilter();"
@@ -557,23 +563,23 @@
                         <div class="flex flex-col gap-3">
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="kondisi_filter" :checked="condition === ''" @change="page = 1; setCondition('')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Semua Kondisi</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Semua Kondisi</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="kondisi_filter" :checked="condition === 'baru'" @change="page = 1; setCondition('baru')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Baru</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Baru</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="kondisi_filter" :checked="condition === 'seperti_baru'" @change="page = 1; setCondition('seperti_baru')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Like New</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Like New</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="kondisi_filter" :checked="condition === 'sudah_diperbaiki'" @change="page = 1; setCondition('sudah_diperbaiki')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Refurbished</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Refurbished</span>
                             </label>
                         </div>
                     </div>
@@ -584,18 +590,18 @@
                         <div class="flex flex-col gap-3">
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="status_filter" :checked="status === ''" @change="page = 1; setStatus('')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Semua Status</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Semua Status</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="status_filter" :checked="status === 'tersedia'" @change="page = 1; setStatus('tersedia')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Tersedia</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Tersedia</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <input type="radio" name="status_filter" :checked="status === 'disalurkan'" @change="page = 1; setStatus('disalurkan')"
-                                       class="w-5 h-5 border-[#bcc9c6] text-[#22AF85] focus:ring-[#22AF85]"/>
-                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-[#22AF85]">Sudah Disalurkan</span>
+                                       class="w-5 h-5 border-[#bcc9c6] text-aa-green focus:ring-aa-green"/>
+                                <span class="text-sm font-medium text-[#191c1d] group-hover:text-aa-green">Sudah Disalurkan</span>
                             </label>
                         </div>
                     </div>
@@ -620,7 +626,7 @@
                         <div class="flex items-center gap-2 self-end sm:self-auto">
                             <label for="sort-dropdown" class="text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Urutkan:</label>
                             <select id="sort-dropdown" x-model="sort" @change="page = 1; setSort(sort)"
-                                    class="text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 py-2 focus:ring-[#22AF85] focus:border-[#22AF85] outline-none cursor-pointer shadow-sm">
+                                    class="text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 py-2 focus:ring-aa-green focus:border-aa-green outline-none cursor-pointer shadow-sm">
                                 <option value="">Terbaru (Default)</option>
                                 <option value="harga_termurah">Harga Reparasi Termurah</option>
                                 <option value="harga_termahal">Harga Reparasi Termahal</option>
@@ -631,7 +637,7 @@
                     <!-- Loading overlay -->
                     <div x-show="loading" x-transition class="absolute inset-0 bg-white/70 z-10 flex items-center justify-center rounded-2xl" style="display: none;">
                         <div class="flex flex-col items-center gap-3">
-                            <svg class="animate-spin h-8 w-8 text-[#22AF85]" fill="none" viewBox="0 0 24 24">
+                            <svg class="animate-spin h-8 w-8 text-aa-green" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -663,13 +669,13 @@
                 <!-- Detail thumbs -->
                 <div class="flex gap-2 overflow-x-auto py-1">
                     <button @click="activeImage = activeItem ? activeItem.foto_utama_url : ''"
-                            :class="activeImage === (activeItem ? activeItem.foto_utama_url : '') ? 'border-2 border-[#22AF85]' : 'border border-[#bcc9c6]'"
+                            :class="activeImage === (activeItem ? activeItem.foto_utama_url : '') ? 'border-2 border-aa-green' : 'border border-[#bcc9c6]'"
                             class="w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0">
                         <img :src="activeItem ? activeItem.foto_utama_url : ''" class="w-full h-full object-cover">
                     </button>
                     <template x-for="(photoUrl, idx) in activeItem?.foto_detail_urls" :key="idx">
                         <button @click="activeImage = photoUrl"
-                                :class="activeImage === photoUrl ? 'border-2 border-[#22AF85]' : 'border border-[#bcc9c6]'"
+                                :class="activeImage === photoUrl ? 'border-2 border-aa-green' : 'border border-[#bcc9c6]'"
                                 class="w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0">
                             <img :src="photoUrl" class="w-full h-full object-cover">
                         </button>
@@ -679,30 +685,30 @@
 
             <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between">
                 <div class="space-y-4">
-                    <span class="text-xs font-bold text-[#22AF85] uppercase tracking-wider" x-text="`Kategori: ${activeItem?.kategori}`"></span>
+                    <span class="text-xs font-bold text-aa-green uppercase tracking-wider" x-text="`Kategori: ${activeItem?.kategori}`"></span>
                     <h2 class="text-2xl md:text-3xl font-extrabold text-[#191c1d] leading-snug" x-text="activeItem?.nama"></h2>
-                    <p class="text-sm text-[#22AF85] font-bold" x-text="`Brand: ${activeItem?.brand || '-'}`"></p>
+                    <p class="text-sm text-aa-green font-bold" x-text="`Brand: ${activeItem?.brand || '-'}`"></p>
                     
                     <div class="space-y-4 border-t border-[#bcc9c6] pt-4">
                         <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[#22AF85]">verified</span>
+                            <span class="material-symbols-outlined text-aa-green">verified</span>
                             <div>
                                 <h5 class="text-xs font-bold text-[#191c1d]">Kondisi Terverifikasi</h5>
                                 <p class="text-xs text-[#3d4947] mt-0.5 leading-relaxed" x-text="activeItem?.deskripsi || 'Barang telah dicek dan diperbaiki oleh tim kami.'"></p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[#22AF85]">local_shipping</span>
+                            <span class="material-symbols-outlined text-aa-green">local_shipping</span>
                             <div>
-                                <h5 class="text-xs font-bold text-[#191c1d]">Ongkir Ditanggung Pemohon</h5>
-                                <p class="text-xs text-[#3d4947] mt-0.5">Tagihan berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
+                                <h5 class="text-xs font-bold text-[#191c1d]">Ongkos Kirim</h5>
+                                <p class="text-xs text-[#3d4947] mt-0.5">Tagihan berisi biaya jasa reparasi saja. Ongkos kirim dikonfirmasi oleh CS kami setelah pembayaran.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="pt-6 border-t border-[#bcc9c6] mt-6">
-                    <button class="w-full py-4 bg-[#22AF85] text-white rounded-lg text-sm font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                    <button class="w-full py-4 bg-aa-green text-white rounded-lg text-sm font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
                             :disabled="activeItem?.status !== 'tersedia'"
                             @click="openForm()">
                         <span class="material-symbols-outlined">send</span>
@@ -727,13 +733,13 @@
 
                 <div>
                     <label class="block text-xs font-bold text-[#191c1d] mb-1">Nama Lengkap</label>
-                    <input class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] bg-[#f3f4f5] text-sm"
+                    <input class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-aa-green focus:border-aa-green bg-[#f3f4f5] text-sm"
                            type="text" x-model="form.nama_pemohon" required placeholder="Contoh: Budi Santoso"/>
                     <span x-show="errors.nama_pemohon" x-text="errors.nama_pemohon" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-[#191c1d] mb-1">Email Aktif</label>
-                    <input class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] bg-[#f3f4f5] text-sm"
+                    <input class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-aa-green focus:border-aa-green bg-[#f3f4f5] text-sm"
                            type="email" x-model="form.email" required placeholder="Contoh: budi@gmail.com"/>
                     <span x-show="errors.email" x-text="errors.email" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
                 </div>
@@ -741,7 +747,7 @@
                     <label class="block text-xs font-bold text-[#191c1d] mb-1">Nomor WhatsApp</label>
                     <div class="relative flex items-center">
                         <span class="absolute left-4 text-xs font-black text-gray-400 select-none">+62</span>
-                        <input class="w-full pl-12 pr-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] bg-[#f3f4f5] text-sm"
+                        <input class="w-full pl-12 pr-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-aa-green focus:border-aa-green bg-[#f3f4f5] text-sm"
                                type="tel" x-model="form.kontak_pemohon" required placeholder="8123456789"/>
                     </div>
                     <p class="text-[9px] text-gray-400 mt-1 font-semibold">Tulis tanpa angka 0 atau +62 di depan</p>
@@ -749,18 +755,18 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-[#191c1d] mb-1">Alamat Pengiriman</label>
-                    <textarea class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] bg-[#f3f4f5] text-sm"
+                    <textarea class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-aa-green focus:border-aa-green bg-[#f3f4f5] text-sm"
                               rows="3" x-model="form.alamat_pengiriman" required placeholder="Alamat lengkap tujuan pengiriman..."></textarea>
                     <span x-show="errors.alamat_pengiriman" x-text="errors.alamat_pengiriman" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-[#191c1d] mb-1">Alasan Mengajukan Donasi</label>
-                    <textarea class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-[#22AF85] focus:border-[#22AF85] bg-[#f3f4f5] text-sm"
-                              rows="3" x-model="form.alasan" required placeholder="Jelaskan mengapa Anda membutuhkan barang ini..."></textarea>
+                    <textarea class="w-full px-4 py-3 rounded-lg border border-[#bcc9c6] focus:ring-2 focus:ring-aa-green focus:border-aa-green bg-[#f3f4f5] text-sm"
+                              rows="3" x-model="form.alasan" required placeholder="Jelaskan mengapa kamu membutuhkan barang ini..."></textarea>
                     <span x-show="errors.alasan" x-text="errors.alasan" class="text-xs text-red-600 mt-1 block font-semibold" style="display: none;"></span>
                 </div>
                 
-                <button class="w-full py-4 bg-[#22AF85] text-white rounded-lg font-bold text-sm hover:opacity-90 active:scale-[0.99] transition-all shadow-md mt-4 flex items-center justify-center gap-2"
+                <button class="w-full py-4 bg-aa-green text-white rounded-lg font-bold text-sm hover:opacity-90 active:scale-[0.99] transition-all shadow-md mt-4 flex items-center justify-center gap-2"
                         type="submit" :disabled="submitting">
                     <span x-show="!submitting">Kirim Pengajuan</span>
                     <span x-show="submitting" class="flex items-center gap-1.5" style="display: none;">
@@ -778,12 +784,12 @@
     <!-- Success Message Modal -->
     <div x-show="successOpen" class="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;" x-cloak>
         <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
-            <div class="w-20 h-20 bg-green-50 text-green-700 rounded-full flex items-center justify-center mx-auto">
+            <div class="w-20 h-20 bg-aa-beige/40 text-aa-green rounded-full flex items-center justify-center mx-auto">
                 <span class="material-symbols-outlined" style="font-size: 48px;">check_circle</span>
             </div>
             <div>
                 <h3 class="text-xl font-bold text-[#191c1d]">Pengajuan Terkirim!</h3>
-                <p class="text-xs text-[#3d4947] mt-2 leading-relaxed">Data Anda telah kami simpan. Hubungi WhatsApp Admin untuk proses verifikasi alamat lebih cepat.</p>
+                <p class="text-xs text-[#3d4947] mt-2 leading-relaxed">Data kamu telah kami simpan. Hubungi WhatsApp Admin untuk proses verifikasi alamat lebih cepat.</p>
             </div>
             <a class="w-full py-4 bg-[#25D366] text-white rounded-lg text-sm font-bold hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
                :href="whatsappUrl" target="_blank" id="waLink">
@@ -1216,14 +1222,14 @@
                                 this.errors[key] = data.errors[key][0];
                             });
                         } else {
-                            this.generalError = data.message || 'Validasi gagal. Harap periksa form Anda.';
+                            this.generalError = data.message || 'Validasi gagal. Harap periksa form kamu.';
                         }
                     } else {
                         this.generalError = data.message || 'Gagal memproses pengajuan. Silakan coba lagi.';
                     }
                 } catch (err) {
                     console.error('Submission error:', err);
-                    this.generalError = 'Terjadi gangguan jaringan. Pastikan Anda terhubung ke internet.';
+                    this.generalError = 'Terjadi gangguan jaringan. Pastikan kamu terhubung ke internet.';
                 } finally {
                     this.submitting = false;
                 }

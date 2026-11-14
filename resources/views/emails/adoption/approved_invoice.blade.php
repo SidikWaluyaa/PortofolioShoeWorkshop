@@ -7,40 +7,40 @@
     <style>
         body { font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; }
-        .header { background-color: #10b981; padding: 30px; text-align: center; }
+        .header { background-color: #0F3D3B; padding: 30px; text-align: center; }
         .header h1 { color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; }
         .content { padding: 40px 30px; }
         .content p { color: #4b5563; line-height: 1.6; margin-bottom: 20px; font-size: 15px; }
         .greeting { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 10px; }
-        .invoice-box { background-color: #f3f4f6; border-radius: 12px; padding: 20px; margin: 30px 0; border-left: 4px solid #10b981; }
+        .invoice-box { background-color: #f3f4f6; border-radius: 12px; padding: 20px; margin: 30px 0; border-left: 4px solid #0F3D3B; }
         .invoice-box h3 { margin-top: 0; margin-bottom: 15px; color: #111827; font-size: 16px; }
         .invoice-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: #4b5563; font-size: 14px; }
         .invoice-total { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #d1d5db; font-weight: 700; color: #111827; font-size: 16px; }
-        .payment-info { background-color: #ecfdf5; border-radius: 12px; padding: 20px; margin: 30px 0; border: 1px solid #a7f3d0; text-align: center; }
-        .payment-info p { margin-bottom: 10px; color: #065f46; font-size: 14px; }
-        .account-number { font-size: 24px; font-weight: 800; color: #047857; letter-spacing: 1px; margin: 15px 0; }
-        .btn { display: inline-block; background-color: #10b981; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; font-size: 16px; margin-top: 20px; text-align: center; }
-        .btn:hover { background-color: #059669; }
+        .payment-info { background-color: #FBF6EF; border-radius: 12px; padding: 20px; margin: 30px 0; border: 1px solid #F5DABF; text-align: center; }
+        .payment-info p { margin-bottom: 10px; color: #0F3D3B; font-size: 14px; }
+        .account-number { font-size: 24px; font-weight: 800; color: #0F3D3B; letter-spacing: 1px; margin: 15px 0; }
+        .btn { display: inline-block; background-color: #6C1420; color: #F5DABF; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; font-size: 16px; margin-top: 20px; text-align: center; }
+        .btn:hover { background-color: #540F19; }
         .footer { background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #f3f4f6; }
         .footer p { color: #9ca3af; font-size: 12px; margin: 0; }
-        .text-emerald { color: #10b981; }
+        .text-emerald { color: #0F3D3B; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Shoe Workshop</h1>
+            <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt &amp; Adopt by ShoeWorkshop" width="150" style="width:150px;height:auto;display:inline-block;">
         </div>
         <div class="content">
             <div class="greeting">Halo, {{ $donationRequest->nama_pemohon }}! 🎉</div>
             @if($donationRequest->batas_bayar)
-                <p>Selamat! Setelah kurasi, Anda <strong class="text-emerald">TERPILIH</strong> untuk mengadopsi sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong>.</p>
+                <p>Selamat! Setelah kurasi, kamu <strong class="text-emerald">TERPILIH</strong> untuk mengadopsi sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong>.</p>
 
-                <p>Sepatu ini sudah kami amankan untuk Anda. Selesaikan pembayaran dan unggah bukti transfer <strong>sebelum {{ $donationRequest->batas_bayar->translatedFormat('l, d F Y, H.i') }} WIB</strong>. Jika lewat dari batas waktu tersebut, sepatu dapat kami alihkan ke pemohon lain. Tagihan di bawah berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
+                <p>Sepatu ini sudah kami amankan untuk kamu. Selesaikan pembayaran dan unggah bukti transfer <strong>sebelum {{ $donationRequest->batas_bayar->translatedFormat('l, d F Y, H.i') }} WIB</strong>. Jika lewat dari batas waktu tersebut, sepatu dapat kami alihkan ke pemohon lain. Tagihan di bawah berisi biaya jasa reparasi saja. Ongkos kirim dikonfirmasi oleh CS kami setelah pembayaran.</p>
             @else
-                <p>Selamat! Permohonan adopsi Anda untuk sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong> telah <strong class="text-emerald">DISETUJUI</strong> oleh tim Shoe Workshop.</p>
+                <p>Selamat! Permohonan adopsi kamu untuk sepatu <strong class="text-emerald">{{ $donationRequest->donationItem->nama ?? 'Sepatu' }}</strong> telah <strong class="text-emerald">DISETUJUI</strong> oleh tim Shoe Workshop.</p>
 
-                <p>Sepatu ini siap menjadi teman perjalanan Anda yang baru. Siapa cepat dia dapat: sepatu menjadi milik pemohon pertama yang membayar dan mengunggah bukti pembayaran. Tagihan di bawah berisi biaya jasa restorasi saja. Ongkos kirim ditagih terpisah, CS kami akan menghubungi Anda.</p>
+                <p>Sepatu ini siap menjadi teman perjalanan kamu yang baru. Siapa cepat dia dapat: sepatu menjadi milik pemohon pertama yang membayar dan mengunggah bukti pembayaran. Tagihan di bawah berisi biaya jasa reparasi saja. Ongkos kirim dikonfirmasi oleh CS kami setelah pembayaran.</p>
             @endif
 
             <div class="invoice-box">
@@ -89,12 +89,12 @@
             </div>
 
             <div style="text-align: center;">
-                <p style="font-size: 13px; margin-bottom: 5px;">Setelah melakukan transfer, unggah foto bukti transfer di halaman pengajuan adopsi Anda.@unless($donationRequest->batas_bayar) Sepatu menjadi milik pemohon pertama yang mengunggah bukti pembayaran.@endunless</p>
+                <p style="font-size: 13px; margin-bottom: 5px;">Setelah melakukan transfer, unggah foto bukti transfer di halaman pengajuan adopsi kamu.@unless($donationRequest->batas_bayar) Sepatu menjadi milik pemohon pertama yang mengunggah bukti pembayaran.@endunless</p>
                 <a href="{{ route('member.adoption-requests.show', $donationRequest->id) }}#pembayaran" class="btn">Unggah Bukti Transfer</a>
             </div>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Shoe Workshop. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Adapt &amp; Adopt by ShoeWorkshop.</p>
             <p>Jl. Kembar I No.41, Cigereleng, Kec. Regol, Kota Bandung, Jawa Barat 40253</p>
         </div>
     </div>

@@ -12,6 +12,7 @@
     <!-- Heading -->
     <h1>Selamat datang kembali</h1>
     <p class="subtitle">Masuk untuk mengelola donasi Anda dan melacak alur reparasi sepatu.</p>
+    @include('auth.partials.donation-draft-note')
 
     <!-- Session Status -->
     @if (session('status'))

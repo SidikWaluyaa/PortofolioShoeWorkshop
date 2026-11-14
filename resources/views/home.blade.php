@@ -90,6 +90,9 @@
                 @include('components.services', ['services' => $services])
             </section>
 
+            {{-- 2.5 ADAPT & ADOPT (campaign currently prioritised) --}}
+            @include('components.donasi-showcase')
+
             {{-- 3. TENTANG KAMI --}}
             <section id="about" class="scroll-mt-20">
                 @include('components.about', ['about' => $about])
@@ -140,9 +143,6 @@
                     @include('components.reviews', ['reviews' => $reviews])
                 </div>
             </section>
-
-            {{-- 6.5 DONASI SHOWCASE --}}
-            @include('components.donasi-showcase')
 
             {{-- 7. ARTIKEL --}}
             <section id="blog" class="py-20 sm:py-24 px-4 sm:px-6 lg:px-16 max-w-7xl mx-auto scroll-mt-20">

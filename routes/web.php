@@ -56,20 +56,31 @@ Route::post('/klaim-garansi/api/submit', [WarrantyClaimController::class, 'submi
 Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 
-// The catalog used to live at /donasi-katalog: keep old links (emails, socials, search results) working
-Route::get('/donasi-katalog/{path?}', function (\Illuminate\Http\Request $request, ?string $path = null) {
+// Adapt & Adopt by ShoeWorkshop: program page + adoption catalog (the catalog used to live at
+// /donasi and before that /donasi-katalog; keep those links from emails, socials and search working)
+Route::get('/{legacy}/{path?}', function (\Illuminate\Http\Request $request, string $legacy, ?string $path = null) {
     $query = $request->getQueryString();
-    return redirect('/donasi' . ($path ? '/' . $path : '') . ($query ? '?' . $query : ''), 301);
-})->where('path', '.*');
+    return redirect('/adapt-adopt/katalog' . ($path ? '/' . $path : '') . ($query ? '?' . $query : ''), 301);
+})->where(['legacy' => 'donasi|donasi-katalog', 'path' => '.*']);
 
-Route::get('/donasi', [\App\Http\Controllers\DonationCatalogController::class, 'index'])->name('katalog.index');
-Route::get('/donasi/filter', [\App\Http\Controllers\DonationCatalogController::class, 'filter'])->name('katalog.filter');
-Route::get('/donasi/{item}', [\App\Http\Controllers\DonationCatalogController::class, 'show'])->name('katalog.show');
+Route::get('/adapt-adopt', [\App\Http\Controllers\AdaptAdoptController::class, 'index'])->name('adapt-adopt.index');
+// Public donation form: guests fill it in, the entry is kept as a draft until they sign in or register
+Route::get('/adapt-adopt/donasi', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'create'])->name('adapt-adopt.donasi.create');
+Route::post('/adapt-adopt/donasi', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'store'])->middleware('throttle:20,60')->name('adapt-adopt.donasi.store');
+Route::get('/adapt-adopt/donasi/lanjut', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'pending'])->name('adapt-adopt.donasi.pending');
+Route::delete('/adapt-adopt/donasi/draf/{draft}', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'discard'])->name('adapt-adopt.donasi.discard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/adapt-adopt/donasi/kirim', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'review'])->name('adapt-adopt.donasi.review');
+    Route::post('/adapt-adopt/donasi/kirim/{draft}', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'submit'])->name('adapt-adopt.donasi.submit');
+});
+Route::get('/adapt-adopt/katalog', [\App\Http\Controllers\DonationCatalogController::class, 'index'])->name('katalog.index');
+Route::get('/adapt-adopt/katalog/filter', [\App\Http\Controllers\DonationCatalogController::class, 'filter'])->name('katalog.filter');
+Route::get('/adapt-adopt/katalog/{item}', [\App\Http\Controllers\DonationCatalogController::class, 'show'])->name('katalog.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/donasi/{item}/ajukan', [\App\Http\Controllers\DonationCatalogController::class, 'requestForm'])->name('katalog.request.form');
-    Route::get('/donasi/{item}/sukses/{requestId}', [\App\Http\Controllers\DonationCatalogController::class, 'requestSuccess'])->name('katalog.success');
-    Route::post('/donasi/{item}/request', [\App\Http\Controllers\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
+    Route::get('/adapt-adopt/katalog/{item}/ajukan', [\App\Http\Controllers\DonationCatalogController::class, 'requestForm'])->name('katalog.request.form');
+    Route::get('/adapt-adopt/katalog/{item}/sukses/{requestId}', [\App\Http\Controllers\DonationCatalogController::class, 'requestSuccess'])->name('katalog.success');
+    Route::post('/adapt-adopt/katalog/{item}/request', [\App\Http\Controllers\DonationCatalogController::class, 'requestItem'])->name('katalog.request');
     
     // Notifications
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');

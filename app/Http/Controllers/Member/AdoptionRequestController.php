@@ -97,7 +97,7 @@ class AdoptionRequestController extends Controller
         // Send Notification to Member
         auth()->user()->notify(new \App\Notifications\SystemNotification(
             'Pesanan Diterima!',
-            'Terima kasih telah mengonfirmasi penerimaan paket. Sepatu adopsi kini resmi menjadi milik Anda.',
+            'Terima kasih telah mengonfirmasi penerimaan paket. Sepatu adopsi kini resmi menjadi milik kamu.',
             route('member.adoption-requests.show', $adoptionRequest->id),
             'check_circle',
             'success'
@@ -115,6 +115,6 @@ class AdoptionRequestController extends Controller
             ));
         }
 
-        return redirect()->back()->with('success', 'Terima kasih! Pesanan telah diselesaikan. Sepatu kini resmi menjadi milik Anda.');
+        return redirect()->back()->with('success', 'Terima kasih! Pesanan telah diselesaikan. Sepatu kini resmi menjadi milik kamu.');
     }
 }

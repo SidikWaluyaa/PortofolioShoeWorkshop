@@ -31,6 +31,18 @@ class DashboardController extends Controller
 
         $tasks = collect();
 
+        // A donation filled in on the public form before signing in, not sent yet
+        if ($draft = \App\Models\DonationDraft::current($user)) {
+            $tasks->push([
+                'icon' => 'volunteer_activism',
+                'tone' => 'emerald',
+                'title' => 'Kirim donasi ' . $draft->data['nama_sepatu'],
+                'desc' => 'Data dan fotonya sudah tersimpan. Periksa lagi, lalu kirim supaya bisa kami tinjau.',
+                'url' => route('adapt-adopt.donasi.review'),
+                'cta' => 'Kirim',
+            ]);
+        }
+
         foreach ($adoptions as $request) {
             $name = $request->donationItem?->nama ?? 'sepatu adopsi';
             $url = route('member.adoption-requests.show', $request->id);

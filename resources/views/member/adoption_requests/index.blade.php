@@ -2,7 +2,7 @@
     <x-slot name="header">Adopsi Saya</x-slot>
 
     <div class="mb-6">
-        <p class="text-sm text-gray-500">Pantau status adopsi sepatu Anda dan selesaikan langkah berikutnya di sini.</p>
+        <p class="text-sm text-gray-500">Pantau status adopsi sepatu kamu dan selesaikan langkah berikutnya di sini.</p>
     </div>
 
             @if ($errors->any())
@@ -31,7 +31,7 @@
                     'amber'   => ['box' => 'bg-amber-50 border-amber-200', 'icon' => 'bg-amber-500', 'title' => 'text-amber-900', 'text' => 'text-amber-800'],
                     'purple'  => ['box' => 'bg-purple-50 border-purple-200', 'icon' => 'bg-purple-600', 'title' => 'text-purple-900', 'text' => 'text-purple-800'],
                     'blue'    => ['box' => 'bg-blue-50 border-blue-200', 'icon' => 'bg-blue-600', 'title' => 'text-blue-900', 'text' => 'text-blue-800'],
-                    'emerald' => ['box' => 'bg-emerald-50 border-emerald-200', 'icon' => 'bg-[#22AF85]', 'title' => 'text-emerald-900', 'text' => 'text-emerald-800'],
+                    'emerald' => ['box' => 'bg-aa-beige/40 border-aa-beige', 'icon' => 'bg-aa-green', 'title' => 'text-aa-green', 'text' => 'text-aa-green'],
                     'gray'    => ['box' => 'bg-gray-50 border-gray-200', 'icon' => 'bg-gray-600', 'title' => 'text-gray-900', 'text' => 'text-gray-600'],
                     'red'     => ['box' => 'bg-red-50 border-red-100', 'icon' => 'bg-red-500', 'title' => 'text-red-900', 'text' => 'text-red-700'],
                 ];
@@ -69,7 +69,7 @@
                                 'Lihat Status', $detailUrl, false];
                         } elseif ($otherOrder) {
                             $next = ['blue', 'pending_actions', 'Selesaikan pesanan lain dulu',
-                                'Pesanan ' . ($otherOrder->donationItem?->nama ?? 'Anda yang lain') . ' sedang diverifikasi/diproses. Mohon jangan transfer untuk sepatu ini dulu.',
+                                'Pesanan ' . ($otherOrder->donationItem?->nama ?? 'kamu yang lain') . ' sedang diverifikasi/diproses. Mohon jangan transfer untuk sepatu ini dulu.',
                                 'Lihat Pesanan Lain', route('member.adoption-requests.show', $otherOrder->id), false];
                         } else {
                             $next = match ($req->status) {
@@ -83,7 +83,7 @@
                                         'Transfer sesuai tagihan, lalu unggah bukti transfernya. Siapa cepat dia dapat: sepatu jadi milik pemohon pertama yang mengunggah bukti bayar.',
                                         'Bayar & Unggah Bukti', $detailUrl . '#pembayaran', true],
                                 'menunggu_verifikasi' => ['purple', 'fact_check', 'Bukti bayar sedang dicek',
-                                    'Admin sedang memverifikasi pembayaran Anda. Selama proses ini sepatu sudah diamankan untuk Anda.',
+                                    'Admin sedang memverifikasi pembayaran kamu. Selama proses ini sepatu sudah diamankan untuk kamu.',
                                     'Lihat Detail Pesanan', $detailUrl, false],
                                 'diproses' => ['blue', 'inventory_2', 'Sepatu sedang disiapkan',
                                     'Pembayaran terverifikasi. Kami akan mengabari nomor resi saat sepatu dikirim.',
@@ -92,13 +92,13 @@
                                     ($req->resi_pengiriman ? 'No. resi: ' . $req->resi_pengiriman . '. ' : '') . 'Sudah sampai? Konfirmasi penerimaan agar adopsi selesai.',
                                     'Konfirmasi Sepatu Diterima', $detailUrl . '#konfirmasi', true],
                                 'selesai' => ['emerald', 'check_circle', 'Adopsi selesai',
-                                    'Sepatu resmi menjadi milik Anda. Terima kasih telah memberi kesempatan kedua untuk sepatu ini!',
+                                    'Sepatu resmi menjadi milik kamu. Terima kasih telah memberi kesempatan kedua untuk sepatu ini!',
                                     'Lihat Detail', $detailUrl, false],
                                 'ditolak', 'dibatalkan' => ['red', 'cancel', $req->status === 'ditolak' ? 'Permohonan ditolak' : 'Permohonan dibatalkan',
                                     'Permohonan ini tidak dapat dilanjutkan. Masih banyak sepatu hasil restorasi lain di katalog.',
                                     'Cari Sepatu Lain', route('katalog.index'), false],
                                 default => ['gray', 'schedule', 'Menunggu proses',
-                                    'Permohonan Anda sedang kami proses.',
+                                    'Permohonan kamu sedang kami proses.',
                                     'Lihat Detail', $detailUrl, false],
                             };
                         }
@@ -141,10 +141,10 @@
                                         @endphp
                                         <li class="flex-1 flex flex-col items-center text-center relative">
                                             @if(!$loop->first)
-                                                <span class="absolute top-[11px] right-1/2 w-full h-0.5 {{ $index <= $currentStep ? 'bg-[#22AF85]' : 'bg-gray-200' }}"></span>
+                                                <span class="absolute top-[11px] right-1/2 w-full h-0.5 {{ $index <= $currentStep ? 'bg-aa-green' : 'bg-gray-200' }}"></span>
                                             @endif
                                             <span class="relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black
-                                                {{ $done ? 'bg-[#22AF85] text-white' : ($active ? 'bg-white text-[#22AF85] ring-2 ring-[#22AF85]' : 'bg-gray-100 text-gray-400') }}">
+                                                {{ $done ? 'bg-aa-green text-white' : ($active ? 'bg-white text-aa-green ring-2 ring-aa-green' : 'bg-gray-100 text-gray-400') }}">
                                                 @if($done)
                                                     <span class="material-symbols-outlined !text-[14px]">check</span>
                                                 @else
@@ -180,7 +180,7 @@
 
                                 <a href="{{ $ctaUrl }}"
                                    class="mt-4 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition
-                                          {{ $isPrimary ? 'bg-[#22AF85] hover:bg-[#1a936f] text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
+                                          {{ $isPrimary ? 'bg-aa-green hover:bg-aa-green-dark text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
                                     {{ $ctaLabel }}
                                     <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                                 </a>
@@ -193,8 +193,8 @@
                             <span class="material-symbols-outlined text-4xl text-gray-300">inbox</span>
                         </div>
                         <h3 class="text-lg font-black text-gray-900 mb-2">Belum ada permohonan adopsi</h3>
-                        <p class="text-gray-500 text-sm font-medium">Anda belum pernah mengajukan adopsi sepatu. Yuk cek sepatu hasil restorasi di katalog!</p>
-                        <a href="{{ route('katalog.index') }}" class="inline-block mt-6 px-6 py-3 bg-[#22AF85] hover:bg-[#1a936f] text-white font-bold rounded-xl transition shadow-sm">Lihat Katalog</a>
+                        <p class="text-gray-500 text-sm font-medium">Kamu belum pernah mengajukan adopsi sepatu. Yuk cek sepatu hasil restorasi di katalog!</p>
+                        <a href="{{ route('katalog.index') }}" class="inline-block mt-6 px-6 py-3 bg-aa-green hover:bg-aa-green-dark text-white font-bold rounded-xl transition shadow-sm">Lihat Katalog</a>
                     </div>
                 @endforelse
             </div>

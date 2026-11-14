@@ -1,9 +1,10 @@
 @extends('layouts.main')
-@section('seo_title', 'Adopsi ' . $item->nama . ' - Shoe Workshop')
+@section('seo_title', 'Adopsi ' . $item->nama . ' · Adapt & Adopt by ShoeWorkshop')
 @section('seo_description', 'Adopsi ' . $item->nama . ': sepatu layak pakai hasil restorasi profesional tim Shoe Workshop.')
 @section('seo_keywords', 'adopsi sepatu, katalog donasi, sepatu restorasi, shoe workshop, reparasi sepatu')
 
 @section('head')
+@include('layouts.partials.aa-fonts')
 <style>
     [x-cloak] { display: none !important; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -42,7 +43,7 @@
     $finalColor = $item->warna ?: $color;
 @endphp
 
-<div x-data="detailApp()" x-init="initApp()" class="bg-[#f8f9fa] text-[#1c1c17] min-h-screen flex flex-col justify-between">
+<div x-data="detailApp()" x-init="initApp()" class="bg-aa-white text-[#1c1c17] min-h-screen flex flex-col justify-between">
     
     <!-- TopNavBar Component -->
     @include('layouts.navigation-public')
@@ -57,7 +58,7 @@
                     
                     {{-- 1. Beranda --}}
                     <li class="flex items-center gap-1.5 sm:gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a href="{{ route('home') }}" class="hover:text-[#22AF85] transition-colors flex items-center gap-1 text-gray-400 hover:scale-105 active:scale-95" itemprop="item">
+                        <a href="{{ route('home') }}" class="hover:text-aa-green transition-colors flex items-center gap-1 text-gray-400 hover:scale-105 active:scale-95" itemprop="item">
                             <span class="material-symbols-outlined !text-[16px]">home</span>
                             <span itemprop="name" class="hidden sm:inline">Beranda</span>
                         </a>
@@ -67,10 +68,10 @@
                         <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
                     </li>
                     
-                    {{-- 2. Katalog Donasi --}}
+                    {{-- 2. Katalog Adopsi --}}
                     <li class="flex items-center gap-1.5 sm:gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a href="{{ route('katalog.index') }}" class="hover:text-[#22AF85] transition-colors" itemprop="item">
-                            <span itemprop="name">Donasi</span>
+                        <a href="{{ route('katalog.index') }}" class="hover:text-aa-green transition-colors" itemprop="item">
+                            <span itemprop="name">Katalog Adopsi</span>
                         </a>
                         <meta itemprop="position" content="2" />
                     </li>
@@ -84,7 +85,7 @@
                         $catLabel = $catLabels[$item->kategori] ?? ucfirst($item->kategori);
                     @endphp
                     <li class="flex items-center gap-1.5 sm:gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a href="{{ route('katalog.index') }}?category={{ $item->kategori }}" class="hover:text-[#22AF85] transition-colors" itemprop="item">
+                        <a href="{{ route('katalog.index') }}?category={{ $item->kategori }}" class="hover:text-aa-green transition-colors" itemprop="item">
                             <span itemprop="name">{{ $catLabel }}</span>
                         </a>
                         <meta itemprop="position" content="3" />
@@ -94,7 +95,7 @@
                     </li>
 
                     {{-- 4. Halaman Aktif (Nama Produk) --}}
-                    <li class="text-[#22AF85] font-extrabold max-w-[140px] sm:max-w-[350px] truncate" aria-current="page" title="{{ $item->nama }}">
+                    <li class="text-aa-green font-extrabold max-w-[140px] sm:max-w-[350px] truncate" aria-current="page" title="{{ $item->nama }}">
                         {{ $item->nama }}
                     </li>
                 </ol>
@@ -109,7 +110,7 @@
                         <a :href="activeImage || '{{ $item->foto_utama_url }}'" target="_blank" class="w-full h-full block">
                             <img src="{{ $item->foto_utama_url }}" :src="activeImage" alt="{{ $item->nama }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" title="Klik untuk memperbesar"/>
                         </a>
-                        <div class="absolute top-3 left-3 bg-green-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm flex items-center gap-1 z-10 pointer-events-none">
+                        <div class="absolute top-3 left-3 bg-aa-green text-aa-beige px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm flex items-center gap-1 z-10 pointer-events-none">
                             <span class="material-symbols-outlined !text-[12px]">verified</span>
                             Kualitas Terverifikasi
                         </div>
@@ -119,7 +120,7 @@
                     <div class="flex gap-2 sm:gap-4 overflow-x-auto pb-1">
                         <!-- Thumbnail 1 (Active) -->
                         <button @click="activeImage = '{{ $item->foto_utama_url }}'; activeIndex = 0" 
-                                :class="activeIndex === 0 ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
+                                :class="activeIndex === 0 ? 'border-2 border-aa-green' : 'border border-gray-200 hover:border-aa-green'"
                                 class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
                             <img alt="Foto Utama" class="w-full h-full object-cover" src="{{ $item->foto_utama_url }}"/>
                         </button>
@@ -141,7 +142,7 @@
                         @for($i = 0; $i < 3; $i++)
                             @if(isset($detailPhotos[$i]))
                                 <button @click="activeImage = '{{ $detailUrl($detailPhotos[$i]) }}'; activeIndex = {{ $i + 1 }}" 
-                                        :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-[#22AF85]' : 'border border-gray-200 hover:border-[#22AF85]'"
+                                        :class="activeIndex === {{ $i + 1 }} ? 'border-2 border-aa-green' : 'border border-gray-200 hover:border-aa-green'"
                                         class="w-14 h-14 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden bg-white transition-all shadow-sm flex-shrink-0 flex items-center justify-center">
                                     <img alt="Detail {{ $i + 1 }}" class="w-full h-full object-cover" src="{{ $detailUrl($detailPhotos[$i]) }}"/>
                                 </button>
@@ -168,7 +169,7 @@
                     <!-- Brand & Title -->
                     <div>
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-[#22AF85] uppercase tracking-widest">{{ $item->brand ?? 'Generic' }}</span>
+                            <span class="text-xs font-bold text-aa-green uppercase tracking-widest">{{ $item->brand ?? 'Generic' }}</span>
                         </div>
                         <h1 class="text-2xl md:text-3xl font-extrabold text-[#1c1c17] mt-2 leading-tight">{{ $item->nama }}</h1>
                         
@@ -176,7 +177,7 @@
                             @php
                                 $condBadgeClasses = [
                                     'baru' => 'bg-blue-50 text-blue-700 border border-blue-200',
-                                    'seperti_baru' => 'bg-green-50 text-green-700 border border-green-200',
+                                    'seperti_baru' => 'bg-aa-beige/40 text-aa-green border border-green-200',
                                     'sudah_diperbaiki' => 'bg-yellow-50 text-yellow-700 border border-yellow-200',
                                 ];
                                 $condBadgeLabels = [
@@ -251,7 +252,7 @@
                                     <label class="flex items-start gap-3 py-3 first:pt-0 cursor-pointer select-none">
                                         <div class="pt-0.5">
                                             <input type="checkbox" value="{{ $rs->id }}" 
-                                                class="w-5 h-5 rounded border-gray-300 text-[#22AF85] focus:ring-[#22AF85]"
+                                                class="w-5 h-5 rounded border-gray-300 text-aa-green focus:ring-aa-green"
                                                 @change="calculateTotals()"
                                                 x-model="checkedServices"
                                                 @if($rs->is_mandatory) disabled @endif>
@@ -286,19 +287,19 @@
                             <div class="border-t border-slate-200 pt-3 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                 <div>
                                     <p class="text-[10px] text-slate-400 font-black uppercase">Total Estimasi Durasi (Max)</p>
-                                    <p class="text-sm font-black text-[#22AF85]" x-text="formattedTotalDuration"></p>
+                                    <p class="text-sm font-black text-aa-green" x-text="formattedTotalDuration"></p>
                                 </div>
                                 <div class="sm:text-right">
                                     <p class="text-[10px] text-slate-400 font-black uppercase">Total Nilai Restorasi</p>
-                                    <p class="text-base font-black text-[#22AF85]" x-text="formattedTotalPrice"></p>
+                                    <p class="text-base font-black text-aa-green" x-text="formattedTotalPrice"></p>
                                 </div>
                             </div>
                         </div>
                         @endif
 
                         {{-- No numbers on purpose: there is no measured CO2/water saving per shoe --}}
-                        <div class="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-4 mb-6">
-                            <div class="w-10 h-10 rounded-full bg-[#22AF85]/10 flex items-center justify-center flex-shrink-0 text-[#22AF85]">
+                        <div class="bg-aa-beige/40 border border-aa-beige rounded-xl p-4 flex items-center gap-4 mb-6">
+                            <div class="w-10 h-10 rounded-full bg-aa-green/10 flex items-center justify-center flex-shrink-0 text-aa-green">
                                 <span class="material-symbols-outlined !text-[24px]">eco</span>
                             </div>
                             <p class="text-[13px] text-gray-600 leading-relaxed">Dengan mengadopsi sepatu hasil restorasi, kamu memperpanjang umur sepatu dan membantu mengurangi sepatu yang berakhir di tempat sampah.</p>
@@ -311,8 +312,8 @@
                             <p class="text-[10px] font-bold text-gray-400 uppercase">Status Ketersediaan</p>
                             <div class="flex items-center gap-2 mt-1">
                                 @if($item->status === 'tersedia')
-                                    <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span class="text-sm font-bold text-green-700">Tersedia untuk Pengajuan</span>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-aa-sage animate-pulse"></div>
+                                    <span class="text-sm font-bold text-aa-green">Tersedia untuk Pengajuan</span>
                                 @else
                                     <div class="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
                                     <span class="text-sm font-bold text-gray-600">Sudah Disalurkan</span>
@@ -324,7 +325,7 @@
                         <div class="hidden sm:flex gap-3">
                             @if($item->status === 'tersedia')
                                     @auth
-                                        <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                        <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-aa-burgundy hover:bg-aa-burgundy-dark text-aa-beige rounded-xl font-bold text-sm shadow-md shadow-aa-burgundy/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined !text-[18px]">send</span>
                                             Ajukan Adopsi
                                         </button>
@@ -358,7 +359,7 @@
             <div class="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white border-t border-gray-200 px-4 py-3 flex gap-2 shadow-lg">
                 @if($item->status === 'tersedia')
                         @auth
-                            <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-[#22AF85] text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <button @click="goToRequestForm()" class="flex-grow py-3.5 bg-aa-burgundy hover:bg-aa-burgundy-dark text-aa-beige rounded-xl font-bold text-sm shadow-md shadow-aa-burgundy/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined !text-[18px]">send</span>
                                 Ajukan Adopsi
                             </button>
@@ -383,7 +384,7 @@
                 <section class="mt-8 mb-20 sm:mb-0">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg sm:text-2xl font-bold text-[#1c1c17]">Sepatu Lain untuk Diadopsi</h2>
-                        <a href="{{ route('katalog.index') }}" class="text-[#22AF85] text-xs sm:text-sm font-bold flex items-center gap-0.5 hover:underline">
+                        <a href="{{ route('katalog.index') }}" class="text-aa-green text-xs sm:text-sm font-bold flex items-center gap-0.5 hover:underline">
                             Lihat Semua <span class="material-symbols-outlined !text-[16px]">chevron_right</span>
                         </a>
                     </div>
@@ -397,7 +398,7 @@
                                             {{ $condLabels[$other->kondisi] ?? ucfirst($other->kondisi) }}
                                         </span>
                                     </div>
-                                    <p class="text-[9px] sm:text-[10px] font-bold text-[#22AF85] uppercase tracking-wider mb-1">{{ $other->brand ?? 'Generic' }}</p>
+                                    <p class="text-[9px] sm:text-[10px] font-bold text-aa-green uppercase tracking-wider mb-1">{{ $other->brand ?? 'Generic' }}</p>
                                     <h4 class="font-bold text-xs sm:text-sm text-[#1c1c17] line-clamp-2">
                                         {{ $other->nama }}
                                     </h4>
@@ -473,7 +474,7 @@
 
                 this.totalPrice = priceSum;
                 this.totalDuration = maxDuration;
-                this.formattedTotalPrice = this.totalPrice === 0 ? 'Gratis / N/A' : 'Rp ' + this.totalPrice.toLocaleString('id-ID');
+                this.formattedTotalPrice = this.totalPrice === 0 ? 'Rp 0' : 'Rp ' + this.totalPrice.toLocaleString('id-ID');
                 this.formattedTotalDuration = this.totalDuration === 0 ? '0 Hari' : this.totalDuration + ' Hari';
             },
 
@@ -536,7 +537,7 @@
                 const toast = document.createElement('div');
                 toast.id = 'share-toast';
                 toast.className = 'fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl z-[100] transform transition-all translate-y-20 flex items-center gap-3 text-sm font-semibold border border-gray-800';
-                toast.innerHTML = `<span class="material-symbols-outlined text-[#22AF85]">check_circle</span> ` + message;
+                toast.innerHTML = `<span class="material-symbols-outlined text-aa-green">check_circle</span> ` + message;
                 document.body.appendChild(toast);
                 requestAnimationFrame(() => toast.classList.remove('translate-y-20'));
                 setTimeout(() => {

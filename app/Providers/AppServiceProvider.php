@@ -22,6 +22,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        // A donation filled in as a guest on /adapt-adopt/donasi belongs to the account once the donor signs in or registers
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class, function ($event) {
+            if ($event->user instanceof \App\Models\User) {
+                \App\Models\DonationDraft::claimFromSession($event->user);
+            }
+        });
+
         // Dates shown to users ("3 bulan yang lalu", "Sabtu, 31 Oktober") are always Indonesian,
         // whatever APP_LOCALE the server has
         \Carbon\Carbon::setLocale('id');

@@ -39,7 +39,7 @@
                     <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('layanan.index') }}">Layanan</a></li>
                     <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('portfolio.index') }}">Portfolio</a></li>
                     <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('home') }}#review">Testimoni</a></li>
-                    <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('katalog.index') }}">Donasi</a></li>
+                    <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('adapt-adopt.index') }}">Adapt &amp; Adopt</a></li>
                     <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('blog.index') }}">Blog</a></li>
                     <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('tracking.index') }}">Tracking Pesanan</a></li>
                     <li><a class="hover:text-[#22AF85] transition-colors" href="{{ route('warranty.index') }}">Klaim Garansi</a></li>
