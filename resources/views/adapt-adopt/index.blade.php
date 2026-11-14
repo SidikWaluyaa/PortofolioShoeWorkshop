@@ -3,6 +3,8 @@
 @section('seo_description', 'Adapt & Adopt by ShoeWorkshop: donasikan sepatu yang sudah tidak kamu pakai, atau adopsi sepatu hasil restorasi dengan membayar biaya jasa reparasinya saja.')
 @section('seo_keywords', 'adapt and adopt, adapt & adopt, donasi sepatu, adopsi sepatu, sepatu restorasi, shoeworkshop bandung')
 
+@section('mobile_action_bar', '1')
+
 @push('head')
     @include('layouts.partials.aa-fonts')
 @endpush
@@ -199,5 +201,20 @@
     </main>
 
     @include('components.footer', ['settings' => $settings])
+    <div class="h-20 sm:hidden" aria-hidden="true"></div>
+
+    {{-- Phones: the page is long, keep both actions one tap away once the hero is scrolled past --}}
+    <div x-data="{ show: false }" @scroll.window="show = window.scrollY > 520"
+         x-show="show" x-cloak
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full"
+         class="fixed inset-x-0 bottom-0 z-40 sm:hidden bg-aa-white/95 backdrop-blur border-t border-aa-beige px-4 py-3 flex gap-2">
+        <a href="{{ route('katalog.index') }}" class="flex-1 inline-flex items-center justify-center gap-1.5 py-3 rounded-xl bg-aa-burgundy text-aa-beige font-bold text-sm">
+            <span class="material-symbols-outlined !text-[18px]">footprint</span> Adopsi
+        </a>
+        <a href="{{ route('adapt-adopt.donasi.create') }}" class="flex-1 inline-flex items-center justify-center gap-1.5 py-3 rounded-xl border border-aa-green text-aa-green font-bold text-sm">
+            <span class="material-symbols-outlined !text-[18px]">volunteer_activism</span> Donasi
+        </a>
+    </div>
 </div>
 @endsection

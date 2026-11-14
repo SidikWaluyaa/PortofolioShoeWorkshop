@@ -3,6 +3,8 @@
 @section('seo_description', 'Adopsi ' . $item->nama . ': sepatu layak pakai hasil restorasi profesional tim Shoe Workshop.')
 @section('seo_keywords', 'adopsi sepatu, katalog donasi, sepatu restorasi, shoe workshop, reparasi sepatu')
 
+@section('mobile_action_bar', '1')
+
 @section('head')
 @include('layouts.partials.aa-fonts')
 <style>
@@ -297,12 +299,12 @@
                         </div>
                         @endif
 
-                        {{-- No numbers on purpose: there is no measured CO2/water saving per shoe --}}
+                        {{-- Program tone: no environmental claims without a measurement --}}
                         <div class="bg-aa-beige/40 border border-aa-beige rounded-xl p-4 flex items-center gap-4 mb-6">
                             <div class="w-10 h-10 rounded-full bg-aa-green/10 flex items-center justify-center flex-shrink-0 text-aa-green">
-                                <span class="material-symbols-outlined !text-[24px]">eco</span>
+                                <span class="material-symbols-outlined !text-[24px]">autorenew</span>
                             </div>
-                            <p class="text-[13px] text-gray-600 leading-relaxed">Dengan mengadopsi sepatu hasil restorasi, kamu memperpanjang umur sepatu dan membantu mengurangi sepatu yang berakhir di tempat sampah.</p>
+                            <p class="text-[13px] text-gray-600 leading-relaxed">Sepatu ini sudah kami perbaiki dan cek ulang di workshop. Saatnya menemani langkah pemilik barunya.</p>
                         </div>
                     </div>
 
@@ -330,9 +332,9 @@
                                             Ajukan Adopsi
                                         </button>
                                     @else
-                                        <a href="{{ route('login') }}" class="flex-grow py-3.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold text-sm shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                        <a href="{{ route('katalog.request.form', $item->id) }}" class="flex-grow py-3.5 bg-aa-burgundy hover:bg-aa-burgundy-dark text-aa-beige rounded-xl font-bold text-sm shadow-md shadow-aa-burgundy/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined !text-[18px]">login</span>
-                                            Login untuk Mengajukan
+                                            Masuk untuk Mengajukan
                                         </a>
                                     @endauth
                             @else
@@ -364,9 +366,9 @@
                                 Ajukan Adopsi
                             </button>
                         @else
-                            <a href="{{ route('login') }}" class="flex-grow py-3.5 bg-gray-800 text-white rounded-xl font-bold text-sm shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <a href="{{ route('katalog.request.form', $item->id) }}" class="flex-grow py-3.5 bg-aa-burgundy text-aa-beige rounded-xl font-bold text-sm shadow-md shadow-aa-burgundy/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined !text-[18px]">login</span>
-                                Login untuk Mengajukan
+                                Masuk untuk Mengajukan
                             </a>
                         @endauth
                 @else
