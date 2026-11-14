@@ -137,10 +137,11 @@
 <body class="antialiased bg-white text-[#1c1c17] overflow-x-hidden">
     @yield('content')
 
-    {{-- Floating WhatsApp widget. Pages with a mobile bottom action bar define the mobile_action_bar section so it sits above that bar --}}
+    {{-- Floating WhatsApp widget. Pages with an always-visible mobile bottom bar define the mobile_action_bar section;
+         a bar that appears on scroll adds the has-action-bar body class instead (see app.css) --}}
     <div x-data="{ open: false, showBadge: false }" 
          x-init="setTimeout(() => { showBadge = true }, 3000)" 
-         class="fixed @hasSection('mobile_action_bar') bottom-24 sm:bottom-6 @else bottom-6 @endif right-4 sm:right-6 z-[9999] flex flex-col items-end gap-3"
+         class="wa-float fixed @hasSection('mobile_action_bar') bottom-24 sm:bottom-6 @else bottom-6 @endif right-4 sm:right-6 z-[9999] flex flex-col items-end gap-3"
          x-cloak>
         
         <!-- Chat Popup Card -->
