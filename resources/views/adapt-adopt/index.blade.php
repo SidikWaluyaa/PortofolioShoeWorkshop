@@ -3,8 +3,6 @@
 @section('seo_description', 'Adapt & Adopt by ShoeWorkshop: donasikan sepatu yang sudah tidak kamu pakai, atau adopsi sepatu hasil restorasi dengan membayar biaya jasa reparasinya saja.')
 @section('seo_keywords', 'adapt and adopt, adapt & adopt, donasi sepatu, adopsi sepatu, sepatu restorasi, shoeworkshop bandung')
 
-@section('mobile_action_bar', '1')
-
 @push('head')
     @include('layouts.partials.aa-fonts')
 @endpush
@@ -19,10 +17,10 @@
     <main class="flex-grow pt-16 sm:pt-20">
         {{-- Hero --}}
         <section class="bg-aa-green text-aa-beige">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 grid lg:grid-cols-[1.1fr_1fr] gap-10 items-center">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 grid lg:grid-cols-[1.1fr_1fr] gap-7 lg:gap-10 items-center">
                 <div>
-                    <p class="text-xs font-bold tracking-[0.2em] uppercase text-aa-sage">by ShoeWorkshop</p>
-                    <h1 class="mt-4 font-aa text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05]">
+                    <p class="hidden lg:block text-xs font-bold tracking-[0.2em] uppercase text-aa-sage">by ShoeWorkshop</p>
+                    <h1 class="lg:mt-4 font-aa text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05]">
                         Adapt the Mindset.<br>Give a Second Chance.
                     </h1>
                     <p class="mt-5 text-base sm:text-lg text-aa-beige/90 leading-relaxed max-w-xl">
@@ -37,8 +35,10 @@
                         </a>
                     </div>
                 </div>
-                <div class="flex justify-start lg:justify-end order-first lg:order-none">
-                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Logo Adapt & Adopt" width="820" height="500" class="w-full max-w-[180px] sm:max-w-xs lg:max-w-md">
+                {{-- Phones: logo and "by ShoeWorkshop" read as one lockup above the headline; desktop keeps the logo on the right --}}
+                <div class="flex flex-col items-start lg:items-end order-first lg:order-none">
+                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Logo Adapt & Adopt" width="820" height="500" class="w-full max-w-[140px] sm:max-w-xs lg:max-w-md">
+                    <p class="lg:hidden mt-1 text-[11px] font-bold tracking-[0.2em] uppercase text-aa-sage">by ShoeWorkshop</p>
                 </div>
             </div>
         </section>
@@ -205,6 +205,7 @@
 
     {{-- Phones: the page is long, keep both actions one tap away once the hero is scrolled past --}}
     <div x-data="{ show: false }" @scroll.window="show = window.scrollY > 520"
+         x-effect="document.body.classList.toggle('has-action-bar', show)"
          x-show="show" x-cloak
          x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
          x-transition:leave="transition ease-in duration-150" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full"

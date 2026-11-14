@@ -52,3 +52,9 @@
   }
 }
 
+
+/* Floating WhatsApp button moves above a mobile bottom action bar while that bar is visible */
+.wa-float { transition: bottom 0.2s ease; }
+@media (max-width: 639px) {
+    body.has-action-bar .wa-float { bottom: 6rem; }
+}
