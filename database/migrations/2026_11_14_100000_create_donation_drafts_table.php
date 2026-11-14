@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('donation_drafts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->json('data');
-            $table->json('foto_path');
+            $table->text('data'); // text, not json: production runs an older MySQL without the JSON type
+            $table->text('foto_path');
             $table->timestamps();
         });
     }
