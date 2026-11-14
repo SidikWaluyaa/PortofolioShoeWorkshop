@@ -120,7 +120,7 @@
                                     </h1>
                                 </div>
 
-                                <p class="text-sm lg:text-base xl:text-lg text-white/90 leading-relaxed font-normal max-w-[90%]">
+                                <p class="text-sm lg:text-base xl:text-lg text-white/90 leading-relaxed font-normal max-w-[30rem] xl:max-w-[34rem]">
                                     {{ $hero->subtitle }}
                                 </p>
 
@@ -196,16 +196,6 @@
                                         </div>
                                     </div>
                                     
-                                    {{-- Card 2: Portfolio/Impact --}}
-                                    <div class="absolute bottom-8 right-12 xl:right-16 z-20 flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md border border-white/20 animate-float-delayed pointer-events-auto">
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-inner">
-                                            <span class="material-symbols-outlined !text-xl text-[#22AF85] fill-1">payments</span>
-                                        </div>
-                                        <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">Bayar Jasa Saja</span>
-                                            <span class="text-[10px] font-bold text-[#FFC232] xl:text-xs drop-shadow-sm">Bukan Harga Sepatu</span>
-                                        </div>
-                                    </div>
 
                                     {{-- Card 3: Moved from under buttons --}}
                                     <div class="absolute top-10 right-4 xl:right-10 z-20 flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md border border-white/20 animate-float pointer-events-auto" style="animation-delay: 1.5s;">
@@ -316,16 +306,6 @@
                                             <div class="flex flex-col text-left">
                                                 <span class="text-[11px] font-black text-white drop-shadow-md">{{ number_format($catalogCount, 0, ',', '.') }} Sepatu</span>
                                                 <span class="text-[9px] font-semibold text-white/90 drop-shadow-sm">Di Katalog Adopsi</span>
-                                            </div>
-                                        </div>
-                                        {{-- Card 2 --}}
-                                        <div class="absolute bottom-2 -right-2 sm:right-4 z-20 flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 shadow-lg backdrop-blur-md border border-white/20 animate-float-delayed pointer-events-none scale-90 sm:scale-100 origin-bottom-right">
-                                            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-inner">
-                                                <span class="material-symbols-outlined !text-base text-[#22AF85] fill-1">payments</span>
-                                            </div>
-                                            <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">Bayar Jasa Saja</span>
-                                                <span class="text-[9px] font-bold text-[#FFC232] drop-shadow-sm">Bukan Harga Sepatu</span>
                                             </div>
                                         </div>
                                         {{-- Card 3 --}}
