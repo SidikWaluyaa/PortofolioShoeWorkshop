@@ -28,16 +28,16 @@
         </div>
         <div class="content">
             <div class="greeting">Halo, {{ $notifiable->name ?? 'Member Baru' }}! 👋</div>
-            <p>Terima kasih telah mendaftar di Shoe Workshop. Untuk memastikan keamanan akun Anda dan mulai menggunakan fitur kami, silakan verifikasi alamat email Anda.</p>
+            <p>Terima kasih telah mendaftar di Shoe Workshop. Supaya akunmu aman dan kamu bisa mulai memakai fitur kami, verifikasi dulu alamat emailmu.</p>
             
             <div class="btn-wrapper">
                 <a href="{{ $url }}" class="btn">Verifikasi Email Saya</a>
             </div>
 
-            <p>Jika Anda tidak merasa membuat akun ini, Anda dapat mengabaikan email ini dengan aman.</p>
+            <p>Kalau kamu tidak merasa membuat akun ini, abaikan saja email ini.</p>
 
             <div class="link-text">
-                Jika Anda kesulitan mengklik tombol "Verifikasi Email Saya", salin dan tempel URL di bawah ini ke browser web Anda:<br>
+                Kalau tombol "Verifikasi Email Saya" tidak bisa diklik, salin dan tempel URL di bawah ini ke browsermu:<br>
                 <a href="{{ $url }}">{{ $url }}</a>
             </div>
         </div>

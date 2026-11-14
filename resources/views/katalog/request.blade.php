@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('hide_whatsapp', '1')
 @section('seo_title', 'Ajukan Adopsi ' . $item->nama . ' · Adapt & Adopt by ShoeWorkshop')
 @section('seo_description', 'Form permohonan adopsi ' . $item->nama . ' dari Shoe Workshop.')
 
@@ -433,9 +434,9 @@
                                     </label>
                                 @endforeach
                             </div>
-                            <div class="bg-[#1c1c17] text-white px-4 py-3 flex justify-between items-center">
-                                <span class="text-sm font-bold uppercase tracking-wider">Total Biaya Jasa (di luar ongkir)</span>
-                                <span class="text-lg font-black text-aa-green" x-text="formattedTotal"></span>
+                            <div class="bg-aa-green text-aa-beige px-4 py-3 flex justify-between items-center gap-3">
+                                <span class="text-xs sm:text-sm font-bold uppercase tracking-wider leading-tight">Total biaya jasa<span class="block text-[10px] font-semibold normal-case tracking-normal text-aa-beige/70">di luar ongkos kirim</span></span>
+                                <span class="text-lg font-black text-aa-beige whitespace-nowrap" x-text="formattedTotal"></span>
                             </div>
                         </div>
                         @endif
@@ -474,8 +475,8 @@
                         <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Biaya Transparan</span>
                     </div>
                     <div class="flex items-center gap-1.5 sm:gap-2">
-                        <span class="material-symbols-outlined !text-[18px] sm:!text-[22px]">eco</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Ramah Lingkungan</span>
+                        <span class="material-symbols-outlined !text-[18px] sm:!text-[22px]">verified</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Dikurasi Tim Kami</span>
                     </div>
                 </div>
             </div>

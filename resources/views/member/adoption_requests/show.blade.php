@@ -440,9 +440,9 @@
                                         Tidak ada jasa berbayar yang dipilih.
                                     </div>
                                 @endif
-                                <div class="bg-gray-900 px-5 py-4 flex justify-between items-center">
-                                    <span class="font-bold text-gray-400 text-[10px] uppercase tracking-wider">Total Pembayaran · di luar ongkir</span>
-                                    <span class="text-xl font-black text-aa-green">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
+                                <div class="bg-aa-green px-5 py-4 flex justify-between items-center gap-3">
+                                    <span class="font-bold text-aa-beige/80 text-[10px] uppercase tracking-wider leading-tight">Total pembayaran<span class="block normal-case tracking-normal font-semibold text-aa-beige/60">di luar ongkos kirim</span></span>
+                                    <span class="text-xl font-black text-aa-beige whitespace-nowrap">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>

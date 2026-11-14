@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('hide_whatsapp', '1')
 @section('seo_title', 'Donasikan Sepatu · Adapt & Adopt by ShoeWorkshop')
 @section('seo_description', 'Donasikan sepatu yang sudah tidak kamu pakai lewat Adapt & Adopt by ShoeWorkshop. Isi data dan foto sepatu, tim kami meninjaunya dalam 1–2 hari kerja.')
 

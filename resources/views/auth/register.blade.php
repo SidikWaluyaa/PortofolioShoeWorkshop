@@ -11,7 +11,7 @@
 
     <!-- Heading -->
     <h1>Bergabung sebagai Member</h1>
-    <p class="subtitle">Daftarkan akun Anda untuk mulai berdonasi sepatu dan melacak riwayat reparasi secara real‑time.</p>
+    <p class="subtitle">Buat akunmu untuk berdonasi, mengadopsi sepatu, dan memantau reparasi secara real‑time.</p>
     @include('auth.partials.donation-draft-note')
 
     <form method="POST" action="{{ route('register') }}" style="margin-top:1.5rem;">
@@ -21,7 +21,7 @@
         <div style="margin-bottom:1.125rem;">
             <label for="name" class="auth-label">Nama Lengkap</label>
             <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
-                   class="auth-input" placeholder="Masukkan nama lengkap Anda">
+                   class="auth-input" placeholder="Masukkan nama lengkapmu">
             @error('name')
                 <p class="auth-error">{{ $message }}</p>
             @enderror

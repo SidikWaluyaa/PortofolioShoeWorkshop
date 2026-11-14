@@ -17,6 +17,11 @@ class RewardController extends Controller
 
     public function index()
     {
+        // While the Rewards menu is hidden (check-in off, no donation reward, nothing claimed) the page stays closed too
+        if (!\App\Support\MemberFeatures::rewardsVisible(Auth::user())) {
+            return redirect()->route('member.dashboard');
+        }
+
         $userId = Auth::id();
         $streakStatus = $this->checkinService->getStreakStatus($userId);
         

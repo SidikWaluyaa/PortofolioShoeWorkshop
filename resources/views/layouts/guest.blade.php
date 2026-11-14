@@ -271,7 +271,7 @@
                             & Reparasi.
                         </h2>
                         <p style="font-size:0.85rem;color:#9ca3af;line-height:1.7;">
-                            Donasikan sepatu, adopsi sepatu hasil restorasi, dan pantau reparasi Anda secara real‑time dalam satu akun.
+                            Donasikan sepatu, adopsi sepatu hasil restorasi, dan pantau reparasimu secara real‑time dalam satu akun.
                         </p>
                     </div>
                 </div>

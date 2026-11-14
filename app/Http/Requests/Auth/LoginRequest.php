@@ -54,7 +54,7 @@ class LoginRequest extends FormRequest
             Auth::logout();
             
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda telah dinonaktifkan (suspended). Silakan hubungi Administrator.',
+                'email' => 'Akunmu sedang dinonaktifkan. Hubungi CS kami untuk bantuan.',
             ]);
         }
 
