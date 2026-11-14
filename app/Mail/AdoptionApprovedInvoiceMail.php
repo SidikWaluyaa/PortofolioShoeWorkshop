@@ -27,7 +27,7 @@ class AdoptionApprovedInvoiceMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Tagihan Adopsi Sepatu - ' . ($this->donationRequest->donationItem->nama ?? 'Shoe Workshop'),
+            subject: 'Tagihan adopsi ' . ($this->donationRequest->donationItem->nama ?? 'sepatu') . ' · Adapt & Adopt',
         );
     }
 

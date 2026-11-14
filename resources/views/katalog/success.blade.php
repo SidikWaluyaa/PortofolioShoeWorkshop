@@ -1,8 +1,9 @@
 @extends('layouts.main')
-@section('seo_title', 'Pengajuan Berhasil — Shoe Workshop')
-@section('seo_description', 'Permohonan adopsi Anda berhasil dikirim.')
+@section('seo_title', 'Pengajuan Terkirim · Adapt & Adopt by ShoeWorkshop')
+@section('seo_description', 'Permohonan adopsi kamu berhasil dikirim.')
 
 @section('head')
+@include('layouts.partials.aa-fonts')
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .fill-1 { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -45,7 +46,7 @@
     <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_110%,rgba(255,194,50,0.08),transparent_45%)]"></div>
 </div>
 
-<div class="min-h-screen flex flex-col bg-[#f8f9fa] text-[#1c1c17]">
+<div class="min-h-screen flex flex-col bg-aa-white text-[#1c1c17]">
 
     {{-- Minimal top bar --}}
     <header class="w-full border-b border-gray-200 bg-white/95 backdrop-blur-sm">
@@ -54,12 +55,12 @@
                 <div class="flex flex-col leading-tight">
                     <span class="text-base font-extrabold text-[#1c1c17]">Shoe Workshop</span>
                     <div class="flex h-0.5 w-full">
-                        <div class="w-1/2 bg-[#22AF85]"></div>
+                        <div class="w-1/2 bg-aa-green"></div>
                         <div class="w-1/2 bg-[#FFC232]"></div>
                     </div>
                 </div>
             </a>
-            <a href="{{ route('katalog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors flex items-center gap-1">
+            <a href="{{ route('katalog.index') }}" class="text-sm font-semibold text-gray-500 hover:text-aa-green transition-colors flex items-center gap-1">
                 <span class="material-symbols-outlined !text-[18px]">arrow_back</span>
                 Kembali ke Katalog
             </a>
@@ -73,15 +74,15 @@
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 text-center relative overflow-hidden">
 
                 {{-- Abstract decorative blob --}}
-                <div class="absolute -top-16 -right-16 w-48 h-48 bg-[#22AF85]/8 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -top-16 -right-16 w-48 h-48 bg-aa-green/8 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-[#FFC232]/10 rounded-full blur-2xl pointer-events-none"></div>
 
                 {{-- Success Icon --}}
                 <div class="relative mb-5 sm:mb-6 flex justify-center fade-up">
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="w-24 h-24 sm:w-28 sm:h-28 bg-[#22AF85]/15 rounded-full success-ring"></div>
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 bg-aa-green/15 rounded-full success-ring"></div>
                     </div>
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#22AF85] rounded-full flex items-center justify-center text-white relative z-10 shadow-lg shadow-[#22AF85]/30 success-check">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-aa-green rounded-full flex items-center justify-center text-white relative z-10 shadow-lg shadow-aa-green/30 success-check">
                         <span class="material-symbols-outlined !text-[38px] sm:!text-[48px] fill-1" style="font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48;">check_circle</span>
                     </div>
                 </div>
@@ -93,13 +94,13 @@
                 </div>
 
                 {{-- Headline --}}
-                <h1 class="text-xl sm:text-2xl font-extrabold text-[#22AF85] mb-3 fade-up delay-100">
+                <h1 class="text-xl sm:text-2xl font-extrabold text-aa-green mb-3 fade-up delay-100">
                     Pengajuan Berhasil Terkirim!
                 </h1>
 
                 {{-- Description --}}
                 <p class="text-xs sm:text-sm text-gray-500 leading-relaxed mb-5 sm:mb-7 px-0 sm:px-2 fade-up delay-200">
-                    Data permohonan Anda untuk <strong class="text-[#1c1c17]">{{ $itemNama }}</strong> telah tersimpan dengan aman di sistem kami.
+                    Data permohonan kamu untuk <strong class="text-[#1c1c17]">{{ $itemNama }}</strong> telah tersimpan dengan aman di sistem kami.
                     Untuk melanjutkan proses verifikasi, silakan hubungi WhatsApp Admin Shoe Workshop.
                 </p>
 
@@ -110,7 +111,7 @@
                             <span class="w-2 h-2 rounded-full bg-[#25D366]"></span>
                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Preview Pesan WhatsApp</span>
                         </div>
-                        <button onclick="copyMessage()" class="flex items-center gap-1 text-[10px] font-bold text-[#22AF85] hover:opacity-75 transition-opacity" id="copyBtn">
+                        <button onclick="copyMessage()" class="flex items-center gap-1 text-[10px] font-bold text-aa-green hover:opacity-75 transition-opacity" id="copyBtn">
                             <span class="material-symbols-outlined !text-[14px]">content_copy</span>
                             Salin
                         </button>
@@ -119,7 +120,7 @@
                         {{-- Header line --}}
                         <p class="text-xs text-gray-600 italic leading-relaxed">
                             "Halo Admin Shoe Workshop, saya <span class="font-bold not-italic">{{ $pemohonNama }}</span> ingin mengonfirmasi permohonan adopsi saya dengan ID
-                            <span class="font-bold not-italic text-[#22AF85]">{{ $reqCode }}</span>."
+                            <span class="font-bold not-italic text-aa-green">{{ $reqCode }}</span>."
                         </p>
                         <div class="border-t border-gray-100 pt-2.5 space-y-1.5">
                             {{-- Detail Barang --}}
@@ -144,7 +145,7 @@
                                 <div class="flex gap-2 text-xs items-start pt-1">
                                     <span class="text-gray-400 font-semibold w-[90px] shrink-0">Link</span>
                                     <a href="{{ $itemUrl }}" target="_blank"
-                                       class="text-[#22AF85] font-semibold hover:underline break-all leading-snug">
+                                       class="text-aa-green font-semibold hover:underline break-all leading-snug">
                                         {{ $itemUrl }}
                                     </a>
                                 </div>
@@ -165,7 +166,7 @@
                         <span class="material-symbols-outlined !text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </a>
                     <a href="{{ route('katalog.index') }}"
-                       class="flex items-center justify-center gap-1.5 py-2.5 sm:py-3 text-sm font-semibold text-gray-500 hover:text-[#22AF85] transition-colors">
+                       class="flex items-center justify-center gap-1.5 py-2.5 sm:py-3 text-sm font-semibold text-gray-500 hover:text-aa-green transition-colors">
                         <span class="material-symbols-outlined !text-[18px]">grid_view</span>
                         Kembali ke Katalog
                     </a>

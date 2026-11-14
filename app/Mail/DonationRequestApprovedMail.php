@@ -28,7 +28,7 @@ class DonationRequestApprovedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Permohonan Adopsi Anda Disetujui! 🎉',
+            subject: 'Pengajuan adopsi kamu disetujui · Adapt & Adopt',
         );
     }
 

@@ -129,6 +129,7 @@
         }
     </style>
     @yield('head')
+    @stack('head')
 
     {{-- Structured Data (JSON-LD) --}}
     @yield('schema_json')

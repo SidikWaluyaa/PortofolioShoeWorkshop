@@ -13,8 +13,22 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Plus Jakarta Sans', 'Figtree', ...defaultTheme.fontFamily.sans],
+                // Adapt & Adopt program headings; body text stays Plus Jakarta Sans
+                aa: ['Bricolage Grotesque', 'Plus Jakarta Sans', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                // Adapt & Adopt brand guideline v1.0 (sistem warna), used only in the program area
+                aa: {
+                    green: '#0F3D3B',
+                    'green-dark': '#0A2C2A',
+                    burgundy: '#6C1420',
+                    'burgundy-dark': '#540F19',
+                    beige: '#F5DABF',
+                    white: '#FBF6EF',
+                    ink: '#1E1B1A',
+                    neutral: '#6F6660',
+                    sage: '#8FB5AE',
+                },
                 "tertiary-fixed-dim": "#c6c6c7",
                 "secondary-fixed": "#ffdea2",
                 "secondary-container": "#fcc02f",

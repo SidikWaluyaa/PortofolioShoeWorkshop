@@ -26,7 +26,7 @@ class AdoptionAvailableAgainMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '🔔 Sepatu Incaranmu Tersedia Lagi! - Shoe Workshop',
+            subject: 'Sepatu yang kamu ajukan tersedia lagi · Adapt & Adopt',
         );
     }
 

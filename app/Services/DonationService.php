@@ -6,41 +6,80 @@ use App\Helpers\ImageCompressionHelper;
 use App\Models\Donation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\DonationSubmittedMail;
+use App\Models\User;
+use App\Notifications\SystemNotification;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class DonationService
 {
     /**
-     * Create a new donation submission from a user.
+     * Create a new donation submission from the signed-in user.
      */
     public function create(array $data, mixed $foto): Donation
     {
         $fotoPaths = [];
-        if (is_array($foto)) {
-            foreach ($foto as $file) {
-                $fotoPaths[] = ImageCompressionHelper::compressAndStore($file, 'donations/sepatu');
-            }
-        } else {
-            $fotoPaths[] = ImageCompressionHelper::compressAndStore($foto, 'donations/sepatu');
+        foreach (is_array($foto) ? $foto : [$foto] as $file) {
+            $fotoPaths[] = ImageCompressionHelper::compressAndStore($file, 'donations/sepatu');
         }
 
-        $donation = Donation::create([
-            'user_id' => Auth::id(),
+        return $this->createWithPhotos(Auth::user(), $data, $fotoPaths);
+    }
+
+    /**
+     * Create a donation from photos already on the public disk (a draft saved before the donor signed in).
+     */
+    public function createWithPhotos(User $user, array $data, array $fotoPaths): Donation
+    {
+        return Donation::create([
+            'user_id' => $user->id,
             'nama_sepatu' => $data['nama_sepatu'],
             'brand' => $data['brand'] ?? null,
             'ukuran' => $data['ukuran'],
             'kondisi' => $data['kondisi'],
             'harga' => $data['harga'] ?? 0,
             'deskripsi' => $data['deskripsi'] ?? null,
-            'foto_path' => $fotoPaths,
+            'foto_path' => array_values($fotoPaths),
             'metode_pengiriman' => 'ekspedisi', // Placeholder until user inputs it later
             'nama_ekspedisi' => null,
             'no_resi' => null,
             'status' => 'pending',
         ]);
-        
-        // Note: Email notification moved to approve method
-        
-        return $donation;
+    }
+
+    /**
+     * Tell the donor (in-app and by email) and the admins that a new donation came in.
+     */
+    public function announceSubmitted(Donation $donation): void
+    {
+        $donor = $donation->user;
+
+        $donor->notify(new SystemNotification(
+            'Donasi Terkirim',
+            "Donasi {$donation->nama_sepatu} sedang ditinjau tim kami, biasanya 1–2 hari kerja. Terima kasih sudah berbagi!",
+            route('member.donations.index'),
+            'volunteer_activism',
+            'info'
+        ));
+
+        try {
+            Mail::to($donor->email)->send(new DonationSubmittedMail($donation));
+        } catch (\Exception $e) {
+            Log::error('Failed to send donation submitted email: ' . $e->getMessage());
+        }
+
+        $admins = User::where('role', 'admin')->get();
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new SystemNotification(
+                'Donasi Baru Masuk!',
+                'Ada pengajuan donasi sepatu baru dari ' . $donor->name . '. Segera cek di halaman donasi.',
+                route('admin.donations.index'),
+                'volunteer_activism',
+                'info'
+            ));
+        }
     }
 
     /**
@@ -82,7 +121,7 @@ class DonationService
         if ($donation->user) {
             $donation->user->notify(new \App\Notifications\SystemNotification(
                 'Donasi Disetujui!',
-                "Terima kasih! Pengajuan donasi sepatu {$donation->nama_sepatu} Anda telah kami setujui. Silakan cek email Anda untuk instruksi pengiriman.",
+                "Terima kasih! Pengajuan donasi sepatu {$donation->nama_sepatu} kamu telah kami setujui. Silakan cek email kamu untuk instruksi pengiriman.",
                 route('member.donations.index'),
                 'volunteer_activism',
                 'success'
@@ -119,7 +158,7 @@ class DonationService
         if ($donation->user) {
             $donation->user->notify(new \App\Notifications\SystemNotification(
                 'Sepatu Diterima!',
-                "Terima kasih! Sepatu {$donation->nama_sepatu} Anda telah kami terima di workshop dan masuk antrean restorasi.",
+                "Terima kasih! Sepatu {$donation->nama_sepatu} kamu telah kami terima di workshop dan masuk antrean restorasi.",
                 route('member.donations.index'),
                 'volunteer_activism',
                 'success'
@@ -154,7 +193,7 @@ class DonationService
         if ($donation->user) {
             $donation->user->notify(new \App\Notifications\SystemNotification(
                 'Donasi Ditolak',
-                "Mohon maaf, donasi {$donation->nama_sepatu} Anda belum dapat kami terima. Cek catatan admin.",
+                "Mohon maaf, donasi {$donation->nama_sepatu} kamu belum dapat kami terima. Cek catatan admin.",
                 route('member.donations.index'),
                 'cancel',
                 'error'
@@ -210,7 +249,7 @@ class DonationService
         if ($donation->user) {
             $donation->user->notify(new \App\Notifications\SystemNotification(
                 'Sepatu Masuk Katalog!',
-                "Sepatu donasi Anda {$donation->nama_sepatu} telah direstorasi dan kini terpajang di Katalog!",
+                "Sepatu donasi kamu {$donation->nama_sepatu} telah direstorasi dan kini terpajang di Katalog!",
                 route('member.donations.index'),
                 'storefront',
                 'success'

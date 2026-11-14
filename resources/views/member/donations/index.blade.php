@@ -19,7 +19,7 @@
     }">
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <p class="text-sm text-gray-500">Pantau donasi sepatumu dan selesaikan langkah berikutnya di sini.</p>
-            <a href="{{ route('member.donations.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/25">
+            <a href="{{ route('member.donations.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-aa-green text-white text-sm font-bold rounded-xl hover:bg-aa-green transition shadow-lg shadow-aa-green/25">
                 <span class="material-symbols-outlined !text-[18px]">add</span>
                 Donasi Baru
             </a>
@@ -27,12 +27,12 @@
 
         @if($donations->isEmpty())
             <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-10 sm:p-12 text-center">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-emerald-50 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-emerald-400 !text-[40px]">volunteer_activism</span>
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-aa-beige/40 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-aa-sage !text-[40px]">volunteer_activism</span>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 mb-2">Belum ada donasi</h3>
                 <p class="text-sm text-gray-500 max-w-md mx-auto">Punya sepatu yang masih layak tapi sudah tidak dipakai? Kami restorasi dan salurkan ke pemilik baru. Kami menerima sepatu dengan kelayakan di atas {{ \App\Models\Donation::MIN_KONDISI }}%.</p>
-                <a href="{{ route('member.donations.create') }}" class="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition">Donasikan Sepatu Pertama</a>
+                <a href="{{ route('member.donations.create') }}" class="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-aa-green text-white text-sm font-bold rounded-xl hover:bg-aa-green transition">Donasikan Sepatu Pertama</a>
             </div>
         @else
             @php
@@ -42,7 +42,7 @@
                     'amber'   => ['box' => 'bg-amber-50 border-amber-200', 'icon' => 'bg-amber-500', 'title' => 'text-amber-900', 'text' => 'text-amber-800'],
                     'purple'  => ['box' => 'bg-purple-50 border-purple-200', 'icon' => 'bg-purple-600', 'title' => 'text-purple-900', 'text' => 'text-purple-800'],
                     'blue'    => ['box' => 'bg-blue-50 border-blue-200', 'icon' => 'bg-blue-600', 'title' => 'text-blue-900', 'text' => 'text-blue-800'],
-                    'emerald' => ['box' => 'bg-emerald-50 border-emerald-200', 'icon' => 'bg-[#22AF85]', 'title' => 'text-emerald-900', 'text' => 'text-emerald-800'],
+                    'emerald' => ['box' => 'bg-aa-beige/40 border-aa-beige', 'icon' => 'bg-aa-green', 'title' => 'text-aa-green', 'text' => 'text-aa-green'],
                     'red'     => ['box' => 'bg-red-50 border-red-100', 'icon' => 'bg-red-500', 'title' => 'text-red-900', 'text' => 'text-red-700'],
                 ];
             @endphp
@@ -122,10 +122,10 @@
                                         @endphp
                                         <li class="flex-1 flex flex-col items-center text-center relative">
                                             @if(!$loop->first)
-                                                <span class="absolute top-[11px] right-1/2 w-full h-0.5 {{ $index <= $current ? 'bg-[#22AF85]' : 'bg-gray-200' }}"></span>
+                                                <span class="absolute top-[11px] right-1/2 w-full h-0.5 {{ $index <= $current ? 'bg-aa-green' : 'bg-gray-200' }}"></span>
                                             @endif
                                             <span class="relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black
-                                                {{ $done ? 'bg-[#22AF85] text-white' : ($active ? 'bg-white text-[#22AF85] ring-2 ring-[#22AF85]' : 'bg-gray-100 text-gray-400') }}">
+                                                {{ $done ? 'bg-aa-green text-white' : ($active ? 'bg-white text-aa-green ring-2 ring-aa-green' : 'bg-gray-100 text-gray-400') }}">
                                                 @if($done)
                                                     <span class="material-symbols-outlined !text-[14px]">check</span>
                                                 @else
@@ -158,14 +158,14 @@
                                 @if($ctaModal)
                                     <button type="button" @click="openResiModal({{ $resiArgs }})"
                                             class="mt-4 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition
-                                                   {{ $primary ? 'bg-[#22AF85] hover:bg-[#1a936f] text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
+                                                   {{ $primary ? 'bg-aa-green hover:bg-aa-green-dark text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
                                         {{ $ctaLabel }}
                                         <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                                     </button>
                                 @elseif($ctaLabel && $ctaUrl)
                                     <a href="{{ $ctaUrl }}"
                                        class="mt-4 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition
-                                              {{ $primary ? 'bg-[#22AF85] hover:bg-[#1a936f] text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
+                                              {{ $primary ? 'bg-aa-green hover:bg-aa-green-dark text-white shadow-sm' : 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200' }}">
                                         {{ $ctaLabel }}
                                         <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                                     </a>
@@ -173,8 +173,8 @@
 
                                 {{-- Only while management runs a donation reward --}}
                                 @if($canClaimReward)
-                                    <a href="{{ route('member.rewards.index') }}" class="mt-3 flex items-center justify-between gap-3 rounded-xl bg-white/80 border border-emerald-100 px-4 py-3 text-xs font-bold text-emerald-800 hover:bg-white transition">
-                                        <span class="flex items-center gap-2"><span class="material-symbols-outlined !text-[18px] text-emerald-600">redeem</span>Donasi ini bisa ditukar dengan reward</span>
+                                    <a href="{{ route('member.rewards.index') }}" class="mt-3 flex items-center justify-between gap-3 rounded-xl bg-white/80 border border-aa-beige px-4 py-3 text-xs font-bold text-aa-green hover:bg-white transition">
+                                        <span class="flex items-center gap-2"><span class="material-symbols-outlined !text-[18px] text-aa-green">redeem</span>Donasi ini bisa ditukar dengan reward</span>
                                         <span class="material-symbols-outlined !text-[18px]">arrow_forward</span>
                                     </a>
                                 @endif
@@ -234,9 +234,9 @@
                                 <label class="relative cursor-pointer" @click="metodePengiriman = 'antar_langsung'">
                                     <input type="radio" name="metode_pengiriman" value="antar_langsung" class="peer sr-only" x-model="metodePengiriman">
                                     <div class="p-3 rounded-xl border transition-all"
-                                         :class="metodePengiriman === 'antar_langsung' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300'">
+                                         :class="metodePengiriman === 'antar_langsung' ? 'border-aa-green bg-aa-beige/40' : 'border-gray-200 hover:border-gray-300'">
                                         <div class="text-center">
-                                            <span class="material-symbols-outlined text-xl text-emerald-600 block mx-auto">home</span>
+                                            <span class="material-symbols-outlined text-xl text-aa-green block mx-auto">home</span>
                                             <p class="text-xs font-bold text-gray-900 mt-1">Antar Langsung</p>
                                         </div>
                                     </div>
@@ -244,9 +244,9 @@
                                 <label class="relative cursor-pointer" @click="metodePengiriman = 'ekspedisi'">
                                     <input type="radio" name="metode_pengiriman" value="ekspedisi" class="peer sr-only" x-model="metodePengiriman">
                                     <div class="p-3 rounded-xl border transition-all"
-                                         :class="metodePengiriman === 'ekspedisi' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300'">
+                                         :class="metodePengiriman === 'ekspedisi' ? 'border-aa-green bg-aa-beige/40' : 'border-gray-200 hover:border-gray-300'">
                                         <div class="text-center">
-                                            <span class="material-symbols-outlined text-xl text-emerald-600 block mx-auto">local_shipping</span>
+                                            <span class="material-symbols-outlined text-xl text-aa-green block mx-auto">local_shipping</span>
                                             <p class="text-xs font-bold text-gray-900 mt-1">Ekspedisi</p>
                                         </div>
                                     </div>
@@ -254,7 +254,7 @@
                             </div>
                         </div>
 
-                        <div x-show="metodePengiriman === 'antar_langsung'" x-transition class="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
+                        <div x-show="metodePengiriman === 'antar_langsung'" x-transition class="mb-4 p-4 bg-aa-beige/40 border border-aa-beige rounded-xl text-xs text-aa-green">
                             <p class="font-bold mb-1">Antar ke:</p>
                             <p>{{ $globalSettings['address'] ?? 'Jl. Kembar I No.41, Cigereleng, Kec. Regol, Kota Bandung' }}</p>
                             <p class="mt-1">Senin–Sabtu, 09.00–17.00 WIB (Minggu tutup)</p>
@@ -264,14 +264,14 @@
                             <div>
                                 <label for="modal_nama_ekspedisi" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nama Ekspedisi <span class="text-red-500">*</span></label>
                                 <input type="text" name="nama_ekspedisi" id="modal_nama_ekspedisi" x-model="namaEkspedisi" :required="metodePengiriman === 'ekspedisi'"
-                                       class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-aa-green focus:border-aa-green transition"
                                        placeholder="Contoh: JNE, J&T, SiCepat">
                             </div>
 
                             <div>
                                 <label for="modal_no_resi" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nomor Resi <span class="text-red-500">*</span></label>
                                 <input type="text" name="no_resi" id="modal_no_resi" x-model="noResi" :required="metodePengiriman === 'ekspedisi'"
-                                       class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-aa-green focus:border-aa-green transition"
                                        placeholder="Masukkan nomor resi">
                             </div>
                         </div>
@@ -280,7 +280,7 @@
                             <button type="button" @click="showModal = false" class="flex-1 py-2.5 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-100 transition">
                                 Batal
                             </button>
-                            <button type="submit" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-emerald-500/25">
+                            <button type="submit" class="flex-1 py-2.5 bg-aa-green hover:bg-aa-green text-white text-sm font-bold rounded-xl transition shadow-lg shadow-aa-green/25">
                                 Simpan Info Pengiriman
                             </button>
                         </div>

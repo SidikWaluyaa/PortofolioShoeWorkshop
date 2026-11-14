@@ -12,6 +12,7 @@
     <!-- Heading -->
     <h1>Bergabung sebagai Member</h1>
     <p class="subtitle">Daftarkan akun Anda untuk mulai berdonasi sepatu dan melacak riwayat reparasi secara real‑time.</p>
+    @include('auth.partials.donation-draft-note')
 
     <form method="POST" action="{{ route('register') }}" style="margin-top:1.5rem;">
         @csrf

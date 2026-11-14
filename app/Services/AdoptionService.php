@@ -7,6 +7,7 @@ use App\Mail\AdoptionApprovedInvoiceMail;
 use App\Mail\AdoptionAvailableAgainMail;
 use App\Mail\AdoptionCompletedMail;
 use App\Mail\AdoptionOnHoldMail;
+use App\Mail\AdoptionReserveMail;
 use App\Mail\AdoptionProcessingMail;
 use App\Mail\AdoptionTakenMail;
 use App\Mail\DonationRequestRejectedMail;
@@ -82,7 +83,7 @@ class AdoptionService
             }
             $expectedItemStatus = self::curationMode() ? 'dipesan' : 'tersedia';
             if (!$item || $item->status !== $expectedItemStatus) {
-                throw new AdoptionConflictException('Maaf, sepatu ini sedang dipesan atau sudah diadopsi pemohon lain. Mohon jangan melakukan transfer dulu, kami akan mengabari Anda.');
+                throw new AdoptionConflictException('Maaf, sepatu ini sedang dipesan atau sudah diadopsi pemohon lain. Mohon jangan melakukan transfer dulu, kami akan mengabari kamu.');
             }
 
             // Serialize one member's payments so two shoes can't be paid for at the same time
@@ -90,7 +91,7 @@ class AdoptionService
                 User::lockForUpdate()->find($locked->user_id);
             }
             if ($locked->otherOrderInProgress()) {
-                throw new AdoptionConflictException('Selesaikan pesanan Anda yang lain dulu. Anda baru dapat membayar sepatu ini setelah pesanan sebelumnya selesai diverifikasi dan diproses.');
+                throw new AdoptionConflictException('Selesaikan pesanan kamu yang lain dulu. Kamu baru dapat membayar sepatu ini setelah pesanan sebelumnya selesai diverifikasi dan diproses.');
             }
         });
     }
@@ -129,7 +130,7 @@ class AdoptionService
 
             $locked->update(array_merge($attributes, ['status' => $newStatus]));
 
-            $affected = ['on_hold' => collect(), 'taken' => collect(), 'available' => collect()];
+            $affected = ['on_hold' => collect(), 'reserve' => collect(), 'taken' => collect(), 'available' => collect()];
             if (!$item || $oldStatus === $newStatus) {
                 return [$locked, $oldStatus, $item, $affected];
             }
@@ -142,6 +143,11 @@ class AdoptionService
 
             if ($newHold === 'dipesan' && !$oldHold) {
                 $affected['on_hold'] = $this->waitingRequests($locked, ['menunggu_pembayaran']);
+            }
+
+            // Curation: the admin chose someone else, so the other requesters learn they are reserves
+            if ($newStatus === 'menunggu_pembayaran' && $newHold && !$oldHold) {
+                $affected['reserve'] = $this->waitingRequests($locked, ['pending']);
             }
 
             if ($newHold === 'disalurkan' && $oldHold !== 'disalurkan') {
@@ -224,14 +230,14 @@ class AdoptionService
 
         $name = $request->donationItem?->nama;
         $invoice = self::curationMode()
-            ? ['Selamat, Anda Terpilih!', "Anda terpilih untuk mengadopsi {$name}. Selesaikan pembayaran sebelum " . $request->batas_bayar?->translatedFormat('d M Y, H.i') . ' WIB.', 'celebration', 'success']
+            ? ['Selamat, Kamu Terpilih!', "Kamu terpilih untuk mengadopsi {$name}. Selesaikan pembayaran sebelum " . $request->batas_bayar?->translatedFormat('d M Y, H.i') . ' WIB.', 'celebration', 'success']
             : ['Tagihan Adopsi Terbit', "Tagihan adopsi untuk {$name} sudah terbit. Siapa cepat dia dapat, segera selesaikan pembayaran.", 'receipt_long', 'info'];
         $notification = match ($request->status) {
             'menunggu_pembayaran' => $invoice,
-            'menunggu_verifikasi' => ['Bukti Bayar Terkirim', "Bukti transfer untuk {$name} sudah kami terima dan sedang dicek admin. Sepatu sudah diamankan untuk Anda.", 'fact_check', 'info'],
-            'diproses'            => ['Pembayaran Divalidasi', "Pembayaran Anda untuk {$name} divalidasi. Sepatu sedang disiapkan.", 'inventory_2', 'info'],
-            'dikirim'             => ['Pesanan Dikirim', "Hore! {$name} Anda telah dikirim. Lacak sekarang!", 'local_shipping', 'success'],
-            'ditolak', 'dibatalkan' => ['Permohonan Dibatalkan/Ditolak', "Maaf, permohonan/tagihan Anda untuk {$name} telah dibatalkan atau ditolak.", 'cancel', 'error'],
+            'menunggu_verifikasi' => ['Bukti Bayar Terkirim', "Bukti transfer untuk {$name} sudah kami terima dan sedang dicek admin. Sepatu sudah diamankan untuk kamu.", 'fact_check', 'info'],
+            'diproses'            => ['Pembayaran Divalidasi', "Pembayaran kamu untuk {$name} divalidasi. Sepatu sedang disiapkan.", 'inventory_2', 'info'],
+            'dikirim'             => ['Pesanan Dikirim', "Hore! {$name} kamu telah dikirim. Lacak sekarang!", 'local_shipping', 'success'],
+            'ditolak', 'dibatalkan' => ['Permohonan Dibatalkan/Ditolak', "Maaf, permohonan/tagihan kamu untuk {$name} telah dibatalkan atau ditolak.", 'cancel', 'error'],
             default               => null,
         };
 
@@ -270,6 +276,7 @@ class AdoptionService
     private function notifyOthers(array $affected): array
     {
         $config = [
+            'reserve'   => [AdoptionReserveMail::class, 'Kamu Masuk Daftar Cadangan', 'Sepatu %s sudah ditawarkan ke pemohon lain. Kamu masuk daftar cadangan dan akan kami kabari kalau penerima sebelumnya batal. Mohon jangan transfer apa pun.', 'hourglass_top', 'info', '%d pemohon lain diberi tahu bahwa mereka menjadi cadangan.'],
             'on_hold'   => [AdoptionOnHoldMail::class, 'Sepatu Sedang Dipesan', 'Sepatu %s sedang dipesan pemohon lain dan menunggu verifikasi. Mohon jangan transfer dulu, kami kabari hasilnya.', 'hourglass_top', 'info', '%d pemohon lain diberi tahu bahwa sepatu sedang dipesan.'],
             'taken'     => [AdoptionTakenMail::class, 'Sepatu Sudah Diadopsi', 'Terima kasih sudah mengajukan. Sepatu %s sudah diadopsi pemohon lain. Yuk cari sepatu lain di katalog!', 'cancel', 'error', '%d permohonan lain otomatis ditolak karena sepatu sudah diadopsi.'],
             'available' => [AdoptionAvailableAgainMail::class, 'Sepatu Tersedia Lagi!', 'Sepatu %s tersedia lagi. Siapa cepat dia dapat, segera selesaikan pembayaran!', 'notifications_active', 'success', '%d pemohon lain diberi tahu bahwa sepatu tersedia lagi.'],
@@ -279,7 +286,7 @@ class AdoptionService
         foreach ($config as $key => [$mailClass, $title, $message, $icon, $type, $summary]) {
             foreach ($affected[$key] as $other) {
                 $text = $key === 'available' && $other->otherOrderInProgress()
-                    ? 'Sepatu %s tersedia lagi. Selesaikan pesanan Anda yang lain dulu sebelum membayar sepatu ini.'
+                    ? 'Sepatu %s tersedia lagi. Selesaikan pesanan kamu yang lain dulu sebelum membayar sepatu ini.'
                     : $message;
 
                 $other->user?->notify(new SystemNotification(

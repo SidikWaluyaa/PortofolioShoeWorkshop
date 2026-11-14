@@ -2,7 +2,7 @@
     <div class="col-span-full py-16 text-center space-y-4">
         <span class="material-symbols-outlined !text-[64px] text-gray-300">search_off</span>
         <h3 class="text-xl font-bold text-[#191c1d]">Barang Tidak Ditemukan</h3>
-        <p class="text-sm text-gray-500 max-w-sm mx-auto">Tidak ada sepatu yang cocok dengan pencarian, kategori, atau kondisi yang Anda pilih.</p>
+        <p class="text-sm text-gray-500 max-w-sm mx-auto">Tidak ada sepatu yang cocok dengan pencarian, kategori, atau kondisi yang kamu pilih.</p>
     </div>
 @else
     <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">
@@ -57,7 +57,7 @@
                         <div class="flex justify-between items-center gap-2 mb-2">
                             <!-- Status -->
                             @if($item->status === 'tersedia')
-                                <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-bold text-[9px] sm:text-[10px]">Tersedia</span>
+                                <span class="px-2 py-0.5 bg-aa-beige text-aa-green rounded-full font-bold text-[9px] sm:text-[10px]">Tersedia</span>
                             @else
                                 <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full font-bold text-[9px] sm:text-[10px]">Disalurkan</span>
                             @endif
@@ -77,7 +77,7 @@
                         </div>
 
                         <!-- Title -->
-                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-[#22AF85] transition-colors" title="{{ $item->nama }}">
+                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-aa-green transition-colors" title="{{ $item->nama }}">
                             @if($item->status === 'tersedia')
                                 <a href="{{ route('katalog.show', $item->id) }}">
                                     {{ $item->nama }}
@@ -89,7 +89,7 @@
 
                         <!-- Brand, Size & Price -->
                         <div class="flex justify-between items-center gap-2 mb-2">
-                            <p class="text-[#22AF85] font-bold text-[10px] sm:text-xs truncate">
+                            <p class="text-aa-green font-bold text-[10px] sm:text-xs truncate">
                                 Brand: {{ $item->brand ?? 'Generic' }} <span class="text-gray-300 font-normal mx-1">|</span> Size: {{ $item->ukuran ?? '-' }}
                             </p>
                             @if($item->jasa_harga_total > 0)
@@ -102,7 +102,7 @@
                         <!-- Specifications badges -->
                         <div class="flex flex-wrap gap-1 mb-3">
                             @if($item->jasa_nama)
-                                <span class="px-1.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded text-[9px] sm:text-[10px] font-bold truncate max-w-[120px]" title="{{ $item->jasa_nama }}">
+                                <span class="px-1.5 py-0.5 bg-aa-beige/40 text-aa-green border border-aa-beige rounded text-[9px] sm:text-[10px] font-bold truncate max-w-[120px]" title="{{ $item->jasa_nama }}">
                                     {{ $item->jasa_nama }}
                                 </span>
                             @endif
@@ -122,7 +122,7 @@
                     <!-- Button Action -->
                     <div class="pt-2">
                         @if($item->status === 'tersedia')
-                            <a href="{{ route('katalog.show', $item->id) }}" class="w-full py-2 sm:py-3 bg-[#22AF85] text-white rounded-lg font-bold text-xs sm:text-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-1.5">
+                            <a href="{{ route('katalog.show', $item->id) }}" class="w-full py-2 sm:py-3 bg-aa-green text-white rounded-lg font-bold text-xs sm:text-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-1.5">
                                 <span class="material-symbols-outlined !text-[16px] sm:text-[18px]">visibility</span>
                                 Lihat Detail
                             </a>
@@ -145,7 +145,7 @@
             </p>
             @if($items->hasMorePages())
                 <button id="load-more-btn" data-next-page="{{ $items->currentPage() + 1 }}"
-                        class="px-8 py-3.5 bg-[#22AF85] hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-[#22AF85]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        class="px-8 py-3.5 bg-aa-green hover:opacity-90 text-white rounded-xl font-bold text-sm shadow-md shadow-aa-green/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined !text-[18px]">expand_more</span>
                     Muat Lebih Banyak
                 </button>

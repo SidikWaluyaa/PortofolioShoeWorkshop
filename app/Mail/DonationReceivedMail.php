@@ -26,7 +26,7 @@ class DonationReceivedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Sepatu Donasi Anda Telah Kami Terima 💚 - Shoe Workshop',
+            subject: 'Sepatu donasimu sudah kami terima · Adapt & Adopt',
         );
     }
 

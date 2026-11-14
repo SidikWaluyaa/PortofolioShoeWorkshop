@@ -23,7 +23,7 @@
                 <p>Estimasi waktu pengerjaan (SLA) yang kami berikan adalah perkiraan. Waktu aktual dapat berubah sewaktu-waktu tergantung pada tingkat kerusakan, ketersediaan material, dan antrean pengerjaan di workshop kami. Segala kerusakan bawaan yang tidak dilaporkan atau terlihat saat serah terima barang bukan menjadi tanggung jawab Shoe Workshop.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">2. Pembayaran & Tagihan</h4>
-                <p>Pembayaran layanan perbaikan maupun biaya jasa restorasi (untuk sepatu adopsi) harus dilakukan secara penuh sesuai dengan tagihan yang tertera di sistem kami. Ongkos kirim sepatu adopsi tidak termasuk dalam tagihan, ditanggung oleh pemohon, dan ditagih terpisah oleh tim CS kami yang akan menghubungi Anda. Pembayaran dilakukan melalui transfer bank ke rekening resmi Shoe Workshop yang tercantum pada tagihan. Untuk adopsi sepatu, bukti transfer wajib diunggah melalui halaman Adopsi Saya untuk diverifikasi admin. Pesanan akan diproses atau dikirimkan HANYA setelah pembayaran terverifikasi.</p>
+                <p>Pembayaran layanan perbaikan maupun biaya jasa reparasi (untuk sepatu adopsi) harus dilakukan secara penuh sesuai dengan tagihan yang tertera di sistem kami. Ongkos kirim sepatu adopsi tidak termasuk dalam tagihan dan dikonfirmasi oleh tim CS kami setelah pembayaran. Pembayaran dilakukan melalui transfer bank ke rekening resmi Shoe Workshop yang tercantum pada tagihan. Untuk adopsi sepatu, bukti transfer wajib diunggah melalui halaman Adopsi Saya untuk diverifikasi admin. Pesanan akan diproses atau dikirimkan HANYA setelah pembayaran terverifikasi.</p>
                 
                 <h4 class="font-bold text-gray-900 text-xl mt-8">3. Kebijakan Pengembalian Dana (Refund Policy)</h4>
                 <p>Pengembalian dana (refund) HANYA dapat diproses dalam kondisi berikut:</p>
@@ -39,6 +39,18 @@
                 <h4 class="font-bold text-gray-900 text-xl mt-8">5. Pengambilan & Pengiriman Barang</h4>
                 <p>Sepatu yang tidak diambil lebih dari 30 hari kalender sejak pemberitahuan selesai berisiko disumbangkan atau tidak lagi menjadi tanggung jawab kami. Kerusakan atau kehilangan selama proses pengiriman oleh pihak ketiga (kurir/ekspedisi logistik) sepenuhnya merupakan tanggung jawab pihak ekspedisi.</p>
                 
+                <h4 id="adapt-adopt" class="font-bold text-gray-900 text-xl mt-8 scroll-mt-24">6. Program Adapt &amp; Adopt by ShoeWorkshop</h4>
+                <p>Adapt &amp; Adopt adalah program donasi dan adopsi sepatu. Ketentuan berikut berlaku khusus untuk program ini:</p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Kurasi donasi.</strong> Sepatu donasi diterima jika kondisinya minimal 70% menurut kurasi tim kami. Donasi online dikurasi dari foto, lalu diperiksa ulang saat sepatu tiba. Donasi di store dikurasi langsung di tempat.</li>
+                    <li><strong>Pengiriman donasi.</strong> Setelah lolos kurasi, sepatu dikirim pendonor lewat ekspedisi atau diantar langsung ke store kami.</li>
+                    <li><strong>Apresiasi pendonor.</strong> Bentuk apresiasi untuk pendonor menyesuaikan hasil kurasi sepatu yang didonasikan.</li>
+                    <li><strong>Biaya adopsi.</strong> Pengadopsi tidak membayar harga sepatu. Yang dibayar adalah biaya jasa reparasi yang sudah dikerjakan pada sepatu tersebut, sesuai yang tercantum di Katalog Adopsi.</li>
+                    <li><strong>Pemilihan penerima.</strong> Satu sepatu bisa diajukan beberapa orang. Tim kami memilih satu penerima dengan mempertimbangkan alasan dan urutan waktu pengajuan. Pemohon lain menjadi cadangan.</li>
+                    <li><strong>Batas pembayaran.</strong> Penerima terpilih wajib membayar dalam 2×24 jam sejak dinyatakan terpilih. Jika lewat, pengajuan dibatalkan dan sepatu dialihkan ke pemohon cadangan.</li>
+                    <li><strong>Tanpa komplain dan garansi.</strong> Tidak ada komplain maupun garansi untuk sepatu adopsi. Kondisi sepatu sudah ditampilkan di Katalog Adopsi sebelum kamu mengajukan.</li>
+                </ul>
+
                 <div class="mt-12 pt-8 border-t border-gray-100 flex items-center justify-between">
                     <p class="text-sm text-gray-400 font-medium">Terakhir diperbarui: {{ date('d F Y') }}</p>
                     <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-[#22AF85] hover:text-[#198f6b] font-bold transition-colors">

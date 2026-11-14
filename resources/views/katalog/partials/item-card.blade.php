@@ -47,7 +47,7 @@
             <div class="flex justify-between items-center gap-2 mb-2">
                 <!-- Status -->
                 @if($item->status === 'tersedia')
-                    <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-bold text-[9px] sm:text-[10px]">Tersedia</span>
+                    <span class="px-2 py-0.5 bg-aa-beige text-aa-green rounded-full font-bold text-[9px] sm:text-[10px]">Tersedia</span>
                 @else
                     <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full font-bold text-[9px] sm:text-[10px]">Disalurkan</span>
                 @endif
@@ -67,7 +67,7 @@
             </div>
 
             <!-- Title -->
-            <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-[#22AF85] transition-colors" title="{{ $item->nama }}">
+            <h4 class="font-bold text-sm sm:text-base md:text-lg text-[#191c1d] mb-1 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[3rem] hover:text-aa-green transition-colors" title="{{ $item->nama }}">
                 @if($item->status === 'tersedia')
                     <a href="{{ route('katalog.show', $item->id) }}">
                         {{ $item->nama }}
@@ -79,7 +79,7 @@
 
             <!-- Brand & Price -->
             <div class="flex justify-between items-center gap-2 mb-2">
-                <p class="text-[#22AF85] font-bold text-[10px] sm:text-xs truncate">
+                <p class="text-aa-green font-bold text-[10px] sm:text-xs truncate">
                     Brand: {{ $item->brand ?? 'Generic' }}
                 </p>
                 @if($item->jasa_harga_total > 0)
@@ -98,7 +98,7 @@
         <!-- Button Action -->
         <div class="pt-2">
             @if($item->status === 'tersedia')
-                <a href="{{ route('katalog.show', $item->id) }}" class="w-full py-2 sm:py-3 bg-[#22AF85] text-white rounded-lg font-bold text-xs sm:text-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-1.5">
+                <a href="{{ route('katalog.show', $item->id) }}" class="w-full py-2 sm:py-3 bg-aa-green text-white rounded-lg font-bold text-xs sm:text-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined !text-[16px] sm:text-[18px]">visibility</span>
                     Lihat Detail
                 </a>

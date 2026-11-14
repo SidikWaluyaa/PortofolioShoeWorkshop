@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permohonan Adopsi Anda Disetujui! 🎉</title>
+    <title>Permohonan Adopsi Kamu Disetujui! 🎉</title>
 </head>
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #1e293b;">
 
@@ -16,9 +16,9 @@
                     
                     <!-- Header Banner -->
                     <tr>
-                        <td align="center" style="background-color: #22AF85; padding: 40px 30px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 900; color: #d1fae5; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 8px;">Shoe Workshop Donation</span>
-                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2;">Permohonan Anda Disetujui! 🎉</h1>
+                        <td align="center" style="background-color: #0F3D3B; padding: 40px 30px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 900; color: #8FB5AE; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 8px;">Adapt &amp; Adopt by ShoeWorkshop</span>
+                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2;">Permohonan Kamu Disetujui! 🎉</h1>
                         </td>
                     </tr>
 
@@ -28,7 +28,7 @@
                                 Halo <strong>{{ $donationRequest->nama_pemohon }}</strong>,
                             </p>
                             <p style="font-size: 15px; line-height: 1.6; color: #334155; margin-bottom: 25px;">
-                                Kabar baik! Permohonan adopsi Anda untuk sepatu di bawah ini telah disetujui.
+                                Kabar baik! Permohonan adopsi kamu untuk sepatu di bawah ini telah disetujui.
                             </p>
 
                             <!-- Item Card Details -->
@@ -90,7 +90,7 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="text-align: center;">
                                 <tr>
                                     <td>
-                                        <a href="{{ route('member.dashboard') }}" target="_blank" style="background-color: #22AF85; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 14px; font-weight: bold; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(34, 175, 133, 0.2);">
+                                        <a href="{{ route('member.dashboard') }}" target="_blank" style="background-color: #0F3D3B; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 14px; font-weight: bold; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(34, 175, 133, 0.2);">
                                             Upload Bukti Pembayaran Sekarang
                                         </a>
                                     </td>
@@ -104,11 +104,10 @@
                     <tr>
                         <td style="background-color: #f8fafc; padding: 30px; border-top: 1px solid #e2e8f0; text-align: center;">
                             <p style="font-size: 12px; color: #64748b; margin: 0 0 8px 0;">
-                                Email ini dikirim secara otomatis oleh platform donasi <strong>Shoe Workshop</strong>.
+                                Email ini dikirim secara otomatis oleh program <strong>Adapt &amp; Adopt by ShoeWorkshop</strong>.
                             </p>
                             <p style="font-size: 11px; color: #94a3b8; margin: 0;">
-                                &copy; {{ date('Y') }} Shoe Workshop. Hak Cipta Dilindungi Undang-Undang.
-                            </p>
+                                &copy; {{ date('Y') }} Adapt &amp; Adopt by ShoeWorkshop.</p>
                         </td>
                     </tr>
 

@@ -53,24 +53,7 @@ class DonationController extends Controller
 
         $donation = $this->donationService->create($validated, $request->file('foto'));
 
-        Auth::user()->notify(new \App\Notifications\SystemNotification(
-            'Donasi Terkirim',
-            "Donasi {$donation->nama_sepatu} sedang ditinjau tim kami, biasanya 1–2 hari kerja. Terima kasih sudah berbagi!",
-            route('member.donations.index'),
-            'volunteer_activism',
-            'info'
-        ));
-
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        if ($admins->isNotEmpty()) {
-            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
-                'Donasi Baru Masuk!',
-                'Ada pengajuan donasi sepatu baru dari ' . Auth::user()->name . '. Segera cek di halaman donasi.',
-                route('admin.donations.index'),
-                'volunteer_activism',
-                'info'
-            ));
-        }
+        $this->donationService->announceSubmitted($donation);
 
         return redirect()->route('member.donations.index')
             ->with('success', 'Donasi sepatu berhasil diajukan! Menunggu verifikasi admin.');

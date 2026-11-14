@@ -26,7 +26,7 @@ class AdoptionProcessingMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pembayaran Terverifikasi, Sepatu Sedang Disiapkan - Shoe Workshop',
+            subject: 'Pembayaran terverifikasi, sepatu sedang disiapkan · Adapt & Adopt',
         );
     }
 

@@ -26,7 +26,7 @@ class DonationRejectedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pengajuan Donasi Belum Dapat Diterima - Shoe Workshop',
+            subject: 'Pengajuan donasi belum dapat kami terima · Adapt & Adopt',
         );
     }
 
