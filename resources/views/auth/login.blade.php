@@ -11,7 +11,7 @@
 
     <!-- Heading -->
     <h1>Selamat datang kembali</h1>
-    <p class="subtitle">Masuk untuk mengelola donasi Anda dan melacak alur reparasi sepatu.</p>
+    <p class="subtitle">Masuk untuk mengelola donasi dan adopsimu, serta memantau reparasi sepatumu.</p>
     @include('auth.partials.donation-draft-note')
 
     <!-- Session Status -->

@@ -8,7 +8,7 @@
                 Perbarui Kata Sandi
             </h2>
             <p class="text-xs font-medium text-gray-500 mt-0.5">
-                Pastikan akun Anda menggunakan kata sandi yang panjang dan acak agar tetap aman.
+                Pakai kata sandi yang panjang dan acak supaya akunmu tetap aman.
             </p>
         </div>
     </header>

@@ -10,7 +10,7 @@
     </div>
 
     <h1>Lupa Kata Sandi?</h1>
-    <p class="subtitle">Tidak masalah. Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi.</p>
+    <p class="subtitle">Tenang. Masukkan alamat emailmu, nanti kami kirim tautan untuk mengatur ulang kata sandi.</p>
 
     <!-- Session Status -->
     @if (session('status'))

@@ -32,7 +32,8 @@ class AuthenticatedSessionController extends Controller
         if ($user instanceof \App\Models\User && $user->isAdmin()) {
             return redirect()->intended(route('admin.dashboard'));
         }
-        return redirect()->intended(route('home'));
+        // Members land on their own Beranda ("Perlu tindakanmu"), unless they were on their way to a page
+        return redirect()->intended(route('member.dashboard'));
     }
 
     /**

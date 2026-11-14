@@ -15,9 +15,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
         </div>
-        <h1 style="font-size:1.5rem;font-weight:800;color:#111827;margin-bottom:0.5rem;">Cek Email Anda</h1>
+        <h1 style="font-size:1.5rem;font-weight:800;color:#111827;margin-bottom:0.5rem;">Cek Email Kamu</h1>
         <p class="subtitle" style="margin-bottom:1.5rem;">
-            Pendaftaran Anda berhasil! Namun, Anda perlu memverifikasi alamat email dengan mengklik tautan yang baru saja kami kirimkan. Hal ini diperlukan untuk mengakses Dashboard Member.
+            Pendaftaranmu berhasil! Satu langkah lagi: klik tautan verifikasi yang baru saja kami kirim ke emailmu supaya kamu bisa masuk ke halaman member.
         </p>
     </div>
 
@@ -25,7 +25,7 @@
 
     @if (session('status') == 'verification-link-sent')
         <div style="margin-bottom:1.5rem;padding:1rem;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;color:#065f46;font-size:0.875rem;font-weight:600;text-align:center;">
-            Tautan verifikasi baru telah dikirim ke email Anda!
+            Tautan verifikasi baru sudah kami kirim ke emailmu!
         </div>
     @endif
 

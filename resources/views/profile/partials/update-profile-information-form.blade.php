@@ -11,7 +11,7 @@
                 Informasi Profil
             </h2>
             <p class="text-xs font-medium text-gray-500 mt-0.5">
-                Perbarui informasi profil dan alamat email akun Anda.
+                Perbarui informasi profil dan alamat email akunmu.
             </p>
         </div>
     </header>
@@ -83,13 +83,13 @@
                 <div class="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
                     <span class="material-symbols-outlined text-amber-500 text-[18px]">warning</span>
                     <div>
-                        <p class="text-xs font-bold text-amber-800">Email Anda belum diverifikasi.</p>
+                        <p class="text-xs font-bold text-amber-800">Emailmu belum diverifikasi.</p>
                         <button form="send-verification" class="text-xs font-bold text-amber-600 hover:text-amber-700 underline mt-1 transition">
                             Klik di sini untuk mengirim ulang email verifikasi.
                         </button>
                         @if (session('status') === 'verification-link-sent')
                             <p class="mt-1 font-bold text-[10px] text-emerald-600">
-                                Link verifikasi baru telah dikirim ke email Anda!
+                                Link verifikasi baru sudah kami kirim ke emailmu!
                             </p>
                         @endif
                     </div>

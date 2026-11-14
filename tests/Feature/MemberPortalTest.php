@@ -48,6 +48,8 @@ class MemberPortalTest extends TestCase
             ->assertOk()
             ->assertDontSee('href="' . route('member.checkin.index') . '"', false)
             ->assertDontSee('href="' . route('member.rewards.index') . '"', false);
+        // ...and the page itself stays closed while there is nothing to earn
+        $this->actingAs($this->member)->get(route('member.rewards.index'))->assertRedirect(route('member.dashboard'));
 
         Setting::updateOrCreate(['key' => 'checkin_enabled'], ['value' => '1']);
 

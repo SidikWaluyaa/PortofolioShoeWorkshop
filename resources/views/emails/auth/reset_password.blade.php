@@ -29,7 +29,7 @@
         </div>
         <div class="content">
             <div class="greeting">Halo, {{ $notifiable->name ?? 'Member' }}!</div>
-            <p>Anda menerima email ini karena kami menerima permintaan reset password untuk akun Anda.</p>
+            <p>Kamu menerima email ini karena ada permintaan reset password untuk akunmu.</p>
             
             <div class="btn-wrapper">
                 <a href="{{ $url }}" class="btn">Reset Password Sekarang</a>
@@ -38,11 +38,11 @@
             <p>Tautan reset password ini akan kedaluwarsa dalam 60 menit.</p>
 
             <div class="warning">
-                <strong>Catatan:</strong> Jika Anda tidak merasa melakukan permintaan reset password, abaikan email ini dan pastikan akun Anda tetap aman.
+                <strong>Catatan:</strong> Kalau kamu tidak merasa meminta reset password, abaikan email ini. Akunmu tetap aman.
             </div>
 
             <div class="link-text">
-                Jika Anda kesulitan mengklik tombol "Reset Password Sekarang", salin dan tempel URL di bawah ini ke browser web Anda:<br>
+                Kalau tombol "Reset Password Sekarang" tidak bisa diklik, salin dan tempel URL di bawah ini ke browsermu:<br>
                 <a href="{{ $url }}">{{ $url }}</a>
             </div>
         </div>
