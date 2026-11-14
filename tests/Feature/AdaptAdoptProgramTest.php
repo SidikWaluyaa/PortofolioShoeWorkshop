@@ -117,4 +117,30 @@ class AdaptAdoptProgramTest extends TestCase
         $this->assertTrue($budi->fresh()->notifications->contains(fn ($n) => $n->data['title'] === 'Kamu Masuk Daftar Cadangan'));
         $this->assertSame('pending', $budiReq->fresh()->status);
     }
+
+    public function test_old_donor_links_lead_to_the_program_instead_of_a_404(): void
+    {
+        $this->get('/donatur/donations/create')->assertRedirect('/adapt-adopt/donasi');
+        $this->get('/donatur/dashboard')->assertRedirect('/member/dashboard');
+    }
+
+    public function test_transparent_hero_images_are_stored_as_webp_and_stay_transparent(): void
+    {
+        if (!function_exists('imagewebp')) {
+            $this->markTestSkipped('GD without WebP support');
+        }
+        Storage::fake('public');
+        $png = imagecreatetruecolor(1600, 800);
+        imagesavealpha($png, true);
+        imagefill($png, 0, 0, imagecolorallocatealpha($png, 0, 0, 0, 127));
+        $file = tempnam(sys_get_temp_dir(), 'hero') . '.png';
+        imagepng($png, $file);
+
+        $path = \App\Helpers\ImageCompressionHelper::storeTransparentWebp(new UploadedFile($file, 'hero.png', 'image/png', null, true), 'hero');
+
+        $this->assertStringEndsWith('.webp', $path);
+        $stored = imagecreatefromwebp(Storage::disk('public')->path($path));
+        $this->assertSame(1400, imagesx($stored));
+        $this->assertSame(127, (imagecolorat($stored, 10, 10) >> 24) & 0x7F, 'corner should stay fully transparent');
+    }
 }
