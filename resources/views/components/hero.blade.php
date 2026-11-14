@@ -72,10 +72,16 @@
         @touchstart="handleTouchStart($event)"
         @touchend="handleTouchEnd($event)">
         <div class="relative min-h-[780px] sm:min-h-[820px] lg:min-h-[560px] xl:min-h-[640px] group">
+            @php
+                // Real figure for the donation slide's card (no made-up totals)
+                $catalogCount = \App\Models\DonationItem::where('status', 'tersedia')->count();
+            @endphp
             @foreach($heroes as $index => $hero)
                 @php
-                    $isDonation = Str::contains($hero->primary_cta_link, 'donations') || Str::contains($hero->title, 'Donasi');
-                    $heroEyebrow = $isDonation ? 'Program Sosial Shoe Workshop' : 'Reparasi & Perawatan Sepatu';
+                    // The donation slide links to the Adapt & Adopt program (older slides still use /donatur/donations or "Donasi")
+                    $isDonation = Str::contains((string) $hero->primary_cta_link, ['donations', 'adapt-adopt', 'donasi'])
+                        || Str::contains($hero->title, ['Donasi', 'donasi', 'Adapt', 'kesempatan kedua']);
+                    $heroEyebrow = $isDonation ? 'Adapt & Adopt by ShoeWorkshop' : 'Reparasi & Perawatan Sepatu';
                 @endphp
 
                 <section
@@ -185,19 +191,19 @@
                                             <span class="material-symbols-outlined !text-xl text-[#1c1c17] fill-1">inventory_2</span>
                                         </div>
                                         <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">1.542+ Sepatu</span>
-                                            <span class="text-[10px] font-semibold text-white/90 xl:text-xs drop-shadow-sm">Telah Disalurkan</span>
+                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">{{ number_format($catalogCount, 0, ',', '.') }} Sepatu</span>
+                                            <span class="text-[10px] font-semibold text-white/90 xl:text-xs drop-shadow-sm">Di Katalog Adopsi</span>
                                         </div>
                                     </div>
                                     
                                     {{-- Card 2: Portfolio/Impact --}}
                                     <div class="absolute bottom-8 right-12 xl:right-16 z-20 flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md border border-white/20 animate-float-delayed pointer-events-auto">
                                         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-inner">
-                                            <span class="material-symbols-outlined !text-xl text-[#22AF85] fill-1">local_shipping</span>
+                                            <span class="material-symbols-outlined !text-xl text-[#22AF85] fill-1">payments</span>
                                         </div>
                                         <div class="flex flex-col text-left">
-                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">Siap Diadopsi</span>
-                                            <span class="text-[10px] font-bold text-[#FFC232] xl:text-xs drop-shadow-sm">Lewat Katalog</span>
+                                            <span class="text-xs font-black text-white xl:text-sm drop-shadow-md">Bayar Jasa Saja</span>
+                                            <span class="text-[10px] font-bold text-[#FFC232] xl:text-xs drop-shadow-sm">Bukan Harga Sepatu</span>
                                         </div>
                                     </div>
 
@@ -308,18 +314,18 @@
                                                 <span class="material-symbols-outlined !text-base text-[#1c1c17] fill-1">inventory_2</span>
                                             </div>
                                             <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">1.542+ Sepatu</span>
-                                                <span class="text-[9px] font-semibold text-white/90 drop-shadow-sm">Telah Disalurkan</span>
+                                                <span class="text-[11px] font-black text-white drop-shadow-md">{{ number_format($catalogCount, 0, ',', '.') }} Sepatu</span>
+                                                <span class="text-[9px] font-semibold text-white/90 drop-shadow-sm">Di Katalog Adopsi</span>
                                             </div>
                                         </div>
                                         {{-- Card 2 --}}
                                         <div class="absolute bottom-2 -right-2 sm:right-4 z-20 flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 shadow-lg backdrop-blur-md border border-white/20 animate-float-delayed pointer-events-none scale-90 sm:scale-100 origin-bottom-right">
                                             <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-inner">
-                                                <span class="material-symbols-outlined !text-base text-[#22AF85] fill-1">local_shipping</span>
+                                                <span class="material-symbols-outlined !text-base text-[#22AF85] fill-1">payments</span>
                                             </div>
                                             <div class="flex flex-col text-left">
-                                                <span class="text-[11px] font-black text-white drop-shadow-md">Siap Diadopsi</span>
-                                                <span class="text-[9px] font-bold text-[#FFC232] drop-shadow-sm">Lewat Katalog</span>
+                                                <span class="text-[11px] font-black text-white drop-shadow-md">Bayar Jasa Saja</span>
+                                                <span class="text-[9px] font-bold text-[#FFC232] drop-shadow-sm">Bukan Harga Sepatu</span>
                                             </div>
                                         </div>
                                         {{-- Card 3 --}}

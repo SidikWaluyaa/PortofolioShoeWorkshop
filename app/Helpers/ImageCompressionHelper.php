@@ -114,4 +114,57 @@ class ImageCompressionHelper
 
         return $storedPath;
     }
+
+    /**
+     * Store an image that may be transparent (e.g. a cut-out shoe on the home hero) as WebP, keeping the alpha channel.
+     * compressAndStore() always writes JPG on white, which would put a white box behind such images.
+     * Falls back to compressAndStore() when the server's GD has no WebP support.
+     *
+     * @param UploadedFile|string $file An upload, or an absolute path to an image on disk
+     * @return string The stored file path relative to the public disk
+     */
+    public static function storeTransparentWebp(UploadedFile|string $file, string $directory, int $maxWidth = 1400, int $maxHeight = 1400, int $quality = 82): string
+    {
+        $path = $file instanceof UploadedFile ? $file->getPathname() : $file;
+        $info = @getimagesize($path);
+
+        if (!function_exists('imagewebp') || $info === false) {
+            return $file instanceof UploadedFile
+                ? self::compressAndStore($file, $directory, null, false, $maxWidth, $maxHeight)
+                : $directory . '/' . basename($path);
+        }
+
+        $source = match ($info['mime']) {
+            'image/png' => imagecreatefrompng($path),
+            'image/webp' => imagecreatefromwebp($path),
+            'image/gif' => imagecreatefromgif($path),
+            'image/jpeg', 'image/jpg' => imagecreatefromjpeg($path),
+            default => null,
+        };
+        if ($source === null) {
+            return $file instanceof UploadedFile ? $file->store($directory, 'public') : $directory . '/' . basename($path);
+        }
+
+        [$width, $height] = [$info[0], $info[1]];
+        $ratio = min($maxWidth / $width, $maxHeight / $height, 1);
+        $newWidth = (int) round($width * $ratio);
+        $newHeight = (int) round($height * $ratio);
+
+        $resized = imagecreatetruecolor($newWidth, $newHeight);
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
+        imagefill($resized, 0, 0, imagecolorallocatealpha($resized, 0, 0, 0, 127));
+        imagecopyresampled($resized, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+        $storedPath = $directory . '/' . Str::uuid() . '.webp';
+        $tempPath = tempnam(sys_get_temp_dir(), 'webp');
+        imagewebp($resized, $tempPath, $quality);
+        Storage::disk('public')->put($storedPath, file_get_contents($tempPath));
+
+        @unlink($tempPath);
+        imagedestroy($source);
+        imagedestroy($resized);
+
+        return $storedPath;
+    }
 }

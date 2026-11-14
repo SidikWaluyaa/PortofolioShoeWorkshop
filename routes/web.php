@@ -63,6 +63,11 @@ Route::get('/{legacy}/{path?}', function (\Illuminate\Http\Request $request, str
     return redirect('/adapt-adopt/katalog' . ($path ? '/' . $path : '') . ($query ? '?' . $query : ''), 301);
 })->where(['legacy' => 'donasi|donasi-katalog', 'path' => '.*']);
 
+// The old donor area (/donatur/...) is gone; old links (e.g. a hero button saved in the CMS) go to the program instead of a 404
+Route::get('/donatur/{path?}', fn (?string $path = null) => redirect(
+    str_starts_with((string) $path, 'donations/create') ? '/adapt-adopt/donasi' : '/member/dashboard', 301
+))->where('path', '.*');
+
 Route::get('/adapt-adopt', [\App\Http\Controllers\AdaptAdoptController::class, 'index'])->name('adapt-adopt.index');
 // Public donation form: guests fill it in, the entry is kept as a draft until they sign in or register
 Route::get('/adapt-adopt/donasi', [\App\Http\Controllers\AdaptAdoptDonationController::class, 'create'])->name('adapt-adopt.donasi.create');

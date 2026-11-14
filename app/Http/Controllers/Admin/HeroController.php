@@ -38,7 +38,7 @@ class HeroController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $data['image'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'hero', null, false, 1920, 1080);
+            $data['image'] = ImageCompressionHelper::storeTransparentWebp($request->file('image'), 'hero');
         }
 
         $this->heroService->create($data);
@@ -68,7 +68,7 @@ class HeroController extends Controller
             if ($hero->image) {
                 Storage::disk('public')->delete($hero->image);
             }
-            $data['image'] = ImageCompressionHelper::compressAndStore($request->file('image'), 'hero', null, false, 1920, 1080);
+            $data['image'] = ImageCompressionHelper::storeTransparentWebp($request->file('image'), 'hero');
         }
 
         $this->heroService->update($hero, $data);

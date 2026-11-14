@@ -265,7 +265,8 @@
 
                 <!-- Image Link -->
                 <a href="{{ route('register') }}" class="block w-full cursor-pointer hover:scale-[1.01] transition-transform duration-300 relative z-10">
-                    <img src="{{ asset('images/pop-up.png') }}" alt="Daftar Sebagai Donatur" class="w-full h-auto object-cover rounded-3xl block">
+                    {{-- WebP (42 KB instead of 0.9 MB PNG); lazy, so it only downloads when the popup actually opens --}}
+                    <img src="{{ asset('images/pop-up.webp') }}" alt="Daftar Sebagai Donatur" width="1011" height="997" loading="lazy" decoding="async" class="w-full h-auto object-cover rounded-3xl block">
                 </a>
             </div>
         </div>
