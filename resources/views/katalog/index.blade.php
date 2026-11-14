@@ -29,21 +29,22 @@
 
     <div class="pt-20 flex-grow flex flex-col">
         {{-- Hero header: Adapt & Adopt program --}}
-        <div class="bg-aa-green text-aa-beige py-12 sm:py-14 w-full">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center gap-6">
+        <div class="bg-aa-green text-aa-beige py-6 sm:py-14 w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row items-center gap-4 sm:gap-6">
                 <a href="{{ route('adapt-adopt.index') }}" class="flex-shrink-0" aria-label="Tentang Adapt & Adopt">
-                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="820" height="500" class="w-32 sm:w-40">
+                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="820" height="500" class="w-20 sm:w-40">
                 </a>
                 <div>
-                    <span class="inline-block text-xs font-bold tracking-[0.2em] text-aa-sage uppercase mb-2">Katalog Adopsi</span>
-                    <h1 class="font-aa text-3xl sm:text-5xl font-extrabold leading-tight mb-3">Sepatu yang menunggu pemilik baru</h1>
-                    <p class="text-aa-beige/85 max-w-2xl text-base leading-relaxed">Pilih sepatu hasil restorasi, lihat kondisinya, lalu ajukan adopsi. Kamu tidak membayar harga sepatunya, hanya biaya jasa reparasinya{{ \App\Services\AdoptionService::curationMode() ? '. Penerimanya dipilih tim kami dari alasan pengajuan.' : '. Siapa cepat dia dapat.' }}</p>
+                    <span class="inline-block text-[10px] sm:text-xs font-bold tracking-[0.2em] text-aa-sage uppercase mb-1 sm:mb-2">Katalog Adopsi</span>
+                    <h1 class="font-aa text-xl sm:text-5xl font-extrabold leading-tight sm:mb-3">Sepatu yang menunggu pemilik baru</h1>
+                    <p class="sm:hidden mt-1 text-aa-beige/85 text-xs leading-relaxed">Kamu cukup bayar biaya jasa reparasinya, bukan harga sepatunya.</p>
+                    <p class="hidden sm:block text-aa-beige/85 max-w-2xl text-base leading-relaxed">Pilih sepatu hasil restorasi, lihat kondisinya, lalu ajukan adopsi. Kamu tidak membayar harga sepatunya, hanya biaya jasa reparasinya{{ \App\Services\AdoptionService::curationMode() ? '. Penerimanya dipilih tim kami dari alasan pengajuan.' : '. Siapa cepat dia dapat.' }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Main Content Cluster -->
-        <main class="max-w-[1280px] w-full mx-auto px-6 lg:px-10 py-10 flex-grow flex flex-col gap-8">
+        <main class="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-10 py-5 sm:py-10 flex-grow flex flex-col gap-5 sm:gap-8">
 
             @if(isset($activeCampaigns) && $activeCampaigns->isNotEmpty())
                 <div x-data="{
@@ -619,8 +620,8 @@
                 <!-- Product Grid -->
                 <div class="lg:col-span-3 relative">
                     <!-- Sorting & Header Info -->
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
-                        <p class="text-sm font-semibold text-gray-500">
+                    <div class="flex flex-row justify-end sm:justify-between items-center gap-4 mb-4 sm:mb-6">
+                        <p class="hidden sm:block text-sm font-semibold text-gray-500">
                             Menampilkan katalog barang hasil restorasi terbaik kami
                         </p>
                         <div class="flex items-center gap-2 self-end sm:self-auto">

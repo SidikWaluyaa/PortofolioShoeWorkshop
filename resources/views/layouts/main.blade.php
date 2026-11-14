@@ -137,10 +137,10 @@
 <body class="antialiased bg-white text-[#1c1c17] overflow-x-hidden">
     @yield('content')
 
-    <!-- Floating WhatsApp Widget -->
+    {{-- Floating WhatsApp widget. Pages with a mobile bottom action bar define the mobile_action_bar section so it sits above that bar --}}
     <div x-data="{ open: false, showBadge: false }" 
          x-init="setTimeout(() => { showBadge = true }, 3000)" 
-         class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3"
+         class="fixed @hasSection('mobile_action_bar') bottom-24 sm:bottom-6 @else bottom-6 @endif right-4 sm:right-6 z-[9999] flex flex-col items-end gap-3"
          x-cloak>
         
         <!-- Chat Popup Card -->
@@ -224,7 +224,8 @@
         </button>
     </div>
 
-    @guest
+    {{-- Old "Daftar Sebagai Donatur" popup: kept off the Adapt & Adopt area until Digital Marketing provides a program version --}}
+    @if(auth()->guest() && !request()->routeIs('adapt-adopt.*', 'katalog.*'))
         <!-- Registration Modal Popup -->
         <div x-data="registerModal()" 
              x-init="initModal()" 
@@ -294,7 +295,7 @@
                 }
             }
         </script>
-    @endguest
+    @endif
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     window.confirmAction = function(event, formElement, message) {
