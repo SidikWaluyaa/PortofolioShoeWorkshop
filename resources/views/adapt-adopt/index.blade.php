@@ -5,6 +5,19 @@
 
 @push('head')
     @include('layouts.partials.aa-fonts')
+    <style>
+        .aa-ticker { -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); }
+        .aa-ticker-track { animation: aa-ticker var(--aa-ticker-duration, 48s) linear infinite; }
+        .aa-ticker:hover .aa-ticker-track, .aa-ticker:focus-within .aa-ticker-track { animation-play-state: paused; }
+        @keyframes aa-ticker { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 0.5rem)); } }
+        @media (min-width: 640px) { @keyframes aa-ticker { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 0.625rem)); } } }
+        /* Visitors who asked for less motion get a strip they can swipe instead */
+        @media (prefers-reduced-motion: reduce) {
+            .aa-ticker { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+            .aa-ticker-track { animation: none; }
+            .aa-ticker-track > [aria-hidden="true"] { display: none; }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -42,6 +55,37 @@
                 </div>
             </div>
         </section>
+
+        {{-- Photo ticker: shoes from the adoption catalog scrolling by on their own (two copies of the list for a seamless loop) --}}
+        @if($tickerItems->count() >= 4)
+            <section class="bg-aa-green-dark text-aa-beige border-t border-aa-beige/10" aria-label="Sepatu di Katalog Adopsi">
+                <div class="flex flex-col lg:flex-row lg:items-center">
+                    <div class="shrink-0 px-4 sm:px-6 lg:pl-8 lg:pr-8 pt-6 lg:py-0 lg:w-64 lg:border-r lg:border-aa-beige/15">
+                        <p class="text-[11px] font-bold tracking-[0.2em] uppercase text-aa-sage leading-relaxed">Sebagian sepatu yang menunggu pemilik baru</p>
+                        <a href="{{ route('katalog.index') }}" class="mt-2 inline-flex items-center gap-1 text-sm font-bold text-aa-beige hover:underline">
+                            Lihat semua <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="aa-ticker relative flex-1 overflow-hidden py-6">
+                        <div class="aa-ticker-track flex w-max gap-4 sm:gap-5" style="--aa-ticker-duration: {{ $tickerItems->count() * 4 }}s">
+                            @foreach([false, true] as $copy)
+                                @foreach($tickerItems as $item)
+                                    <a href="{{ route('katalog.show', $item->id) }}" @if($copy) aria-hidden="true" tabindex="-1" @endif
+                                       class="group w-40 sm:w-52 shrink-0 rounded-2xl overflow-hidden bg-aa-white text-aa-ink">
+                                        <img src="{{ $item->foto_utama_url }}" alt="{{ $copy ? '' : $item->nama }}" loading="lazy" decoding="async"
+                                             class="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <span class="block px-3 py-2.5">
+                                            <span class="block text-xs sm:text-sm font-bold truncate">{{ $item->nama }}</span>
+                                            <span class="block text-[11px] text-aa-neutral">{{ $item->ukuran ? 'Ukuran ' . $item->ukuran : ($item->brand ?: 'Siap diadopsi') }}</span>
+                                        </span>
+                                    </a>
+                                @endforeach
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </section>
+        @endif
 
         {{-- Meaning of the name --}}
         <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
