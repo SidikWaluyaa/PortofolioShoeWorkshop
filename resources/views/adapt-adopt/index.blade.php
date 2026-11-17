@@ -50,7 +50,7 @@
                 </div>
                 {{-- Phones: logo and "by ShoeWorkshop" read as one lockup above the headline; desktop keeps the logo on the right --}}
                 <div class="flex flex-col items-start lg:items-end order-first lg:order-none">
-                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Logo Adapt & Adopt" width="820" height="500" class="w-full max-w-[140px] sm:max-w-xs lg:max-w-md">
+                    <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary.webp') }}" alt="Logo Adapt & Adopt" width="1632" height="995" class="w-full max-w-[140px] sm:max-w-xs lg:max-w-md">
                     <p class="lg:hidden mt-1 text-[11px] font-bold tracking-[0.2em] uppercase text-aa-sage">by ShoeWorkshop</p>
                 </div>
             </div>

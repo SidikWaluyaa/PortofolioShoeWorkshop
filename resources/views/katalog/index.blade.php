@@ -32,7 +32,7 @@
         <div class="bg-aa-green text-aa-beige py-6 sm:py-14 w-full">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row items-center gap-4 sm:gap-6">
                 <a href="{{ route('adapt-adopt.index') }}" class="flex-shrink-0" aria-label="Tentang Adapt & Adopt">
-                    <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="820" height="500" class="w-20 sm:w-40">
+                    <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary.webp') }}" alt="Adapt & Adopt by ShoeWorkshop" width="1632" height="995" class="w-20 sm:w-40">
                 </a>
                 <div>
                     <span class="inline-block text-[10px] sm:text-xs font-bold tracking-[0.2em] text-aa-sage uppercase mb-1 sm:mb-2">Katalog Adopsi</span>

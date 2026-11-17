@@ -69,7 +69,7 @@
     {{-- Adapt & Adopt: the campaign ShoeWorkshop currently puts first --}}
     <section class="rounded-3xl bg-aa-green text-aa-beige p-5 sm:p-7 mb-6 overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center gap-5">
-            <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="820" height="500" class="w-36 sm:w-44 flex-shrink-0">
+            <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary.webp') }}" alt="Adapt & Adopt by ShoeWorkshop" width="1632" height="995" class="w-36 sm:w-44 flex-shrink-0">
             <div class="min-w-0 flex-1">
                 <p class="text-[11px] font-bold tracking-[0.2em] uppercase text-aa-sage">by ShoeWorkshop</p>
                 <h2 class="mt-1 font-aa text-2xl sm:text-3xl font-extrabold leading-tight">Adapt the Mindset. Give a Second Chance.</h2>
