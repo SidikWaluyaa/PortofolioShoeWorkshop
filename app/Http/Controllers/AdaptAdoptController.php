@@ -18,6 +18,8 @@ class AdaptAdoptController extends Controller
 
         return view('adapt-adopt.index', [
             'items' => (clone $available)->latest()->take(4)->get(),
+            // Photo ticker under the hero: a changing selection of catalog shoes that have a photo
+            'tickerItems' => DonationItem::where('status', 'tersedia')->whereNotNull('foto_utama_path')->inRandomOrder()->take(12)->get(),
             'availableCount' => (clone $available)->count(),
             'adoptedCount' => DonationItem::where('status', 'disalurkan')->count(),
             'settings' => Setting::pluck('value', 'key')->all(),
