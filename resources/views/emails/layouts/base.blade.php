@@ -31,7 +31,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="150">
+            <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary-email.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="150">
             @hasSection('subtitle')
                 <p>@yield('subtitle')</p>
             @endif

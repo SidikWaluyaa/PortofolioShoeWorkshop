@@ -25,7 +25,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('images/adapt-adopt/adaptadopt_dark_beige_on_green.png') }}" alt="Adapt &amp; Adopt by ShoeWorkshop" width="150" style="width:150px;height:auto;display:inline-block;">
+            <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary-email.png') }}" alt="Adapt &amp; Adopt by ShoeWorkshop" width="150" style="width:150px;height:auto;display:inline-block;">
         </div>
         <div class="content">
             <div class="greeting">Halo, {{ $donation->user?->name ?? 'Donatur' }}! 💖</div>

@@ -6,7 +6,7 @@
 <section id="donasi-showcase" class="relative overflow-hidden bg-aa-beige text-aa-ink py-14 lg:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
         <div class="grid lg:grid-cols-[auto_1fr] gap-8 lg:gap-14 items-center mb-12">
-            <img src="{{ asset('images/adapt-adopt/adaptadopt_primary_green_transparent.png') }}" alt="Adapt & Adopt by ShoeWorkshop" width="820" height="500" loading="lazy" class="w-40 sm:w-64 lg:w-80">
+            <img src="{{ asset('images/adapt-adopt/adaptadopt-original.webp') }}" alt="Adapt & Adopt by ShoeWorkshop" width="1632" height="995" loading="lazy" class="w-40 sm:w-64 lg:w-80">
             <div>
                 <p class="text-xs font-bold tracking-[0.2em] uppercase text-aa-burgundy">Program donasi &amp; adopsi sepatu</p>
                 <h2 class="mt-3 font-aa text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-aa-green">Adapt the Mindset. Give a Second Chance.</h2>
