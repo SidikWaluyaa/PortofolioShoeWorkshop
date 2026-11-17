@@ -106,8 +106,8 @@
             </div>
         </section>
 
-        {{-- Two ways to take part --}}
-        <section class="bg-white border-y border-aa-beige">
+        {{-- Two ways to take part (the catalog's "Cara adopsi" link lands here) --}}
+        <section id="cara-ikut" class="bg-white border-y border-aa-beige scroll-mt-20">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
                 <p class="text-xs font-bold tracking-[0.2em] uppercase text-aa-burgundy">Cara ikut</p>
                 <h2 class="mt-3 font-aa text-3xl sm:text-4xl font-extrabold text-aa-green">Dua cara memberi kesempatan kedua</h2>

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">Kelola Barang Katalog Donasi</x-slot>
+    <x-slot name="header">Katalog Adopsi</x-slot>
 
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <p class="text-sm text-gray-500">Kelola barang-barang layak pakai yang siap didonasikan kepada penerima.</p>

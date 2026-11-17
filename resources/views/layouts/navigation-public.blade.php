@@ -115,7 +115,7 @@
                                 <span class="material-symbols-outlined !text-[18px]">person</span>
                                 Edit Profil
                             </a>
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout(event, this)">
                                 @csrf
                                 <button type="submit" class="flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all">
                                     <span class="material-symbols-outlined !text-[18px]">logout</span>
@@ -216,7 +216,7 @@
                     <span class="material-symbols-outlined !text-[20px]">person</span>
                     Edit Profil
                 </a>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout(event, this)">
                     @csrf
                     <button type="submit" class="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg">
                         <span class="material-symbols-outlined !text-[20px]">logout</span>

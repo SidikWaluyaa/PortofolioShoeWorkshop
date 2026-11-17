@@ -28,17 +28,26 @@
     @include('layouts.navigation-public')
 
     <div class="pt-20 flex-grow flex flex-col">
-        {{-- Hero header: Adapt & Adopt program --}}
-        <div class="bg-aa-green text-aa-beige py-6 sm:py-14 w-full">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row items-center gap-4 sm:gap-6">
-                <a href="{{ route('adapt-adopt.index') }}" class="flex-shrink-0" aria-label="Tentang Adapt & Adopt">
-                    <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary.webp') }}" alt="Adapt & Adopt by ShoeWorkshop" width="1632" height="995" class="w-20 sm:w-40">
+        {{-- Program header. On desktop it follows the grid below: logo over the filter column, text over the cards. --}}
+        <div class="bg-aa-green text-aa-beige w-full">
+            <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10 lg:py-9 flex items-center gap-4 sm:gap-6 lg:grid lg:grid-cols-4 lg:gap-8">
+                <a href="{{ route('adapt-adopt.index') }}" class="flex-shrink-0 lg:col-span-1" aria-label="Tentang Adapt & Adopt">
+                    <img src="{{ asset('images/adapt-adopt/adaptadopt-secondary.webp') }}" alt="Adapt & Adopt by ShoeWorkshop" width="1632" height="995" class="w-20 sm:w-32 lg:w-36">
                 </a>
-                <div>
-                    <span class="inline-block text-[10px] sm:text-xs font-bold tracking-[0.2em] text-aa-sage uppercase mb-1 sm:mb-2">Katalog Adopsi</span>
-                    <h1 class="font-aa text-xl sm:text-5xl font-extrabold leading-tight sm:mb-3">Sepatu yang menunggu pemilik baru</h1>
-                    <p class="sm:hidden mt-1 text-aa-beige/85 text-xs leading-relaxed">Kamu cukup bayar biaya jasa reparasinya, bukan harga sepatunya.</p>
-                    <p class="hidden sm:block text-aa-beige/85 max-w-2xl text-base leading-relaxed">Pilih sepatu hasil restorasi, lihat kondisinya, lalu ajukan adopsi. Kamu tidak membayar harga sepatunya, hanya biaya jasa reparasinya{{ \App\Services\AdoptionService::curationMode() ? '. Penerimanya dipilih tim kami dari alasan pengajuan.' : '. Siapa cepat dia dapat.' }}</p>
+                <div class="min-w-0 lg:col-span-3 xl:flex xl:items-end xl:justify-between xl:gap-8">
+                    <div>
+                        <span class="inline-block text-[10px] sm:text-xs font-bold tracking-[0.2em] text-aa-sage uppercase mb-1 sm:mb-2">Katalog Adopsi</span>
+                        <h1 class="font-aa text-xl sm:text-4xl lg:text-3xl font-extrabold leading-tight">Sepatu yang menunggu pemilik baru</h1>
+                        <p class="mt-1 sm:mt-2 text-aa-beige/85 text-xs sm:text-base leading-relaxed">Bayar biaya jasa reparasinya saja, bukan harga sepatunya.</p>
+                    </div>
+                    <div class="hidden lg:flex items-center gap-3 shrink-0 mt-4 xl:mt-0">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-aa-beige/10 border border-aa-beige/20 text-sm font-bold whitespace-nowrap">
+                            <span class="material-symbols-outlined !text-[18px] text-aa-sage">footprint</span>{{ number_format($availableCount, 0, ',', '.') }} sepatu tersedia
+                        </span>
+                        <a href="{{ route('adapt-adopt.index') }}#cara-ikut" class="inline-flex items-center gap-1 text-sm font-bold text-aa-beige hover:underline whitespace-nowrap">
+                            Cara adopsi <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

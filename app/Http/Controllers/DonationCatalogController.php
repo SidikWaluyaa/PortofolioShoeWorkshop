@@ -125,7 +125,9 @@ class DonationCatalogController extends Controller
 
         $sizeOptions = $this->sizeOptions();
 
-        return view('katalog.index', compact('items', 'categories', 'settings', 'activeCampaigns', 'activeCampaign', 'maxPriceLimit', 'sizeOptions'));
+        $availableCount = DonationItem::where('status', 'tersedia')->count();
+
+        return view('katalog.index', compact('items', 'categories', 'settings', 'activeCampaigns', 'activeCampaign', 'maxPriceLimit', 'sizeOptions', 'availableCount'));
     }
 
     /**

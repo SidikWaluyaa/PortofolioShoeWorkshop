@@ -300,6 +300,7 @@
         </script>
     @endif
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@include('layouts.partials.logout-confirm')
 <script>
     window.confirmAction = function(event, formElement, message) {
         event.preventDefault();

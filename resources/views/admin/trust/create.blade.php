@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Add Trust Item') }}
-        </h2>
+        <span>
+            {{ __('Tambah Item Trust Strip') }}
+        </span>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+    <div>
+        <div>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('admin.trust.store') }}" method="POST">
                         @csrf
@@ -20,11 +20,11 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                                <x-input-label for="icon" :value="__('Icon (Emoji or SVG)')" />
-                                <x-text-input id="icon" name="icon" type="text" class="mt-1 block w-full" :value="old('icon')" placeholder="e.g. 🛡️" />
+                                <x-input-label for="icon" :value="__('Ikon (emoji atau SVG)')" />
+                                <x-text-input id="icon" name="icon" type="text" class="mt-1 block w-full" :value="old('icon')" placeholder="Contoh: 🛡️" />
                             </div>
                             <div>
-                                <x-input-label for="order" :value="__('Order')" />
+                                <x-input-label for="order" :value="__('Urutan')" />
                                 <x-text-input id="order" name="order" type="number" class="mt-1 block w-full" :value="old('order', 0)" />
                             </div>
                         </div>
@@ -32,13 +32,13 @@
                         <div class="block mb-4">
                             <label for="is_active" class="inline-flex items-center">
                                 <input id="is_active" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="is_active" value="1" checked>
-                                <span class="ms-2 text-sm text-gray-600">{{ __('Active') }}</span>
+                                <span class="ms-2 text-sm text-gray-600">{{ __('Aktif') }}</span>
                             </label>
                         </div>
 
                         <div class="flex items-center gap-4">
-                            <x-primary-button>{{ __('Save') }}</x-primary-button>
-                            <a href="{{ route('admin.trust.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Cancel</a>
+                            <x-primary-button>{{ __('Simpan') }}</x-primary-button>
+                            <a href="{{ route('admin.trust.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Batal</a>
                         </div>
                     </form>
                 </div>
