@@ -27,7 +27,7 @@ class DashboardController extends Controller
             'donations_pending'         => Donation::where('status', 'pending')->count(),
             'donation_requests_pending' => DonationRequest::where('status', 'pending')->count(),
             'catalog_available'         => DonationItem::where('status', 'tersedia')->count(),
-            'total_donators'            => User::where('role', '!=', 'admin')->count(),
+            'total_donators'            => User::where('role', 'member')->count(),
 
             'projects'                  => Project::count(),
             'services'                  => Service::count(),

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">Kelola Permohonan Barang Donasi</x-slot>
+    <x-slot name="header">Pengajuan Adopsi</x-slot>
 
     {{-- Flatpickr Stylesheet --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">

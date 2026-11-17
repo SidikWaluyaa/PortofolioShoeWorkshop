@@ -94,7 +94,7 @@
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-blue-900">Antrean Siap Rilis</h4>
-                        <p class="text-xs text-blue-700 mt-1">Daftar sepatu di bawah ini sudah bersih. Silakan buka menu <strong>Katalog Barang Donasi -> Tambah Barang</strong> untuk merilisnya. Setelah dirilis, klik tombol "Arsip" di bawah ini.</p>
+                        <p class="text-xs text-blue-700 mt-1">Daftar sepatu di bawah ini sudah bersih. Silakan buka menu <strong>Katalog Adopsi → Tambah Barang Katalog</strong> untuk merilisnya. Setelah dirilis, klik tombol "Arsip" di bawah ini.</p>
                     </div>
                 </div>
                 <div class="overflow-x-auto">

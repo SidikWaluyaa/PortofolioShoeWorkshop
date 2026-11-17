@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Katalog Barang Donasi</title>
+    <title>Laporan Katalog Adopsi</title>
     <style>
         @page {
             margin: 1.2cm 1.5cm;
@@ -197,7 +197,7 @@
         <table style="width: 100%;">
             <tr>
                 <td style="vertical-align: middle;">
-                    <h1 class="title">Katalog Barang Donasi</h1>
+                    <h1 class="title">Katalog Adopsi</h1>
                     <p class="subtitle">Shoe Workshop - Laporan inventarisasi barang donasi siap salur</p>
                 </td>
                 <td style="text-align: right; vertical-align: middle;">
@@ -350,7 +350,7 @@
     </table>
 
     <div class="footer">
-        Halaman <span class="page-number"></span> | Laporan Katalog Barang Donasi Shoe Workshop
+        Halaman <span class="page-number"></span> | Laporan Katalog Adopsi · Adapt &amp; Adopt by ShoeWorkshop
     </div>
 
 </body>

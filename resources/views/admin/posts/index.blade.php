@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex justify-between">
+        <div class="flex items-center justify-between gap-4">
             {{ __('Manajemen Berita & Artikel') }}
-            <a href="{{ route('admin.posts.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
+            <a href="{{ route('admin.posts.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-[#22AF85] hover:bg-[#178a67] text-white font-bold rounded-xl text-sm transition-colors">
                 Tambah Artikel
             </a>
-        </h2>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div>
+        <div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="p-6 text-gray-900 text-sm">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -19,8 +19,8 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thumbnail</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul / Kategori</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Published At</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Terbit</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -28,7 +28,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($post->thumbnail)
-                                        <img src="{{ $post->thumbnail }}" alt="{{ $post->title }}" class="h-12 w-20 object-cover rounded shadow-sm">
+                                        <img src="{{ $post->thumbnail_url }}" alt="{{ $post->title }}" class="h-12 w-20 object-cover rounded shadow-sm">
                                     @else
                                         <div class="h-12 w-20 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">No Image</div>
                                     @endif
@@ -52,7 +52,7 @@
                                     <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="confirmAction(event, this.closest('form'), 'Apakah Anda yakin ingin menghapus artikel ini?')">Delete</button>
+                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="confirmAction(event, this.closest('form'), 'Apakah Anda yakin ingin menghapus artikel ini?')">Hapus</button>
                                     </form>
                                 </td>
                             </tr>

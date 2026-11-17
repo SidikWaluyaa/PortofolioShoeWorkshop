@@ -1,13 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        Layanan Categories
+        Kategori Layanan
     </x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
-        <div>
-            <h2 class="text-2xl font-black text-gray-900">Kategori Layanan</h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola kategori utama layanan seperti Cuci, Lem, dll.</p>
-        </div>
+    <div class="-mt-6 mb-6 flex justify-between items-center gap-4">
+        <p class="text-sm text-gray-500">Kelola kategori utama layanan seperti Cuci, Lem, dll.</p>
         <a href="{{ route('admin.layanan-categories.create') }}" class="inline-flex items-center gap-2 bg-[#22AF85] hover:bg-[#1a8b69] text-white font-bold py-2 px-4 rounded-xl transition-colors shadow-sm shadow-[#22AF85]/20">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Tambah Kategori

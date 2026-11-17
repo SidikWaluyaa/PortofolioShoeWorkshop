@@ -46,7 +46,7 @@
         'Utama': {{ request()->routeIs('admin.dashboard*') || request()->routeIs('admin.settings*') ? 'true' : 'false' }},
         'Sistem Internal': {{ request()->routeIs('admin.tracking*') || request()->routeIs('admin.warranty-claims*') || request()->routeIs('admin.users*') ? 'true' : 'false' }},
         'Transaksi & Reparasi': {{ request()->routeIs('admin.donations*') || request()->routeIs('admin.restorations*') || request()->routeIs('admin.donation-items*') || request()->routeIs('admin.donation-requests*') || request()->routeIs('admin.orders*') ? 'true' : 'false' }},
-        'Loyalitas Donatur': {{ request()->routeIs('admin.checkins*') || request()->routeIs('admin.rewards*') ? 'true' : 'false' }},
+        'Loyalitas Member': {{ request()->routeIs('admin.checkins*') || request()->routeIs('admin.rewards*') ? 'true' : 'false' }},
         'Konten Website': {{ request()->routeIs('admin.hero*') || request()->routeIs('admin.services*') || request()->routeIs('admin.projects*') || request()->routeIs('admin.reviews*') || request()->routeIs('admin.workflow*') || request()->routeIs('admin.posts*') || request()->routeIs('admin.trust*') || request()->routeIs('admin.about*') || request()->routeIs('admin.cta*') || request()->routeIs('admin.campaigns*') ? 'true' : 'false' }}
     }
 }">
@@ -70,11 +70,8 @@
         {{-- Logo --}}
         <div class="h-20 flex items-center px-6 border-b border-gray-100 flex-shrink-0">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-                <x-application-logo class="h-12 w-auto" />
-                <div class="leading-none">
-                    <p class="font-black text-sm text-gray-900">SHOE</p>
-                    <p class="font-black text-sm text-[#22AF85]">WORKSHOP</p>
-                </div>
+                <img src="{{ asset('images/logo-navbar.webp') }}" alt="Shoe Workshop" class="h-9 w-auto">
+                <span class="px-2 py-0.5 rounded-md bg-gray-100 text-[10px] font-black tracking-wider text-gray-500 uppercase">Admin</span>
             </a>
         </div>
 
@@ -110,7 +107,7 @@
                     'icon_inactive' => 'text-indigo-400 group-hover:text-indigo-500',
                     'links' => [
                         ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
-                        ['route' => 'admin.settings.index', 'label' => 'Pengaturan API', 'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'],
+                        ['route' => 'admin.settings.index', 'label' => 'Pengaturan', 'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'],
                     ]
                 ],
                 [
@@ -134,13 +131,13 @@
                     'links' => [
                         ['route' => 'admin.donations.index', 'label' => 'Donasi Sepatu', 'icon' => 'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7'],
                         ['route' => 'admin.restorations.index', 'label' => 'Dapur Restorasi', 'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'],
-                        ['route' => 'admin.donation-items.index', 'label' => 'Katalog Barang Donasi', 'icon' => 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'],
-                        ['route' => 'admin.donation-requests.index', 'label' => 'Permohonan Barang', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+                        ['route' => 'admin.donation-items.index', 'label' => 'Katalog Adopsi', 'icon' => 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'],
+                        ['route' => 'admin.donation-requests.index', 'label' => 'Pengajuan Adopsi', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
                         ['route' => 'admin.orders.index', 'label' => 'Pesanan & Pengiriman', 'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'],
                     ]
                 ],
                 [
-                    'title' => 'Loyalitas Donatur',
+                    'title' => 'Loyalitas Member',
                     'dot_color' => 'bg-amber-500',
                     'active_bg' => 'bg-amber-500 text-white shadow-sm shadow-amber-500/20',
                     'icon_active' => 'text-white',
@@ -221,40 +218,10 @@
             @endforeach
         </nav>
 
-        {{-- User --}}
-        <div class="p-4 border-t border-gray-100 flex-shrink-0">
-            <div class="flex items-center gap-3 mb-3">
-                @if(Auth::user()->avatar_path)
-                    <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="{{ Auth::user()->name }}" class="w-10 h-10 rounded-xl object-cover border border-gray-200">
-                @else
-                    <div class="w-10 h-10 rounded-xl bg-[#22AF85] flex items-center justify-center text-white font-black text-sm flex-shrink-0">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </div>
-                @endif
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-gray-400 truncate">{{ Auth::user()->email }}</p>
-                </div>
-            </div>
-
-            <a href="{{ route('profile.edit') }}" class="w-full flex items-center justify-center gap-2 py-2 mb-2 text-xs font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-                Edit Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 border border-red-100 rounded-xl transition-colors">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    Logout
-                </button>
-            </form>
-        </div>
     </aside>
 
     {{-- MAIN CONTENT --}}
+    @php $admin = Auth::user(); @endphp
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {{-- Mobile topbar --}}
@@ -263,13 +230,84 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <span class="font-black text-sm text-gray-900">ADMIN PANEL</span>
-            <x-notification-dropdown align="right" />
+            <div class="flex items-center gap-1">
+                <x-notification-dropdown align="right" />
+                <div x-data="{ open: false }" class="relative" @keydown.escape.window="open = false">
+                    <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-haspopup="true"
+                            class="flex items-center gap-2.5 rounded-xl pl-1 pr-2 py-1 hover:bg-gray-50 transition-colors">
+                        @if($admin->avatar_path)
+                            <img src="{{ asset('storage/' . $admin->avatar_path) }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-gray-200">
+                        @else
+                            <span class="w-8 h-8 rounded-lg bg-[#22AF85] flex items-center justify-center text-white font-black text-xs">{{ strtoupper(substr($admin->name, 0, 1)) }}</span>
+                        @endif
+                        <span class="hidden sm:block text-left leading-tight">
+                            <span class="block text-xs font-bold text-gray-900 max-w-[160px] truncate">{{ $admin->name }}</span>
+                            <span class="block text-[11px] text-gray-400 capitalize">{{ str_replace('_', ' ', $admin->role) }}</span>
+                        </span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="open" x-cloak @click.outside="open = false"
+                         x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                         class="absolute right-0 mt-2 w-60 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-lg p-2 z-50">
+                        <div class="px-3 py-2 border-b border-gray-100 mb-1">
+                            <p class="text-sm font-bold text-gray-900 truncate">{{ $admin->name }}</p>
+                            <p class="text-xs text-gray-400 truncate">{{ $admin->email }}</p>
+                        </div>
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            Edit Profil
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout(event, this)">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Desktop Topbar --}}
         <div class="hidden lg:flex h-16 items-center justify-end px-8 bg-white border-b border-gray-100 flex-shrink-0 z-40 relative shadow-sm">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <x-notification-dropdown align="right" />
+                <span class="w-px h-8 bg-gray-200" aria-hidden="true"></span>
+                <div x-data="{ open: false }" class="relative" @keydown.escape.window="open = false">
+                    <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-haspopup="true"
+                            class="flex items-center gap-2.5 rounded-xl pl-1 pr-2 py-1 hover:bg-gray-50 transition-colors">
+                        @if($admin->avatar_path)
+                            <img src="{{ asset('storage/' . $admin->avatar_path) }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-gray-200">
+                        @else
+                            <span class="w-8 h-8 rounded-lg bg-[#22AF85] flex items-center justify-center text-white font-black text-xs">{{ strtoupper(substr($admin->name, 0, 1)) }}</span>
+                        @endif
+                        <span class="hidden sm:block text-left leading-tight">
+                            <span class="block text-xs font-bold text-gray-900 max-w-[160px] truncate">{{ $admin->name }}</span>
+                            <span class="block text-[11px] text-gray-400 capitalize">{{ str_replace('_', ' ', $admin->role) }}</span>
+                        </span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="open" x-cloak @click.outside="open = false"
+                         x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                         class="absolute right-0 mt-2 w-60 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-lg p-2 z-50">
+                        <div class="px-3 py-2 border-b border-gray-100 mb-1">
+                            <p class="text-sm font-bold text-gray-900 truncate">{{ $admin->name }}</p>
+                            <p class="text-xs text-gray-400 truncate">{{ $admin->email }}</p>
+                        </div>
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            Edit Profil
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmLogout(event, this)">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -297,6 +335,7 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@include('layouts.partials.logout-confirm', ['logoutTitle' => 'Keluar dari panel admin?', 'logoutText' => 'Kamu perlu login lagi untuk masuk ke panel admin.'])
 <script>
     window.confirmAction = function(event, formElement, message) {
         event.preventDefault();
