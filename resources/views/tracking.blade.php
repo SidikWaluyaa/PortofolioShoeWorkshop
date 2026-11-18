@@ -65,7 +65,7 @@
             $hasOtoOffer = $result['has_oto_offer'] ?? false;
             $isWarranty  = $result['is_warranty']   ?? false;
             $isRevising  = $result['is_revising']   ?? false;
-            // /track only promises the status code; the is_tambah_jasa fields are documented for /track-shoes
+            // The status code also covers API responses from before the is_tambah_jasa fields existed
             $isTambahJasa = ($result['is_tambah_jasa'] ?? false) || strtoupper((string) $statusCode) === 'TAMBAH_JASA';
 
             /* ── Timeline ── */
@@ -154,8 +154,8 @@
                 ];
             }
 
-            // The banner already shows this text, so the page does not repeat it below
-            $descInBanner = $isTambahJasa && ($banner['message'] ?? '') === $statusDesc;
+            // The Tambah Jasa banner already explains the status, so the page does not repeat it below
+            $descInBanner = ($banner['type'] ?? null) === 'TAMBAH_JASA';
 
             /* ── Banner theme map ── */
             $themeMap = [

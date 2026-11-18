@@ -52,7 +52,9 @@ class TrackingTambahJasaTest extends TestCase
             'tambah_jasa_title' => 'Judul dari API',
             'tambah_jasa_message' => 'Pesan dari API',
             'tambah_jasa_services' => ['Repaint', 'Ganti Sol'],
-        ])->assertSee('Judul dari API')->assertSee('Pesan dari API')->assertSee('Repaint')->assertSee('Ganti Sol');
+        ])->assertSee('Judul dari API')->assertSee('Pesan dari API')->assertSee('Repaint')->assertSee('Ganti Sol')
+            // The banner replaces the description, even when the API words them differently
+            ->assertDontSee(self::DESCRIPTION);
     }
 
     public function test_other_statuses_do_not_show_the_banner(): void
