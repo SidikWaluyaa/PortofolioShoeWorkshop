@@ -132,6 +132,22 @@ class MemberPortalTest extends TestCase
             ->assertDontSee('Sisa tagihan');
     }
 
+    public function test_tambah_jasa_counts_as_being_worked_on_not_ready_to_pick_up(): void
+    {
+        Setting::create(['key' => 'workshop_api_base_url', 'value' => 'https://workshop.test/api']);
+        Http::fake(['workshop.test/*' => Http::response(['status' => 'success', 'data' => ['work_orders' => [[
+            'spk_number' => 'S-2611-01-0001-SW', 'shoe_brand' => 'Nike', 'shoe_type' => 'Dunk',
+            'status' => ['code' => 'TAMBAH_JASA', 'label' => 'Production (Sedang Mengerjakan Tambah Jasa)'],
+            'payment' => ['status' => 'L', 'total_amount' => 100000], 'services' => [],
+        ]]]])]);
+
+        $this->actingAs($this->member)->get(route('member.reparation-history.index'))
+            ->assertOk()
+            ->assertSee('Sedang dikerjakan')
+            ->assertSee('Production (Sedang Mengerjakan Tambah Jasa)')
+            ->assertDontSee('Siap diambil!');
+    }
+
     public function test_repair_history_shows_stages_and_hides_internal_data(): void
     {
         $this->fakeWorkshopApi();
