@@ -33,14 +33,65 @@
                     .hide-scrollbar::-webkit-scrollbar { display: none; }
                     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
                 </style>
-                <div class="flex overflow-x-auto gap-4 sm:gap-6 pb-4 snap-x snap-mandatory hide-scrollbar text-aa-ink">
+                <div id="aa-showcase-track" class="flex overflow-x-auto gap-4 sm:gap-6 pb-4 hide-scrollbar text-aa-ink">
                     @foreach($donationShowcase as $item)
-                        <div class="w-[260px] sm:w-[300px] shrink-0 snap-center sm:snap-start h-auto">
+                        <div class="w-[260px] sm:w-[300px] shrink-0 h-auto">
                             @include('katalog.partials.item-card', ['item' => $item])
                         </div>
                     @endforeach
                 </div>
             </div>
+            {{-- Slow auto-scroll. It moves the real scroll position, so visitors can still swipe or drag the row. --}}
+            <script>
+                (function () {
+                    const track = document.getElementById('aa-showcase-track');
+                    if (!track || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                    const SPEED = 28; // pixels per second
+                    const originals = [...track.children];
+                    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+                    const setWidth = () => originals.reduce((sum, card) => sum + card.offsetWidth + gap, 0);
+
+                    // Too few shoes to fill the row: leave it still
+                    if (setWidth() < track.clientWidth) return;
+
+                    // A second copy makes the loop seamless; it is hidden from keyboard and screen readers
+                    originals.forEach((card) => {
+                        const copy = card.cloneNode(true);
+                        copy.setAttribute('aria-hidden', 'true');
+                        copy.querySelectorAll('a').forEach((link) => link.setAttribute('tabindex', '-1'));
+                        track.appendChild(copy);
+                    });
+
+                    let position = track.scrollLeft, last = null, visible = false, held = false, resumeTimer;
+                    const hold = () => { clearTimeout(resumeTimer); held = true; };
+                    const release = (delay = 0) => {
+                        clearTimeout(resumeTimer);
+                        resumeTimer = setTimeout(() => { position = track.scrollLeft; held = false; }, delay);
+                    };
+
+                    track.addEventListener('mouseenter', hold);
+                    track.addEventListener('mouseleave', () => release());
+                    track.addEventListener('focusin', hold);
+                    track.addEventListener('focusout', () => release());
+                    track.addEventListener('touchstart', hold, { passive: true });
+                    track.addEventListener('touchend', () => release(2500), { passive: true });
+                    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(track);
+
+                    requestAnimationFrame(function step(now) {
+                        // Capped so returning from another tab does not make the row jump
+                        const elapsed = last === null ? 0 : Math.min(now - last, 100);
+                        last = now;
+                        if (visible && !held && !document.hidden) {
+                            position += SPEED * elapsed / 1000;
+                            const width = setWidth();
+                            if (position >= width) position -= width;
+                            track.scrollLeft = position;
+                        }
+                        requestAnimationFrame(step);
+                    });
+                })();
+            </script>
         @endif
     </div>
 </section>
