@@ -65,6 +65,8 @@
             $hasOtoOffer = $result['has_oto_offer'] ?? false;
             $isWarranty  = $result['is_warranty']   ?? false;
             $isRevising  = $result['is_revising']   ?? false;
+            // /track only promises the status code; the is_tambah_jasa fields are documented for /track-shoes
+            $isTambahJasa = ($result['is_tambah_jasa'] ?? false) || strtoupper((string) $statusCode) === 'TAMBAH_JASA';
 
             /* ── Timeline ── */
             $timelineArray = (array)($result['timeline'] ?? []);
@@ -107,6 +109,15 @@
                     'actionUrl' => $result['report_issue_url'] ?? null,
                     'actionLbl' => 'Lihat Laporan Kendala (CX Report)',
                 ];
+            } elseif ($isTambahJasa) {
+                $banner = [
+                    'type'     => 'TAMBAH_JASA',
+                    'theme'    => 'sky',
+                    'icon'     => 'add_task',
+                    'title'    => $result['tambah_jasa_title'] ?? 'Sedang Mengerjakan Tambah Jasa',
+                    'message'  => ($result['tambah_jasa_message'] ?? null) ?: $statusDesc,
+                    'services' => (array) ($result['tambah_jasa_services'] ?? []),
+                ];
             } elseif ($isWarranty) {
                 $banner = [
                     'type'    => 'WARRANTY',
@@ -143,12 +154,16 @@
                 ];
             }
 
+            // The banner already shows this text, so the page does not repeat it below
+            $descInBanner = $isTambahJasa && ($banner['message'] ?? '') === $statusDesc;
+
             /* ── Banner theme map ── */
             $themeMap = [
                 'rose'   => ['bg'=>'bg-rose-50',   'border'=>'border-rose-200',   'icon_bg'=>'bg-rose-100',   'icon_text'=>'text-rose-500',   'title'=>'text-rose-700',   'msg'=>'text-rose-600',   'btn_bg'=>'bg-rose-100',   'btn_text'=>'text-rose-700',   'btn_hover'=>'hover:bg-rose-200'],
                 'indigo' => ['bg'=>'bg-indigo-50',  'border'=>'border-indigo-200', 'icon_bg'=>'bg-indigo-100', 'icon_text'=>'text-indigo-500', 'title'=>'text-indigo-700', 'msg'=>'text-indigo-600', 'btn_bg'=>'bg-indigo-100', 'btn_text'=>'text-indigo-700', 'btn_hover'=>'hover:bg-indigo-200'],
                 'orange' => ['bg'=>'bg-orange-50',  'border'=>'border-orange-200', 'icon_bg'=>'bg-orange-100', 'icon_text'=>'text-orange-500', 'title'=>'text-orange-700', 'msg'=>'text-orange-600', 'btn_bg'=>'bg-orange-100', 'btn_text'=>'text-orange-700', 'btn_hover'=>'hover:bg-orange-200'],
                 'amber'  => ['bg'=>'bg-amber-50',   'border'=>'border-amber-200',  'icon_bg'=>'bg-amber-100',  'icon_text'=>'text-amber-500',  'title'=>'text-amber-700',  'msg'=>'text-amber-600',  'btn_bg'=>'bg-amber-100',  'btn_text'=>'text-amber-700',  'btn_hover'=>'hover:bg-amber-200'],
+                'sky'    => ['bg'=>'bg-sky-50',     'border'=>'border-sky-200',    'icon_bg'=>'bg-sky-100',    'icon_text'=>'text-sky-600',    'title'=>'text-sky-800',    'msg'=>'text-sky-700',    'btn_bg'=>'bg-sky-100',    'btn_text'=>'text-sky-700',    'btn_hover'=>'hover:bg-sky-200'],
                 'teal'   => ['bg'=>'bg-teal-50',    'border'=>'border-teal-200',   'icon_bg'=>'bg-teal-100',   'icon_text'=>'text-teal-600',   'title'=>'text-teal-700',   'msg'=>'text-teal-600',   'btn_bg'=>'bg-teal-100',   'btn_text'=>'text-teal-700',   'btn_hover'=>'hover:bg-teal-200'],
             ];
         @endphp
@@ -178,6 +193,7 @@
                 @php
                     $badgeCls = match(true) {
                         $isOnHold    => 'bg-rose-100 text-rose-700',
+                        $isTambahJasa => 'bg-sky-100 text-sky-700',
                         $isWarranty  => 'bg-indigo-100 text-indigo-700',
                         $isOto       => 'bg-orange-100 text-orange-700',
                         $isRevising  => 'bg-amber-100 text-amber-700',
@@ -232,10 +248,11 @@
                             $isCxHld = $curr && $isOnHold;
 
                             $dotCls  = $isCxHld ? 'bg-rose-500 text-white'
+                                     : ($isTambahJasa && $curr ? 'bg-sky-500 text-white'
                                      : ($isWarranty && $curr  ? 'bg-indigo-500 text-white'
                                      : ($isOto      && $curr  ? 'bg-orange-500 text-white'
                                      : ($isRevising && $curr  ? 'bg-amber-400 text-white'
-                                     : ($done || $curr        ? 'bg-[#22AF85] text-white' : 'bg-gray-200 text-gray-400'))));
+                                     : ($done || $curr        ? 'bg-[#22AF85] text-white' : 'bg-gray-200 text-gray-400')))));
 
                             $lblCls  = $isCxHld ? 'text-rose-500'
                                      : ($done || $curr ? 'text-[#22AF85]' : 'text-gray-400');
@@ -275,6 +292,13 @@
                     <p class="text-sm font-extrabold {{ $t['title'] }}">{{ $banner['title'] }}</p>
                 </div>
                 <p class="text-xs {{ $t['msg'] }} leading-relaxed">{{ $banner['message'] }}</p>
+                @if($banner['services'] ?? [])
+                <div class="flex flex-wrap gap-1.5 mt-2.5">
+                    @foreach($banner['services'] as $service)
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-full {{ $t['btn_bg'] }} {{ $t['btn_text'] }}">{{ $service }}</span>
+                    @endforeach
+                </div>
+                @endif
                 @if($banner['actionUrl'] ?? null)
                 <a href="{{ $banner['actionUrl'] }}" target="_blank" rel="noopener"
                    class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold {{ $t['btn_text'] }} {{ $t['btn_bg'] }} {{ $t['btn_hover'] }} px-3 py-1.5 rounded-lg transition-colors">
@@ -323,7 +347,7 @@
                     @endif
 
                     {{-- Status description --}}
-                    @if($statusDesc)
+                    @if($statusDesc && !$descInBanner)
                     <div class="mt-4 pt-4 border-t border-gray-100 flex items-start gap-2">
                         <span class="material-symbols-outlined text-[#22AF85] !text-[18px] mt-0.5 shrink-0">info</span>
                         <p class="text-xs text-gray-500 leading-relaxed">{{ $statusDesc }}</p>
@@ -413,11 +437,12 @@
                                     $timestamp    = $stage['waktu'] ?? null;
 
                                     $dotCls = $isCxFollowup ? 'bg-rose-500 text-white'
+                                            : ($isTambahJasa && $isCurrent ? 'bg-sky-500 text-white'
                                             : ($isWarranty && $isCurrent  ? 'bg-indigo-500 text-white'
                                             : ($isOto     && $isCurrent   ? 'bg-orange-500 text-white'
                                             : ($isRevising && $isCurrent  ? 'bg-amber-400 text-white'
                                             : ($isCurrent                 ? 'bg-[#FFC232] text-white'
-                                            : ($isCompleted               ? 'bg-[#22AF85] text-white' : 'bg-gray-100 text-gray-400')))));
+                                            : ($isCompleted               ? 'bg-[#22AF85] text-white' : 'bg-gray-100 text-gray-400'))))));
 
                                     $dotIco = $isCxFollowup ? 'report_problem'
                                             : ($isCurrent   ? 'autorenew'
@@ -432,6 +457,8 @@
                                             <span class="text-sm font-bold text-[#1c1c17]">{{ $stage['label'] ?? '-' }}</span>
                                             @if($isCxFollowup)
                                                 <span class="bg-rose-100 text-rose-600 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">CX Follow Up</span>
+                                            @elseif($isTambahJasa && $isCurrent)
+                                                <span class="bg-sky-100 text-sky-700 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Tambah Jasa</span>
                                             @elseif($isWarranty && $isCurrent)
                                                 <span class="bg-indigo-100 text-indigo-600 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase">Garansi</span>
                                             @elseif($isOto && $isCurrent)
@@ -450,7 +477,7 @@
                                             <p class="text-[11px] text-gray-400">{{ \Carbon\Carbon::parse($timestamp)->format('d M Y, H:i') }} WIB</p>
                                         @endif
                                         {{-- Context note per special state at current step --}}
-                                        @if($isCurrent && $statusDesc && !$isCxFollowup)
+                                        @if($isCurrent && $statusDesc && !$isCxFollowup && !$descInBanner)
                                             <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">{{ $statusDesc }}</p>
                                         @endif
                                     </div>

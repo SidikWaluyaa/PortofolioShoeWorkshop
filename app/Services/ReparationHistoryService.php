@@ -33,6 +33,7 @@ class ReparationHistoryService
         'SORTIR' => 'dikerjakan',
         'PRODUCTION' => 'dikerjakan',
         'REVISI' => 'dikerjakan',
+        'TAMBAH_JASA' => 'dikerjakan',
         'QC' => 'qc',
         'STAGING_OUTBOUND' => 'qc',
         'DIANTAR' => 'diantar',

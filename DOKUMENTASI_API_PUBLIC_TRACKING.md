@@ -1,7 +1,7 @@
 # 📘 Dokumentasi Integrasi API Public Tracking (Web Eksternal)
 
 **Versi API:** `v1`  
-**Terakhir Diperbarui:** 10 November 2026  
+**Terakhir Diperbarui:** 18 November 2026  
 **Target Penggunaan:** Integrasi halaman pelacakan SPK pada website eksternal (misal: `shoeworkshop.id`), widget status order, maupun bot layanan pelanggan.
 
 ---
@@ -60,7 +60,7 @@ Pada tampilan pelacakan, terdapat **7 tahapan (stepper)** standar di dalam objek
 
 ### Tabel Pemetaan Kondisi Khusus (PENTING untuk Frontend)
 
-Ketika sepatu sedang dalam proses **OTO**, **Garansi**, atau **Revisi**, sistem backend **secara otomatis menarik posisi stepper (`is_current: true`) kembali ke Tahap 5 (`PRODUCTION` / Service)** dan menonaktifkan status selesai (`timeline.SELESAI.is_completed = false`), sehingga pelanggan tidak salah mengira sepatu sudah selesai.
+Ketika sepatu sedang dalam proses **OTO**, **Garansi**, **Revisi**, atau **Tambah Jasa (Non-OTO)**, sistem backend **secara otomatis menarik posisi stepper (`is_current: true`) kembali ke Tahap 5 (`PRODUCTION` / Service)** dan menonaktifkan status selesai (`timeline.SELESAI.is_completed = false`), sehingga pelanggan tidak salah mengira sepatu sudah selesai.
 
 | Kondisi SPK | `current_status.code` | `current_status.label` | Step Aktif di `timeline` | Flag Boolean Aktif | Rekomendasi Banner di UI Web |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -69,7 +69,8 @@ Ketika sepatu sedang dalam proses **OTO**, **Garansi**, atau **Revisi**, sistem 
 | **3. Selesai + Ada Penawaran OTO** | `SELESAI` | `Selesai Reparasi` | Step 7: `SELESAI` (`is_current: true`) | `has_oto_offer: true` | **Banner Teal/Hijau:** Tampilkan `oto_offer_message` |
 | **4. Sedang Klaim Garansi (`OPEN`)** | `GARANSI` | `Service (Garansi)` | Step 5: `PRODUCTION` (`is_current: true`) | `is_warranty: true` | **Banner Indigo/Biru:** Tampilkan `warranty_title`, `warranty_spk_number`, & `warranty_message` |
 | **5. Sedang Revisi Kualitas** | `REVISI` | `Service (Revisi)` | Step 5: `PRODUCTION` (`is_current: true`) | `is_revising: true` | **Banner Kuning/Amber:** Tampilkan `revision_title` & `revision_message` |
-| **6. Ditangguhkan / Kendala CX** | `CX_FOLLOWUP` / `HOLD_FOR_CX` | Sesuai tahap terakhir | Tahap sebelum hold (`is_current: true`) | `is_on_hold: true` | **Banner Merah/Rose:** Tampilkan `hold_title`, `hold_message`, & tombol link ke `report_issue_url` |
+| **6. Sedang Tambah Jasa (Non-OTO)** | `TAMBAH_JASA` | `Production (Sedang Mengerjakan Tambah Jasa)` | Step 5: `PRODUCTION` (`is_current: true`) | `is_tambah_jasa: true` (di `/track-shoes`) | **Banner Biru Muda:** Di `/track` deteksi dari `current_status.code` dan tampilkan `current_status.description`; di `/track-shoes` tampilkan `tambah_jasa_title`, `tambah_jasa_message`, dan `tambah_jasa_services` |
+| **7. Ditangguhkan / Kendala CX** | `CX_FOLLOWUP` / `HOLD_FOR_CX` | Sesuai tahap terakhir | Tahap sebelum hold (`is_current: true`) | `is_on_hold: true` | **Banner Merah/Rose:** Tampilkan `hold_title`, `hold_message`, & tombol link ke `report_issue_url` |
 
 > **Catatan Pencarian SPK Garansi (`-GR`):**
 > Selama klaim garansi masih berstatus `OPEN` (sedang dikerjakan), pelanggan dapat melacak menggunakan **Nomor SPK Asli (`S-2605-04-0001-SW`)** maupun **Nomor SPK Garansi (`S-2605-04-0001-GR`)**. Keduanya akan mengembalikan data SPK yang sama dengan status `current_status.code = "GARANSI"` dan `is_warranty = true`.
@@ -110,6 +111,10 @@ Ketika sepatu sedang dalam proses **OTO**, **Garansi**, atau **Revisi**, sistem 
 | `data.is_revising` | `boolean` | `true` jika sepatu sedang dalam proses **Revisi Kualitas**. |
 | `data.revision_title` | `string\|null` | Judul banner revisi (terisi jika `is_revising = true`). |
 | `data.revision_message` | `string\|null` | Deskripsi proses revisi (terisi jika `is_revising = true`). |
+| `data.is_tambah_jasa` | `boolean` | Khusus `/track-shoes`: `true` jika SPK selesai sedang dikerjakan lagi di **Stasiun Tambah Jasa (Non-OTO)**. |
+| `data.tambah_jasa_title` | `string\|null` | Khusus `/track-shoes`: judul banner Tambah Jasa. |
+| `data.tambah_jasa_message` | `string\|null` | Khusus `/track-shoes`: deskripsi pengerjaan Tambah Jasa. |
+| `data.tambah_jasa_services` | `array` | Khusus `/track-shoes`: daftar nama layanan Tambah Jasa. |
 | `data.visual_photos` | `object` | URL foto kondisi sepatu (`before_photo_url`, `after_photo_url`, `hero_photo_url`). |
 | `data.services` | `array` | Daftar layanan pada SPK (`service_name`, `category`, `cost`). |
 | `data.timeline` | `object` | Objek berisi 7 tahapan (`DITERIMA` s/d `SELESAI`). Masing-masing memiliki `label`, `is_completed` (`bool`), `is_current` (`bool`), dan `waktu` (`YYYY-MM-DD HH:mm:ss` atau `null`). |
